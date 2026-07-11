@@ -1,7 +1,7 @@
 // webgl particle system with mouse distortion
 const PV = {
   config: {
-    canvasBg: "#121212",
+    canvasBg: "#7e2810",
     logoSize: 2000,
     distortionRadius: 2000,
     forceStrength: 0.05,

@@ -1,6 +1,6 @@
 .sample-project {
   width: 100%;
-  background: var(--d);
+  background: var(--accent-deep);
   color: var(--l);
 }
 
@@ -158,7 +158,7 @@
 .cs-results {
   position: relative;
   padding: 6rem 0;
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   color: var(--l);
   overflow: hidden;
 }
@@ -283,7 +283,7 @@
    "technical, structured" — the product is the artifact, not a mood. */
 .pd-hero-web {
   padding: 9rem 0 5rem;
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   color: var(--l);
 }
 
@@ -610,7 +610,7 @@
   display: block;
   padding: 5rem 0;
   overflow: hidden;
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   color: var(--l);
   text-decoration: none;
   border-bottom: 1px solid rgba(245, 241, 230, 0.15);

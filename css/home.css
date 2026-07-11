@@ -128,7 +128,7 @@
 .strip {
   padding: 2rem 0;
   overflow: hidden;
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   color: var(--l);
 }
 
@@ -235,7 +235,7 @@
 }
 
 .section-dark {
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   color: var(--l);
 }
 

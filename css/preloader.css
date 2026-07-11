@@ -10,7 +10,7 @@
 
 .preloader,
 .split-overlay {
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   color: var(--l);
 }
 

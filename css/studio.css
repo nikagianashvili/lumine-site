@@ -99,7 +99,7 @@
   width: 100%;
   height: 100%;
   padding-top: 2.5rem;
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   color: var(--l);
 }
 
@@ -195,7 +195,7 @@
   width: 325px;
   height: 500px;
   padding: 0.75rem;
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   border-radius: 1rem;
   will-change: transform;
 }
@@ -394,7 +394,7 @@
 /* — mission / vision — */
 .studio-mission {
   padding: 6rem 0;
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   color: var(--l);
 }
 

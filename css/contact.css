@@ -169,9 +169,9 @@ a.contact-line:hover .contact-line-value {
 }
 
 .form-chip.is-active {
-  background-color: var(--d);
-  border-color: var(--d);
-  color: var(--l);
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-deep);
 }
 
 .form-actions {

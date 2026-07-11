@@ -62,7 +62,7 @@ body {
 }
 
 .price-card.is-featured {
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   color: var(--l);
 }
 
@@ -181,7 +181,7 @@ body {
 /* — singles — */
 .price-singles {
   padding: var(--sp-6) 0;
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   color: var(--l);
 }
 

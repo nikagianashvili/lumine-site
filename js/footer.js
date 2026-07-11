@@ -59,7 +59,7 @@ const CFG = {
 
 (function () {
   const rs = getComputedStyle(document.documentElement);
-  const BG = rs.getPropertyValue("--d").trim() || "#121212";
+  const BG = rs.getPropertyValue("--accent-deep").trim() || "#7e2810";
   const FG = rs.getPropertyValue("--l").trim() || "#f5f1e6";
   const _h = FG.replace("#", "");
   const [FR, FGc, FB] = [0, 2, 4].map((i) => parseInt(_h.slice(i, i + 2), 16));
