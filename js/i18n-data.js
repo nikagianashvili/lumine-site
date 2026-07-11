@@ -9,6 +9,14 @@
 // translated separately — see js/projects-data.js, js/pricing-data.js,
 // js/work.js, js/pricing.js, js/project.js, js/featured.js, js/team-cards.js.
 
+// Keys inside `common` below that exist in the raw server-rendered HTML
+// on every page from the start (as opposed to the nav menu overlay and
+// footer link grid, which nav.js / footer-links.js build later at
+// runtime). js/i18n-early.js uses this list to translate everything it
+// safely can before any animation script gets a turn — see its own
+// header comment for why that ordering matters.
+export const STATIC_COMMON_KEYS = [".footer-cta-eyebrow", ".footer-cta-heading", ".footer-copy"];
+
 export const translations = {
   // ────────────────────────────────────────────────────────────────────────
   // shared across every page: nav menu overlay + footer

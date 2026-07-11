@@ -1,17 +1,15 @@
-// i18n.js — selector-based text swap for static markup.
+// i18n.js — must be the LAST script tag on every page.
 //
-// IMPORTANT: values in i18n-data.js are [english, georgian] pairs (or an
-// array of pairs, one per matched element, for selectors that match several
-// elements). We never read "the original" back out of the DOM — several
-// other scripts (animated-copy.js's SplitText, nav.js's menu-overlay split)
-// mutate these same elements' innerHTML for scroll/hover animations, and if
-// that happens before this script's first pass, a DOM-cached "original"
-// would already be the mangled, animation-wrapped markup. Restoring THAT
-// on switching back to English produced invisible/broken text instead of
-// the real copy. Always writing a known value from data sidesteps the
-// whole class of bug regardless of what any animation library did in
-// between.
-import { translations } from "/js/i18n-data.js";
+// js/i18n-early.js (first script tag) already translated every selector
+// present in the raw server-rendered HTML, before any animation script
+// touched the page — see its header comment. This file has two jobs:
+// (1) on load, translate the handful of `common` selectors that don't
+// exist yet at that early point — the nav menu overlay and footer link
+// grid, both built at runtime by nav.js / footer-links.js, both of
+// which load before this script; (2) on every later `lumine:langchange`
+// (the user clicking EN/GE), re-apply everything in one pass — safe at
+// that point since initial entrance animations have long settled.
+import { translations, STATIC_COMMON_KEYS } from "/js/i18n-data.js";
 
 const LANG_KEY = "lumine-lang";
 
@@ -47,25 +45,7 @@ function currentLang() {
   return localStorage.getItem(LANG_KEY) || "en";
 }
 
-function entries(pageKey) {
-  const common = translations.common || {};
-  const page = (pageKey && translations[pageKey]) || {};
-  return { ...common, ...page };
-}
-
-function pick(pair, lang) {
-  if (!pair) return undefined;
-  // { attr: "placeholder", en: "...", ka: "..." } targets an attribute.
-  if (typeof pair === "object" && !Array.isArray(pair) && pair.attr) {
-    return pair;
-  }
-  return lang === "ka" ? pair[1] : pair[0];
-}
-
-function apply(lang) {
-  const pageKey = currentPageKey();
-  const dict = entries(pageKey);
-
+function applyDict(dict, lang) {
   Object.keys(dict).forEach((selector) => {
     const els = document.querySelectorAll(selector);
     if (!els.length) return;
@@ -74,15 +54,14 @@ function apply(lang) {
 
     els.forEach((el, i) => {
       const raw = isMultiEntry ? dict[selector][i] : dict[selector];
-      const value = pick(raw, lang);
-      if (value === undefined) return;
+      if (raw === undefined) return;
 
-      if (value && typeof value === "object" && value.attr) {
-        el.setAttribute(value.attr, lang === "ka" ? value.ka : value.en);
+      if (typeof raw === "object" && !Array.isArray(raw) && raw.attr) {
+        el.setAttribute(raw.attr, lang === "ka" ? raw.ka : raw.en);
         return;
       }
 
-      el.innerHTML = value;
+      el.innerHTML = lang === "ka" ? raw[1] : raw[0];
     });
   });
 
@@ -90,10 +69,25 @@ function apply(lang) {
   document.dispatchEvent(new CustomEvent("lumine:i18napplied", { detail: { lang } }));
 }
 
+function dynamicCommon() {
+  const dict = {};
+  Object.keys(translations.common).forEach((k) => {
+    if (!STATIC_COMMON_KEYS.includes(k)) dict[k] = translations.common[k];
+  });
+  return dict;
+}
+
+function fullDict() {
+  const pageKey = currentPageKey();
+  const page = (pageKey && translations[pageKey]) || {};
+  return { ...translations.common, ...page };
+}
+
 function init() {
-  apply(currentLang());
+  applyDict(dynamicCommon(), currentLang());
+
   document.documentElement.addEventListener("lumine:langchange", (e) => {
-    apply(e.detail.lang);
+    applyDict(fullDict(), e.detail.lang);
   });
 }
 
