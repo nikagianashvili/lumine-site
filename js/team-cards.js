@@ -3,50 +3,89 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
+
 // discipline cards — what the studio does, not invented people.
 // Swap for real team members (name, photo, bio) when the roster is public.
-const teamMembers = [
+const teamMembersEn = [
   {
     id: "card-1",
     name: "Photo & Video",
     img: "/work/work2.jpg",
     alt: "Photo and video discipline",
-    description:
-      "Shoots, retouching, color. The pictures do the selling before anyone reads a word.",
+    description: "Shoots, retouching, color. The pictures do the selling before anyone reads a word.",
   },
   {
     id: "card-2",
     name: "Design",
     img: "/work/work1.jpg",
     alt: "Design discipline",
-    description:
-      "Identity, posters, brand books. The face of the thing, kept consistent everywhere.",
+    description: "Identity, posters, brand books. The face of the thing, kept consistent everywhere.",
   },
   {
     id: "card-3",
     name: "Social & Content",
     img: "/work/work3.jpg",
     alt: "Social and content discipline",
-    description:
-      "Plans that ship, posts that sound like you, and yes — the comments section too.",
+    description: "Plans that ship, posts that sound like you, and yes — the comments section too.",
   },
   {
     id: "card-4",
     name: "Marketing",
     img: "/work/work6.jpg",
     alt: "Marketing discipline",
-    description:
-      "Paid social and SEO with receipts. Reach you can measure, not vibes.",
+    description: "Paid social and SEO with receipts. Reach you can measure, not vibes.",
   },
   {
     id: "card-5",
     name: "Web",
     img: "/work/work4.jpg",
     alt: "Web discipline",
-    description:
-      "Sites designed and built in house — fast, maintained, and never off a theme store.",
+    description: "Sites designed and built in house — fast, maintained, and never off a theme store.",
   },
 ];
+
+const teamMembersKa = [
+  {
+    id: "card-1",
+    name: "ფოტო და ვიდეო",
+    img: "/work/work2.jpg",
+    alt: "Photo and video discipline",
+    description: "გადაღება, რეტუში, ფერი. სურათები ყიდიან მანამ, სანამ ვინმე სიტყვას წაიკითხავს.",
+  },
+  {
+    id: "card-2",
+    name: "დიზაინი",
+    img: "/work/work1.jpg",
+    alt: "Design discipline",
+    description: "იდენტობა, პოსტერები, ბრენდბუქები. საგნის სახე, ერთნაირად შენარჩუნებული ყველგან.",
+  },
+  {
+    id: "card-3",
+    name: "სოციალური და კონტენტი",
+    img: "/work/work3.jpg",
+    alt: "Social and content discipline",
+    description: "გეგმები, რომლებიც სრულდება, პოსტები, რომლებიც შენსავით ჟღერს, და კი — კომენტარების სექციაც.",
+  },
+  {
+    id: "card-4",
+    name: "მარკეტინგი",
+    img: "/work/work6.jpg",
+    alt: "Marketing discipline",
+    description: "ფასიანი სოციალური და SEO, დამტკიცებადი. მიწვდომა, რომლის გაზომვაც შეგიძლია და არა შეგრძნება.",
+  },
+  {
+    id: "card-5",
+    name: "ვები",
+    img: "/work/work4.jpg",
+    alt: "Web discipline",
+    description: "საიტები, დაპროექტებული და აშენებული საკუთარ გუნდში — სწრაფი, მხარდაჭერილი და არასდროს თემის მაღაზიიდან.",
+  },
+];
+
+const teamMembers = isKa ? teamMembersKa : teamMembersEn;
+const HEADER_STICKY = isKa ? "რაზეც ვზრუნავთ" : "What We Obsess Over";
+const HEADER_MOBILE = isKa ? "მიმართულებები" : "The Disciplines";
 
 // dom builders
 function buildCard(m) {
@@ -73,7 +112,7 @@ function buildTeam() {
 
   const stickyHeader = document.createElement("div");
   stickyHeader.className = "sticky-header";
-  stickyHeader.innerHTML = `<h1>What We Obsess Over</h1>`;
+  stickyHeader.innerHTML = `<h1>${HEADER_STICKY}</h1>`;
   desktopSection.appendChild(stickyHeader);
 
   const desktopCards = teamMembers.map((m) => {
@@ -88,7 +127,7 @@ function buildTeam() {
 
   const mobileHeader = document.createElement("div");
   mobileHeader.className = "mobile-header";
-  mobileHeader.innerHTML = `<h1>The Disciplines</h1>`;
+  mobileHeader.innerHTML = `<h1>${HEADER_MOBILE}</h1>`;
   mobileSection.appendChild(mobileHeader);
 
   teamMembers.forEach((m) => {

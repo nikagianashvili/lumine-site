@@ -4,33 +4,89 @@ import { projects, getProject, getServiceType } from "/js/projects-data.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
+const p = (route) => (isKa ? `/ka${route}` : route);
+
+const L = isKa
+  ? {
+      client: "კლიენტი",
+      industry: "ინდუსტრია",
+      year: "წელი",
+      status: "სტატუსი",
+      phase01Challenge: "ფაზა 01 · გამოწვევა",
+      phase02Research: "ფაზა 02 · კვლევა",
+      wireframes: "კარკასები",
+      uiDesign: "UI დიზაინი",
+      phase03Development: "ფაზა 03 · დეველოპმენტი",
+      results: "შედეგები",
+      gallery: "გალერეა",
+      technologiesUsed: "გამოყენებული ტექნოლოგიები",
+      nextProject: "შემდეგი პროექტი",
+      theConcept: "კონცეფცია",
+      behindTheScenes: "კულისებში",
+      theWork: "სამუშაო",
+      theBrief: "დავალება",
+      conceptMoodboard: "კონცეფცია და მუდბორდი",
+      finalDeliverables: "საბოლოო მასალები",
+    }
+  : {
+      client: "Client",
+      industry: "Industry",
+      year: "Year",
+      status: "Status",
+      phase01Challenge: "Phase 01 · The Challenge",
+      phase02Research: "Phase 02 · Research",
+      wireframes: "Wireframes",
+      uiDesign: "UI Design",
+      phase03Development: "Phase 03 · Development",
+      results: "Results",
+      gallery: "Gallery",
+      technologiesUsed: "Technologies Used",
+      nextProject: "Next Project",
+      theConcept: "The Concept",
+      behindTheScenes: "Behind The Scenes",
+      theWork: "The Work",
+      theBrief: "The Brief",
+      conceptMoodboard: "Concept &amp; Moodboard",
+      finalDeliverables: "Final Deliverables",
+    };
+
+// Picks `${field}_ka` when present and the page is under /ka/, otherwise
+// the English field.
+function t(project, field) {
+  if (isKa && project[`${field}_ka`] !== undefined) return project[`${field}_ka`];
+  return project[field];
+}
+
 // ── hero: one composition per service type, deliberately unalike ────────────
 // Goal (per brief): screenshot the hero of each type side by side and the
 // type should be readable without reading a word of copy.
 
 function heroBadge(project) {
   const type = getServiceType(project.serviceType);
-  return `<span class="pd-hero-badge" style="background-color:${type.color};color:${type.onColor}">${type.label}</span>`;
+  const label = isKa ? type.label_ka : type.label;
+  return `<span class="pd-hero-badge" style="background-color:${type.color};color:${type.onColor}">${label}</span>`;
 }
 
 function factsRow(project) {
+  const status = isKa ? project.status_ka || project.status : project.status;
   return `
     <div class="pd-hero-facts">
       <div>
-        <span class="pd-hero-fact-label">Client</span>
+        <span class="pd-hero-fact-label">${L.client}</span>
         <span class="pd-hero-fact-value">${project.client}</span>
       </div>
       <div>
-        <span class="pd-hero-fact-label">Industry</span>
+        <span class="pd-hero-fact-label">${L.industry}</span>
         <span class="pd-hero-fact-value">${project.industry}</span>
       </div>
       <div>
-        <span class="pd-hero-fact-label">Year</span>
+        <span class="pd-hero-fact-label">${L.year}</span>
         <span class="pd-hero-fact-value">${project.year}</span>
       </div>
       <div>
-        <span class="pd-hero-fact-label">Status</span>
-        <span class="pd-hero-fact-value">${project.status}</span>
+        <span class="pd-hero-fact-label">${L.status}</span>
+        <span class="pd-hero-fact-value">${status}</span>
       </div>
     </div>
   `;
@@ -39,12 +95,13 @@ function factsRow(project) {
 // web: a floating browser window on a flat ink field — the product is the
 // artifact. tech stack sits right under it, like a spec sheet.
 function heroWeb(project) {
+  const tagline = t(project, "heroTagline") || t(project, "blurb");
   return `
     <section class="pd-hero pd-hero-web">
       <div class="container">
         ${heroBadge(project)}
         <h2 class="pd-reveal">${project.title}</h2>
-        <p class="pd-hero-tagline pd-reveal">${project.heroTagline || project.blurb}</p>
+        <p class="pd-hero-tagline pd-reveal">${tagline}</p>
 
         <div class="pd-browser-frame pd-reveal">
           <div class="pd-browser-bar">
@@ -59,7 +116,7 @@ function heroWeb(project) {
         </div>
 
         <div class="pd-hero-tech pd-reveal">
-          ${(project.technologies || []).map((t) => `<span class="cs-chip">${t}</span>`).join("")}
+          ${(project.technologies || []).map((tech) => `<span class="cs-chip">${tech}</span>`).join("")}
         </div>
 
         ${factsRow(project)}
@@ -71,6 +128,7 @@ function heroWeb(project) {
 // photo & video: the frame is the hero. full-bleed, minimal type, a play
 // affordance — nothing between the visitor and the image.
 function heroPhotoVideo(project) {
+  const tagline = t(project, "heroTagline") || t(project, "blurb");
   return `
     <section class="pd-hero pd-hero-photo">
       <div class="pd-hero-photo-media">
@@ -83,7 +141,7 @@ function heroPhotoVideo(project) {
       <div class="container">
         ${heroBadge(project)}
         <h2 class="pd-reveal">${project.title}</h2>
-        <p class="pd-hero-tagline pd-reveal">${project.heroTagline || project.blurb}</p>
+        <p class="pd-hero-tagline pd-reveal">${tagline}</p>
         ${factsRow(project)}
       </div>
     </section>
@@ -93,6 +151,7 @@ function heroPhotoVideo(project) {
 // graphic design: title on flat paper, then an asymmetric collage — one
 // tall piece + two stacked — a portfolio wall, not one photograph.
 function heroDesign(project) {
+  const tagline = t(project, "heroTagline") || t(project, "blurb");
   const mood = project.moodboardImages || [];
   const tall = project.cover;
   const a = mood[1] || mood[0] || project.cover;
@@ -103,7 +162,7 @@ function heroDesign(project) {
       <div class="container">
         ${heroBadge(project)}
         <h2 class="pd-reveal">${project.title}</h2>
-        <p class="pd-hero-tagline pd-reveal">${project.heroTagline || project.blurb}</p>
+        <p class="pd-hero-tagline pd-reveal">${tagline}</p>
 
         <div class="pd-collage pd-reveal">
           <div class="pd-collage-item pd-collage-tall">
@@ -220,14 +279,14 @@ function resultsSection(results) {
   return `
     <section class="cs-results grain">
       <div class="container">
-        <p class="cs-results-label pd-reveal">Results</p>
+        <p class="cs-results-label pd-reveal">${L.results}</p>
         <div class="cs-results-grid">
           ${results
             .map(
               (r) => `
             <div class="cs-result">
               <h3>${r.stat}</h3>
-              <p>${r.label}</p>
+              <p>${isKa ? r.label_ka || r.label : r.label}</p>
             </div>
           `,
             )
@@ -252,23 +311,25 @@ function chipsSection(label, items) {
 }
 
 function quoteSection(testimonial) {
+  const quote = isKa ? testimonial.quote_ka || testimonial.quote : testimonial.quote;
+  const author = isKa ? testimonial.author_ka || testimonial.author : testimonial.author;
   return `
     <section class="cs-quote">
       <div class="container">
-        <h4 class="pd-reveal">"${testimonial.quote}"</h4>
-        <p class="cs-quote-attr">— ${testimonial.author}</p>
+        <h4 class="pd-reveal">"${quote}"</h4>
+        <p class="cs-quote-attr">— ${author}</p>
       </div>
     </section>
   `;
 }
 
 function nextSection(current) {
-  const idx = projects.findIndex((p) => p.slug === current.slug);
+  const idx = projects.findIndex((proj) => proj.slug === current.slug);
   const next = projects[(idx + 1) % projects.length];
   return `
-    <a href="/project?slug=${next.slug}" class="cs-next grain">
+    <a href="${p("/project")}?slug=${next.slug}" class="cs-next grain">
       <div class="container">
-        <span class="cs-next-label">Next Project</span>
+        <span class="cs-next-label">${L.nextProject}</span>
         <h3>${next.title}</h3>
         <span class="cs-next-arrow">↗</span>
       </div>
@@ -278,41 +339,41 @@ function nextSection(current) {
 
 // ── per-type template assembly ───────────────────────────────────────────────
 
-function webTemplate(p) {
+function webTemplate(proj) {
   return [
-    heroWeb(p),
-    phaseSection("Phase 01 · The Challenge", `<h6 class="pd-reveal">${p.challenge}</h6>`),
-    phaseSection("Phase 02 · Research", `<h6 class="pd-reveal">${p.research}</h6>`),
-    browserSection("Wireframes", p.wireframesImage, p, "/wireframes"),
-    browserSection("UI Design", p.uiImage, p, "/"),
-    phaseSection("Phase 03 · Development", `<h6 class="pd-reveal">${p.development}</h6>`),
-    resultsSection(p.results),
-    imageSection("Gallery", p.gallery),
-    chipsSection("Technologies Used", p.technologies),
-    quoteSection(p.testimonial),
-    nextSection(p),
+    heroWeb(proj),
+    phaseSection(L.phase01Challenge, `<h6 class="pd-reveal">${t(proj, "challenge")}</h6>`),
+    phaseSection(L.phase02Research, `<h6 class="pd-reveal">${t(proj, "research")}</h6>`),
+    browserSection(L.wireframes, proj.wireframesImage, proj, "/wireframes"),
+    browserSection(L.uiDesign, proj.uiImage, proj, "/"),
+    phaseSection(L.phase03Development, `<h6 class="pd-reveal">${t(proj, "development")}</h6>`),
+    resultsSection(proj.results),
+    imageSection(L.gallery, proj.gallery),
+    chipsSection(L.technologiesUsed, proj.technologies),
+    quoteSection(proj.testimonial),
+    nextSection(proj),
   ].join("");
 }
 
-function photoVideoTemplate(p) {
+function photoVideoTemplate(proj) {
   return [
-    heroPhotoVideo(p),
-    phaseSection("The Concept", `<h6 class="pd-reveal">${p.concept}</h6>`),
-    cinematicSection("Behind The Scenes", p.behindTheScenes),
-    cinematicSection("The Work", p.galleryImages),
-    quoteSection(p.testimonial),
-    nextSection(p),
+    heroPhotoVideo(proj),
+    phaseSection(L.theConcept, `<h6 class="pd-reveal">${t(proj, "concept")}</h6>`),
+    cinematicSection(L.behindTheScenes, proj.behindTheScenes),
+    cinematicSection(L.theWork, proj.galleryImages),
+    quoteSection(proj.testimonial),
+    nextSection(proj),
   ].join("");
 }
 
-function designTemplate(p) {
+function designTemplate(proj) {
   return [
-    heroDesign(p),
-    phaseSection("The Brief", `<h6 class="pd-reveal">${p.brief}</h6>`),
-    imageSection("Concept &amp; Moodboard", p.moodboardImages, true),
-    imageSection("Final Deliverables", p.deliverablesImages, true),
-    quoteSection(p.testimonial),
-    nextSection(p),
+    heroDesign(proj),
+    phaseSection(L.theBrief, `<h6 class="pd-reveal">${t(proj, "brief")}</h6>`),
+    imageSection(L.conceptMoodboard, proj.moodboardImages, true),
+    imageSection(L.finalDeliverables, proj.deliverablesImages, true),
+    quoteSection(proj.testimonial),
+    nextSection(proj),
   ].join("");
 }
 
@@ -344,13 +405,19 @@ function init() {
   const notFound = document.getElementById("pdNotFound");
   if (!main) return;
 
+  // The language-switch link in the nav is static in the HTML (no slug) —
+  // append the current project's slug so it lands on the same project in
+  // the other language instead of a bare, unspecified project page.
+  const langLink = document.getElementById("navLangKa") || document.getElementById("navLangEn");
+  if (langLink) langLink.href += window.location.search;
+
   const slug = new URLSearchParams(window.location.search).get("slug");
   const project = slug ? getProject(slug) : null;
 
   if (!project) {
     main.hidden = true;
     notFound.hidden = false;
-    document.title = "Project Not Found | Lumine";
+    document.title = isKa ? "პროექტი ვერ მოიძებნა | Lumine" : "Project Not Found | Lumine";
     return;
   }
 

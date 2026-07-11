@@ -10,6 +10,16 @@
     { "source": "/pricing", "destination": "/pricing.html" },
     { "source": "/journal", "destination": "/journal.html" },
     { "source": "/legal", "destination": "/legal.html" },
-    { "source": "/contact", "destination": "/contact.html" }
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/ka", "destination": "/ka/index.html" },
+    { "source": "/ka/work", "destination": "/ka/work.html" },
+    { "source": "/ka/sample-project", "destination": "/ka/sample-project.html" },
+    { "source": "/ka/project", "destination": "/ka/project.html" },
+    { "source": "/ka/studio", "destination": "/ka/studio.html" },
+    { "source": "/ka/services", "destination": "/ka/services.html" },
+    { "source": "/ka/pricing", "destination": "/ka/pricing.html" },
+    { "source": "/ka/journal", "destination": "/ka/journal.html" },
+    { "source": "/ka/legal", "destination": "/ka/legal.html" },
+    { "source": "/ka/contact", "destination": "/ka/contact.html" }
   ]
 }

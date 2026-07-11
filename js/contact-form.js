@@ -4,6 +4,17 @@
 // replace the mailto block inside onSubmit with a fetch() POST.
 
 const INBOX = "hello@lumine.ge";
+const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
+
+const MSG = isKa
+  ? {
+      missing: "მიუთითეთ სახელი და საკონტაქტო ინფორმაცია.",
+      sent: "დრაფტი გაიხსნა თქვენს მეილ აპლიკაციაში — გააგზავნეთ იქიდან და პასუხს 48 საათში მიიღებთ.",
+    }
+  : {
+      missing: "Add your name and a way to reach you.",
+      sent: "A draft opened in your mail app — hit send there and we'll reply within 48h.",
+    };
 
 function initChips(container) {
   if (!container) return;
@@ -45,7 +56,7 @@ function init() {
     const reach = (data.get("reach") || "").toString().trim();
 
     if (!name || !reach) {
-      status.textContent = "Add your name and a way to reach you.";
+      status.textContent = MSG.missing;
       return;
     }
 
@@ -68,8 +79,7 @@ function init() {
       subject,
     )}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
 
-    status.textContent =
-      "A draft opened in your mail app — hit send there and we'll reply within 48h.";
+    status.textContent = MSG.sent;
   });
 }
 

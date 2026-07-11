@@ -1,11 +1,18 @@
 import gsap from "gsap";
-import { projects, SERVICE_TYPES, INDUSTRIES, getServiceType } from "/js/projects-data.js";
+import { projects, SERVICE_TYPES, INDUSTRIES, INDUSTRY_LABELS_KA, getServiceType } from "/js/projects-data.js";
 
 const grid = document.getElementById("workGrid");
 const emptyEl = document.getElementById("workEmpty");
 const countEl = document.getElementById("workCount");
 const typeFiltersEl = document.getElementById("typeFilters");
 const industryFiltersEl = document.getElementById("industryFilters");
+
+const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
+const p = (route) => (isKa ? `/ka${route}` : route);
+
+const UI = isKa
+  ? { all: "ყველა", allTypes: "ყველა ტიპი", allIndustries: "ყველა ინდუსტრია", featured: "გამორჩეული" }
+  : { all: "All", allTypes: "All Types", allIndustries: "All Industries", featured: "Featured" };
 
 const state = { type: "all", industry: "all" };
 let isAnimating = false;
@@ -72,17 +79,20 @@ function buildVisual(project) {
 
 function buildCard(project) {
   const type = getServiceType(project.serviceType);
+  const label = isKa ? type.label_ka : type.label;
+  const blurb = isKa ? project.blurb_ka : project.blurb;
   const card = document.createElement("a");
   card.className = "work-card" + (project.featured ? " is-featured" : "");
-  card.href = `/project?slug=${project.slug}`;
+  card.href = `${p("/project")}?slug=${project.slug}`;
   card.dataset.type = project.serviceType;
   card.dataset.industry = project.industry;
   card.innerHTML = `
+    ${project.featured ? `<span class="work-card-featured-tag">${UI.featured}</span>` : ""}
     ${buildVisual(project)}
     <div class="work-card-meta">
-      <span class="work-card-badge" style="background-color:${type.color};color:${type.onColor}">${type.label}</span>
+      <span class="work-card-badge" style="background-color:${type.color};color:${type.onColor}">${label}</span>
       <h6 class="work-card-title">${project.title}</h6>
-      <p class="work-card-blurb">${project.blurb}</p>
+      <p class="work-card-blurb">${blurb}</p>
     </div>
   `;
   return card;
@@ -100,16 +110,16 @@ function buildPill(group, value, label) {
 }
 
 function render() {
-  projects.forEach((p) => grid.appendChild(buildCard(p)));
+  projects.forEach((proj) => grid.appendChild(buildCard(proj)));
 
-  typeFiltersEl.appendChild(buildPill("type", "all", "All"));
+  typeFiltersEl.appendChild(buildPill("type", "all", UI.all));
   SERVICE_TYPES.forEach((s) =>
-    typeFiltersEl.appendChild(buildPill("type", s.id, s.label)),
+    typeFiltersEl.appendChild(buildPill("type", s.id, isKa ? s.label_ka : s.label)),
   );
 
-  industryFiltersEl.appendChild(buildPill("industry", "all", "All"));
+  industryFiltersEl.appendChild(buildPill("industry", "all", UI.all));
   INDUSTRIES.forEach((s) =>
-    industryFiltersEl.appendChild(buildPill("industry", s, s)),
+    industryFiltersEl.appendChild(buildPill("industry", s, isKa ? INDUSTRY_LABELS_KA[s] : s)),
   );
 }
 
@@ -126,9 +136,9 @@ function updateCount(visible) {
   const total = String(projects.length).padStart(2, "0");
   const shown = String(visible).padStart(2, "0");
   const typePart =
-    state.type === "all" ? "All Types" : getServiceType(state.type).label;
+    state.type === "all" ? UI.allTypes : isKa ? getServiceType(state.type).label_ka : getServiceType(state.type).label;
   const industryPart =
-    state.industry === "all" ? "All Industries" : state.industry;
+    state.industry === "all" ? UI.allIndustries : isKa ? INDUSTRY_LABELS_KA[state.industry] : state.industry;
   countEl.textContent = `${shown} / ${total} — ${typePart}, ${industryPart}`;
 }
 

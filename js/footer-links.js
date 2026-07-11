@@ -1,40 +1,47 @@
 // Utility footer — injected on every page from one config,
 // so links live in a single place instead of eight HTML files.
+//
+// Georgian pages live under /ka/ as real, separate static HTML, so this
+// only needs to know which side of that split it's on to link and label
+// itself correctly — no language state to read/write.
 
-const COLUMNS = [
+const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
+const p = (route) => (isKa ? `/ka${route}` : route);
+
+const COLUMNS_EN = [
   {
     title: "Pages",
     links: [
-      { label: "Home", href: "/" },
-      { label: "Studio", href: "/studio" },
-      { label: "Services", href: "/services" },
-      { label: "Work", href: "/work" },
-      { label: "Pricing", href: "/pricing" },
-      { label: "Journal", href: "/journal" },
-      { label: "Q&A", href: "/#faq" },
+      { label: "Home", href: p("/") },
+      { label: "Studio", href: p("/studio") },
+      { label: "Services", href: p("/services") },
+      { label: "Work", href: p("/work") },
+      { label: "Pricing", href: p("/pricing") },
+      { label: "Journal", href: p("/journal") },
+      { label: "Q&A", href: `${p("/")}#faq` },
     ],
   },
   {
     title: "Services",
     links: [
-      { label: "Photography", href: "/services#photography" },
-      { label: "Video", href: "/services#video" },
-      { label: "Graphic Design", href: "/services#design" },
-      { label: "Social Media", href: "/services#social" },
-      { label: "Marketing", href: "/services#marketing" },
-      { label: "Web", href: "/services#web" },
+      { label: "Photography", href: `${p("/services")}#photography` },
+      { label: "Video", href: `${p("/services")}#video` },
+      { label: "Graphic Design", href: `${p("/services")}#design` },
+      { label: "Social Media", href: `${p("/services")}#social` },
+      { label: "Marketing", href: `${p("/services")}#marketing` },
+      { label: "Web", href: `${p("/services")}#web` },
     ],
   },
   {
     title: "Industries",
     links: [
-      { label: "Medical", href: "/work?industry=Medical" },
-      { label: "Hotels", href: "/work?industry=Hotels" },
-      { label: "Restaurants", href: "/work?industry=Restaurants" },
-      { label: "Real Estate", href: "/work?industry=Real%20Estate" },
-      { label: "SaaS", href: "/work?industry=SaaS" },
-      { label: "E-Commerce", href: "/work?industry=E-Commerce" },
-      { label: "Startups", href: "/work?industry=Startups" },
+      { label: "Medical", href: `${p("/work")}?industry=Medical` },
+      { label: "Hotels", href: `${p("/work")}?industry=Hotels` },
+      { label: "Restaurants", href: `${p("/work")}?industry=Restaurants` },
+      { label: "Real Estate", href: `${p("/work")}?industry=Real%20Estate` },
+      { label: "SaaS", href: `${p("/work")}?industry=SaaS` },
+      { label: "E-Commerce", href: `${p("/work")}?industry=E-Commerce` },
+      { label: "Startups", href: `${p("/work")}?industry=Startups` },
     ],
   },
   {
@@ -42,15 +49,86 @@ const COLUMNS = [
     links: [
       { label: "hello@lumine.ge", href: "mailto:hello@lumine.ge" },
       { label: "+995 555 00 00 00", href: "tel:+995555000000" },
-      {
-        label: "Instagram",
-        href: "https://www.instagram.com/lumine.ge",
-        external: true,
-      },
-      { label: "Tbilisi, Georgia", href: "/contact" },
+      { label: "Instagram", href: "https://www.instagram.com/lumine.ge", external: true },
+      { label: "Tbilisi, Georgia", href: p("/contact") },
     ],
   },
 ];
+
+const COLUMNS_KA = [
+  {
+    title: "გვერდები",
+    links: [
+      { label: "მთავარი", href: p("/") },
+      { label: "სტუდია", href: p("/studio") },
+      { label: "სერვისები", href: p("/services") },
+      { label: "ნამუშევრები", href: p("/work") },
+      { label: "ფასები", href: p("/pricing") },
+      { label: "ჟურნალი", href: p("/journal") },
+      { label: "კითხვა-პასუხი", href: `${p("/")}#faq` },
+    ],
+  },
+  {
+    title: "სერვისები",
+    links: [
+      { label: "ფოტოგრაფია", href: `${p("/services")}#photography` },
+      { label: "ვიდეო", href: `${p("/services")}#video` },
+      { label: "გრაფიკული დიზაინი", href: `${p("/services")}#design` },
+      { label: "სოციალური მედია", href: `${p("/services")}#social` },
+      { label: "მარკეტინგი", href: `${p("/services")}#marketing` },
+      { label: "ვები", href: `${p("/services")}#web` },
+    ],
+  },
+  {
+    title: "ინდუსტრიები",
+    links: [
+      { label: "სამედიცინო", href: `${p("/work")}?industry=Medical` },
+      { label: "სასტუმროები", href: `${p("/work")}?industry=Hotels` },
+      { label: "რესტორნები", href: `${p("/work")}?industry=Restaurants` },
+      { label: "უძრავი ქონება", href: `${p("/work")}?industry=Real%20Estate` },
+      { label: "SaaS", href: `${p("/work")}?industry=SaaS` },
+      { label: "ელ-კომერცია", href: `${p("/work")}?industry=E-Commerce` },
+      { label: "სტარტაპები", href: `${p("/work")}?industry=Startups` },
+    ],
+  },
+  {
+    title: "კონტაქტი",
+    links: [
+      { label: "hello@lumine.ge", href: "mailto:hello@lumine.ge" },
+      { label: "+995 555 00 00 00", href: "tel:+995555000000" },
+      { label: "Instagram", href: "https://www.instagram.com/lumine.ge", external: true },
+      { label: "თბილისი, საქართველო", href: p("/contact") },
+    ],
+  },
+];
+
+const COLUMNS = isKa ? COLUMNS_KA : COLUMNS_EN;
+
+const T = isKa
+  ? {
+      tag: "ფოტო, ვიდეო, დიზაინი, სოციალური მედია, მარკეტინგი და ვები — ყველაფერი ერთ გუნდში, თბილისში.",
+      newsletterLabel: "ჟურნალი არის ჩვენი გამოწერა — ახალი ჩანაწერები პირდაპირ მეილზე",
+      emailPlaceholder: "შენი@მეილი.com",
+      basedIn: "დაფუძნებულია თბილისში",
+      availableFor: "ხელმისაწვდომია ახალი პროექტებისთვის",
+      bookACall: "დარეკვის დაჯავშნა",
+      privacy: "კონფიდენციალურობის პოლიტიკა",
+      terms: "წესები",
+      invalid: "მიუთითეთ რეალური მეილი.",
+      sent: "დრაფტი გაიხსნა თქვენს მეილ აპლიკაციაში — გააგზავნეთ და სიაშია ხართ.",
+    }
+  : {
+      tag: "Photo, video, design, social, marketing, and web — in house, in Tbilisi.",
+      newsletterLabel: "The Journal is the newsletter — new notes by email",
+      emailPlaceholder: "you@email.com",
+      basedIn: "Based In Tbilisi",
+      availableFor: "Available For New Projects",
+      bookACall: "Book A Call",
+      privacy: "Privacy Policy",
+      terms: "Terms",
+      invalid: "Add a real email first.",
+      sent: "A draft opened in your mail app — send it and you're on the list.",
+    };
 
 // Turn the bare "big statement" CTA into a composed sign-off:
 // corner meta (location + live availability) + a real action row.
@@ -62,15 +140,15 @@ function enhanceCta(footer) {
   const meta = document.createElement("div");
   meta.className = "footer-cta-meta";
   meta.innerHTML = `
-    <span class="footer-cta-meta-item">Based In Tbilisi</span>
-    <span class="footer-cta-meta-item">Available For New Projects</span>
+    <span class="footer-cta-meta-item">${T.basedIn}</span>
+    <span class="footer-cta-meta-item">${T.availableFor}</span>
   `;
   inner.insertBefore(meta, inner.firstChild);
 
   const actions = document.createElement("div");
   actions.className = "footer-cta-actions";
   actions.innerHTML = `
-    <a href="/contact" class="btn btn-invert">Book A Call</a>
+    <a href="${p("/contact")}" class="btn btn-invert">${T.bookACall}</a>
     <a href="mailto:hello@lumine.ge" class="footer-cta-mail">hello@lumine.ge</a>
   `;
   cta.insertAdjacentElement("afterend", actions);
@@ -93,14 +171,11 @@ function buildLinks() {
   section.innerHTML = `
     <div class="footer-links-brand">
       <img src="/logo/lumine-logo-white.png" alt="Lumine" class="footer-links-logo" />
-      <p class="footer-links-tag">
-        Photo, video, design, social, marketing, and web — in house, in
-        Tbilisi.
-      </p>
+      <p class="footer-links-tag">${T.tag}</p>
       <form class="footer-newsletter" id="footerNewsletter" novalidate>
-        <span class="footer-newsletter-label">The Journal is the newsletter — new notes by email</span>
+        <span class="footer-newsletter-label">${T.newsletterLabel}</span>
         <div class="footer-newsletter-row">
-          <input type="email" name="email" placeholder="you@email.com" required />
+          <input type="email" name="email" placeholder="${T.emailPlaceholder}" required />
           <button type="submit" aria-label="Subscribe">↗</button>
         </div>
         <span class="footer-newsletter-status" aria-live="polite"></span>
@@ -131,7 +206,7 @@ function buildLinks() {
     bottom.classList.add("is-static");
     const legal = document.createElement("p");
     legal.className = "footer-legal";
-    legal.innerHTML = `<a href="/legal#privacy">Privacy Policy</a> · <a href="/legal#terms">Terms</a> · © 2026 Lumine`;
+    legal.innerHTML = `<a href="${p("/legal")}#privacy">${T.privacy}</a> · <a href="${p("/legal")}#terms">${T.terms}</a> · © 2026 Lumine`;
     bottom.appendChild(legal);
     solid.appendChild(bottom);
   }
@@ -143,13 +218,13 @@ function buildLinks() {
     e.preventDefault();
     const email = form.email.value.trim();
     if (!email || !email.includes("@")) {
-      status.textContent = "Add a real email first.";
+      status.textContent = T.invalid;
       return;
     }
     window.location.href = `mailto:hello@lumine.ge?subject=${encodeURIComponent(
       "Journal subscription",
     )}&body=${encodeURIComponent(`Add me to the journal list: ${email}`)}`;
-    status.textContent = "A draft opened in your mail app — send it and you're on the list.";
+    status.textContent = T.sent;
   });
 }
 

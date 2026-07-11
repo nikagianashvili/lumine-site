@@ -1,24 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="ka">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contact | Lumine | Creative Agency — Tbilisi</title>
+    <title>კონტაქტი | Lumine | შემოქმედებითი სააგენტო — თბილისი</title>
     <meta name="author" content="Lumine" />
     <meta
       name="description"
-      content="Get in touch with Lumine — a creative agency in Tbilisi."
+      content="დაუკავშირდი Lumine-ს — შემოქმედებით სააგენტოს თბილისში."
     />
     <meta name="theme-color" content="#121212" />
-    <meta property="og:title" content="Contact — Lumine" />
+    <meta property="og:title" content="კონტაქტი — Lumine" />
     <meta
       property="og:description"
-      content="One call, fifteen minutes, no pitch deck. Say hello."
+      content="ერთი ზარი, თხუთმეტი წუთი, არანაირი პრეზენტაცია. მოგვესალმეთ."
     />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="/logo/lumine-logo-black.png" />
     <meta name="twitter:card" content="summary" />
     <link rel="icon" type="image/png" href="/icons/favicon-mark.png" />
+    <link rel="canonical" href="https://lumine.ge/ka/contact" />
+    <link rel="alternate" hreflang="en" href="https://lumine.ge/contact" />
+    <link rel="alternate" hreflang="ka" href="https://lumine.ge/ka/contact" />
+    <link rel="alternate" hreflang="x-default" href="https://lumine.ge/contact" />
     <link rel="stylesheet" href="/css/globals.css" />
     <link rel="stylesheet" href="/css/nav.css" />
     <link rel="stylesheet" href="/css/contact.css" />
@@ -30,7 +34,7 @@
     <!-- contact: navigation -->
     <nav>
       <div class="nav-logo">
-        <a href="/">
+        <a href="/ka">
           <img src="/logo/lumine-logo-white.png" alt="Lumine" />
         </a>
       </div>
@@ -39,9 +43,9 @@
       </div>
       <div class="nav-right">
         <div class="nav-lang" role="group" aria-label="Language">
-          <span class="nav-lang-btn is-active">EN</span>
+          <a href="/contact" class="nav-lang-btn">EN</a>
           <span class="nav-lang-sep">/</span>
-          <a href="/ka/contact" class="nav-lang-btn">GE</a>
+          <span class="nav-lang-btn is-active">GE</span>
         </div>
         <div class="nav-toggler">
           <p>Menu</p>
@@ -55,13 +59,13 @@
     <section class="contact">
       <div class="container">
         <header class="contact-head">
-          <p class="eyebrow">Contact</p>
+          <p class="eyebrow">კონტაქტი</p>
           <h1
             data-animate-variant="slide-words"
             data-animate-on-scroll="false"
             data-animate-delay="0.3"
           >
-            Say Hello
+            მოგვესალმეთ
           </h1>
         </header>
 
@@ -69,16 +73,16 @@
           <!-- direct lines -->
           <div class="contact-direct">
             <p class="contact-direct-copy">
-              One call, fifteen minutes, no pitch deck. Tell us what you're
-              building and we'll tell you honestly what it needs.
+              ერთი ზარი, თხუთმეტი წუთი, არანაირი პრეზენტაცია. გვითხარით,
+              რას აშენებთ, და გულწრფელად გეტყვით, რა სჭირდება.
             </p>
             <div class="contact-lines">
               <a href="mailto:hello@lumine.ge" class="contact-line">
-                <span class="contact-line-label">Email</span>
+                <span class="contact-line-label">ელფოსტა</span>
                 <span class="contact-line-value">hello@lumine.ge</span>
               </a>
               <a href="tel:+995555000000" class="contact-line">
-                <span class="contact-line-label">Phone</span>
+                <span class="contact-line-label">ტელეფონი</span>
                 <span class="contact-line-value">+995 555 00 00 00</span>
               </a>
               <a
@@ -91,8 +95,8 @@
                 <span class="contact-line-value">@lumine.ge</span>
               </a>
               <div class="contact-line">
-                <span class="contact-line-label">Studio</span>
-                <span class="contact-line-value">Tbilisi, Georgia</span>
+                <span class="contact-line-label">სტუდია</span>
+                <span class="contact-line-value">თბილისი, საქართველო</span>
               </div>
             </div>
           </div>
@@ -101,55 +105,55 @@
           <form class="contact-form" id="contactForm" novalidate>
             <div class="form-row form-row-split">
               <label class="form-field">
-                <span class="form-label">Your Name</span>
+                <span class="form-label">თქვენი სახელი</span>
                 <input type="text" name="name" required autocomplete="name" />
               </label>
               <label class="form-field">
-                <span class="form-label">Brand / Company</span>
+                <span class="form-label">ბრენდი / კომპანია</span>
                 <input type="text" name="brand" autocomplete="organization" />
               </label>
             </div>
 
             <div class="form-row">
               <label class="form-field">
-                <span class="form-label">Email Or Phone</span>
+                <span class="form-label">ელფოსტა ან ტელეფონი</span>
                 <input type="text" name="reach" required />
               </label>
             </div>
 
             <div class="form-row">
-              <span class="form-label">What Do You Need?</span>
+              <span class="form-label">რა გჭირდებათ?</span>
               <div class="form-chips" id="serviceChips">
-                <button type="button" class="form-chip">Photography</button>
-                <button type="button" class="form-chip">Video</button>
-                <button type="button" class="form-chip">Design</button>
-                <button type="button" class="form-chip">Social</button>
-                <button type="button" class="form-chip">Marketing</button>
-                <button type="button" class="form-chip">Web</button>
+                <button type="button" class="form-chip">ფოტოგრაფია</button>
+                <button type="button" class="form-chip">ვიდეო</button>
+                <button type="button" class="form-chip">დიზაინი</button>
+                <button type="button" class="form-chip">სოციალური</button>
+                <button type="button" class="form-chip">მარკეტინგი</button>
+                <button type="button" class="form-chip">ვები</button>
               </div>
             </div>
 
             <div class="form-row">
-              <span class="form-label">Budget</span>
+              <span class="form-label">ბიუჯეტი</span>
               <div class="form-chips" id="budgetChips" data-single>
-                <button type="button" class="form-chip">Package I</button>
-                <button type="button" class="form-chip">Package II</button>
-                <button type="button" class="form-chip">Package III</button>
-                <button type="button" class="form-chip">Single Service</button>
-                <button type="button" class="form-chip">Not Sure Yet</button>
+                <button type="button" class="form-chip">პაკეტი I</button>
+                <button type="button" class="form-chip">პაკეტი II</button>
+                <button type="button" class="form-chip">პაკეტი III</button>
+                <button type="button" class="form-chip">ცალკეული სერვისი</button>
+                <button type="button" class="form-chip">ჯერ არ ვიცი</button>
               </div>
             </div>
 
             <div class="form-row">
               <label class="form-field">
-                <span class="form-label">The Project, In A Few Lines</span>
+                <span class="form-label">პროექტი, რამდენიმე სტრიქონად</span>
                 <textarea name="message" rows="4"></textarea>
               </label>
             </div>
 
             <div class="form-actions">
               <button type="submit" class="btn btn-solid" data-magnetic>
-                Send It
+                გაგზავნა
               </button>
               <p class="form-status" id="formStatus" aria-live="polite"></p>
             </div>
@@ -167,7 +171,7 @@
           data-animate-on-scroll="true"
           data-animate-stagger="0.1"
         >
-          While you decide — spin the cube.
+          სანამ გადაწყვეტთ — დაატრიალეთ კუბი.
         </p>
       </div>
     </section>
@@ -177,12 +181,12 @@
       <div id="footer-canvas"></div>
       <div class="footer-inner">
         <div class="footer-cta">
-          <span class="footer-cta-eyebrow">We Are Listening</span>
-          <h3 class="footer-cta-heading">Your Next Big Thing Starts Here</h3>
+          <span class="footer-cta-eyebrow">გისმენთ</span>
+          <h3 class="footer-cta-heading">თქვენი შემდეგი დიდი საქმე სწორედ აქედან იწყება</h3>
         </div>
         <div class="footer-bottom">
           <p class="footer-logo">Lumine</p>
-          <p class="footer-copy">Tbilisi, Georgia</p>
+          <p class="footer-copy">თბილისი, საქართველო</p>
         </div>
       </div>
     </footer>

@@ -11,15 +11,31 @@ try {
 
 gsap.registerPlugin(SplitText);
 
-const menuItems = [
-  { label: "Home", route: "/" },
-  { label: "Studio", route: "/studio" },
-  { label: "Services", route: "/services" },
-  { label: "Work", route: "/work" },
-  { label: "Pricing", route: "/pricing" },
-  { label: "Journal", route: "/journal" },
-  { label: "Contact", route: "/contact" },
-];
+// Georgian pages live under /ka/ as real, separate static HTML — not a
+// client-side toggle — so the menu this builds just needs to know which
+// side of that split the current page is on, to link and label itself
+// correctly. No language state to read/write anywhere.
+const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
+
+const menuItems = isKa
+  ? [
+      { label: "მთავარი", route: "/ka" },
+      { label: "სტუდია", route: "/ka/studio" },
+      { label: "სერვისები", route: "/ka/services" },
+      { label: "ნამუშევრები", route: "/ka/work" },
+      { label: "ფასები", route: "/ka/pricing" },
+      { label: "ჟურნალი", route: "/ka/journal" },
+      { label: "კონტაქტი", route: "/ka/contact" },
+    ]
+  : [
+      { label: "Home", route: "/" },
+      { label: "Studio", route: "/studio" },
+      { label: "Services", route: "/services" },
+      { label: "Work", route: "/work" },
+      { label: "Pricing", route: "/pricing" },
+      { label: "Journal", route: "/journal" },
+      { label: "Contact", route: "/contact" },
+    ];
 
 function buildNav() {
   const nav = document.querySelector("nav");
@@ -31,7 +47,14 @@ function buildNav() {
 
   const toggler = nav.querySelector(".nav-toggler");
   if (toggler) {
-    toggler.innerHTML = `
+    toggler.innerHTML = isKa
+      ? `
+      <div class="nav-toggle-wrapper">
+        <p class="open-label">მენიუ</p>
+        <p class="close-label">დახურვა</p>
+      </div>
+    `
+      : `
       <div class="nav-toggle-wrapper">
         <p class="open-label">Menu</p>
         <p class="close-label">Close</p>
@@ -41,7 +64,66 @@ function buildNav() {
 
   const overlay = document.createElement("div");
   overlay.className = "menu-overlay";
-  overlay.innerHTML = `
+  overlay.innerHTML = isKa
+    ? `
+    <div class="menu-content">
+      <div class="menu-col" data-col="0">
+        <div class="menu-content-group">
+          <p>&copy; Lumine</p>
+          <p>თბილისი, საქართველო</p>
+        </div>
+        <div class="menu-content-group">
+          <p>რას ვაკეთებთ</p>
+          <p>ფოტო და ვიდეო</p>
+          <p>დიზაინი და ბრენდინგი</p>
+          <p>მარკეტინგი და ვები</p>
+        </div>
+        <div class="menu-content-group">
+          <p>მოგვწერეთ</p>
+          <p>hello@lumine.ge</p>
+        </div>
+        <div class="menu-content-group">
+          <p>სატელეფონო ხაზი</p>
+          <p>+995 555 00 00 00</p>
+        </div>
+      </div>
+      <div class="menu-col" data-col="1">
+        <div class="menu-content-group">
+          <p>სოციალური ქსელები</p>
+          <a href="https://www.instagram.com/lumine.ge" target="_blank">Instagram</a>
+        </div>
+        <div class="menu-content-group">
+          <p>ენა</p>
+          <p>ძირითადად ქართული</p>
+        </div>
+        <div class="menu-content-group">
+          <p>ხელმისაწვდომია</p>
+          <p>ახალი პროექტებისთვის</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-img">
+      <img src="/menu/menu-img.jpg" alt="" />
+    </div>
+
+    <div class="menu-links-wrapper">
+      ${menuItems
+        .map(
+          (item) => `
+        <div class="menu-link" data-route="${item.route}">
+          <a href="${item.route}">
+            <span>${item.label}</span>
+            <span>${item.label}</span>
+          </a>
+        </div>
+      `,
+        )
+        .join("")}
+      <div class="link-highlighter"></div>
+    </div>
+  `
+    : `
     <div class="menu-content">
       <div class="menu-col" data-col="0">
         <div class="menu-content-group">
@@ -480,35 +562,10 @@ function initNavSolidOnScroll() {
   window.addEventListener("scroll", onScroll, { passive: true });
 }
 
-// Button + state only for now — no content actually swaps languages yet.
-// Persists the choice and fires an event so a future translation pass has
-// a ready-made hook to listen for, instead of needing this rewired later.
-const LANG_KEY = "lumine-lang";
-
-function initLangSwitch() {
-  const buttons = document.querySelectorAll(".nav-lang-btn");
-  if (!buttons.length) return;
-
-  const saved = localStorage.getItem(LANG_KEY) || "en";
-  buttons.forEach((btn) => {
-    btn.classList.toggle("is-active", btn.dataset.lang === saved);
-    btn.addEventListener("click", () => {
-      const lang = btn.dataset.lang;
-      buttons.forEach((b) => b.classList.toggle("is-active", b === btn));
-      localStorage.setItem(LANG_KEY, lang);
-      document.documentElement.dispatchEvent(
-        new CustomEvent("lumine:langchange", { detail: { lang } }),
-      );
-    });
-  });
-}
-
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initMenu);
   document.addEventListener("DOMContentLoaded", initNavSolidOnScroll);
-  document.addEventListener("DOMContentLoaded", initLangSwitch);
 } else {
   initMenu();
   initNavSolidOnScroll();
-  initLangSwitch();
 }
