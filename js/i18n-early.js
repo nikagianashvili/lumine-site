@@ -56,23 +56,32 @@ function currentLang() {
 }
 
 function applyDict(dict, lang) {
+  // One bad/unmatchable selector must never take the rest of the batch
+  // down with it — querySelectorAll on an invalid selector throws, and an
+  // uncaught throw here would silently abort every selector still queued
+  // after it in iteration order (this is exactly what happened: whatever
+  // ran before the failure translated fine, everything after it didn't).
   Object.keys(dict).forEach((selector) => {
-    const els = document.querySelectorAll(selector);
-    if (!els.length) return;
+    try {
+      const els = document.querySelectorAll(selector);
+      if (!els.length) return;
 
-    const isMultiEntry = Array.isArray(dict[selector]) && Array.isArray(dict[selector][0]);
+      const isMultiEntry = Array.isArray(dict[selector]) && Array.isArray(dict[selector][0]);
 
-    els.forEach((el, i) => {
-      const raw = isMultiEntry ? dict[selector][i] : dict[selector];
-      if (raw === undefined) return;
+      els.forEach((el, i) => {
+        const raw = isMultiEntry ? dict[selector][i] : dict[selector];
+        if (raw === undefined) return;
 
-      if (typeof raw === "object" && !Array.isArray(raw) && raw.attr) {
-        el.setAttribute(raw.attr, lang === "ka" ? raw.ka : raw.en);
-        return;
-      }
+        if (typeof raw === "object" && !Array.isArray(raw) && raw.attr) {
+          el.setAttribute(raw.attr, lang === "ka" ? raw.ka : raw.en);
+          return;
+        }
 
-      el.innerHTML = lang === "ka" ? raw[1] : raw[0];
-    });
+        el.innerHTML = lang === "ka" ? raw[1] : raw[0];
+      });
+    } catch (err) {
+      console.error(`[i18n] failed applying selector "${selector}"`, err);
+    }
   });
 }
 

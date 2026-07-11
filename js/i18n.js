@@ -1,17 +1,13 @@
-// i18n.js — must be the LAST script tag on every page.
+// i18n.js — loaded last on every page.
 //
-// js/i18n-early.js (first script tag) already translated every selector
-// present in the raw server-rendered HTML, before any animation script
-// touched the page — see its header comment. This file has two jobs:
-// (1) on load, translate the handful of `common` selectors that don't
-// exist yet at that early point — the nav menu overlay and footer link
-// grid, both built at runtime by nav.js / footer-links.js, both of
-// which load before this script; (2) on every later `lumine:langchange`
-// (the user clicking EN/GE), re-apply everything in one pass — safe at
-// that point since initial entrance animations have long settled.
-import { translations, STATIC_COMMON_KEYS } from "/js/i18n-data.js";
-
-const LANG_KEY = "lumine-lang";
+// js/i18n-early.js (first script tag) already translated everything
+// present in the raw server-rendered HTML on load, before any animation
+// script touched the page. The nav menu overlay and footer link grid
+// translate themselves directly in js/nav.js / js/footer-links.js. So
+// this file has one job left: on `lumine:langchange` (the user clicking
+// EN/GE), re-apply the full static dict in one pass — safe at that point
+// since entrance animations have long settled.
+import { translations } from "/js/i18n-data.js";
 
 const PAGE_MAP = {
   "/": "index",
@@ -41,60 +37,43 @@ function currentPageKey() {
   return PAGE_MAP[path] || null;
 }
 
-function currentLang() {
-  return localStorage.getItem(LANG_KEY) || "en";
-}
-
-function applyDict(dict, lang) {
-  Object.keys(dict).forEach((selector) => {
-    const els = document.querySelectorAll(selector);
-    if (!els.length) return;
-
-    const isMultiEntry = Array.isArray(dict[selector]) && Array.isArray(dict[selector][0]);
-
-    els.forEach((el, i) => {
-      const raw = isMultiEntry ? dict[selector][i] : dict[selector];
-      if (raw === undefined) return;
-
-      if (typeof raw === "object" && !Array.isArray(raw) && raw.attr) {
-        el.setAttribute(raw.attr, lang === "ka" ? raw.ka : raw.en);
-        return;
-      }
-
-      el.innerHTML = lang === "ka" ? raw[1] : raw[0];
-    });
-  });
-
-  document.documentElement.lang = lang === "ka" ? "ka" : "en";
-  document.dispatchEvent(new CustomEvent("lumine:i18napplied", { detail: { lang } }));
-}
-
-function dynamicCommon() {
-  const dict = {};
-  Object.keys(translations.common).forEach((k) => {
-    if (!STATIC_COMMON_KEYS.includes(k)) dict[k] = translations.common[k];
-  });
-  return dict;
-}
-
 function fullDict() {
   const pageKey = currentPageKey();
   const page = (pageKey && translations[pageKey]) || {};
   return { ...translations.common, ...page };
 }
 
-function init() {
-  applyDict(dynamicCommon(), currentLang());
+function applyDict(dict, lang) {
+  // One bad/unmatchable selector must never take the rest of the batch
+  // down with it — querySelectorAll on an invalid selector throws, and an
+  // uncaught throw here would silently abort every selector still queued
+  // after it in iteration order.
+  Object.keys(dict).forEach((selector) => {
+    try {
+      const els = document.querySelectorAll(selector);
+      if (!els.length) return;
 
-  document.documentElement.addEventListener("lumine:langchange", (e) => {
-    applyDict(fullDict(), e.detail.lang);
+      const isMultiEntry = Array.isArray(dict[selector]) && Array.isArray(dict[selector][0]);
+
+      els.forEach((el, i) => {
+        const raw = isMultiEntry ? dict[selector][i] : dict[selector];
+        if (raw === undefined) return;
+
+        if (typeof raw === "object" && !Array.isArray(raw) && raw.attr) {
+          el.setAttribute(raw.attr, lang === "ka" ? raw.ka : raw.en);
+          return;
+        }
+
+        el.innerHTML = lang === "ka" ? raw[1] : raw[0];
+      });
+    } catch (err) {
+      console.error(`[i18n] failed applying selector "${selector}"`, err);
+    }
   });
+
+  document.documentElement.lang = lang === "ka" ? "ka" : "en";
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
-} else {
-  init();
-}
-
-export { currentLang, LANG_KEY };
+document.documentElement.addEventListener("lumine:langchange", (e) => {
+  applyDict(fullDict(), e.detail.lang);
+});

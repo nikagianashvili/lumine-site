@@ -9,104 +9,24 @@
 // translated separately — see js/projects-data.js, js/pricing-data.js,
 // js/work.js, js/pricing.js, js/project.js, js/featured.js, js/team-cards.js.
 
-// Keys inside `common` below that exist in the raw server-rendered HTML
-// on every page from the start (as opposed to the nav menu overlay and
-// footer link grid, which nav.js / footer-links.js build later at
-// runtime). js/i18n-early.js uses this list to translate everything it
-// safely can before any animation script gets a turn — see its own
-// header comment for why that ordering matters.
+// The nav menu overlay (js/nav.js) and footer link grid (js/footer-links.js)
+// translate themselves directly at build/relabel time — both build their
+// content at runtime, after this early pass would have already run, and
+// both proved unreliable when a separate script tried to catch up and
+// translate them after the fact (raced against page-load timing). What's
+// left in `common` below is only what's actually present in the raw
+// server-rendered HTML on every page from the start.
 export const STATIC_COMMON_KEYS = [".footer-cta-eyebrow", ".footer-cta-heading", ".footer-copy"];
 
 export const translations = {
   // ────────────────────────────────────────────────────────────────────────
-  // shared across every page: nav menu overlay + footer
+  // shared across every page: the footer's bare CTA heading (footer-links.js
+  // enhances this footer further at runtime, but translates that part itself)
   // ────────────────────────────────────────────────────────────────────────
   common: {
-    ".open-label": ["Menu", "მენიუ"],
-    ".close-label": ["Close", "დახურვა"],
-
-    '.menu-col[data-col="0"] .menu-content-group:nth-child(1) p:last-child': ["Tbilisi, Georgia", "თბილისი, საქართველო"],
-
-    '.menu-col[data-col="0"] .menu-content-group:nth-child(2) p': [
-      ["What We Do", "რას ვაკეთებთ"],
-      ["Photo & Video", "ფოტო და ვიდეო"],
-      ["Design & Branding", "დიზაინი და ბრენდინგი"],
-      ["Marketing & Web", "მარკეტინგი და ვები"],
-    ],
-    '.menu-col[data-col="0"] .menu-content-group:nth-child(3) p:first-child': ["Say Hello", "მოგვწერეთ"],
-    '.menu-col[data-col="0"] .menu-content-group:nth-child(4) p:first-child': ["Hotline", "სატელეფონო ხაზი"],
-    '.menu-col[data-col="1"] .menu-content-group:nth-child(1) p:first-child': ["Socials", "სოციალური ქსელები"],
-    '.menu-col[data-col="1"] .menu-content-group:nth-child(2) p:first-child': ["Language", "ენა"],
-    '.menu-col[data-col="1"] .menu-content-group:nth-child(2) p:last-child': ["Georgian, Mostly", "ძირითადად ქართული"],
-    '.menu-col[data-col="1"] .menu-content-group:nth-child(3) p:first-child': ["Available For", "ხელმისაწვდომია"],
-    '.menu-col[data-col="1"] .menu-content-group:nth-child(3) p:last-child': ["New Projects", "ახალი პროექტებისთვის"],
-
-    '.menu-link[data-route="/"] a span': ["Home", "მთავარი"],
-    '.menu-link[data-route="/studio"] a span': ["Studio", "სტუდია"],
-    '.menu-link[data-route="/services"] a span': ["Services", "სერვისები"],
-    '.menu-link[data-route="/work"] a span': ["Work", "ნამუშევრები"],
-    '.menu-link[data-route="/pricing"] a span': ["Pricing", "ფასები"],
-    '.menu-link[data-route="/journal"] a span': ["Journal", "ჟურნალი"],
-    '.menu-link[data-route="/contact"] a span': ["Contact", "კონტაქტი"],
-
     ".footer-cta-eyebrow": ["We Are Listening", "გისმენთ"],
     ".footer-cta-heading": ["Your Next Big Thing Starts Here", "თქვენი შემდეგი დიდი საქმე სწორედ აქედან იწყება"],
     ".footer-copy": ["Tbilisi, Georgia", "თბილისი, საქართველო"],
-
-    ".footer-cta-meta-item:nth-child(1)": ["Based In Tbilisi", "დაფუძნებულია თბილისში"],
-    ".footer-cta-meta-item:nth-child(2)": ["Available For New Projects", "ხელმისაწვდომია ახალი პროექტებისთვის"],
-    ".footer-cta-actions .btn-invert": ["Book A Call", "დარეკვის დაჯავშნა"],
-
-    ".footer-links-tag": [
-      "Photo, video, design, social, marketing, and web — in house, in Tbilisi.",
-      "ფოტო, ვიდეო, დიზაინი, სოციალური მედია, მარკეტინგი და ვები — ყველაფერი ერთ გუნდში, თბილისში.",
-    ],
-    ".footer-newsletter-label": [
-      "The Journal is the newsletter — new notes by email",
-      "ჟურნალი არის ჩვენი გამოწერა — ახალი ჩანაწერები პირდაპირ მეილზე",
-    ],
-    '.footer-newsletter input[name="email"]': { attr: "placeholder", en: "you@email.com", ka: "შენი@მეილი.com" },
-
-    ".footer-links > div:nth-child(2) .footer-links-title": ["Pages", "გვერდები"],
-    ".footer-links > div:nth-child(2) a": [
-      ["Home", "მთავარი"],
-      ["Studio", "სტუდია"],
-      ["Services", "სერვისები"],
-      ["Work", "ნამუშევრები"],
-      ["Pricing", "ფასები"],
-      ["Journal", "ჟურნალი"],
-      ["Q&A", "კითხვა-პასუხი"],
-    ],
-    ".footer-links > div:nth-child(3) .footer-links-title": ["Services", "სერვისები"],
-    ".footer-links > div:nth-child(3) a": [
-      ["Photography", "ფოტოგრაფია"],
-      ["Video", "ვიდეო"],
-      ["Graphic Design", "გრაფიკული დიზაინი"],
-      ["Social Media", "სოციალური მედია"],
-      ["Marketing", "მარკეტინგი"],
-      ["Web", "ვები"],
-    ],
-    ".footer-links > div:nth-child(4) .footer-links-title": ["Industries", "ინდუსტრიები"],
-    ".footer-links > div:nth-child(4) a": [
-      ["Medical", "სამედიცინო"],
-      ["Hotels", "სასტუმროები"],
-      ["Restaurants", "რესტორნები"],
-      ["Real Estate", "უძრავი ქონება"],
-      ["SaaS", "SaaS"],
-      ["E-Commerce", "ელ-კომერცია"],
-      ["Startups", "სტარტაპები"],
-    ],
-    ".footer-links > div:nth-child(5) .footer-links-title": ["Contact", "კონტაქტი"],
-    ".footer-links > div:nth-child(5) a": [
-      ["hello@lumine.ge", "hello@lumine.ge"],
-      ["+995 555 00 00 00", "+995 555 00 00 00"],
-      ["Instagram", "Instagram"],
-      ["Tbilisi, Georgia", "თბილისი, საქართველო"],
-    ],
-    ".footer-legal": [
-      '<a href="/legal#privacy">Privacy Policy</a> · <a href="/legal#terms">Terms</a> · © 2026 Lumine',
-      '<a href="/legal#privacy">კონფიდენციალურობის პოლიტიკა</a> · <a href="/legal#terms">წესები</a> · © 2026 Lumine',
-    ],
   },
 
   // ────────────────────────────────────────────────────────────────────────
