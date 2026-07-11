@@ -3,76 +3,53 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LANG_KEY = "lumine-lang";
-const currentLang = () => localStorage.getItem(LANG_KEY) || "en";
-
-const HEADERS = {
-  en: { sticky: "What We Obsess Over", mobile: "The Disciplines" },
-  ka: { sticky: "რაზეც ვზრუნავთ", mobile: "მიმართულებები" },
-};
-
 // discipline cards — what the studio does, not invented people.
 // Swap for real team members (name, photo, bio) when the roster is public.
 const teamMembers = [
   {
     id: "card-1",
     name: "Photo & Video",
-    name_ka: "ფოტო და ვიდეო",
     img: "/work/work2.jpg",
     alt: "Photo and video discipline",
     description:
       "Shoots, retouching, color. The pictures do the selling before anyone reads a word.",
-    description_ka:
-      "გადაღება, რეტუში, ფერი. სურათები ყიდიან მანამ, სანამ ვინმე სიტყვას წაიკითხავს.",
   },
   {
     id: "card-2",
     name: "Design",
-    name_ka: "დიზაინი",
     img: "/work/work1.jpg",
     alt: "Design discipline",
     description:
       "Identity, posters, brand books. The face of the thing, kept consistent everywhere.",
-    description_ka:
-      "იდენტობა, პოსტერები, ბრენდბუქები. საგნის სახე, ერთნაირად შენარჩუნებული ყველგან.",
   },
   {
     id: "card-3",
     name: "Social & Content",
-    name_ka: "სოციალური და კონტენტი",
     img: "/work/work3.jpg",
     alt: "Social and content discipline",
     description:
       "Plans that ship, posts that sound like you, and yes — the comments section too.",
-    description_ka:
-      "გეგმები, რომლებიც სრულდება, პოსტები, რომლებიც შენსავით ჟღერს, და კი — კომენტარების სექციაც.",
   },
   {
     id: "card-4",
     name: "Marketing",
-    name_ka: "მარკეტინგი",
     img: "/work/work6.jpg",
     alt: "Marketing discipline",
     description:
       "Paid social and SEO with receipts. Reach you can measure, not vibes.",
-    description_ka:
-      "ფასიანი სოციალური და SEO, დამტკიცებადი. მიწვდომა, რომლის გაზომვაც შეგიძლია და არა შეგრძნება.",
   },
   {
     id: "card-5",
     name: "Web",
-    name_ka: "ვები",
     img: "/work/work4.jpg",
     alt: "Web discipline",
     description:
       "Sites designed and built in house — fast, maintained, and never off a theme store.",
-    description_ka:
-      "საიტები, დაპროექტებული და აშენებული საკუთარ გუნდში — სწრაფი, მხარდაჭერილი და არასდროს თემის მაღაზიიდან.",
   },
 ];
 
 // dom builders
-function buildCard(m, lang) {
+function buildCard(m) {
   const card = document.createElement("div");
   card.className = "card";
   card.id = m.id;
@@ -81,14 +58,14 @@ function buildCard(m, lang) {
       <img src="${m.img}" alt="${m.alt}" />
     </div>
     <div class="card-content">
-      <div class="card-title"><h6>${lang === "ka" ? m.name_ka : m.name}</h6></div>
-      <div class="card-description"><p>${lang === "ka" ? m.description_ka : m.description}</p></div>
+      <div class="card-title"><h6>${m.name}</h6></div>
+      <div class="card-description"><p>${m.description}</p></div>
     </div>
   `;
   return card;
 }
 
-function buildTeam(lang) {
+function buildTeam() {
   // desktop section
   const desktopSection = document.createElement("section");
   desktopSection.className = "sticky team-desktop";
@@ -96,11 +73,11 @@ function buildTeam(lang) {
 
   const stickyHeader = document.createElement("div");
   stickyHeader.className = "sticky-header";
-  stickyHeader.innerHTML = `<h1>${HEADERS[lang].sticky}</h1>`;
+  stickyHeader.innerHTML = `<h1>What We Obsess Over</h1>`;
   desktopSection.appendChild(stickyHeader);
 
   const desktopCards = teamMembers.map((m) => {
-    const card = buildCard(m, lang);
+    const card = buildCard(m);
     desktopSection.appendChild(card);
     return card;
   });
@@ -111,17 +88,16 @@ function buildTeam(lang) {
 
   const mobileHeader = document.createElement("div");
   mobileHeader.className = "mobile-header";
-  mobileHeader.innerHTML = `<h1>${HEADERS[lang].mobile}</h1>`;
+  mobileHeader.innerHTML = `<h1>The Disciplines</h1>`;
   mobileSection.appendChild(mobileHeader);
 
-  const mobileCards = teamMembers.map((m) => {
-    const card = buildCard(m, lang);
+  teamMembers.forEach((m) => {
+    const card = buildCard(m);
     card.id = `m-${m.id}`;
     mobileSection.appendChild(card);
-    return card;
   });
 
-  return { desktopSection, stickyHeader, desktopCards, mobileSection, mobileHeader, mobileCards };
+  return { desktopSection, stickyHeader, desktopCards, mobileSection };
 }
 
 // animation transforms
@@ -148,35 +124,13 @@ const transforms = [
   ],
 ];
 
-function relabel(lang, refs) {
-  const { stickyHeader, mobileHeader, desktopCards, mobileCards } = refs;
-  stickyHeader.querySelector("h1").textContent = HEADERS[lang].sticky;
-  mobileHeader.querySelector("h1").textContent = HEADERS[lang].mobile;
-  teamMembers.forEach((m, i) => {
-    const dCard = desktopCards[i];
-    const mCard = mobileCards[i];
-    if (dCard) {
-      dCard.querySelector(".card-title h6").textContent = lang === "ka" ? m.name_ka : m.name;
-      dCard.querySelector(".card-description p").textContent = lang === "ka" ? m.description_ka : m.description;
-    }
-    if (mCard) {
-      mCard.querySelector(".card-title h6").textContent = lang === "ka" ? m.name_ka : m.name;
-      mCard.querySelector(".card-description p").textContent = lang === "ka" ? m.description_ka : m.description;
-    }
-  });
-}
-
 function initTeamCards(mountEl) {
-  const refs = buildTeam(currentLang());
-  const { desktopSection, stickyHeader, desktopCards, mobileSection } = refs;
+  const { desktopSection, stickyHeader, desktopCards, mobileSection } =
+    buildTeam();
 
   // mount sections (css controls visibility)
   mountEl.appendChild(desktopSection);
   mountEl.appendChild(mobileSection);
-
-  document.documentElement.addEventListener("lumine:langchange", (e) => {
-    relabel(e.detail.lang, refs);
-  });
 
   const mm = gsap.matchMedia();
 

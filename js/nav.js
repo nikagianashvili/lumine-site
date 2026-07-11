@@ -11,65 +11,19 @@ try {
 
 gsap.registerPlugin(SplitText);
 
-// Self-contained EN/GE text for everything this file builds at runtime —
-// deliberately NOT relying on js/i18n.js applying translations to this
-// content after the fact. That was tried first and raced against the
-// order other deferred scripts happen to finish evaluating in, which
-// proved unreliable across a plain page reload. Building the right
-// language directly, and rebuilding on language change, removes the
-// cross-script timing dependency entirely.
-const MENU_LANG_KEY = "lumine-lang";
-const menuCurrentLang = () => localStorage.getItem(MENU_LANG_KEY) || "en";
-
-const MENU_TEXT = {
-  en: {
-    open: "Menu",
-    close: "Close",
-    copyright: "&copy; Lumine",
-    location: "Tbilisi, Georgia",
-    whatWeDo: ["What We Do", "Photo &amp; Video", "Design &amp; Branding", "Marketing &amp; Web"],
-    sayHello: "Say Hello",
-    hotline: "Hotline",
-    socials: "Socials",
-    instagram: "Instagram",
-    language: "Language",
-    languageValue: "Georgian, Mostly",
-    availableFor: "Available For",
-    newProjects: "New Projects",
-  },
-  ka: {
-    open: "მენიუ",
-    close: "დახურვა",
-    copyright: "&copy; Lumine",
-    location: "თბილისი, საქართველო",
-    whatWeDo: ["რას ვაკეთებთ", "ფოტო და ვიდეო", "დიზაინი და ბრენდინგი", "მარკეტინგი და ვები"],
-    sayHello: "მოგვწერეთ",
-    hotline: "სატელეფონო ხაზი",
-    socials: "სოციალური ქსელები",
-    instagram: "Instagram",
-    language: "ენა",
-    languageValue: "ძირითადად ქართული",
-    availableFor: "ხელმისაწვდომია",
-    newProjects: "ახალი პროექტებისთვის",
-  },
-};
-
 const menuItems = [
-  { en: "Home", ka: "მთავარი", route: "/" },
-  { en: "Studio", ka: "სტუდია", route: "/studio" },
-  { en: "Services", ka: "სერვისები", route: "/services" },
-  { en: "Work", ka: "ნამუშევრები", route: "/work" },
-  { en: "Pricing", ka: "ფასები", route: "/pricing" },
-  { en: "Journal", ka: "ჟურნალი", route: "/journal" },
-  { en: "Contact", ka: "კონტაქტი", route: "/contact" },
+  { label: "Home", route: "/" },
+  { label: "Studio", route: "/studio" },
+  { label: "Services", route: "/services" },
+  { label: "Work", route: "/work" },
+  { label: "Pricing", route: "/pricing" },
+  { label: "Journal", route: "/journal" },
+  { label: "Contact", route: "/contact" },
 ];
 
 function buildNav() {
   const nav = document.querySelector("nav");
   if (!nav) return;
-
-  const lang = menuCurrentLang();
-  const T = MENU_TEXT[lang];
 
   // Prevent duplicate overlays if any script re-runs.
   const existingOverlay = document.querySelector(".menu-overlay");
@@ -79,8 +33,8 @@ function buildNav() {
   if (toggler) {
     toggler.innerHTML = `
       <div class="nav-toggle-wrapper">
-        <p class="open-label">${T.open}</p>
-        <p class="close-label">${T.close}</p>
+        <p class="open-label">Menu</p>
+        <p class="close-label">Close</p>
       </div>
     `;
   }
@@ -91,36 +45,36 @@ function buildNav() {
     <div class="menu-content">
       <div class="menu-col" data-col="0">
         <div class="menu-content-group">
-          <p>${T.copyright}</p>
-          <p>${T.location}</p>
+          <p>&copy; Lumine</p>
+          <p>Tbilisi, Georgia</p>
         </div>
         <div class="menu-content-group">
-          <p>${T.whatWeDo[0]}</p>
-          <p>${T.whatWeDo[1]}</p>
-          <p>${T.whatWeDo[2]}</p>
-          <p>${T.whatWeDo[3]}</p>
+          <p>What We Do</p>
+          <p>Photo &amp; Video</p>
+          <p>Design &amp; Branding</p>
+          <p>Marketing &amp; Web</p>
         </div>
         <div class="menu-content-group">
-          <p>${T.sayHello}</p>
+          <p>Say Hello</p>
           <p>hello@lumine.ge</p>
         </div>
         <div class="menu-content-group">
-          <p>${T.hotline}</p>
+          <p>Hotline</p>
           <p>+995 555 00 00 00</p>
         </div>
       </div>
       <div class="menu-col" data-col="1">
         <div class="menu-content-group">
-          <p>${T.socials}</p>
-          <a href="https://www.instagram.com/lumine.ge" target="_blank">${T.instagram}</a>
+          <p>Socials</p>
+          <a href="https://www.instagram.com/lumine.ge" target="_blank">Instagram</a>
         </div>
         <div class="menu-content-group">
-          <p>${T.language}</p>
-          <p>${T.languageValue}</p>
+          <p>Language</p>
+          <p>Georgian, Mostly</p>
         </div>
         <div class="menu-content-group">
-          <p>${T.availableFor}</p>
-          <p>${T.newProjects}</p>
+          <p>Available For</p>
+          <p>New Projects</p>
         </div>
       </div>
     </div>
@@ -135,8 +89,8 @@ function buildNav() {
           (item) => `
         <div class="menu-link" data-route="${item.route}">
           <a href="${item.route}">
-            <span>${lang === "ka" ? item.ka : item.en}</span>
-            <span>${lang === "ka" ? item.ka : item.en}</span>
+            <span>${item.label}</span>
+            <span>${item.label}</span>
           </a>
         </div>
       `,
@@ -558,50 +512,3 @@ if (document.readyState === "loading") {
   initNavSolidOnScroll();
   initLangSwitch();
 }
-
-// Relabels the already-built menu in place on a language switch, instead
-// of tearing it down and rebuilding — buildNav() removes/recreates the
-// whole overlay, which would orphan every element reference and event
-// listener initMenu() wired up (menuOverlay, menuLinks, the toggler
-// click handler, GSAP/SplitText state) against the now-detached old DOM.
-document.documentElement.addEventListener("lumine:langchange", (e) => {
-  const lang = e.detail.lang;
-  const T = MENU_TEXT[lang];
-
-  const openLabel = document.querySelector(".open-label");
-  const closeLabel = document.querySelector(".close-label");
-  if (openLabel) openLabel.textContent = T.open;
-  if (closeLabel) closeLabel.textContent = T.close;
-
-  const col0Groups = document.querySelectorAll('.menu-col[data-col="0"] .menu-content-group');
-  if (col0Groups[0]) col0Groups[0].querySelectorAll("p")[1].textContent = T.location;
-  if (col0Groups[1]) {
-    const ps = col0Groups[1].querySelectorAll("p");
-    T.whatWeDo.forEach((text, i) => {
-      if (ps[i]) ps[i].innerHTML = text;
-    });
-  }
-  if (col0Groups[2]) col0Groups[2].querySelectorAll("p")[0].textContent = T.sayHello;
-  if (col0Groups[3]) col0Groups[3].querySelectorAll("p")[0].textContent = T.hotline;
-
-  const col1Groups = document.querySelectorAll('.menu-col[data-col="1"] .menu-content-group');
-  if (col1Groups[0]) col1Groups[0].querySelector("p").textContent = T.socials;
-  if (col1Groups[1]) {
-    const ps = col1Groups[1].querySelectorAll("p");
-    if (ps[0]) ps[0].textContent = T.language;
-    if (ps[1]) ps[1].textContent = T.languageValue;
-  }
-  if (col1Groups[2]) {
-    const ps = col1Groups[2].querySelectorAll("p");
-    if (ps[0]) ps[0].textContent = T.availableFor;
-    if (ps[1]) ps[1].textContent = T.newProjects;
-  }
-
-  menuItems.forEach((item) => {
-    const container = document.querySelector(`.menu-link[data-route="${item.route}"]`);
-    if (!container) return;
-    container.querySelectorAll("a span").forEach((span) => {
-      span.textContent = lang === "ka" ? item.ka : item.en;
-    });
-  });
-});
