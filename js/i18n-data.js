@@ -18,6 +18,7 @@ export const translations = {
       "დიზაინი და ბრენდინგი",
       "მარკეტინგი და ვები",
     ],
+    '.menu-col[data-col="0"] .menu-content-group:nth-child(1) p:last-child': "თბილისი, საქართველო",
     '.menu-col[data-col="0"] .menu-content-group:nth-child(3) p:first-child': "მოგვწერეთ",
     '.menu-col[data-col="0"] .menu-content-group:nth-child(4) p:first-child': "სატელეფონო ხაზი",
     '.menu-col[data-col="1"] .menu-content-group:nth-child(1) p:first-child': "სოციალური ქსელები",
