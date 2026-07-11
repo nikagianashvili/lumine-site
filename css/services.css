@@ -1,0 +1,206 @@
+/* services — six alternating service blocks */
+
+body {
+  background-color: var(--l);
+  color: var(--d);
+}
+
+/* — header — */
+.svc-hero {
+  padding-top: 10rem;
+  padding-bottom: var(--sp-5);
+}
+
+.svc-hero .eyebrow {
+  margin-bottom: var(--sp-3);
+}
+
+.svc-hero h1 {
+  font-size: clamp(4rem, 11vw, 11rem);
+}
+
+.svc-hero-copy {
+  max-width: 34rem;
+  margin-top: var(--sp-3);
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* — service blocks — */
+.svc {
+  position: relative;
+  padding: var(--sp-6) 0;
+  overflow: hidden;
+}
+
+.svc-light {
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.svc-dark {
+  background-color: var(--d);
+  color: var(--l);
+}
+
+.svc-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+.svc-index {
+  flex-shrink: 0;
+  font-family: var(--f-h);
+  font-size: clamp(3rem, 5vw, 5rem);
+  line-height: 0.85;
+  color: transparent;
+  -webkit-text-stroke: 1.5px currentColor;
+  opacity: 0.5;
+}
+
+.svc-head h2 {
+  font-size: clamp(3rem, 7vw, 7rem);
+}
+
+.svc-body {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: var(--sp-5);
+}
+
+.svc-label {
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+}
+
+.svc-col h6 {
+  max-width: 24rem;
+  font-size: clamp(1.75rem, 2.8vw, 2.75rem);
+}
+
+.svc-copy {
+  max-width: 32rem;
+  text-transform: none;
+  opacity: 0.75;
+}
+
+.svc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: var(--sp-3);
+}
+
+.svc-chip {
+  padding: 0.6rem 1.2rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  border-radius: 100px;
+  opacity: 0.7;
+}
+
+.svc-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-3);
+  border-top: 1px solid currentColor;
+}
+
+.svc-foot {
+  border-top-color: rgba(128, 125, 115, 0.35);
+}
+
+.svc-price {
+  font-family: var(--f-nm);
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* — industries strip — */
+.svc-industries {
+  padding: var(--sp-6) 0;
+  overflow: hidden;
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.svc-industries .eyebrow {
+  margin-bottom: var(--sp-4);
+}
+
+.svc-industries-track {
+  display: flex;
+  align-items: baseline;
+  width: max-content;
+  will-change: transform;
+  animation: svc-strip-scroll 38s linear infinite;
+}
+
+.svc-industries-track span {
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(3rem, 6vw, 6rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding-right: 3.5rem;
+}
+
+.svc-industries-track span.outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--d);
+}
+
+@keyframes svc-strip-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.svc-industries-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-top: var(--sp-4);
+}
+
+.svc-industries-foot p {
+  max-width: 28rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* — responsive — */
+@media (max-width: 1000px) {
+  .svc-hero {
+    padding-top: 8rem;
+  }
+
+  .svc {
+    padding: var(--sp-5) 0;
+  }
+
+  .svc-body {
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+  }
+
+  .svc-industries-foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

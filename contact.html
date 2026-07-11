@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact | Lumine | Creative Agency — Tbilisi</title>
+    <meta name="author" content="Lumine" />
+    <meta
+      name="description"
+      content="Get in touch with Lumine — a creative agency in Tbilisi."
+    />
+    <meta name="theme-color" content="#121212" />
+    <meta property="og:title" content="Contact — Lumine" />
+    <meta
+      property="og:description"
+      content="One call, fifteen minutes, no pitch deck. Say hello."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/logo/lumine-logo-black.png" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" type="image/png" href="/icons/favicon-mark.png" />
+    <link rel="stylesheet" href="/css/globals.css" />
+    <link rel="stylesheet" href="/css/nav.css" />
+    <link rel="stylesheet" href="/css/contact.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <script src="/js/wrappedgl.js"></script>
+    <script src="/js/simulator.js"></script>
+  </head>
+  <body>
+    <!-- contact: navigation -->
+    <nav>
+      <div class="nav-logo">
+        <a href="/">
+          <img src="/logo/lumine-logo-white.png" alt="Lumine" />
+        </a>
+      </div>
+      <div class="nav-icon">
+        <img src="/logo/lumine-mark-2.png" alt="" />
+      </div>
+      <div class="nav-right">
+        <div class="nav-lang" role="group" aria-label="Language">
+          <button type="button" class="nav-lang-btn is-active" data-lang="en">EN</button>
+          <span class="nav-lang-sep">/</span>
+          <button type="button" class="nav-lang-btn" data-lang="ka">GE</button>
+        </div>
+        <div class="nav-toggler">
+          <p>Menu</p>
+        </div>
+      </div>
+    </nav>
+
+    <div id="custom-cursor"></div>
+
+    <!-- contact: content -->
+    <section class="contact">
+      <div class="container">
+        <header class="contact-head">
+          <p class="eyebrow">Contact</p>
+          <h1
+            data-animate-variant="slide-words"
+            data-animate-on-scroll="false"
+            data-animate-delay="0.3"
+          >
+            Say Hello
+          </h1>
+        </header>
+
+        <div class="contact-layout">
+          <!-- direct lines -->
+          <div class="contact-direct">
+            <p class="contact-direct-copy">
+              One call, fifteen minutes, no pitch deck. Tell us what you're
+              building and we'll tell you honestly what it needs.
+            </p>
+            <div class="contact-lines">
+              <a href="mailto:hello@lumine.ge" class="contact-line">
+                <span class="contact-line-label">Email</span>
+                <span class="contact-line-value">hello@lumine.ge</span>
+              </a>
+              <a href="tel:+995555000000" class="contact-line">
+                <span class="contact-line-label">Phone</span>
+                <span class="contact-line-value">+995 555 00 00 00</span>
+              </a>
+              <a
+                href="https://www.instagram.com/lumine.ge"
+                target="_blank"
+                rel="noopener"
+                class="contact-line"
+              >
+                <span class="contact-line-label">Instagram</span>
+                <span class="contact-line-value">@lumine.ge</span>
+              </a>
+              <div class="contact-line">
+                <span class="contact-line-label">Studio</span>
+                <span class="contact-line-value">Tbilisi, Georgia</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- booking form -->
+          <form class="contact-form" id="contactForm" novalidate>
+            <div class="form-row form-row-split">
+              <label class="form-field">
+                <span class="form-label">Your Name</span>
+                <input type="text" name="name" required autocomplete="name" />
+              </label>
+              <label class="form-field">
+                <span class="form-label">Brand / Company</span>
+                <input type="text" name="brand" autocomplete="organization" />
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label class="form-field">
+                <span class="form-label">Email Or Phone</span>
+                <input type="text" name="reach" required />
+              </label>
+            </div>
+
+            <div class="form-row">
+              <span class="form-label">What Do You Need?</span>
+              <div class="form-chips" id="serviceChips">
+                <button type="button" class="form-chip">Photography</button>
+                <button type="button" class="form-chip">Video</button>
+                <button type="button" class="form-chip">Design</button>
+                <button type="button" class="form-chip">Social</button>
+                <button type="button" class="form-chip">Marketing</button>
+                <button type="button" class="form-chip">Web</button>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <span class="form-label">Budget</span>
+              <div class="form-chips" id="budgetChips" data-single>
+                <button type="button" class="form-chip">Package I</button>
+                <button type="button" class="form-chip">Package II</button>
+                <button type="button" class="form-chip">Package III</button>
+                <button type="button" class="form-chip">Single Service</button>
+                <button type="button" class="form-chip">Not Sure Yet</button>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-field">
+                <span class="form-label">The Project, In A Few Lines</span>
+                <textarea name="message" rows="4"></textarea>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-solid" data-magnetic>
+                Send It
+              </button>
+              <p class="form-status" id="formStatus" aria-live="polite"></p>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="contact-cube-wrap">
+        <canvas id="cube-canvas"></canvas>
+      </div>
+
+      <div class="contact-footer">
+        <p
+          data-animate-variant="slide"
+          data-animate-on-scroll="true"
+          data-animate-stagger="0.1"
+        >
+          While you decide — spin the cube.
+        </p>
+      </div>
+    </section>
+
+    <!-- contact: footer -->
+    <footer>
+      <div id="footer-canvas"></div>
+      <div class="footer-inner">
+        <div class="footer-cta">
+          <span class="footer-cta-eyebrow">We Are Listening</span>
+          <h3 class="footer-cta-heading">Your Next Big Thing Starts Here</h3>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-logo">Lumine</p>
+          <p class="footer-copy">Tbilisi, Georgia</p>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/js/lenis-scroll.js"></script>
+    <script type="module" src="/js/cursor.js"></script>
+    <script type="module" src="/js/animated-copy.js"></script>
+    <script type="module" src="/js/simulation.js"></script>
+    <script type="module" src="/js/nav.js"></script>
+    <script type="module" src="/js/contact.js"></script>
+    <script type="module" src="/js/contact-form.js"></script>
+    <script type="module" src="/js/home-extras.js"></script>
+    <script type="module" src="/js/footer.js"></script>
+  </body>
+</html>

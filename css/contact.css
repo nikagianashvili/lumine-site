@@ -1,0 +1,240 @@
+/* contact — direct lines + booking form + cube */
+
+.contact {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  padding-top: 10rem;
+  overflow: hidden;
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.contact-head {
+  margin-bottom: var(--sp-5);
+}
+
+.contact-head .eyebrow {
+  margin-bottom: var(--sp-3);
+}
+
+.contact-head h1 {
+  font-size: clamp(4rem, 11vw, 11rem);
+}
+
+/* — layout — */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: var(--sp-6);
+  align-items: start;
+  padding-bottom: var(--sp-6);
+}
+
+/* — direct lines — */
+.contact-direct-copy {
+  max-width: 22rem;
+  margin-bottom: var(--sp-4);
+  text-transform: none;
+  opacity: 0.7;
+}
+
+.contact-lines {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-line {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: var(--sp-3) 0;
+  border-top: 1px solid rgba(18, 18, 18, 0.25);
+  text-decoration: none;
+  color: inherit;
+}
+
+.contact-lines .contact-line:last-child {
+  border-bottom: 1px solid rgba(18, 18, 18, 0.25);
+}
+
+.contact-line-label {
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.contact-line-value {
+  font-family: var(--f-h);
+  font-size: clamp(1.75rem, 2.6vw, 2.5rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+a.contact-line:hover .contact-line-value {
+  transform: translateX(0.75rem);
+}
+
+/* — form — */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  background-color: var(--white);
+  border-radius: 1.5rem;
+  box-shadow: 0 1.5rem 3rem -2rem rgba(18, 18, 18, 0.4);
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.form-row-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.form-label {
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.contact-form input,
+.contact-form textarea {
+  user-select: text;
+  -webkit-user-select: text;
+  width: 100%;
+  padding: 0.85rem 0;
+  font-family: var(--f-nm);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: inherit;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(18, 18, 18, 0.3);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.3s ease;
+  resize: vertical;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-bottom-color: var(--d);
+}
+
+.form-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.form-chip {
+  padding: 0.6rem 1.2rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: inherit;
+  background: none;
+  border: 1px solid rgba(18, 18, 18, 0.35);
+  border-radius: 100px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.form-chip:hover {
+  border-color: var(--d);
+}
+
+.form-chip.is-active {
+  background-color: var(--d);
+  border-color: var(--d);
+  color: var(--l);
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-top: 0.5rem;
+}
+
+.form-status {
+  font-size: 0.85rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* — cube — */
+.contact-cube-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.contact-cube-wrap #cube-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.contact-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0 2.5rem 5rem;
+  text-align: center;
+}
+
+.contact-footer p {
+  opacity: 0.55;
+}
+
+/* — responsive — */
+@media (max-width: 1000px) {
+  .contact {
+    padding-top: 8rem;
+  }
+
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+  }
+
+  .contact-form {
+    padding: var(--sp-3);
+  }
+
+  .form-row-split {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}

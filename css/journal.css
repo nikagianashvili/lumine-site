@@ -1,0 +1,196 @@
+/* journal — expandable studio notes */
+
+body {
+  background-color: var(--l);
+  color: var(--d);
+}
+
+/* — header — */
+.journal-hero {
+  padding-top: 10rem;
+  padding-bottom: var(--sp-5);
+}
+
+.journal-hero .eyebrow {
+  margin-bottom: var(--sp-3);
+}
+
+.journal-hero h1 {
+  font-size: clamp(4rem, 11vw, 11rem);
+}
+
+.journal-hero-copy {
+  max-width: 30rem;
+  margin-top: var(--sp-3);
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* — entries — */
+.journal-main {
+  padding-bottom: var(--sp-6);
+}
+
+.journal-entry {
+  border-top: 1px solid rgba(18, 18, 18, 0.25);
+}
+
+.journal-main .journal-entry:last-of-type {
+  border-bottom: 1px solid rgba(18, 18, 18, 0.25);
+}
+
+.journal-entry-head {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: var(--sp-4) 4.5rem var(--sp-4) 0;
+  background: none;
+  border: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.journal-entry-meta {
+  display: block;
+  margin-bottom: 1rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.journal-entry-head h3 {
+  font-size: clamp(2.5rem, 5.5vw, 5.5rem);
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.journal-entry-head:hover h3 {
+  transform: translateX(1rem);
+}
+
+.journal-entry-excerpt {
+  max-width: 34rem;
+  margin-top: 1rem;
+  font-family: var(--f-nm);
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: none;
+  opacity: 0.65;
+}
+
+.journal-entry-toggle {
+  position: absolute;
+  top: var(--sp-4);
+  right: 0;
+}
+
+/* reuse home.css .faq-plus geometry locally */
+.journal-entry .faq-plus {
+  position: relative;
+  display: block;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.7;
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.journal-entry .faq-plus::before,
+.journal-entry .faq-plus::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background-color: currentColor;
+  transition:
+    transform 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 0.3s ease;
+}
+
+.journal-entry .faq-plus::before {
+  width: 38%;
+  height: 1.5px;
+}
+
+.journal-entry .faq-plus::after {
+  width: 1.5px;
+  height: 38%;
+}
+
+.journal-entry.is-open .faq-plus {
+  transform: rotate(45deg);
+}
+
+.journal-entry-body {
+  height: 0;
+  overflow: hidden;
+}
+
+.journal-entry-text {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: var(--sp-3);
+  padding-bottom: var(--sp-5);
+}
+
+.journal-entry-text::before {
+  content: "✦";
+  font-size: 1.25rem;
+  opacity: 0.4;
+}
+
+.journal-entry-text p {
+  grid-column: 2;
+  max-width: 44rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  font-weight: 400;
+  text-transform: none;
+}
+
+/* — foot — */
+.journal-foot {
+  padding-top: var(--sp-5);
+}
+
+.journal-foot p {
+  text-transform: none;
+  opacity: 0.65;
+}
+
+.journal-foot a {
+  color: inherit;
+}
+
+/* — responsive — */
+@media (max-width: 1000px) {
+  .journal-hero {
+    padding-top: 8rem;
+  }
+
+  .journal-entry-head {
+    padding-right: 3.5rem;
+  }
+
+  .journal-entry .faq-plus {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .journal-entry-text {
+    grid-template-columns: 1fr;
+  }
+
+  .journal-entry-text::before {
+    display: none;
+  }
+
+  .journal-entry-text p {
+    grid-column: 1;
+  }
+}

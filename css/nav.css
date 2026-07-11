@@ -1,0 +1,360 @@
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  width: 100%;
+  padding: 2rem;
+  background-color: transparent;
+  mix-blend-mode: difference;
+  transition: background-color 0.3s ease;
+}
+
+/*
+  Past a small scroll threshold (js/nav.js). Difference-blend can't just be
+  layered under an opaque background and left active — the WHOLE nav box
+  (background included) is the blend source, so the bar would still show
+  through/distort based on whatever's scrolled behind it, just less
+  obviously than before. Solid state opts out of blend-mode entirely
+  instead: real opaque background, real dark text/icon colors, and the
+  white logo/icon assets get CSS-inverted to black (their alpha channel is
+  untouched, so this needs no second logo file or extra <img>).
+*/
+nav.nav-solid {
+  background-color: var(--l);
+  mix-blend-mode: normal;
+}
+
+nav.nav-solid .open-label,
+nav.nav-solid .close-label,
+nav.nav-solid .nav-lang-btn {
+  color: var(--d);
+}
+
+nav.nav-solid .nav-logo img {
+  filter: invert(1);
+}
+
+/* nav-icon is a black-on-transparent PNG (not the white sparkle SVG this
+   used to be), so its base state needs to be pushed white first — brightness(0)
+   crushes any anti-aliasing to solid black, invert(1) then flips it white.
+   Solid state just needs plain black, so brightness(0) alone (no invert). */
+nav.nav-solid .nav-icon img {
+  filter: brightness(0);
+}
+
+.nav-logo,
+.nav-icon,
+.nav-right {
+  flex: 1;
+}
+
+/* right-side cluster: language switcher sits beside Menu, both still
+   reading as one "right zone" so the icon in the middle stays truly
+   centered (adding a 4th top-level flex:1 item would have pulled it off) */
+.nav-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.75rem;
+}
+
+.nav-lang {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-lang-btn {
+  padding: 0.1rem;
+  font-family: var(--f-nm);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.125;
+  text-transform: uppercase;
+  color: var(--l);
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.nav-lang-btn.is-active {
+  opacity: 1;
+}
+
+.nav-lang-sep {
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  color: var(--l);
+  opacity: 0.35;
+}
+
+nav.nav-solid .nav-lang-sep {
+  color: var(--d);
+}
+
+.nav-logo a {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: max-content;
+  padding: 0.5rem;
+  text-decoration: none;
+}
+
+.nav-logo a img {
+  width: auto;
+  height: 1.65rem;
+  object-fit: contain;
+}
+
+.nav-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.nav-icon img {
+  width: auto;
+  height: 1.75rem;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  /* scale, not height — a bigger box height here would grow the whole nav
+     bar's row height (flex, no fixed height); transform paints larger
+     without touching layout, so the header stays the same size */
+  transform: scale(1.8);
+}
+
+.nav-toggler {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 0.5rem;
+  cursor: pointer;
+}
+
+.nav-toggle-wrapper {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 1.4rem;
+  overflow: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  cursor: pointer;
+}
+
+.open-label,
+.close-label {
+  position: relative;
+  margin: 0;
+  padding: 0.1rem;
+  font-family: var(--f-nm);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.125;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--l);
+  user-select: none;
+  cursor: pointer;
+  transform: translateY(0);
+  will-change: transform;
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  width: 100vw;
+  height: 100svh;
+  overflow: hidden;
+  background-color: var(--d);
+  color: var(--l);
+  clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
+  will-change: clip-path;
+}
+
+.menu-overlay .menu-content {
+  position: absolute;
+  top: 35%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  padding: 0 2.5rem;
+  transform: translateY(-50%);
+  will-change: transform, opacity;
+}
+
+.menu-overlay .menu-content p,
+.menu-overlay .menu-content a {
+  display: inline-block;
+  font-family: var(--f-nm);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.125;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--l);
+}
+
+.menu-overlay .menu-col {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.menu-overlay .menu-col:nth-child(2) {
+  text-align: right;
+}
+
+.menu-overlay .menu-col a,
+.menu-overlay .menu-col p {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.menu-overlay .split-line {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.menu-overlay .split-line-mask {
+  display: block;
+  overflow: hidden;
+}
+
+.menu-overlay .menu-img {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  width: 150px;
+  aspect-ratio: 5/7;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  will-change: transform, opacity;
+}
+
+.menu-overlay .menu-img img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  filter: grayscale(1) contrast(1.08);
+  transform: translateY(0);
+  will-change: transform;
+}
+
+.menu-overlay .menu-links-wrapper {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  width: max-content;
+  padding: 2rem;
+  will-change: transform;
+}
+
+.menu-overlay .menu-link {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.menu-overlay .menu-link a {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  font-family: var(--f-h);
+  font-size: 10.5rem;
+  font-weight: 700;
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--l);
+}
+
+.menu-overlay .menu-link a span:nth-child(2) {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.menu-overlay .link-highlighter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 400px;
+  height: 0.75rem;
+  background-color: var(--l);
+  will-change: transform, width;
+}
+
+.menu-overlay .char {
+  position: relative;
+  display: inline-block;
+  will-change: transform;
+}
+
+@media (max-width: 1000px) {
+  nav {
+    padding: 1.5rem;
+  }
+
+  .nav-logo a img {
+    height: 1.5rem;
+  }
+
+  .nav-icon {
+    display: none;
+  }
+
+  .nav-toggler {
+    transform: translateY(0.1rem);
+  }
+
+  .nav-right {
+    gap: 1.1rem;
+  }
+
+  .nav-lang-btn {
+    font-size: 0.9rem;
+  }
+
+  .menu-overlay .menu-content {
+    display: none;
+  }
+
+  .menu-overlay .menu-img,
+  .menu-overlay .link-highlighter {
+    display: none;
+  }
+
+  .menu-overlay .menu-links-wrapper {
+    flex-direction: column;
+    gap: 0;
+    padding: 2rem;
+  }
+
+  .menu-overlay .menu-link a {
+    /* 7 items must fit a phone screen above the wrapper padding */
+    font-size: min(11vh, 4.5rem);
+  }
+}

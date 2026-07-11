@@ -1,0 +1,357 @@
+@import "./fonts.css";
+
+:root {
+  /* — color, pulled off the logo itself: pure ink + a warm paper light,
+     white held in reserve as a third tone for surfaces sitting on paper — */
+  --l: #f5f1e6;
+  --d: #121212;
+  --d-soft: #55524a;
+  --white: #ffffff;
+
+  /* LK Lumina is the brand face for display AND body, Latin + Georgian */
+  --f-h: "LK Lumina", "Humane", system-ui, sans-serif;
+  --f-nm: "LK Lumina", "Neue Montreal", system-ui, sans-serif;
+
+  /* — spacing scale — */
+  --sp-1: 0.5rem;
+  --sp-2: 1rem;
+  --sp-3: 1.5rem;
+  --sp-4: 2.5rem;
+  --sp-5: 4rem;
+  --sp-6: 6rem;
+  --sp-7: 9rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  font-family: var(--f-nm);
+  background-color: var(--l);
+  color: var(--d);
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--f-h);
+  font-weight: 700;
+  /* LK Lumina is normal-width (Humane was ultra-condensed):
+     smaller vw scale, taller line so descenders survive the reveal masks */
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: clamp(3.5rem, 12.5vw, 12.5rem);
+}
+h2 {
+  font-size: clamp(3rem, 9.5vw, 9.5rem);
+}
+h3 {
+  font-size: clamp(2.75rem, 7.5vw, 7.5rem);
+}
+h4 {
+  font-size: clamp(2.5rem, 6.5vw, 6.5rem);
+}
+h5 {
+  font-size: clamp(2.25rem, 5.5vw, 5.5rem);
+}
+h6 {
+  font-size: clamp(1.75rem, 4vw, 4rem);
+}
+
+p {
+  font-family: var(--f-nm);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.125;
+  text-transform: uppercase;
+}
+
+p.md {
+  font-size: 1.125rem;
+}
+p.lg {
+  font-size: 1.25rem;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.container {
+  width: 100%;
+  max-width: 2000px;
+  margin: 0 auto;
+  padding: 2.5rem;
+}
+
+/* — buttons — */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem 2rem;
+  overflow: hidden;
+  font-family: var(--f-nm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid currentColor;
+  border-radius: 100px;
+  background: transparent;
+  color: inherit;
+  transition:
+    color 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+    background-color 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+    border-color 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.btn-solid {
+  border-color: var(--d);
+  background-color: var(--d);
+  color: var(--l);
+}
+
+.btn-solid:hover {
+  background-color: transparent;
+  color: var(--d);
+}
+
+.btn-invert {
+  border-color: var(--l);
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.btn-invert:hover {
+  background-color: transparent;
+  color: var(--l);
+}
+
+.btn-outline {
+  border-color: currentColor;
+  background-color: transparent;
+}
+
+.btn-outline:hover {
+  background-color: var(--d);
+  border-color: var(--d);
+  color: var(--l);
+}
+
+/* — cards — */
+.card-base {
+  position: relative;
+  padding: var(--sp-3);
+  background-color: var(--white);
+  border-radius: 1.25rem;
+  box-shadow: 0 1.5rem 3rem -1.5rem rgba(18, 18, 18, 0.35);
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.card-base:hover {
+  transform: translateY(-0.4rem) rotate(-0.75deg);
+}
+
+/* — grain texture, layered over dark/photo sections so nothing sits flat — */
+.grain {
+  position: relative;
+}
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 140px 140px;
+}
+
+.line,
+.word {
+  position: relative;
+  will-change: transform;
+}
+
+.line {
+  display: block;
+}
+.word {
+  display: inline-block;
+}
+
+.line-mask,
+.word-mask {
+  display: block;
+  overflow: hidden;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis [data-lenis-prevent],
+.lenis [data-lenis-prevent-wheel],
+.lenis [data-lenis-prevent-touch] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+.lenis.lenis-autoToggle {
+  transition-property: overflow;
+  transition-duration: 1ms;
+  transition-behavior: allow-discrete;
+}
+
+@media (pointer: fine) {
+  #custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 20001;
+    width: 28px;
+    height: 28px;
+    opacity: 0;
+    background-color: var(--l);
+    -webkit-mask: url("/icons/cursor.png") center / contain no-repeat;
+    mask: url("/icons/cursor.png") center / contain no-repeat;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    user-select: none;
+    transform: translate3d(var(--x, -100px), var(--y, -100px), 0)
+      translate(-50%, -50%);
+    transition: opacity 120ms ease;
+    will-change: transform, opacity;
+  }
+
+  #custom-cursor.is-visible {
+    opacity: 1;
+  }
+
+  .container {
+    padding: 2.25rem;
+  }
+}
+
+/* The `hidden` attribute is only a normal-priority UA rule — any author
+   class that also sets `display` silently wins the cascade by origin,
+   regardless of specificity. Force it site-wide so hidden actually hides
+   (e.g. .work-empty, .pd-not-found, both also set display via a class). */
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(root) {
+  animation: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.5s;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform, clip-path, filter;
+}
+
+::view-transition-old(root) {
+  animation: 1.5s cubic-bezier(0.87, 0, 0.13, 1) both move-out;
+}
+
+::view-transition-new(root) {
+  clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
+  animation: 1.5s cubic-bezier(0.87, 0, 0.13, 1) both move-in;
+}
+
+@keyframes move-out {
+  from {
+    opacity: 1;
+    filter: none;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(0.25);
+    transform: translateY(-35%);
+  }
+}
+
+@keyframes move-in {
+  from {
+    clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
+  }
+  to {
+    clip-path: polygon(0% 100%, 100% 100%, 100% 0%, 0% 0%);
+  }
+}

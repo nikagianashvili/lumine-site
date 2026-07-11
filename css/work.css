@@ -1,0 +1,454 @@
+/* work — filterable portfolio grid */
+
+body {
+  background-color: var(--l);
+  color: var(--d);
+}
+
+/* — header — */
+.work-hero {
+  padding-top: 10rem;
+}
+
+.work-hero .eyebrow {
+  margin-bottom: var(--sp-3);
+}
+
+.work-hero h1 {
+  font-size: clamp(4rem, 11vw, 11rem);
+}
+
+.work-meta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-top: var(--sp-3);
+}
+
+.work-count {
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  opacity: 0.75;
+}
+
+.work-note {
+  max-width: 20rem;
+  text-align: right;
+  font-size: 0.8rem;
+  text-transform: none;
+  opacity: 0.55;
+}
+
+/* — filters — */
+.work-filters {
+  position: relative;
+  border-top: 1px solid rgba(18, 18, 18, 0.15);
+  border-bottom: 1px solid rgba(18, 18, 18, 0.15);
+  margin-top: var(--sp-4);
+}
+
+.work-filters .container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: 1.75rem;
+  padding-bottom: 1.75rem;
+}
+
+.filter-group {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+}
+
+.filter-label {
+  flex-shrink: 0;
+  width: 5.5rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-pill {
+  padding: 0.55rem 1.15rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: inherit;
+  background: none;
+  border: 1px solid rgba(18, 18, 18, 0.35);
+  border-radius: 100px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.filter-pill:hover {
+  border-color: var(--d);
+}
+
+.filter-pill.is-active {
+  background-color: var(--d);
+  border-color: var(--d);
+  color: var(--l);
+}
+
+/* — grid — */
+.work-main {
+  padding: var(--sp-5) 0 var(--sp-6);
+}
+
+.work-grid {
+  display: grid;
+  gap: var(--sp-4) var(--sp-3);
+}
+
+.work-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  will-change: transform, opacity;
+}
+
+/*
+  Two grid modes, switched by js/work.js:
+
+  --featured (default, "All" + "All"): a 2-up grid where curated projects
+  (data: `featured: true`, one per service type, every 3rd slot) break the
+  rhythm by spanning the full row at a wider, more cinematic ratio — 1 big,
+  2 regular, repeating. Stops a 9-item grid from reading as one flat wall.
+
+  --dense (any filter active): visitor is comparing within one bucket now,
+  not browsing — so it collapses to a tight, uniform 3-up grid that trades
+  spotlight-per-item for more items per scroll.
+*/
+.work-grid--featured {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 1001px) {
+  .work-grid--featured .work-card.is-featured {
+    grid-column: span 2;
+  }
+
+  .work-grid--featured .work-card.is-featured .work-card-visual {
+    aspect-ratio: 21 / 9;
+  }
+
+  /* the poster-stack variant reads better wide-ish than ultra-wide —
+     21/9 would flatten two portrait mockups into letterboxed strips */
+  .work-grid--featured .work-card.is-featured .work-card-visual.work-card-stack {
+    aspect-ratio: 12 / 5;
+  }
+
+  .work-grid--featured .work-card.is-featured .work-card-title {
+    font-size: 1.85rem;
+  }
+
+  .work-grid--featured .work-card.is-featured .work-card-blurb {
+    max-width: 36rem;
+    font-size: 1rem;
+  }
+}
+
+.work-grid--dense {
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-3) var(--sp-2);
+}
+
+.work-grid--dense .work-card-title {
+  font-size: 1.15rem;
+}
+
+.work-grid--dense .work-card-blurb {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+/* — card visual: shared frame — */
+.work-card-visual {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border-radius: 1rem;
+  background-color: var(--white);
+}
+
+.work-card-visual img {
+  filter: grayscale(1) contrast(1.08);
+  transition:
+    transform 0.6s cubic-bezier(0.65, 0, 0.35, 1),
+    filter 0.6s ease;
+}
+
+.work-card:hover .work-card-visual img {
+  filter: grayscale(0) contrast(1);
+}
+
+/* variant 1 — web development: browser mockup */
+.work-card-browser {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(18, 18, 18, 0.15);
+}
+
+.browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  padding: 0.7rem 0.85rem;
+  background-color: var(--l);
+  border-bottom: 1px solid rgba(18, 18, 18, 0.12);
+}
+
+.browser-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: rgba(18, 18, 18, 0.25);
+}
+
+.browser-url {
+  flex: 1;
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  font-family: var(--f-nm);
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-align: center;
+  color: rgba(18, 18, 18, 0.4);
+  background-color: rgba(18, 18, 18, 0.05);
+  border-radius: 100px;
+}
+
+.browser-viewport {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+.browser-viewport img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.work-card:hover .browser-viewport img {
+  transform: scale(1.04);
+}
+
+/* variant 2 — photo & video: full cover + play button */
+.work-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.work-card:hover .work-card-photo img {
+  transform: scale(1.05);
+}
+
+.play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  background-color: rgba(18, 18, 18, 0.55);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.play-button svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: var(--l);
+  margin-left: 0.15rem;
+}
+
+.work-card:hover .play-button {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* variant 3 — graphic design: stacked, offset posters */
+.work-card-stack {
+  background: none;
+  overflow: visible;
+}
+
+.stack-poster {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  box-shadow: 0 1rem 2rem -1rem rgba(18, 18, 18, 0.35);
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.stack-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+  Both posters are horizontally centered (left: 4% + width: 92% = an equal
+  4% margin on both sides) instead of anchored from the left/top-left
+  corner like before. Anchoring from one side works fine on a roughly
+  square card, but on a very wide box (the "featured" ratio) it leaves the
+  whole stack sitting closer to one edge than the other — that's what was
+  reading as "not centered." The stack/offset look still comes through via
+  the top-vs-bottom stagger and opposing rotation; only the horizontal
+  anchor changed, so any bleed from the rotation is now symmetric left and
+  right instead of lopsided.
+*/
+.stack-poster-back {
+  top: 0.75rem;
+  left: 4%;
+  width: 92%;
+  height: 92%;
+  transform: rotate(-4deg);
+  opacity: 0.85;
+}
+
+.stack-poster-front {
+  left: 4%;
+  bottom: 0.75rem;
+  width: 92%;
+  height: 92%;
+  transform: rotate(2deg);
+}
+
+.work-card:hover .stack-poster-back {
+  transform: rotate(-7deg) translate(-0.4rem, 0.2rem);
+}
+
+.work-card:hover .stack-poster-front {
+  transform: rotate(4deg) translate(0.4rem, -0.2rem);
+}
+
+/* nudge the whole card right — in the default two-up grid it was reading
+   tighter to the right wall than its neighbor is to the left wall.
+   margin (not transform) on purpose: work.js animates this card's own
+   transform (x/y) for reveal + filter-fade, which would silently override
+   a CSS transform every time it runs. */
+.work-grid--featured .work-card[data-type="design"]:not(.is-featured) {
+  margin-left: 0.75rem;
+}
+
+/* — card meta (shared structure, every type) — */
+.work-card-meta {
+  margin-top: 1.5rem;
+}
+
+.work-card-badge {
+  display: inline-flex;
+  padding: 0.4rem 0.85rem;
+  font-family: var(--f-nm);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 100px;
+}
+
+.work-card-title {
+  margin-top: 0.85rem;
+  font-family: var(--f-nm);
+  font-size: 1.4rem;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.work-card-blurb {
+  max-width: 26rem;
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  text-transform: none;
+  opacity: 0.65;
+}
+
+/* — empty state — */
+.work-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-6) 0;
+  text-align: center;
+}
+
+.work-empty p {
+  text-transform: none;
+  opacity: 0.65;
+}
+
+/* — responsive — */
+@media (max-width: 1000px) {
+  .work-hero {
+    padding-top: 8rem;
+  }
+
+  .work-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .work-note {
+    text-align: left;
+  }
+
+  .filter-group {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filter-label {
+    width: auto;
+  }
+
+  .work-grid--featured,
+  .work-grid--dense {
+    grid-template-columns: 1fr;
+    gap: var(--sp-5);
+  }
+
+  .work-grid--dense .work-card-blurb {
+    -webkit-line-clamp: initial;
+  }
+
+  .browser-url {
+    display: none;
+  }
+
+  .play-button {
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+}

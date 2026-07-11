@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.DS_Store
+*.zip
+
+# personal Claude Code settings, not project config
+.claude/settings.local.json
+
+# raw backups of pre-compression images — not part of the deployed site
+image-originals/

@@ -1,0 +1,15 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/work", "destination": "/work.html" },
+    { "source": "/sample-project", "destination": "/sample-project.html" },
+    { "source": "/project", "destination": "/project.html" },
+    { "source": "/studio", "destination": "/studio.html" },
+    { "source": "/services", "destination": "/services.html" },
+    { "source": "/pricing", "destination": "/pricing.html" },
+    { "source": "/journal", "destination": "/journal.html" },
+    { "source": "/legal", "destination": "/legal.html" },
+    { "source": "/contact", "destination": "/contact.html" }
+  ]
+}

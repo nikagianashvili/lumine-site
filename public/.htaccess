@@ -1,0 +1,15 @@
+# Serves the matching .html file for clean URLs (e.g. /work -> work.html)
+# without changing what shows in the address bar. Mirrors vercel.json's
+# rewrites for Apache/LiteSpeed hosting (e.g. Hostinger).
+
+RewriteEngine On
+
+RewriteRule ^work/?$ /work.html [L,QSA]
+RewriteRule ^sample-project/?$ /sample-project.html [L,QSA]
+RewriteRule ^project/?$ /project.html [L,QSA]
+RewriteRule ^studio/?$ /studio.html [L,QSA]
+RewriteRule ^services/?$ /services.html [L,QSA]
+RewriteRule ^pricing/?$ /pricing.html [L,QSA]
+RewriteRule ^journal/?$ /journal.html [L,QSA]
+RewriteRule ^legal/?$ /legal.html [L,QSA]
+RewriteRule ^contact/?$ /contact.html [L,QSA]

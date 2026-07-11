@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project | Lumine | Creative Agency — Tbilisi</title>
+    <meta name="author" content="Lumine" />
+    <meta name="description" content="A Lumine project — challenge, process, and results." />
+    <meta name="theme-color" content="#121212" />
+    <meta property="og:title" content="Project — Lumine" />
+    <meta property="og:description" content="A Lumine project — challenge, process, and results." />
+    <meta property="og:type" content="article" />
+    <meta property="og:image" content="/logo/lumine-logo-black.png" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" type="image/png" href="/icons/favicon-mark.png" />
+    <link rel="stylesheet" href="/css/globals.css" />
+    <link rel="stylesheet" href="/css/nav.css" />
+    <link rel="stylesheet" href="/css/project.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <script src="/js/wrappedgl.js"></script>
+    <script src="/js/simulator.js"></script>
+  </head>
+  <body>
+    <!-- project: navigation -->
+    <nav>
+      <div class="nav-logo">
+        <a href="/">
+          <img src="/logo/lumine-logo-white.png" alt="Lumine" />
+        </a>
+      </div>
+      <div class="nav-icon">
+        <img src="/logo/lumine-mark-2.png" alt="" />
+      </div>
+      <div class="nav-right">
+        <div class="nav-lang" role="group" aria-label="Language">
+          <button type="button" class="nav-lang-btn is-active" data-lang="en">EN</button>
+          <span class="nav-lang-sep">/</span>
+          <button type="button" class="nav-lang-btn" data-lang="ka">GE</button>
+        </div>
+        <div class="nav-toggler">
+          <p>Menu</p>
+        </div>
+      </div>
+    </nav>
+
+    <div id="custom-cursor"></div>
+
+    <!-- project: content, rendered by js/project.js from js/projects-data.js -->
+    <main class="page sample-project" id="pdMain"></main>
+
+    <!-- project: not found (shown if the slug doesn't match a project) -->
+    <main class="page pd-not-found" id="pdNotFound" hidden>
+      <div class="container">
+        <p class="eyebrow">404</p>
+        <h2>That Project Isn't In The Archive</h2>
+        <p class="pd-not-found-copy">
+          Either the link is old or the slug's wrong. The rest of the work is
+          still where you left it.
+        </p>
+        <a href="/work" class="btn btn-solid">Back To The Archive</a>
+      </div>
+    </main>
+
+    <!-- project: footer -->
+    <footer>
+      <div id="footer-canvas"></div>
+      <div class="footer-inner">
+        <div class="footer-cta">
+          <span
+            class="footer-cta-eyebrow"
+            data-animate-variant="slide"
+            data-animate-on-scroll="true"
+          >
+            We Are Listening
+          </span>
+          <h3
+            class="footer-cta-heading"
+            data-animate-variant="slide"
+            data-animate-on-scroll="true"
+            data-animate-delay="0.1"
+          >
+            Your Next Big Thing Starts Here
+          </h3>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-logo">Lumine</p>
+          <p class="footer-copy">Tbilisi, Georgia</p>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/js/lenis-scroll.js"></script>
+    <script type="module" src="/js/cursor.js"></script>
+    <script type="module" src="/js/animated-copy.js"></script>
+    <script type="module" src="/js/simulation.js"></script>
+    <script type="module" src="/js/nav.js"></script>
+    <script type="module" src="/js/project.js"></script>
+    <script type="module" src="/js/footer.js"></script>
+  </body>
+</html>

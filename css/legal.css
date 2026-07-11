@@ -1,0 +1,62 @@
+/* legal — privacy & terms, plain language */
+
+body {
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.legal-hero {
+  padding-top: 10rem;
+  padding-bottom: var(--sp-4);
+}
+
+.legal-hero .eyebrow {
+  margin-bottom: var(--sp-3);
+}
+
+.legal-hero h1 {
+  font-size: clamp(3.5rem, 10vw, 10rem);
+}
+
+.legal-hero-copy {
+  margin-top: var(--sp-3);
+  text-transform: none;
+  opacity: 0.6;
+}
+
+.legal-main {
+  padding-bottom: var(--sp-6);
+}
+
+.legal-section {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: var(--sp-4);
+  padding: var(--sp-5) 0;
+  border-top: 1px solid rgba(18, 18, 18, 0.25);
+  scroll-margin-top: 7rem;
+}
+
+.legal-section h4 {
+  font-size: clamp(2rem, 4vw, 4rem);
+}
+
+.legal-text p {
+  max-width: 40rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.6;
+  text-transform: none;
+}
+
+@media (max-width: 1000px) {
+  .legal-hero {
+    padding-top: 8rem;
+  }
+
+  .legal-section {
+    grid-template-columns: 1fr;
+    gap: var(--sp-3);
+  }
+}
