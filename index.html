@@ -103,6 +103,7 @@
         <a
           href="/contact"
           class="btn btn-solid"
+          data-magnetic
           data-animate-variant="slide"
           data-animate-on-scroll="false"
           data-animate-delay="1.4"
@@ -180,34 +181,23 @@
     </section>
 
     <!-- home: trusted by -->
-    <section class="section section-light founding">
-      <div class="container founding-inner">
-        <p class="eyebrow" data-animate-variant="slide" data-animate-on-scroll="true">
-          Now Booking
-        </p>
-        <h3 data-animate-variant="slide-words" data-animate-on-scroll="true">
-          You'd Be Among The First
-        </h3>
-        <p
-          class="founding-copy"
-          data-animate-variant="slide"
-          data-animate-on-scroll="true"
-        >
-          Every studio starts somewhere. Right now, that means your project
-          gets the founder's full attention, not a slot in a queue — the
-          people you talk to are the people doing the work, and pricing
-          reflects a studio still building its portfolio, not padding a
-          retainer list.
-        </p>
-        <a
-          href="/contact"
-          class="btn btn-solid"
-          data-animate-variant="slide"
-          data-animate-on-scroll="true"
-        >
-          Start The Conversation
-        </a>
+    <section class="section section-light trusted-by">
+      <div class="container">
+        <div class="section-head">
+          <h3 data-animate-variant="slide" data-animate-on-scroll="true">
+            Trusted By
+          </h3>
+          <p
+            class="section-head-copy"
+            data-animate-variant="slide"
+            data-animate-on-scroll="true"
+          >
+            Placeholder marks for now — this row fills in with real client
+            logos as the roster grows.
+          </p>
+        </div>
       </div>
+      <div class="trusted-marquee-wrapper"></div>
     </section>
 
     <!-- home: featured projects -->
@@ -339,6 +329,7 @@
                 <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
               </svg>
             </div>
+            <span class="bento-num">01</span>
             <h6>Strategy First</h6>
             <p>
               Every project starts with what it needs to achieve, not what
@@ -346,6 +337,7 @@
             </p>
           </div>
           <div class="bento-cell">
+            <span class="bento-num">02</span>
             <h6>Design</h6>
             <p>Bold, current, and built around who you're actually talking to.</p>
           </div>
@@ -353,15 +345,18 @@
             <img src="/work/work4.jpg" alt="Lumine work in progress" />
           </div>
           <div class="bento-cell">
+            <span class="bento-num">03</span>
             <h6>Development</h6>
             <p>Fast, clean sites — no template feel, no bloat.</p>
           </div>
           <div class="bento-cell">
+            <span class="bento-num">04</span>
             <h6>Performance</h6>
             <p>Content and ads that get measured, not just posted.</p>
           </div>
           <div class="bento-cell bento-wide">
             <div class="bento-copy">
+              <span class="bento-num">05</span>
               <h6>Support</h6>
               <p>One team, one point of contact, from brief to launch and after.</p>
             </div>
@@ -415,35 +410,35 @@
       </div>
     </section>
 
-    <!-- home: what you get -->
+    <!-- home: testimonials -->
     <section class="section section-light">
       <div class="container">
         <div class="section-head">
           <h3 data-animate-variant="slide" data-animate-on-scroll="true">
-            What Working With Us Looks Like
+            What Clients Say
           </h3>
           <p
             class="section-head-copy"
             data-animate-variant="slide"
             data-animate-on-scroll="true"
           >
-            No client roster to point to yet — so here's exactly what you
-            get instead of a review score.
+            Placeholder quotes, written in Lumine's voice — swapped for real
+            ones as they come in.
           </p>
         </div>
 
         <div class="testimonial-track">
           <div class="testimonial-card card-base">
-            <p class="testimonial-quote">One person answers the phone, and it's the same person who's editing your video.</p>
-            <p class="testimonial-attr">Direct line to whoever's doing the work</p>
+            <p class="testimonial-quote">"They actually asked what we needed before showing us what looked cool."</p>
+            <p class="testimonial-attr">— A Local Business Owner, Tbilisi</p>
           </div>
           <div class="testimonial-card card-base">
-            <p class="testimonial-quote">Photo, video, design, social, and web — one brief, one invoice, one team.</p>
-            <p class="testimonial-attr">Six services, a single point of contact</p>
+            <p class="testimonial-quote">"Fast turnaround, and the content still felt like us, not a template."</p>
+            <p class="testimonial-attr">— A Social Media Client</p>
           </div>
           <div class="testimonial-card card-base">
-            <p class="testimonial-quote">Prices are on the Pricing page. What you see is what a call confirms.</p>
-            <p class="testimonial-attr">The number on the site is the number on the call</p>
+            <p class="testimonial-quote">"One team handled the shoot, the site, and the ads. No chasing three vendors."</p>
+            <p class="testimonial-attr">— A Startup Founder</p>
           </div>
         </div>
       </div>
@@ -563,7 +558,7 @@
           <p class="eyebrow">Your Move</p>
           <h2>Let's Build <span class="outline">Something</span></h2>
           <div class="cta-actions">
-            <a href="/contact" class="btn btn-invert">Book A Call</a>
+            <a href="/contact" class="btn btn-invert" data-magnetic>Book A Call</a>
             <a href="mailto:hello@lumine.ge" class="cta-mail">hello@lumine.ge</a>
           </div>
         </div>
@@ -604,6 +599,7 @@
     <script type="module" src="/js/simulation.js"></script>
     <script type="module" src="/js/nav.js"></script>
     <script type="module" src="/js/home-hero.js"></script>
+    <script type="module" src="/js/trusted-by.js"></script>
     <script type="module" src="/js/featured.js"></script>
     <script type="module" src="/js/home-extras.js"></script>
     <script type="module" src="/js/faq.js"></script>
