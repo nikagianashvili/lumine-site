@@ -1,6 +1,16 @@
-// i18n.js — selector-based text swap for static markup. Dynamic content
-// (work grid, pricing cards, project pages) is handled separately by each
-// module reading the same LANG_KEY and picking a `_ka` field at render time.
+// i18n.js — selector-based text swap for static markup.
+//
+// IMPORTANT: values in i18n-data.js are [english, georgian] pairs (or an
+// array of pairs, one per matched element, for selectors that match several
+// elements). We never read "the original" back out of the DOM — several
+// other scripts (animated-copy.js's SplitText, nav.js's menu-overlay split)
+// mutate these same elements' innerHTML for scroll/hover animations, and if
+// that happens before this script's first pass, a DOM-cached "original"
+// would already be the mangled, animation-wrapped markup. Restoring THAT
+// on switching back to English produced invisible/broken text instead of
+// the real copy. Always writing a known value from data sidesteps the
+// whole class of bug regardless of what any animation library did in
+// between.
 import { translations } from "/js/i18n-data.js";
 
 const LANG_KEY = "lumine-lang";
@@ -43,6 +53,15 @@ function entries(pageKey) {
   return { ...common, ...page };
 }
 
+function pick(pair, lang) {
+  if (!pair) return undefined;
+  // { attr: "placeholder", en: "...", ka: "..." } targets an attribute.
+  if (typeof pair === "object" && !Array.isArray(pair) && pair.attr) {
+    return pair;
+  }
+  return lang === "ka" ? pair[1] : pair[0];
+}
+
 function apply(lang) {
   const pageKey = currentPageKey();
   const dict = entries(pageKey);
@@ -51,26 +70,19 @@ function apply(lang) {
     const els = document.querySelectorAll(selector);
     if (!els.length) return;
 
-    els.forEach((el, i) => {
-      const raw = Array.isArray(dict[selector]) ? dict[selector][i] : dict[selector];
-      if (raw === undefined) return;
+    const isMultiEntry = Array.isArray(dict[selector]) && Array.isArray(dict[selector][0]);
 
-      // { attr: "placeholder", text: "..." } targets an attribute instead
-      // of innerHTML — used for form inputs.
-      if (raw && typeof raw === "object" && raw.attr) {
-        const origKey = `i18nOrig${raw.attr[0].toUpperCase()}${raw.attr.slice(1)}`;
-        if (el.dataset[origKey] === undefined) {
-          el.dataset[origKey] = el.getAttribute(raw.attr) || "";
-        }
-        el.setAttribute(raw.attr, lang === "ka" ? raw.text : el.dataset[origKey]);
+    els.forEach((el, i) => {
+      const raw = isMultiEntry ? dict[selector][i] : dict[selector];
+      const value = pick(raw, lang);
+      if (value === undefined) return;
+
+      if (value && typeof value === "object" && value.attr) {
+        el.setAttribute(value.attr, lang === "ka" ? value.ka : value.en);
         return;
       }
 
-      if (el.dataset.i18nOrig === undefined) {
-        el.dataset.i18nOrig = el.innerHTML;
-      }
-
-      el.innerHTML = lang === "ka" ? raw : el.dataset.i18nOrig;
+      el.innerHTML = value;
     });
   });
 
