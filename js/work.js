@@ -78,7 +78,6 @@ function buildCard(project) {
   card.dataset.type = project.serviceType;
   card.dataset.industry = project.industry;
   card.innerHTML = `
-    ${project.featured ? '<span class="work-card-featured-tag">Featured</span>' : ""}
     ${buildVisual(project)}
     <div class="work-card-meta">
       <span class="work-card-badge" style="background-color:${type.color};color:${type.onColor}">${type.label}</span>

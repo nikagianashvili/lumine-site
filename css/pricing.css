@@ -58,11 +58,11 @@ body {
   overflow: hidden;
   background-color: var(--white);
   border-radius: 1.5rem;
-  box-shadow: 0 1.5rem 3rem -2rem rgba(126, 40, 16, 0.4);
+  box-shadow: 0 1.5rem 3rem -2rem rgba(18, 18, 18, 0.4);
 }
 
 .price-card.is-featured {
-  background-color: var(--accent-deep);
+  background-color: var(--d);
   color: var(--l);
 }
 
@@ -82,8 +82,8 @@ body {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent-deep);
-  background-color: var(--accent);
+  color: var(--d);
+  background-color: var(--l);
   border-radius: 100px;
 }
 
@@ -115,8 +115,8 @@ body {
   display: flex;
   gap: var(--sp-3);
   padding: var(--sp-3) 0;
-  border-top: 1px solid rgba(126, 40, 16, 0.35);
-  border-bottom: 1px solid rgba(126, 40, 16, 0.35);
+  border-top: 1px solid rgba(128, 125, 115, 0.35);
+  border-bottom: 1px solid rgba(128, 125, 115, 0.35);
 }
 
 .price-count {
@@ -181,7 +181,7 @@ body {
 /* — singles — */
 .price-singles {
   padding: var(--sp-6) 0;
-  background-color: var(--accent-deep);
+  background-color: var(--d);
   color: var(--l);
 }
 
@@ -205,11 +205,11 @@ body {
   align-items: baseline;
   gap: var(--sp-3);
   padding: var(--sp-3) 0;
-  border-top: 1px solid rgba(250, 212, 200, 0.2);
+  border-top: 1px solid rgba(245, 241, 230, 0.2);
 }
 
 .price-singles-list .price-single:last-child {
-  border-bottom: 1px solid rgba(250, 212, 200, 0.2);
+  border-bottom: 1px solid rgba(245, 241, 230, 0.2);
 }
 
 .price-single-index {

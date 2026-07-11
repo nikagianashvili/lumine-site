@@ -33,11 +33,11 @@ body {
 /* — entries — */
 
 .journal-entry {
-  border-top: 1px solid rgba(126, 40, 16, 0.25);
+  border-top: 1px solid rgba(18, 18, 18, 0.25);
 }
 
 .journal-main .journal-entry:last-of-type {
-  border-bottom: 1px solid rgba(126, 40, 16, 0.25);
+  border-bottom: 1px solid rgba(18, 18, 18, 0.25);
 }
 
 .journal-entry-head {
@@ -70,7 +70,6 @@ body {
 
 .journal-entry-head:hover h3 {
   transform: translateX(1rem);
-  color: var(--accent-deep);
 }
 
 .journal-entry-excerpt {

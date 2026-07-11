@@ -32,10 +32,6 @@ nav.nav-solid .nav-lang-btn {
   color: var(--d);
 }
 
-nav.nav-solid .nav-lang-btn.is-active {
-  color: var(--accent-deep);
-}
-
 nav.nav-solid .nav-logo img {
   filter: invert(1);
 }
@@ -180,7 +176,7 @@ nav.nav-solid .nav-lang-sep {
   width: 100vw;
   height: 100svh;
   overflow: hidden;
-  background-color: var(--accent-deep);
+  background-color: var(--d);
   color: var(--l);
   clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
   will-change: clip-path;

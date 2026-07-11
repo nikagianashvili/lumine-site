@@ -59,7 +59,7 @@
   z-index: 1;
   width: 3.5rem;
   height: 3.5rem;
-  color: var(--accent);
+  color: var(--d);
   pointer-events: none;
   animation: sparkle-spin 14s linear infinite;
 }
@@ -128,7 +128,7 @@
 .strip {
   padding: 2rem 0;
   overflow: hidden;
-  background-color: var(--accent-deep);
+  background-color: var(--d);
   color: var(--l);
 }
 
@@ -189,7 +189,7 @@
   overflow: hidden;
   border-radius: 1rem;
   transform: rotate(4deg);
-  box-shadow: 0 2rem 4rem -2rem rgba(126, 40, 16, 0.5);
+  box-shadow: 0 2rem 4rem -2rem rgba(18, 18, 18, 0.5);
 }
 
 .manifesto-img img {
@@ -235,7 +235,7 @@
 }
 
 .section-dark {
-  background-color: var(--accent-deep);
+  background-color: var(--d);
   color: var(--l);
 }
 
@@ -377,8 +377,8 @@
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(126, 40, 16, 0.75),
-    rgba(126, 40, 16, 0) 55%
+    rgba(18, 18, 18, 0.75),
+    rgba(18, 18, 18, 0) 55%
   );
 }
 
@@ -529,7 +529,7 @@
   overflow: hidden;
   background-color: var(--white);
   border-radius: 1.25rem;
-  box-shadow: 0 1rem 2.5rem -1.75rem rgba(126, 40, 16, 0.4);
+  box-shadow: 0 1rem 2.5rem -1.75rem rgba(18, 18, 18, 0.4);
   transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
@@ -560,13 +560,13 @@
 .bento-lead {
   grid-column: span 2;
   grid-row: span 2;
-  background-color: var(--accent);
-  color: var(--white);
+  background-color: var(--d);
+  color: var(--l);
 }
 
 .bento-lead .bento-num {
   font-size: 8rem;
-  -webkit-text-stroke-color: var(--white);
+  -webkit-text-stroke-color: var(--l);
 }
 
 .bento-lead h6 {
@@ -636,11 +636,11 @@
   align-items: center;
   gap: var(--sp-3);
   padding: var(--sp-3) 0;
-  border-top: 1px solid rgba(250, 212, 200, 0.2);
+  border-top: 1px solid rgba(245, 241, 230, 0.2);
 }
 
 .process-list .process-step:last-child {
-  border-bottom: 1px solid rgba(250, 212, 200, 0.2);
+  border-bottom: 1px solid rgba(245, 241, 230, 0.2);
 }
 
 .process-step-index {
@@ -717,7 +717,6 @@
 
 .stat-item h2 {
   font-size: clamp(3rem, 6vw, 6rem);
-  color: var(--accent);
 }
 
 .stat-item p {
@@ -809,8 +808,6 @@
 .faq-item.is-open .faq-plus,
 .faq-question:hover .faq-plus {
   opacity: 1;
-  color: var(--accent-deep);
-  border-color: var(--accent-deep);
 }
 
 .faq-plus::before,
@@ -859,7 +856,7 @@
   gap: var(--sp-4);
   padding: var(--sp-7) var(--sp-4);
   overflow: hidden;
-  background-color: var(--accent-deep);
+  background-color: var(--d);
   color: var(--l);
   border-radius: 2rem;
   text-align: center;

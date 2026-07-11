@@ -13,15 +13,15 @@ export const SERVICE_TYPES = [
     id: "web",
     label: "Web Development",
     // brand-tone badge, dark end of the ink/paper ramp
-    color: "#7e2810",
-    onColor: "#fad4c8",
+    color: "#121212",
+    onColor: "#f5f1e6",
   },
   {
     id: "photo-video",
     label: "Photo & Video",
     // mid warm-gray, halfway between ink and paper
-    color: "#a1512f",
-    onColor: "#fad4c8",
+    color: "#55524a",
+    onColor: "#f5f1e6",
   },
   {
     id: "design",
