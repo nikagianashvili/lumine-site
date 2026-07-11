@@ -139,17 +139,30 @@ function buildLinks() {
   // newsletter — no backend yet: composes a subscribe email, says so.
   const form = section.querySelector("#footerNewsletter");
   const status = form.querySelector(".footer-newsletter-status");
+  const LANG_KEY = "lumine-lang";
+  const currentLang = () => localStorage.getItem(LANG_KEY) || "en";
+  const MSG = {
+    en: {
+      invalid: "Add a real email first.",
+      sent: "A draft opened in your mail app — send it and you're on the list.",
+    },
+    ka: {
+      invalid: "მიუთითეთ რეალური მეილი.",
+      sent: "დრაფტი გაიხსნა თქვენს მეილ აპლიკაციაში — გააგზავნეთ და სიაშია ხართ.",
+    },
+  };
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const email = form.email.value.trim();
     if (!email || !email.includes("@")) {
-      status.textContent = "Add a real email first.";
+      status.textContent = MSG[currentLang()].invalid;
       return;
     }
     window.location.href = `mailto:hello@lumine.ge?subject=${encodeURIComponent(
       "Journal subscription",
     )}&body=${encodeURIComponent(`Add me to the journal list: ${email}`)}`;
-    status.textContent = "A draft opened in your mail app — send it and you're on the list.";
+    status.textContent = MSG[currentLang()].sent;
   });
 }
 

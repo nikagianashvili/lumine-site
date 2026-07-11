@@ -1,11 +1,19 @@
 import gsap from "gsap";
-import { projects, SERVICE_TYPES, INDUSTRIES, getServiceType } from "/js/projects-data.js";
+import { projects, SERVICE_TYPES, INDUSTRIES, INDUSTRY_LABELS_KA, getServiceType } from "/js/projects-data.js";
 
 const grid = document.getElementById("workGrid");
 const emptyEl = document.getElementById("workEmpty");
 const countEl = document.getElementById("workCount");
 const typeFiltersEl = document.getElementById("typeFilters");
 const industryFiltersEl = document.getElementById("industryFilters");
+
+const LANG_KEY = "lumine-lang";
+const currentLang = () => localStorage.getItem(LANG_KEY) || "en";
+
+const UI = {
+  en: { all: "All", allTypes: "All Types", allIndustries: "All Industries", featured: "Featured" },
+  ka: { all: "ყველა", allTypes: "ყველა ტიპი", allIndustries: "ყველა ინდუსტრია", featured: "გამორჩეული" },
+};
 
 const state = { type: "all", industry: "all" };
 let isAnimating = false;
@@ -70,21 +78,28 @@ function buildVisual(project) {
   `;
 }
 
-function buildCard(project) {
+function cardInnerHTML(project, lang) {
   const type = getServiceType(project.serviceType);
+  const label = lang === "ka" ? type.label_ka : type.label;
+  const blurb = lang === "ka" ? project.blurb_ka : project.blurb;
+  return `
+    ${project.featured ? `<span class="work-card-featured-tag">${UI[lang].featured}</span>` : ""}
+    ${buildVisual(project)}
+    <div class="work-card-meta">
+      <span class="work-card-badge" style="background-color:${type.color};color:${type.onColor}">${label}</span>
+      <h6 class="work-card-title">${project.title}</h6>
+      <p class="work-card-blurb">${blurb}</p>
+    </div>
+  `;
+}
+
+function buildCard(project, lang) {
   const card = document.createElement("a");
   card.className = "work-card" + (project.featured ? " is-featured" : "");
   card.href = `/project?slug=${project.slug}`;
   card.dataset.type = project.serviceType;
   card.dataset.industry = project.industry;
-  card.innerHTML = `
-    ${buildVisual(project)}
-    <div class="work-card-meta">
-      <span class="work-card-badge" style="background-color:${type.color};color:${type.onColor}">${type.label}</span>
-      <h6 class="work-card-title">${project.title}</h6>
-      <p class="work-card-blurb">${project.blurb}</p>
-    </div>
-  `;
+  card.innerHTML = cardInnerHTML(project, lang);
   return card;
 }
 
@@ -99,18 +114,44 @@ function buildPill(group, value, label) {
   return pill;
 }
 
-function render() {
-  projects.forEach((p) => grid.appendChild(buildCard(p)));
+function render(lang) {
+  projects.forEach((p) => grid.appendChild(buildCard(p, lang)));
 
-  typeFiltersEl.appendChild(buildPill("type", "all", "All"));
+  typeFiltersEl.appendChild(buildPill("type", "all", UI[lang].all));
   SERVICE_TYPES.forEach((s) =>
-    typeFiltersEl.appendChild(buildPill("type", s.id, s.label)),
+    typeFiltersEl.appendChild(buildPill("type", s.id, lang === "ka" ? s.label_ka : s.label)),
   );
 
-  industryFiltersEl.appendChild(buildPill("industry", "all", "All"));
+  industryFiltersEl.appendChild(buildPill("industry", "all", UI[lang].all));
   INDUSTRIES.forEach((s) =>
-    industryFiltersEl.appendChild(buildPill("industry", s, s)),
+    industryFiltersEl.appendChild(buildPill("industry", s, lang === "ka" ? INDUSTRY_LABELS_KA[s] : s)),
   );
+}
+
+function relabelFilters(lang) {
+  Array.from(typeFiltersEl.children).forEach((pill) => {
+    pill.textContent =
+      pill.dataset.value === "all"
+        ? UI[lang].all
+        : lang === "ka"
+          ? getServiceType(pill.dataset.value).label_ka
+          : getServiceType(pill.dataset.value).label;
+  });
+  Array.from(industryFiltersEl.children).forEach((pill) => {
+    pill.textContent =
+      pill.dataset.value === "all"
+        ? UI[lang].all
+        : lang === "ka"
+          ? INDUSTRY_LABELS_KA[pill.dataset.value]
+          : pill.dataset.value;
+  });
+}
+
+function relabelCards(lang) {
+  Array.from(grid.children).forEach((card) => {
+    const project = projects.find((p) => p.slug === card.href.split("slug=")[1]);
+    if (project) card.innerHTML = cardInnerHTML(project, lang);
+  });
 }
 
 // ── filtering ────────────────────────────────────────────────────────────────
@@ -123,12 +164,21 @@ function matches(card) {
 }
 
 function updateCount(visible) {
+  const lang = currentLang();
   const total = String(projects.length).padStart(2, "0");
   const shown = String(visible).padStart(2, "0");
   const typePart =
-    state.type === "all" ? "All Types" : getServiceType(state.type).label;
+    state.type === "all"
+      ? UI[lang].allTypes
+      : lang === "ka"
+        ? getServiceType(state.type).label_ka
+        : getServiceType(state.type).label;
   const industryPart =
-    state.industry === "all" ? "All Industries" : state.industry;
+    state.industry === "all"
+      ? UI[lang].allIndustries
+      : lang === "ka"
+        ? INDUSTRY_LABELS_KA[state.industry]
+        : state.industry;
   countEl.textContent = `${shown} / ${total} — ${typePart}, ${industryPart}`;
 }
 
@@ -212,7 +262,8 @@ function reveal() {
 
 function init() {
   if (!grid) return;
-  render();
+  const lang = currentLang();
+  render(lang);
 
   const cards = Array.from(grid.querySelectorAll(".work-card"));
   cards.forEach((c) => {
@@ -224,6 +275,12 @@ function init() {
   applyGridMode();
   updateCount(visible.length);
   reveal();
+
+  document.documentElement.addEventListener("lumine:langchange", (e) => {
+    relabelFilters(e.detail.lang);
+    relabelCards(e.detail.lang);
+    updateCount(cards.filter(matches).length);
+  });
 }
 
 if (document.readyState === "loading") {
