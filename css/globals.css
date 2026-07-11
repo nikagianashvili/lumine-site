@@ -1,22 +1,23 @@
 @import "./fonts.css";
 
 :root {
-  /* — color, pulled off the logo itself: pure ink + a warm paper light,
-     white held in reserve as a third tone for surfaces sitting on paper — */
-  --l: #f5f1e6;
-  --d: #121212;
-  --d-soft: #55524a;
-  --white: #ffffff;
+  /* — color, rebuilt from Coral Spark as the foundation, not layered on
+     top of it. Signature Text is now the base dark (was pure ink), Blush
+     Tint is now the base light (was cream paper) — everywhere ink/paper
+     were used, this is what shows now. — */
+  --l: #fad4c8;
+  --d: #7e2810;
+  --d-soft: #a1512f;
+  --white: #fff4ef;
 
-  /* — accent: Coral Spark — bold, creative-first. Two moments run fully
-     coral (bento lead cell, final CTA panel) instead of accent-only touches;
-     everywhere else keeps the same "earned on interaction" rule as before,
-     just recolored. --accent-bright is a hotter hover tier so the family
-     has range without borrowing a second hue. — */
+  /* — accent: Spark stays exactly what it was — buttons, tags, hover
+     states, never a full-page wash. accent-deep is now darker than the
+     new ink on purpose, so text-on-accent still reads as a distinct,
+     richer tone rather than coinciding with the base dark. — */
   --accent: #f2542d;
   --accent-bright: #ff6b45;
-  --accent-pastel: #fad4c8;
-  --accent-deep: #7e2810;
+  --accent-pastel: #f8bfa4;
+  --accent-deep: #4a1808;
 
   /* LK Lumina is the brand face for display AND body, Latin + Georgian */
   --f-h: "LK Lumina", "Humane", system-ui, sans-serif;
@@ -202,7 +203,7 @@ p.lg {
   padding: var(--sp-3);
   background-color: var(--white);
   border-radius: 1.25rem;
-  box-shadow: 0 1.5rem 3rem -1.5rem rgba(18, 18, 18, 0.35);
+  box-shadow: 0 1.5rem 3rem -1.5rem rgba(126, 40, 16, 0.35);
   transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 

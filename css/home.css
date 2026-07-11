@@ -189,7 +189,7 @@
   overflow: hidden;
   border-radius: 1rem;
   transform: rotate(4deg);
-  box-shadow: 0 2rem 4rem -2rem rgba(18, 18, 18, 0.5);
+  box-shadow: 0 2rem 4rem -2rem rgba(126, 40, 16, 0.5);
 }
 
 .manifesto-img img {
@@ -377,8 +377,8 @@
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(18, 18, 18, 0.75),
-    rgba(18, 18, 18, 0) 55%
+    rgba(126, 40, 16, 0.75),
+    rgba(126, 40, 16, 0) 55%
   );
 }
 
@@ -529,7 +529,7 @@
   overflow: hidden;
   background-color: var(--white);
   border-radius: 1.25rem;
-  box-shadow: 0 1rem 2.5rem -1.75rem rgba(18, 18, 18, 0.4);
+  box-shadow: 0 1rem 2.5rem -1.75rem rgba(126, 40, 16, 0.4);
   transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
@@ -636,11 +636,11 @@
   align-items: center;
   gap: var(--sp-3);
   padding: var(--sp-3) 0;
-  border-top: 1px solid rgba(245, 241, 230, 0.2);
+  border-top: 1px solid rgba(250, 212, 200, 0.2);
 }
 
 .process-list .process-step:last-child {
-  border-bottom: 1px solid rgba(245, 241, 230, 0.2);
+  border-bottom: 1px solid rgba(250, 212, 200, 0.2);
 }
 
 .process-step-index {
