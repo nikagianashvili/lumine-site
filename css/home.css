@@ -59,7 +59,7 @@
   z-index: 1;
   width: 3.5rem;
   height: 3.5rem;
-  color: var(--d);
+  color: var(--accent);
   pointer-events: none;
   animation: sparkle-spin 14s linear infinite;
 }
@@ -560,13 +560,13 @@
 .bento-lead {
   grid-column: span 2;
   grid-row: span 2;
-  background-color: var(--d);
-  color: var(--l);
+  background-color: var(--accent);
+  color: var(--white);
 }
 
 .bento-lead .bento-num {
   font-size: 8rem;
-  -webkit-text-stroke-color: var(--l);
+  -webkit-text-stroke-color: var(--white);
 }
 
 .bento-lead h6 {
@@ -859,7 +859,7 @@
   gap: var(--sp-4);
   padding: var(--sp-7) var(--sp-4);
   overflow: hidden;
-  background-color: var(--d);
+  background-color: var(--accent-deep);
   color: var(--l);
   border-radius: 2rem;
   text-align: center;

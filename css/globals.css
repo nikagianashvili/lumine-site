@@ -8,12 +8,15 @@
   --d-soft: #55524a;
   --white: #ffffff;
 
-  /* — accent test: Amber Glow — warm, tied to the name, extends paper's
-     own warmth rather than interrupting it. Used sparingly: primary CTAs,
-     the featured-package flag, the hover-reveal frame. — */
-  --accent: #e8a33d;
-  --accent-pastel: #f6dcc4;
-  --accent-deep: #7a4a10;
+  /* — accent: Coral Spark — bold, creative-first. Two moments run fully
+     coral (bento lead cell, final CTA panel) instead of accent-only touches;
+     everywhere else keeps the same "earned on interaction" rule as before,
+     just recolored. --accent-bright is a hotter hover tier so the family
+     has range without borrowing a second hue. — */
+  --accent: #f2542d;
+  --accent-bright: #ff6b45;
+  --accent-pastel: #fad4c8;
+  --accent-deep: #7e2810;
 
   /* LK Lumina is the brand face for display AND body, Latin + Georgian */
   --f-h: "LK Lumina", "Humane", system-ui, sans-serif;
@@ -178,8 +181,8 @@ p.lg {
 
 .btn-invert:hover {
   background-color: transparent;
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent-bright);
+  color: var(--accent-bright);
 }
 
 .btn-outline {
