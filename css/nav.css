@@ -32,6 +32,10 @@ nav.nav-solid .nav-lang-btn {
   color: var(--d);
 }
 
+nav.nav-solid .nav-lang-btn.is-active {
+  color: var(--accent-deep);
+}
+
 nav.nav-solid .nav-logo img {
   filter: invert(1);
 }

@@ -8,6 +8,13 @@
   --d-soft: #55524a;
   --white: #ffffff;
 
+  /* — accent test: Amber Glow — warm, tied to the name, extends paper's
+     own warmth rather than interrupting it. Used sparingly: primary CTAs,
+     the featured-package flag, the hover-reveal frame. — */
+  --accent: #e8a33d;
+  --accent-pastel: #f6dcc4;
+  --accent-deep: #7a4a10;
+
   /* LK Lumina is the brand face for display AND body, Latin + Georgian */
   --f-h: "LK Lumina", "Humane", system-ui, sans-serif;
   --f-nm: "LK Lumina", "Neue Montreal", system-ui, sans-serif;
@@ -37,6 +44,11 @@ body {
   font-family: var(--f-nm);
   background-color: var(--l);
   color: var(--d);
+}
+
+::selection {
+  background-color: var(--accent);
+  color: var(--accent-deep);
 }
 
 img {
@@ -148,14 +160,14 @@ p.lg {
 }
 
 .btn-solid {
-  border-color: var(--d);
-  background-color: var(--d);
-  color: var(--l);
+  border-color: var(--accent);
+  background-color: var(--accent);
+  color: var(--accent-deep);
 }
 
 .btn-solid:hover {
   background-color: transparent;
-  color: var(--d);
+  color: var(--accent-deep);
 }
 
 .btn-invert {
@@ -166,7 +178,8 @@ p.lg {
 
 .btn-invert:hover {
   background-color: transparent;
-  color: var(--l);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .btn-outline {
@@ -175,9 +188,9 @@ p.lg {
 }
 
 .btn-outline:hover {
-  background-color: var(--d);
-  border-color: var(--d);
-  color: var(--l);
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-deep);
 }
 
 /* — cards — */

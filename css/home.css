@@ -717,6 +717,7 @@
 
 .stat-item h2 {
   font-size: clamp(3rem, 6vw, 6rem);
+  color: var(--accent);
 }
 
 .stat-item p {
@@ -808,6 +809,8 @@
 .faq-item.is-open .faq-plus,
 .faq-question:hover .faq-plus {
   opacity: 1;
+  color: var(--accent-deep);
+  border-color: var(--accent-deep);
 }
 
 .faq-plus::before,

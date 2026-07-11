@@ -70,6 +70,7 @@ body {
 
 .journal-entry-head:hover h3 {
   transform: translateX(1rem);
+  color: var(--accent-deep);
 }
 
 .journal-entry-excerpt {

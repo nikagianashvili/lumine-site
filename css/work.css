@@ -99,13 +99,13 @@ body {
 }
 
 .filter-pill:hover {
-  border-color: var(--d);
+  border-color: var(--accent);
 }
 
 .filter-pill.is-active {
-  background-color: var(--d);
-  border-color: var(--d);
-  color: var(--l);
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-deep);
 }
 
 /* — grid — */
@@ -189,6 +189,8 @@ body {
   aspect-ratio: 4 / 3;
   border-radius: 1rem;
   background-color: var(--white);
+  box-shadow: 0 0 0 0 var(--accent);
+  transition: box-shadow 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .work-card-visual img {
@@ -196,6 +198,10 @@ body {
   transition:
     transform 0.6s cubic-bezier(0.65, 0, 0.35, 1),
     filter 0.6s ease;
+}
+
+.work-card:hover .work-card-visual {
+  box-shadow: 0 0 0 3px var(--accent);
 }
 
 .work-card:hover .work-card-visual img {

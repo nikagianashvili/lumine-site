@@ -82,8 +82,8 @@ body {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--d);
-  background-color: var(--l);
+  color: var(--accent-deep);
+  background-color: var(--accent);
   border-radius: 100px;
 }
 
