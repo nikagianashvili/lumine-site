@@ -150,6 +150,10 @@
   padding-right: 4rem;
 }
 
+html[lang="ka"] .strip-track span {
+  line-height: 1.15;
+}
+
 .strip-track span.outline {
   color: transparent;
   -webkit-text-stroke: 1.5px var(--l);
