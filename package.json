@@ -30,5 +30,8 @@
     "matter-js": "^0.20.0",
     "three": "^0.183.2",
     "vite": "^8.0.8"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.1"
   }
 }

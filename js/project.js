@@ -1,8 +1,12 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { projects, getProject, getServiceType } from "/js/projects-data.js";
+import { getServiceType } from "/js/projects-data.js";
+import { fetchProjects } from "/js/api-client.js";
 
 gsap.registerPlugin(ScrollTrigger);
+
+let projects = [];
+const getProject = (slug) => projects.find((proj) => proj.slug === slug);
 
 const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
 const p = (route) => (isKa ? `/ka${route}` : route);
@@ -400,7 +404,7 @@ function initReveals(root) {
 
 // ── init ──────────────────────────────────────────────────────────────────────
 
-function init() {
+async function init() {
   const main = document.getElementById("pdMain");
   const notFound = document.getElementById("pdNotFound");
   if (!main) return;
@@ -410,6 +414,8 @@ function init() {
   // the other language instead of a bare, unspecified project page.
   const langLink = document.getElementById("navLangKa") || document.getElementById("navLangEn");
   if (langLink) langLink.href += window.location.search;
+
+  projects = await fetchProjects();
 
   const slug = new URLSearchParams(window.location.search).get("slug");
   const project = slug ? getProject(slug) : null;
