@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login | Lumine</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon-mark.svg" />
+    <link rel="stylesheet" href="/css/globals.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+  </head>
+  <body>
+    <div class="admin-shell admin-login">
+      <form class="admin-login-card card-base" id="loginForm">
+        <h1>Lumine Admin</h1>
+        <div class="admin-field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="username" required />
+        </div>
+        <div class="admin-field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn btn-solid" id="loginSubmit">Log In</button>
+        <p class="admin-error" id="loginError" hidden></p>
+      </form>
+    </div>
+    <script type="module" src="/js/admin-login.js"></script>
+  </body>
+</html>

@@ -1,5 +1,8 @@
 import gsap from "gsap";
-import { projects, SERVICE_TYPES, INDUSTRIES, INDUSTRY_LABELS_KA, getServiceType } from "/js/projects-data.js";
+import { SERVICE_TYPES, INDUSTRIES, INDUSTRY_LABELS_KA, getServiceType } from "/js/projects-data.js";
+import { fetchProjects } from "/js/api-client.js";
+
+let projects = [];
 
 const grid = document.getElementById("workGrid");
 const emptyEl = document.getElementById("workEmpty");
@@ -220,8 +223,9 @@ function reveal() {
   );
 }
 
-function init() {
+async function init() {
   if (!grid) return;
+  projects = await fetchProjects();
   render();
 
   const cards = Array.from(grid.querySelectorAll(".work-card"));

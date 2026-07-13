@@ -1,4 +1,7 @@
-import { projects, SERVICE_TYPES, getServiceType } from "/js/projects-data.js";
+import { SERVICE_TYPES, getServiceType } from "/js/projects-data.js";
+import { fetchProjects } from "/js/api-client.js";
+
+let projects = [];
 
 const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
 const p = (route) => (isKa ? `/ka${route}` : route);
@@ -29,9 +32,10 @@ function buildCard(project, index) {
   return card;
 }
 
-function init() {
+async function init() {
   const grid = document.getElementById("featuredGrid");
   if (!grid) return;
+  projects = await fetchProjects();
   pickFeatured().forEach((proj, i) => grid.appendChild(buildCard(proj, i)));
 }
 
