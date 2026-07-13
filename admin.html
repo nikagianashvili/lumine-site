@@ -10,78 +10,253 @@
     <link rel="stylesheet" href="/css/admin.css" />
   </head>
   <body>
-    <div class="admin-shell">
-      <header class="admin-header">
-        <h1>Lumine Admin</h1>
-        <div class="admin-header-user">
-          <span id="userEmail"></span>
-          <button class="btn btn-outline" id="logoutBtn">Log Out</button>
+    <div class="admin-shell" id="adminShell">
+      <aside class="admin-rail">
+        <button class="rail-icon is-active" data-page="overview" title="Overview" aria-label="Overview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
+        </button>
+        <button class="rail-icon" id="lightModeBtn" title="Light mode" aria-label="Light mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+        <button class="rail-icon" id="darkModeBtn" title="Dark mode" aria-label="Dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
+        </button>
+        <button class="rail-icon" data-page="activity" title="Activity" aria-label="Activity">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
+        </button>
+        <button class="rail-icon" data-page="documents" title="Documents" aria-label="Documents">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg>
+        </button>
+        <button class="rail-icon" data-page="manage" title="Manage" aria-label="Manage">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-6 7-6s7 2.7 7 6"/><circle cx="18" cy="8" r="2.4"/><path d="M16 14.2c2.7.3 5 2.2 6 5.8"/></svg>
+        </button>
+        <button class="rail-icon" data-page="program" title="Program" aria-label="Program">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v4H4zM4 12h16v8H4z"/></svg>
+        </button>
+        <div class="admin-rail-spacer"></div>
+        <button class="rail-icon" title="Help" aria-label="Help">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.9.4-1.5 1-1.5 2.2"/><path d="M12 17h.01"/></svg>
+        </button>
+        <button class="rail-icon" id="logoutBtn" title="Log out" aria-label="Log out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        </button>
+      </aside>
+
+      <div class="admin-main">
+        <header class="admin-topnav">
+          <div class="admin-topnav-logo">LUMINE</div>
+          <nav class="admin-topnav-tabs">
+            <button class="topnav-tab is-active" data-page="overview">Overview</button>
+            <button class="topnav-tab" data-page="activity">Activity</button>
+            <button class="topnav-tab" data-page="manage">Manage</button>
+            <button class="topnav-tab" data-page="program">Program</button>
+            <button class="topnav-tab" data-page="folders">Folders</button>
+            <button class="topnav-tab" data-page="documents">Documents</button>
+          </nav>
+          <div class="admin-topnav-right">
+            <div class="avatar-stack" id="avatarStack"></div>
+            <button class="icon-btn" id="searchBtn" title="Search" aria-label="Search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            </button>
+            <button class="icon-btn" title="Notifications" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 13 6 9z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+            </button>
+            <div class="user-menu">
+              <button class="user-menu-btn" id="userMenuBtn">
+                <span class="avatar-circle" id="userAvatarInitials"></span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <div class="user-menu-dropdown" id="userDropdown" hidden>
+                <span id="userEmail"></span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="admin-content">
+          <!-- ── Overview ─────────────────────────────────────────────── -->
+          <section class="admin-page" id="page-overview">
+            <div class="admin-greeting">
+              <h1 id="greetingText">Good morning</h1>
+              <p>Stay on top of your tasks, monitor progress, and track status.</p>
+            </div>
+
+            <div class="admin-ai-banner">
+              <span class="ai-banner-icon">✦</span>
+              <span class="ai-banner-text"><strong>Lumine AI</strong> is coming soon — chat with visitors and qualify leads automatically, right from this dashboard.</span>
+            </div>
+
+            <div class="admin-folder-grid" id="folderGrid"></div>
+
+            <div class="admin-board-toolbar">
+              <div class="view-switcher" id="viewSwitcher">
+                <button class="view-tab is-active" data-view="board">Board</button>
+                <button class="view-tab" data-view="timeline">Timeline</button>
+                <button class="view-tab" data-view="spreadsheet">Spreadsheet</button>
+                <button class="view-tab" data-view="calendar">Calendar</button>
+              </div>
+              <div class="admin-board-actions">
+                <button class="btn ai-btn" id="askAiBtn" type="button">✦ Ask Lumine AI</button>
+                <button class="btn btn-solid" id="openTaskModal" type="button">+ Create Task</button>
+              </div>
+            </div>
+
+            <div class="admin-view" id="view-board">
+              <div class="admin-board" id="taskBoard">
+                <div class="admin-board-col" data-status="todo">
+                  <div class="admin-board-col-head">
+                    <span>Not Started</span>
+                    <span class="admin-board-col-count" data-count="todo">0</span>
+                  </div>
+                  <div class="admin-board-col-cards" data-cards="todo"></div>
+                </div>
+                <div class="admin-board-col" data-status="in_progress">
+                  <div class="admin-board-col-head">
+                    <span>In Progress</span>
+                    <span class="admin-board-col-count" data-count="in_progress">0</span>
+                  </div>
+                  <div class="admin-board-col-cards" data-cards="in_progress"></div>
+                </div>
+                <div class="admin-board-col" data-status="review">
+                  <div class="admin-board-col-head">
+                    <span>Under Review</span>
+                    <span class="admin-board-col-count" data-count="review">0</span>
+                  </div>
+                  <div class="admin-board-col-cards" data-cards="review"></div>
+                </div>
+                <div class="admin-board-col" data-status="done">
+                  <div class="admin-board-col-head">
+                    <span>Completed</span>
+                    <span class="admin-board-col-count" data-count="done">0</span>
+                  </div>
+                  <div class="admin-board-col-cards" data-cards="done"></div>
+                </div>
+              </div>
+              <p class="admin-empty" id="tasksEmpty" hidden>No tasks yet — create the first one.</p>
+            </div>
+
+            <div class="admin-view" id="view-timeline" hidden>
+              <div class="timeline-wrap" id="timelineWrap"></div>
+            </div>
+
+            <div class="admin-view" id="view-spreadsheet" hidden>
+              <table class="admin-table sheet-table" id="sheetTable">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Due</th>
+                    <th>Assignee</th>
+                  </tr>
+                </thead>
+                <tbody id="sheetBody"></tbody>
+              </table>
+            </div>
+
+            <div class="admin-view" id="view-calendar" hidden>
+              <div class="calendar-head">
+                <button class="icon-btn" id="calPrev" aria-label="Previous month">‹</button>
+                <span id="calLabel"></span>
+                <button class="icon-btn" id="calNext" aria-label="Next month">›</button>
+              </div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+          </section>
+
+          <!-- ── Manage (Clients) ─────────────────────────────────────── -->
+          <section class="admin-page" id="page-manage" hidden>
+            <div class="admin-panel-head">
+              <h2>Clients</h2>
+            </div>
+
+            <form class="admin-add-form" id="addClientForm">
+              <div class="admin-field">
+                <label for="clientName">Name</label>
+                <input type="text" id="clientName" name="name" />
+              </div>
+              <div class="admin-field">
+                <label for="clientEmail">Email</label>
+                <input type="email" id="clientEmail" name="email" />
+              </div>
+              <div class="admin-field">
+                <label for="clientCompany">Company</label>
+                <input type="text" id="clientCompany" name="company" />
+              </div>
+              <div class="admin-field">
+                <label for="clientStatus">Status</label>
+                <select id="clientStatus" name="status">
+                  <option value="new">New</option>
+                  <option value="hot">Hot</option>
+                  <option value="warm">Warm</option>
+                  <option value="cold">Cold</option>
+                  <option value="client">Client</option>
+                  <option value="lost">Lost</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-solid">Add Client</button>
+            </form>
+
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Company</th>
+                  <th>Source</th>
+                  <th>Status</th>
+                  <th>Added</th>
+                </tr>
+              </thead>
+              <tbody id="clientsBody"></tbody>
+            </table>
+            <p class="admin-empty" id="clientsEmpty" hidden>No clients yet.</p>
+          </section>
+
+          <!-- ── Folders ──────────────────────────────────────────────── -->
+          <section class="admin-page" id="page-folders" hidden>
+            <div class="admin-panel-head">
+              <h2>Folders</h2>
+            </div>
+            <div class="admin-folder-grid" id="folderGridFull"></div>
+            <div class="admin-empty-state" id="folderFileList" hidden></div>
+          </section>
+
+          <!-- ── Coming-soon pages ────────────────────────────────────── -->
+          <section class="admin-page" id="page-activity" hidden>
+            <div class="admin-empty-state">Activity feed is coming soon — every status change and comment will show up here.</div>
+          </section>
+          <section class="admin-page" id="page-program" hidden>
+            <div class="admin-empty-state">Program view is coming soon.</div>
+          </section>
+          <section class="admin-page" id="page-documents" hidden>
+            <div class="admin-empty-state">Document management is coming soon.</div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- ── Create Task modal ─────────────────────────────────────────── -->
+    <div class="admin-modal-overlay" id="taskModalOverlay" hidden>
+      <div class="admin-modal">
+        <div class="admin-modal-head">
+          <h3>New Task</h3>
+          <button class="icon-btn" id="closeTaskModal" aria-label="Close">✕</button>
         </div>
-      </header>
-
-      <nav class="admin-tabs">
-        <button class="admin-tab is-active" data-tab="clients">Clients</button>
-        <button class="admin-tab" data-tab="tasks">Tasks</button>
-      </nav>
-
-      <section class="admin-panel" id="panel-clients">
-        <div class="admin-panel-head">
-          <h2>Clients</h2>
-        </div>
-
-        <form class="admin-add-form" id="addClientForm">
-          <div class="admin-field">
-            <label for="clientName">Name</label>
-            <input type="text" id="clientName" name="name" />
-          </div>
-          <div class="admin-field">
-            <label for="clientEmail">Email</label>
-            <input type="email" id="clientEmail" name="email" />
-          </div>
-          <div class="admin-field">
-            <label for="clientCompany">Company</label>
-            <input type="text" id="clientCompany" name="company" />
-          </div>
-          <div class="admin-field">
-            <label for="clientStatus">Status</label>
-            <select id="clientStatus" name="status">
-              <option value="new">New</option>
-              <option value="hot">Hot</option>
-              <option value="warm">Warm</option>
-              <option value="cold">Cold</option>
-              <option value="client">Client</option>
-              <option value="lost">Lost</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-solid">Add Client</button>
-        </form>
-
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Company</th>
-              <th>Source</th>
-              <th>Status</th>
-              <th>Added</th>
-            </tr>
-          </thead>
-          <tbody id="clientsBody"></tbody>
-        </table>
-        <p class="admin-empty" id="clientsEmpty" hidden>No clients yet.</p>
-      </section>
-
-      <section class="admin-panel" id="panel-tasks" hidden>
-        <div class="admin-board-toolbar">
-          <h2>Tasks</h2>
-          <button type="button" class="btn btn-solid" id="toggleAddTask">+ Add Task</button>
-        </div>
-
-        <form class="admin-add-form" id="addTaskForm" hidden>
+        <form id="addTaskForm">
           <div class="admin-field">
             <label for="taskTitle">Title</label>
             <input type="text" id="taskTitle" name="title" required />
+          </div>
+          <div class="admin-field">
+            <label for="taskServiceType">Category</label>
+            <select id="taskServiceType" name="service_type">
+              <option value="">General</option>
+              <option value="web">Web Development</option>
+              <option value="photo-video">Photo &amp; Video</option>
+              <option value="design">Graphic Design</option>
+            </select>
           </div>
           <div class="admin-field">
             <label for="taskPriority">Priority</label>
@@ -101,40 +276,9 @@
           </div>
           <button type="submit" class="btn btn-solid">Add Task</button>
         </form>
-
-        <div class="admin-board" id="taskBoard">
-          <div class="admin-board-col" data-status="todo">
-            <div class="admin-board-col-head">
-              <span>Not Started</span>
-              <span class="admin-board-col-count" data-count="todo">0</span>
-            </div>
-            <div class="admin-board-col-cards" data-cards="todo"></div>
-          </div>
-          <div class="admin-board-col" data-status="in_progress">
-            <div class="admin-board-col-head">
-              <span>In Progress</span>
-              <span class="admin-board-col-count" data-count="in_progress">0</span>
-            </div>
-            <div class="admin-board-col-cards" data-cards="in_progress"></div>
-          </div>
-          <div class="admin-board-col" data-status="review">
-            <div class="admin-board-col-head">
-              <span>Under Review</span>
-              <span class="admin-board-col-count" data-count="review">0</span>
-            </div>
-            <div class="admin-board-col-cards" data-cards="review"></div>
-          </div>
-          <div class="admin-board-col" data-status="done">
-            <div class="admin-board-col-head">
-              <span>Completed</span>
-              <span class="admin-board-col-count" data-count="done">0</span>
-            </div>
-            <div class="admin-board-col-cards" data-cards="done"></div>
-          </div>
-        </div>
-        <p class="admin-empty" id="tasksEmpty" hidden>No tasks yet.</p>
-      </section>
+      </div>
     </div>
+
     <script type="module" src="/js/admin.js"></script>
   </body>
 </html>
