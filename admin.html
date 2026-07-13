@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | Lumine</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon-mark.svg" />
+    <link rel="stylesheet" href="/css/globals.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+  </head>
+  <body>
+    <div class="admin-shell">
+      <header class="admin-header">
+        <h1>Lumine Admin</h1>
+        <div class="admin-header-user">
+          <span id="userEmail"></span>
+          <button class="btn btn-outline" id="logoutBtn">Log Out</button>
+        </div>
+      </header>
+
+      <nav class="admin-tabs">
+        <button class="admin-tab is-active" data-tab="clients">Clients</button>
+        <button class="admin-tab" data-tab="tasks">Tasks</button>
+      </nav>
+
+      <section class="admin-panel" id="panel-clients">
+        <div class="admin-panel-head">
+          <h2>Clients</h2>
+        </div>
+
+        <form class="admin-add-form" id="addClientForm">
+          <div class="admin-field">
+            <label for="clientName">Name</label>
+            <input type="text" id="clientName" name="name" />
+          </div>
+          <div class="admin-field">
+            <label for="clientEmail">Email</label>
+            <input type="email" id="clientEmail" name="email" />
+          </div>
+          <div class="admin-field">
+            <label for="clientCompany">Company</label>
+            <input type="text" id="clientCompany" name="company" />
+          </div>
+          <div class="admin-field">
+            <label for="clientStatus">Status</label>
+            <select id="clientStatus" name="status">
+              <option value="new">New</option>
+              <option value="hot">Hot</option>
+              <option value="warm">Warm</option>
+              <option value="cold">Cold</option>
+              <option value="client">Client</option>
+              <option value="lost">Lost</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-solid">Add Client</button>
+        </form>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Company</th>
+              <th>Source</th>
+              <th>Status</th>
+              <th>Added</th>
+            </tr>
+          </thead>
+          <tbody id="clientsBody"></tbody>
+        </table>
+        <p class="admin-empty" id="clientsEmpty" hidden>No clients yet.</p>
+      </section>
+
+      <section class="admin-panel" id="panel-tasks" hidden>
+        <div class="admin-panel-head">
+          <h2>Tasks</h2>
+        </div>
+
+        <form class="admin-add-form" id="addTaskForm">
+          <div class="admin-field">
+            <label for="taskTitle">Title</label>
+            <input type="text" id="taskTitle" name="title" required />
+          </div>
+          <div class="admin-field">
+            <label for="taskPriority">Priority</label>
+            <select id="taskPriority" name="priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div class="admin-field">
+            <label for="taskDueDate">Due Date</label>
+            <input type="date" id="taskDueDate" name="due_date" />
+          </div>
+          <button type="submit" class="btn btn-solid">Add Task</button>
+        </form>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Priority</th>
+              <th>Due</th>
+              <th>Status</th>
+              <th>Added</th>
+            </tr>
+          </thead>
+          <tbody id="tasksBody"></tbody>
+        </table>
+        <p class="admin-empty" id="tasksEmpty" hidden>No tasks yet.</p>
+      </section>
+    </div>
+    <script type="module" src="/js/admin.js"></script>
+  </body>
+</html>

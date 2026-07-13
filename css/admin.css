@@ -1,0 +1,189 @@
+/* admin — internal tool, deliberately plain: same ink/paper/type tokens as
+   the public site, none of its motion/WebGL chrome. Team members live here,
+   not visitors. */
+
+.admin-shell {
+  min-height: 100svh;
+  background-color: var(--l);
+  color: var(--d);
+}
+
+/* — login — */
+.admin-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  padding: var(--sp-3);
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 24rem;
+}
+
+.admin-login-card h1 {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  margin-bottom: var(--sp-3);
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: var(--sp-2);
+}
+
+.admin-field label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.admin-field input,
+.admin-field select,
+.admin-field textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: var(--f-nm);
+  font-size: 1rem;
+  color: inherit;
+  background: var(--white);
+  border: 1px solid rgba(18, 18, 18, 0.2);
+  border-radius: 0.6rem;
+}
+
+.admin-field input:focus,
+.admin-field select:focus,
+.admin-field textarea:focus {
+  outline: none;
+  border-color: var(--d);
+}
+
+.admin-error {
+  margin-top: var(--sp-2);
+  color: #a3312a;
+  font-size: 0.9rem;
+}
+
+.admin-error[hidden] {
+  display: none;
+}
+
+/* — dashboard shell — */
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid rgba(18, 18, 18, 0.15);
+}
+
+.admin-header h1 {
+  font-size: 1.5rem;
+  text-transform: none;
+}
+
+.admin-header-user {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4) 0;
+  border-bottom: 1px solid rgba(18, 18, 18, 0.15);
+}
+
+.admin-tab {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+}
+
+.admin-tab.is-active {
+  opacity: 1;
+  border-bottom-color: var(--d);
+}
+
+.admin-panel {
+  padding: var(--sp-4);
+}
+
+.admin-panel[hidden] {
+  display: none;
+}
+
+.admin-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-3);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(18, 18, 18, 0.12);
+}
+
+.admin-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  opacity: 0.6;
+  font-weight: 500;
+}
+
+.admin-table select {
+  padding: 0.4rem 0.6rem;
+  font-family: var(--f-nm);
+  border: 1px solid rgba(18, 18, 18, 0.2);
+  border-radius: 0.4rem;
+  background: var(--white);
+  color: inherit;
+}
+
+.admin-empty {
+  padding: var(--sp-4) 0;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.admin-empty[hidden] {
+  display: none;
+}
+
+/* — inline "add new" form — */
+.admin-add-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: end;
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-3);
+  background: var(--white);
+  border-radius: 0.75rem;
+}
+
+.admin-add-form .admin-field {
+  margin-bottom: 0;
+  min-width: 10rem;
+  flex: 1;
+}
