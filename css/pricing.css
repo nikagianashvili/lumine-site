@@ -228,6 +228,10 @@ body {
   text-transform: uppercase;
 }
 
+html[lang="ka"] .price-single-name {
+  line-height: 1.3;
+}
+
 .price-single-price {
   flex-shrink: 0;
   font-family: var(--f-nm);

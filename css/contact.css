@@ -75,6 +75,10 @@
   transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+html[lang="ka"] .contact-line-value {
+  line-height: 1.3;
+}
+
 a.contact-line:hover .contact-line-value {
   transform: translateX(0.75rem);
 }

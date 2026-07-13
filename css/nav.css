@@ -291,6 +291,10 @@ nav.nav-solid .nav-lang-sep {
   color: var(--l);
 }
 
+html[lang="ka"] .menu-overlay .menu-link a {
+  line-height: 1.3;
+}
+
 .menu-overlay .menu-link a span:nth-child(2) {
   position: absolute;
   top: 0;
