@@ -61,27 +61,100 @@ create table journal_posts (
   sort_order int default 0
 );
 
--- ── New tables (don't exist as code today) ──────────────────────────────
+-- ── Team accounts ────────────────────────────────────────────────────────
+-- Rides on Supabase's built-in auth.users; this table just adds the fields
+-- auth.users doesn't have (role, display name).
 
-create table leads (
-  id uuid primary key default gen_random_uuid(),
-  created_at timestamptz default now(),
-  source text not null default 'contact_form', -- contact_form | ai_consultant | ai_chat
-  name text,
-  email text,
-  phone text,
-  message text,
-  status text not null default 'new', -- new | contacted | proposal | won | lost
-  meta jsonb default '{}' -- e.g. consultant quiz answers
-);
-
--- Team accounts ride on Supabase's built-in auth.users; this table just
--- adds the fields auth.users doesn't have (role, display name).
 create table team_members (
   id uuid primary key references auth.users (id) on delete cascade,
   name text,
   role text not null default 'member', -- admin | member
   created_at timestamptz default now()
+);
+
+-- ── Clients (pillar 4) ───────────────────────────────────────────────────
+-- One record per contact, from first inquiry through becoming a real
+-- client — status is the pipeline stage, not a separate "won" table.
+
+create table clients (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  name text,
+  email text,
+  phone text,
+  company text,
+  source text not null default 'contact_form', -- contact_form | ai_consultant | ai_chat | manual
+  status text not null default 'new', -- new | hot | warm | cold | client | lost
+  value_estimate text,
+  assigned_to uuid references team_members (id),
+  last_contacted_at timestamptz,
+  notes text,
+  meta jsonb default '{}' -- e.g. consultant quiz answers, raw contact-form message
+);
+
+-- ── Workflow / management (pillar 3) ─────────────────────────────────────
+-- An "engagement" is actual paid work for a client — separate from the
+-- public portfolio `projects` table above, which is marketing content
+-- (case studies), not operational tracking. A portfolio project MAY
+-- reference the engagement it came from once real work starts.
+
+create table engagements (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid references clients (id) on delete set null,
+  title text not null,
+  status text not null default 'active', -- active | on_hold | completed | cancelled
+  start_date date,
+  end_date date,
+  budget text,
+  notes text,
+  created_at timestamptz default now()
+);
+
+create table tasks (
+  id uuid primary key default gen_random_uuid(),
+  engagement_id uuid references engagements (id) on delete cascade,
+  title text not null,
+  description text,
+  status text not null default 'todo', -- todo | in_progress | review | done
+  priority text not null default 'medium', -- low | medium | high
+  assignee uuid references team_members (id),
+  due_date date,
+  created_at timestamptz default now()
+);
+
+-- ── Marketing office (pillar 2) ──────────────────────────────────────────
+-- Planning/scheduling for content across channels — distinct from
+-- journal_posts above, which is the live published table the public
+-- journal page actually reads. A content_calendar row becomes a
+-- journal_posts row (or a real Instagram post, etc.) once it ships.
+
+create table content_calendar (
+  id uuid primary key default gen_random_uuid(),
+  type text not null default 'journal', -- journal | social | email | ad | other
+  title text not null,
+  body text,
+  platform text, -- e.g. instagram, journal, email — free text, not enforced
+  status text not null default 'idea', -- idea | draft | scheduled | published
+  scheduled_at timestamptz,
+  published_at timestamptz,
+  assigned_to uuid references team_members (id),
+  notes text,
+  created_at timestamptz default now()
+);
+
+-- ── AI front office (pillar 1) ───────────────────────────────────────────
+-- Every AI chat/consultant session, so conversations are reviewable and a
+-- qualified visitor can be linked to a real client record.
+
+create table ai_conversations (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  channel text not null default 'chat', -- chat | consultant
+  client_id uuid references clients (id) on delete set null,
+  language text default 'en', -- en | ka
+  transcript jsonb not null default '[]', -- array of {role, content, ts}
+  status text not null default 'open', -- open | qualified | closed
+  summary text
 );
 
 -- ── Row-level security ───────────────────────────────────────────────────
@@ -93,8 +166,12 @@ alter table projects enable row level security;
 alter table pricing_packages enable row level security;
 alter table pricing_singles enable row level security;
 alter table journal_posts enable row level security;
-alter table leads enable row level security;
 alter table team_members enable row level security;
+alter table clients enable row level security;
+alter table engagements enable row level security;
+alter table tasks enable row level security;
+alter table content_calendar enable row level security;
+alter table ai_conversations enable row level security;
 
 -- Public site can read content tables directly with the anon key...
 create policy "public read projects" on projects for select using (true);
@@ -102,6 +179,7 @@ create policy "public read pricing_packages" on pricing_packages for select usin
 create policy "public read pricing_singles" on pricing_singles for select using (true);
 create policy "public read journal_posts" on journal_posts for select using (true);
 
--- ...but nobody gets leads or team_members via the anon key — those are
--- service_role (server-side /api) only, and authenticated admin reads,
--- once auth is wired up.
+-- ...but nothing else is anon-readable: clients, engagements, tasks,
+-- content_calendar, ai_conversations, and team_members are all
+-- service_role (server-side /api) only, and later authenticated-admin-only,
+-- once team login is wired up. No policies means no anon access at all.
