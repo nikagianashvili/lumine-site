@@ -128,9 +128,12 @@
               <div class="admin-board-actions">
                 <div class="ai-wrap">
                   <button class="btn ai-btn" id="askAiBtn" type="button">✦ Ask Lumine AI</button>
-                  <div class="ai-popover" id="aiPopover" hidden>
-                    <strong>Lumine AI is coming soon.</strong>
-                    <p>It will plan tasks, summarize client threads, and qualify new leads from right here. This button goes live with the AI front office.</p>
+                  <div class="ai-popover ai-popover-chat" id="aiPopover" hidden>
+                    <div class="ai-chat-messages" id="aiChatMessages"></div>
+                    <div class="ai-chat-input-row">
+                      <input type="text" id="aiChatInput" placeholder="Ask about tasks, clients…" autocomplete="off" />
+                      <button class="icon-btn ai-chat-send" id="aiChatSend" type="button" aria-label="Send">➤</button>
+                    </div>
                   </div>
                 </div>
                 <button class="btn btn-solid" id="openTaskModal" type="button">+ Create Task</button>

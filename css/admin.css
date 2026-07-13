@@ -14,6 +14,18 @@
   --a-border: rgba(18, 18, 18, 0.14);
   --a-border-soft: rgba(18, 18, 18, 0.08);
   --a-shadow: 0 0.75rem 1.5rem -1rem rgba(18, 18, 18, 0.22);
+  --a-shadow-lift: 0 1.5rem 3rem -1.25rem rgba(18, 18, 18, 0.3);
+
+  /* signature accent — "Signal Violet". Reserved for the AI layer (banner,
+     Ask AI, AI Inbox, chat) and primary interactive states (active nav,
+     focus rings) — everything else stays the quiet neutral system above.
+     Mirrors the public site's "color only where it's earned" principle,
+     scoped here to mean "color marks where AI touches the product." */
+  --a-accent: #6d5ef0;
+  --a-accent-hover: #5a4ad9;
+  --a-accent-soft: #eeebfd;
+  --a-accent-text: #4636c7;
+  --a-accent-contrast: #ffffff;
 
   /* functional palette — muted/warm, not candy-bright, admin-only */
   --a-danger: #a3432c;
@@ -39,6 +51,13 @@
   --a-border: rgba(242, 237, 226, 0.14);
   --a-border-soft: rgba(242, 237, 226, 0.07);
   --a-shadow: 0 0.75rem 1.5rem -1rem rgba(0, 0, 0, 0.55);
+  --a-shadow-lift: 0 1.5rem 3rem -1.25rem rgba(0, 0, 0, 0.6);
+
+  --a-accent: #9c8fff;
+  --a-accent-hover: #b3a8ff;
+  --a-accent-soft: rgba(156, 143, 255, 0.16);
+  --a-accent-text: #c7beff;
+  --a-accent-contrast: #18140f;
 
   --a-danger: #d97256;
   --a-danger-tint: rgba(217, 114, 86, 0.16);
@@ -48,6 +67,13 @@
   --a-success-tint: rgba(130, 169, 134, 0.16);
   --a-info: #7699b8;
   --a-info-tint: rgba(118, 153, 184, 0.16);
+}
+
+/* keyboard-focus ring, accent-colored — was entirely missing before */
+.admin-shell *:focus-visible {
+  outline: 2px solid var(--a-accent);
+  outline-offset: 2px;
+  border-radius: 0.3rem;
 }
 
 /* — login (unaffected by dark mode toggle, keeps public feel) —
@@ -169,8 +195,9 @@
 }
 
 .rail-icon.is-active {
-  background: var(--a-text);
-  color: var(--a-bg);
+  background: var(--a-accent);
+  color: var(--a-accent-contrast);
+  box-shadow: 0 0.4rem 1rem -0.4rem var(--a-accent);
 }
 
 .admin-rail-spacer {
@@ -229,7 +256,7 @@
 }
 
 .topnav-tab.is-active {
-  color: var(--a-text);
+  color: var(--a-accent);
   font-weight: 600;
 }
 
@@ -354,8 +381,8 @@
   gap: var(--sp-2);
   padding: var(--sp-2) var(--sp-3);
   margin-bottom: var(--sp-3);
-  background: var(--a-surface);
-  border: 1px solid var(--a-border);
+  background: var(--a-accent-soft);
+  border: 1px solid transparent;
   border-radius: 0.9rem;
 }
 
@@ -366,8 +393,8 @@
   width: 2.2rem;
   height: 2.2rem;
   border-radius: 0.7rem;
-  background: var(--a-text);
-  color: var(--a-bg);
+  background: var(--a-accent);
+  color: var(--a-accent-contrast);
   flex-shrink: 0;
 }
 
@@ -434,6 +461,14 @@
 
 /* — toolbar: view switcher + actions — */
 .admin-board-toolbar {
+  position: relative;
+  /* the .rv entrance animation leaves a lingering `transform` on this
+     element after it completes, which — regardless of `position` —
+     creates a stacking context per spec. Without an explicit z-index that
+     context has no defined order against later siblings like .admin-board,
+     so the popover that pops out of it here (.ai-popover) can render
+     behind the kanban board. z-index makes the order explicit. */
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -472,9 +507,14 @@
 }
 
 .ai-btn {
-  background: var(--a-text);
-  color: var(--a-bg);
-  border-color: var(--a-text);
+  background: var(--a-accent);
+  color: var(--a-accent-contrast);
+  border-color: var(--a-accent);
+}
+
+.ai-btn:hover {
+  background: var(--a-accent-hover);
+  border-color: var(--a-accent-hover);
 }
 
 .admin-view[hidden] {
@@ -537,7 +577,7 @@
   gap: 0.5rem;
   padding: var(--sp-2);
   background: var(--a-surface);
-  border-radius: 0.85rem;
+  border-radius: 1rem;
   box-shadow: var(--a-shadow);
   cursor: grab;
 }
@@ -969,7 +1009,7 @@
 
 .task-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 1rem 2rem -1rem rgba(18, 18, 18, 0.35);
+  box-shadow: var(--a-shadow-lift);
 }
 
 .folder-card:hover {
@@ -1143,6 +1183,106 @@
   display: block;
   margin-bottom: 0.4rem;
   color: var(--a-text);
+}
+
+/* — AI assistant chat popover — */
+.ai-popover-chat {
+  width: 24rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-top: 3px solid var(--a-accent);
+}
+
+.ai-chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 22rem;
+  padding: 0.85rem;
+  overflow-y: auto;
+}
+
+.ai-chat-msg {
+  max-width: 88%;
+  padding: 0.55rem 0.8rem;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.ai-chat-msg.role-assistant {
+  align-self: flex-start;
+  background: var(--a-accent-soft);
+  color: var(--a-accent-text);
+}
+
+.ai-chat-msg.role-user {
+  align-self: flex-end;
+  background: var(--a-text);
+  color: var(--a-bg);
+}
+
+.ai-chat-msg.is-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ai-chat-msg.is-typing span {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+  animation: aiChatTypingPulse 1s ease-in-out infinite;
+}
+
+.ai-chat-msg.is-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.ai-chat-msg.is-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes aiChatTypingPulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.ai-chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.85rem;
+  border-top: 1px solid var(--a-border-soft);
+  flex-shrink: 0;
+}
+
+.ai-chat-input-row input {
+  flex: 1;
+  padding: 0.55rem 0.8rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: var(--a-text);
+  background: var(--a-surface-2);
+  border: none;
+  border-radius: 100px;
+  outline: none;
+}
+
+.ai-chat-send {
+  background: var(--a-text);
+  color: var(--a-bg);
+  flex-shrink: 0;
 }
 
 /* — user dropdown items — */
@@ -1550,8 +1690,8 @@
 
 .transcript-msg.role-assistant {
   align-self: flex-end;
-  background: var(--a-text);
-  color: var(--a-bg);
+  background: var(--a-accent);
+  color: var(--a-accent-contrast);
 }
 
 .inbox-card-actions {

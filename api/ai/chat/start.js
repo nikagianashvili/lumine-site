@@ -34,7 +34,7 @@ export default async function handler(req, res) {
     const { count, error: rateError } = await supabase
       .from("clients")
       .select("id", { count: "exact", head: true })
-      .eq("source", "website_chat")
+      .eq("source", "ai_chat")
       .eq("meta->>ip", ip)
       .gte("created_at", oneHourAgo);
 
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
         email,
         phone: phone || null,
         company: company || null,
-        source: "website_chat",
+        source: "ai_chat",
         status: "new",
         meta: { ip, origin: "chat" },
       })
