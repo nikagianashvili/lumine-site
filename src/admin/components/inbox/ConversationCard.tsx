@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, MessageSquare, Sparkles, TriangleAlert } from "lucide-react";
+import { ChevronDown, MessageSquare, Sparkles, TriangleAlert, Phone, Mail, MessageCircle } from "lucide-react";
 import { api, type Conversation, type ClientStatus } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -60,7 +60,7 @@ export function ConversationCard({ convo }: { convo: Conversation }) {
           <div>
             <p className="font-medium">{client?.name || "Unknown visitor"}</p>
             <p className="text-xs text-muted-foreground">
-              {[client?.email, client?.company].filter(Boolean).join(" · ") || "—"} · {timeAgo(convo.created_at)}
+              {client?.company || "—"} · {timeAgo(convo.created_at)}
             </p>
           </div>
         </div>
@@ -76,6 +76,41 @@ export function ConversationCard({ convo }: { convo: Conversation }) {
           </span>
         </div>
       </div>
+
+      {/* Follow-up happens outside this app - the team calls/texts/emails
+          directly, they don't reply inside the chat - so these need to be
+          one-click actionable, not just displayed text. */}
+      {(client?.phone || client?.email) && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {client?.phone && (
+            <a
+              href={`tel:${client.phone}`}
+              className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:bg-muted"
+            >
+              <Phone className="size-3.5" />
+              {client.phone}
+            </a>
+          )}
+          {client?.phone && (
+            <a
+              href={`sms:${client.phone}`}
+              className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:bg-muted"
+            >
+              <MessageCircle className="size-3.5" />
+              Text
+            </a>
+          )}
+          {client?.email && (
+            <a
+              href={`mailto:${client.email}`}
+              className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:bg-muted"
+            >
+              <Mail className="size-3.5" />
+              {client.email}
+            </a>
+          )}
+        </div>
+      )}
 
       {/* AI signal — intent/urgency from the classification step, confidence
           flagged only when low enough a human should double-check it */}

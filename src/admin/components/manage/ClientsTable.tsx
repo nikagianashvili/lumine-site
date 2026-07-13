@@ -75,9 +75,32 @@ export function ClientsTable() {
         cell: (info) => <span className="font-medium">{(info.getValue() as string) || "—"}</span>,
       },
       {
+        accessorKey: "phone",
+        header: "Phone",
+        cell: (info) => {
+          const phone = info.getValue() as string | null;
+          return phone ? (
+            <a href={`tel:${phone}`} className="text-primary hover:underline">
+              {phone}
+            </a>
+          ) : (
+            <span className="text-muted-foreground">—</span>
+          );
+        },
+      },
+      {
         accessorKey: "email",
         header: "Email",
-        cell: (info) => <span className="text-muted-foreground">{(info.getValue() as string) || "—"}</span>,
+        cell: (info) => {
+          const email = info.getValue() as string | null;
+          return email ? (
+            <a href={`mailto:${email}`} className="text-primary hover:underline">
+              {email}
+            </a>
+          ) : (
+            <span className="text-muted-foreground">—</span>
+          );
+        },
       },
       {
         accessorKey: "company",
