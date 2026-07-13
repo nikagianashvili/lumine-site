@@ -1,5 +1,5 @@
 {
-  "name": "lemon-bureau",
+  "name": "lumine-site",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -10,16 +10,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/harrnish/lemon-bureau.git"
+    "url": "git+https://github.com/nikagianashvili/lumine-site.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/harrnish/lemon-bureau/issues"
+    "url": "https://github.com/nikagianashvili/lumine-site/issues"
   },
-  "homepage": "https://github.com/harrnish/lemon-bureau#readme",
-  "description": "",
+  "homepage": "https://github.com/nikagianashvili/lumine-site#readme",
+  "description": "Lumine — creative agency site",
   "dependencies": {
     "@dimforge/rapier3d": "^0.19.3",
     "@supabase/supabase-js": "^2.110.2",
