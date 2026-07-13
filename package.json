@@ -22,6 +22,7 @@
   "homepage": "https://github.com/nikagianashvili/lumine-site#readme",
   "description": "Lumine — creative agency site",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.111.0",
     "@dimforge/rapier3d": "^0.19.3",
     "@supabase/supabase-js": "^2.110.2",
     "cannon-es": "^0.20.0",

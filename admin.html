@@ -27,6 +27,9 @@
           <button class="rail-icon" data-page="activity" title="Activity" aria-label="Activity">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
           </button>
+          <button class="rail-icon" data-page="inbox" title="AI Inbox" aria-label="AI Inbox">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12.5h5"/></svg>
+          </button>
           <button class="rail-icon" data-page="documents" title="Documents" aria-label="Documents">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg>
           </button>
@@ -57,6 +60,7 @@
           <nav class="admin-topnav-tabs">
             <button class="topnav-tab is-active" data-page="overview">Overview</button>
             <button class="topnav-tab" data-page="activity">Activity</button>
+            <button class="topnav-tab" data-page="inbox">AI Inbox</button>
             <button class="topnav-tab" data-page="manage">Manage</button>
             <button class="topnav-tab" data-page="program">Program</button>
             <button class="topnav-tab" data-page="folders">Folders</button>
@@ -107,8 +111,8 @@
 
             <div class="admin-ai-banner rv" id="aiBanner" style="--rv: 1">
               <span class="ai-banner-icon">✦</span>
-              <span class="ai-banner-text"><strong>Lumine AI</strong> is coming soon — chat with visitors and qualify leads automatically, right from this dashboard.</span>
-              <button class="btn btn-outline btn-sm" id="aiBannerDetails" type="button">View details</button>
+              <span class="ai-banner-text" id="aiBannerText"><strong>Lumine AI</strong> is live — it answers new inquiries from the contact form and qualifies each one.</span>
+              <button class="btn btn-outline btn-sm" id="aiBannerDetails" type="button">Open AI Inbox</button>
               <button class="icon-btn" id="aiBannerDismiss" aria-label="Dismiss">✕</button>
             </div>
 
@@ -203,6 +207,17 @@
               </div>
               <div class="calendar-grid" id="calendarGrid"></div>
             </div>
+          </section>
+
+          <!-- ── AI Inbox ─────────────────────────────────────────────── -->
+          <section class="admin-page" id="page-inbox" hidden>
+            <div class="admin-panel-head">
+              <h2>AI Inbox</h2>
+            </div>
+            <div class="inbox-list" id="inboxList"></div>
+            <p class="admin-empty-state" id="inboxEmpty" hidden>
+              No conversations yet — this fills in the moment a visitor messages you through the contact form.
+            </p>
           </section>
 
           <!-- ── Manage (Clients) ─────────────────────────────────────── -->
