@@ -52,6 +52,14 @@ export interface TranscriptMessage {
   ts: string;
 }
 
+// Written by api/ai/intake.js's classification step into clients.meta -
+// not a fixed schema field, so treat every field as possibly absent.
+export interface AiClassification {
+  intent?: string;
+  urgency?: "low" | "medium" | "high";
+  confidence?: number;
+}
+
 export interface Conversation {
   id: string;
   created_at: string;
@@ -61,7 +69,16 @@ export interface Conversation {
   transcript: TranscriptMessage[];
   status: ConversationStatus;
   summary: string | null;
-  clients: { name: string | null; email: string | null; phone: string | null; company: string | null; status: ClientStatus } | null;
+  clients:
+    | {
+        name: string | null;
+        email: string | null;
+        phone: string | null;
+        company: string | null;
+        status: ClientStatus;
+        meta: AiClassification & Record<string, unknown>;
+      }
+    | null;
 }
 
 async function unwrap<T>(res: Response, key: string): Promise<T> {

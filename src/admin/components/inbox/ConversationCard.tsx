@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, Sparkles } from "lucide-react";
+import { ChevronDown, MessageSquare, Sparkles, TriangleAlert } from "lucide-react";
 import { api, type Conversation, type ClientStatus } from "@/lib/api";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,9 @@ const STATUS_CLASSES: Record<ClientStatus, string> = {
   lost: "bg-muted text-muted-foreground",
 };
 
+const URGENCY_VARIANT = { high: "destructive", medium: "warning", low: "secondary" } as const;
+const LOW_CONFIDENCE_THRESHOLD = 0.6;
+
 function timeAgo(iso: string) {
   const diffMs = Date.now() - new Date(iso).getTime();
   const mins = Math.round(diffMs / 60000);
@@ -24,12 +28,17 @@ function timeAgo(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
 }
 
+function messageTime(iso: string) {
+  return new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+}
+
 export function ConversationCard({ convo }: { convo: Conversation }) {
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
   const client = convo.clients;
   const escalated = convo.status === "qualified";
   const handled = convo.status === "closed";
+  const meta = client?.meta ?? {};
 
   const handleMutation = useMutation({
     mutationFn: () => api.conversations.update(convo.id, { status: "closed" }),
@@ -37,32 +46,54 @@ export function ConversationCard({ convo }: { convo: Conversation }) {
   });
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+    <div
+      className={cn(
+        "rounded-2xl border bg-card p-4 shadow-sm",
+        escalated ? "border-destructive/30 bg-destructive/[0.03] border-l-4" : "border-border",
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="font-medium">{client?.name || "Unknown visitor"}</p>
-          <p className="text-xs text-muted-foreground">
-            {[client?.email, client?.company].filter(Boolean).join(" · ") || "—"} · {timeAgo(convo.created_at)}
-          </p>
+        <div className="flex items-start gap-2">
+          <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground" title="Channel: chat">
+            <MessageSquare className="size-3.5" />
+          </span>
+          <div>
+            <p className="font-medium">{client?.name || "Unknown visitor"}</p>
+            <p className="text-xs text-muted-foreground">
+              {[client?.email, client?.company].filter(Boolean).join(" · ") || "—"} · {timeAgo(convo.created_at)}
+            </p>
+          </div>
         </div>
         <div className="flex flex-shrink-0 items-center gap-2">
           {escalated && (
-            <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold uppercase text-destructive">
+            <span className="flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold uppercase text-destructive">
+              <TriangleAlert className="size-3" />
               Needs you
             </span>
           )}
-          <span
-            className={cn(
-              "rounded-full px-2 py-0.5 text-xs font-semibold uppercase",
-              STATUS_CLASSES[client?.status ?? "new"],
-            )}
-          >
+          <span className={cn("rounded-full px-2 py-0.5 text-xs font-semibold uppercase", STATUS_CLASSES[client?.status ?? "new"])}>
             {client?.status ?? "new"}
           </span>
         </div>
       </div>
 
-      <p className="mt-2 text-sm text-muted-foreground">{convo.summary || "No summary available."}</p>
+      {/* AI signal — intent/urgency from the classification step, confidence
+          flagged only when low enough a human should double-check it */}
+      {(meta.intent || meta.urgency || (typeof meta.confidence === "number" && meta.confidence < LOW_CONFIDENCE_THRESHOLD)) && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          {meta.intent && <Badge variant="outline">{meta.intent}</Badge>}
+          {meta.urgency && <Badge variant={URGENCY_VARIANT[meta.urgency]}>{meta.urgency} urgency</Badge>}
+          {typeof meta.confidence === "number" && meta.confidence < LOW_CONFIDENCE_THRESHOLD && (
+            <span className="text-xs text-muted-foreground" title="The AI wasn't fully confident in this classification">
+              Low-confidence read ({Math.round(meta.confidence * 100)}%) — worth a second look
+            </span>
+          )}
+        </div>
+      )}
+
+      <p className="mt-2 text-sm text-muted-foreground">
+        {convo.summary || (handled ? "Answered — no summary generated." : "No summary yet.")}
+      </p>
 
       <button
         type="button"
@@ -76,20 +107,22 @@ export function ConversationCard({ convo }: { convo: Conversation }) {
       {expanded && (
         <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
           {convo.transcript.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No messages recorded.</p>
+            <p className="text-sm text-muted-foreground">
+              No messages recorded — this visitor started a chat but never sent one.
+            </p>
           ) : (
             convo.transcript.map((m, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "max-w-[85%] rounded-xl px-3 py-2 text-sm",
-                  m.role === "assistant"
-                    ? "self-start bg-accent text-accent-foreground"
-                    : "self-end bg-foreground text-background",
-                )}
-              >
-                {m.role === "assistant" && <Sparkles className="mb-1 inline size-3 opacity-60" />}
-                <p className="whitespace-pre-wrap">{m.content}</p>
+              <div key={i} className={cn("flex flex-col", m.role === "assistant" ? "items-start" : "items-end")}>
+                <div
+                  className={cn(
+                    "max-w-[85%] rounded-xl px-3 py-2 text-sm",
+                    m.role === "assistant" ? "bg-accent text-accent-foreground" : "bg-foreground text-background",
+                  )}
+                >
+                  {m.role === "assistant" && <Sparkles className="mb-1 inline size-3 opacity-60" />}
+                  <p className="whitespace-pre-wrap">{m.content}</p>
+                </div>
+                <span className="mt-0.5 px-1 text-[0.65rem] text-muted-foreground">{messageTime(m.ts)}</span>
               </div>
             ))
           )}
