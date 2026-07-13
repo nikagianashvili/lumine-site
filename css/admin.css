@@ -187,3 +187,137 @@
   min-width: 10rem;
   flex: 1;
 }
+
+.admin-add-form[hidden] {
+  display: none;
+}
+
+/* — kanban board (Tasks) — same bones as a generic board tool, ink/paper
+   skin: priority reads through weight/fill, never a new hue, matching the
+   "monochrome until it earns color" rule everywhere else on the site. — */
+
+.admin-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(15rem, 1fr));
+  gap: var(--sp-3);
+  align-items: start;
+  overflow-x: auto;
+}
+
+.admin-board-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  min-height: 6rem;
+  padding: var(--sp-2);
+  background: rgba(18, 18, 18, 0.04);
+  border-radius: 1rem;
+}
+
+.admin-board-col.is-drag-over {
+  background: rgba(18, 18, 18, 0.09);
+}
+
+.admin-board-col-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.admin-board-col-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  font-size: 0.7rem;
+  background: var(--d);
+  color: var(--l);
+  border-radius: 999px;
+}
+
+.task-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: var(--sp-2);
+  background: var(--white);
+  border-radius: 0.85rem;
+  box-shadow: 0 0.75rem 1.5rem -1rem rgba(18, 18, 18, 0.25);
+  cursor: grab;
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.task-card.is-dragging {
+  opacity: 0.4;
+}
+
+.task-priority {
+  align-self: flex-start;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  border: 1px solid rgba(18, 18, 18, 0.3);
+  border-radius: 999px;
+  opacity: 0.6;
+}
+
+.task-priority.priority-medium {
+  opacity: 1;
+  border-color: var(--d);
+}
+
+.task-priority.priority-high {
+  opacity: 1;
+  background: var(--d);
+  color: var(--l);
+  border-color: var(--d);
+}
+
+.task-title {
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.task-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.task-due {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.task-assignee {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: var(--d);
+  color: var(--l);
+  border-radius: 999px;
+}
+
+.admin-board-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-3);
+}
