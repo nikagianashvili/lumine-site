@@ -50,8 +50,11 @@
   --a-info-tint: rgba(118, 153, 184, 0.16);
 }
 
-/* — login (unaffected by dark mode toggle, keeps public feel) — */
-.admin-login {
+/* — login (unaffected by dark mode toggle, keeps public feel) —
+   .admin-shell.admin-login so it outranks the later .admin-shell grid rule:
+   the login page has no rail, and the grid was squeezing the card into the
+   5.5rem rail column */
+.admin-shell.admin-login {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -695,6 +698,24 @@
   background: var(--a-success);
 }
 
+.timeline-today {
+  position: absolute;
+  top: -0.15rem;
+  bottom: -0.15rem;
+  width: 2px;
+  background: var(--a-danger);
+  opacity: 0.55;
+}
+
+.client-delete {
+  color: var(--a-text-soft);
+}
+
+.client-delete:hover {
+  color: var(--a-danger);
+  background: var(--a-danger-tint);
+}
+
 /* — spreadsheet view reuses .admin-table — */
 .sheet-table td {
   font-size: 0.9rem;
@@ -726,6 +747,16 @@
 
 .calendar-cell.is-outside {
   opacity: 0.35;
+}
+
+.calendar-dow {
+  padding: 0.5rem 0.4rem;
+  background: var(--a-surface-2);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--a-text-soft);
+  text-align: center;
 }
 
 .calendar-date {
