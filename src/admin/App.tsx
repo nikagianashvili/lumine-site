@@ -4,6 +4,7 @@ import { getSession, type Session } from "@/lib/session";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { TopNav } from "@/components/shell/TopNav";
 import { OverviewPage } from "@/pages/Overview";
+import { ProgramPage } from "@/pages/Program";
 import { ComingSoonPage } from "@/pages/ComingSoon";
 
 export type Page = "overview" | "activity" | "inbox" | "manage" | "program" | "folders" | "documents" | "profile";
@@ -36,7 +37,9 @@ export default function App() {
         <div className="flex min-w-0 flex-1 flex-col">
           <TopNav page={page} onNavigate={setPage} session={session} />
           <main className="flex-1 overflow-y-auto px-6 pb-6">
-            {page === "overview" ? <OverviewPage /> : <ComingSoonPage page={page} />}
+            {page === "overview" && <OverviewPage />}
+            {page === "program" && <ProgramPage />}
+            {page !== "overview" && page !== "program" && <ComingSoonPage page={page} />}
           </main>
         </div>
       </div>
