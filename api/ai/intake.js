@@ -4,38 +4,17 @@
 // `ai_conversations` row so it's reviewable from /admin's AI Inbox.
 import Anthropic from "@anthropic-ai/sdk";
 import { getSupabaseServerClient } from "../_lib/supabase.js";
+import { SERVICES_CONTEXT, fetchPricing, pricingBlock, parseModelJson, CLIENT_STATUSES } from "./_lib/grounding.js";
 
 const MODEL = "claude-haiku-4-5-20251001";
-const CLIENT_STATUSES = ["new", "hot", "warm", "cold"];
 
-const SERVICES_CONTEXT = `
-Lumine is a creative agency based in Tbilisi, Georgia, offering three service types:
-- Web: websites and web apps (design + development)
-- Photo & Video: brand photography and video production
-- Design: graphic design, branding, print/social design deliverables
-Clients span industries: Medical, Hotels, Restaurants, Real Estate, SaaS, E-Commerce, Startups.
-Ongoing monthly retainer packages combine social content + paid ads management (see PRICING PACKAGES).
-One-off single-service pricing is also available (see PRICING SINGLES).
-`.trim();
-
-function buildSystemPrompt({ packages, singles, pricingNote, language }) {
-  const pkgLines = packages
-    .map((p) => `- ${p.name} (${p.price}/mo): ${(p.includes || []).join(", ")}`)
-    .join("\n");
-  const singleLines = singles.map((s) => `- ${s.name}: ${s.price}`).join("\n");
-
+function buildSystemPrompt({ packages, singles, language }) {
   return `
 You are the front-desk assistant for Lumine, answering a message a visitor just submitted through the website's contact form. Answer ONLY using the information given below.
 
 ${SERVICES_CONTEXT}
 
-PRICING PACKAGES (monthly retainers):
-${pkgLines || "(none loaded)"}
-
-PRICING SINGLES (one-off services):
-${singleLines || "(none loaded)"}
-
-${pricingNote ? `Pricing note: ${pricingNote}` : ""}
+${pricingBlock({ packages, singles })}
 
 Rules:
 - If the visitor's question can be answered from the information above, answer it directly and specifically.
@@ -47,22 +26,6 @@ Rules:
 Respond with ONLY a JSON object (no markdown, no other text) matching exactly this shape:
 {"reply": string, "intent": string, "urgency": "low"|"medium"|"high", "status": "new"|"hot"|"warm"|"cold", "escalate": boolean, "confidence": number between 0 and 1, "summary": string (one short sentence for an internal dashboard)}
 `.trim();
-}
-
-function parseModelJson(text) {
-  try {
-    return JSON.parse(text.trim());
-  } catch {
-    const match = text.match(/\{[\s\S]*\}/);
-    if (match) {
-      try {
-        return JSON.parse(match[0]);
-      } catch {
-        // fall through
-      }
-    }
-    return null;
-  }
 }
 
 export default async function handler(req, res) {
@@ -90,13 +53,11 @@ export default async function handler(req, res) {
 
     const supabase = getSupabaseServerClient();
 
-    const [{ data: packages, error: pkgError }, { data: singles, error: singleError }] = await Promise.all([
-      supabase.from("pricing_packages").select("*").order("sort_order", { ascending: true }),
-      supabase.from("pricing_singles").select("*").order("sort_order", { ascending: true }),
-    ]);
-
-    if (pkgError || singleError) {
-      res.status(500).json({ error: (pkgError || singleError).message });
+    let packages, singles;
+    try {
+      ({ packages, singles } = await fetchPricing());
+    } catch (err) {
+      res.status(500).json({ error: err.message });
       return;
     }
 
