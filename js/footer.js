@@ -147,7 +147,7 @@ const CFG = {
 
   // the reticle/compass mark
   let mark2Stamp = null;
-  loadTintedStamp("/logo/lumine-mark-2.png", (stamp) => (mark2Stamp = stamp));
+  loadTintedStamp("/logo/lumine-mark-2.svg", (stamp) => (mark2Stamp = stamp));
   const mark2Size = particleSize * 2.4;
   const halfMark2Size = mark2Size / 2;
 

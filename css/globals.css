@@ -39,6 +39,17 @@ body {
   color: var(--d);
 }
 
+/* Safety net: LK Lumina is the primary face for both --f-h and --f-nm, so
+   any Georgian text that never sets its own line-height (e.g. a bare <span>
+   that only sets font-size) inherits the browser's tight "normal" instead
+   of a value that actually clears Mkhedruli's real glyph ink. Elements with
+   their own explicit line-height (h1-h6, .strip-track span, etc.) still win
+   over this via specificity — this only catches what would otherwise fall
+   through. */
+html[lang="ka"] body {
+  line-height: 1.3;
+}
+
 img {
   width: 100%;
   height: 100%;
@@ -79,15 +90,24 @@ h6 {
 }
 
 /* Georgian (mkhedruli) has full ascenders/descenders on every letter, unlike
-   uppercase Latin — 0.95 clips them, especially inside the SplitText mask
-   wrappers used for the reveal animations. */
+   uppercase Latin, and LK Lumina's own declared font metrics undershoot its
+   actual glyph ink — 0.95, and even 1.15, still clip real Georgian text,
+   especially inside the SplitText mask wrappers used for the reveal
+   animations. 1.3 leaves real margin instead of chasing the exact number. */
 html[lang="ka"] h1,
 html[lang="ka"] h2,
 html[lang="ka"] h3,
 html[lang="ka"] h4,
 html[lang="ka"] h5,
 html[lang="ka"] h6 {
-  line-height: 1.15;
+  line-height: 1.3;
+  /* js/mtavruli.js already converts the actual text to Mtavruli codepoints
+     (Georgian's real "capitals"), which is already the correct final look —
+     text-transform:uppercase inherited from the base h1-h6 rule then runs
+     the browser's own Unicode case-mapping over that already-uppercase text
+     a second time, which folds it right back down to Mkhedruli instead of
+     leaving it alone. Turning the transform off is what actually fixes it. */
+  text-transform: none;
 }
 
 p {

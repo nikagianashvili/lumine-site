@@ -8,3 +8,7 @@ dist/
 
 # raw backups of pre-compression images — not part of the deployed site
 image-originals/
+
+# Supabase / API secrets - set in Vercel project settings + local .env, never committed
+.env
+.env.local
