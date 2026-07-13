@@ -1,14 +1,24 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Board } from "@/components/program/Board";
+import { Spreadsheet } from "@/components/program/Spreadsheet";
+import { CalendarView } from "@/components/program/CalendarView";
 import { TaskModal } from "@/components/program/TaskModal";
 
-// View tabs (Timeline/Spreadsheet/Calendar) are next in the rebuild queue —
-// Board ships first since it's the one the original brief called out as the
-// biggest lever (DOM-rebuild-per-change lag in the old vanilla version).
+type View = "board" | "timeline" | "spreadsheet" | "calendar";
+
+const VIEWS: { id: View; label: string }[] = [
+  { id: "board", label: "Board" },
+  { id: "timeline", label: "Timeline" },
+  { id: "spreadsheet", label: "Spreadsheet" },
+  { id: "calendar", label: "Calendar" },
+];
+
 export function ProgramPage() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [view, setView] = useState<View>("board");
 
   return (
     <div className="flex flex-col gap-4 pt-6">
@@ -22,7 +32,32 @@ export function ProgramPage() {
           Create task
         </Button>
       </div>
-      <Board />
+
+      <div className="flex w-fit gap-1 rounded-full border border-border bg-card p-1 shadow-sm">
+        {VIEWS.map((v) => (
+          <button
+            key={v.id}
+            type="button"
+            onClick={() => setView(v.id)}
+            className={cn(
+              "rounded-full px-4 py-1.5 text-sm text-muted-foreground transition-colors",
+              view === v.id && "bg-primary text-primary-foreground",
+            )}
+          >
+            {v.label}
+          </button>
+        ))}
+      </div>
+
+      {view === "board" && <Board />}
+      {view === "spreadsheet" && <Spreadsheet />}
+      {view === "calendar" && <CalendarView />}
+      {view === "timeline" && (
+        <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-border text-sm text-muted-foreground">
+          Timeline (Gantt) is next in the rebuild queue.
+        </div>
+      )}
+
       <TaskModal open={modalOpen} onOpenChange={setModalOpen} />
     </div>
   );
