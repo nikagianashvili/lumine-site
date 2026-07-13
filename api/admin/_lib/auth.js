@@ -10,21 +10,29 @@ export async function requireTeamMember(req) {
   const token = authHeader.replace(/^Bearer\s+/i, "");
   if (!token) return { error: "Missing Authorization header", status: 401 };
 
-  const supabase = getSupabaseServerClient();
-  const { data: userData, error: userError } = await supabase.auth.getUser(token);
-  if (userError || !userData?.user) {
-    return { error: "Invalid or expired session", status: 401 };
+  // Every admin endpoint calls this first, so guarding here (rather than in
+  // each handler) covers all of them: a misconfigured env would otherwise
+  // throw synchronously inside createClient() and crash the whole process
+  // instead of returning a clean error.
+  try {
+    const supabase = getSupabaseServerClient();
+    const { data: userData, error: userError } = await supabase.auth.getUser(token);
+    if (userError || !userData?.user) {
+      return { error: "Invalid or expired session", status: 401 };
+    }
+
+    const { data: member, error: memberError } = await supabase
+      .from("team_members")
+      .select("id, name, role")
+      .eq("id", userData.user.id)
+      .single();
+
+    if (memberError || !member) {
+      return { error: "Not a team member", status: 403 };
+    }
+
+    return { user: userData.user, member };
+  } catch (err) {
+    return { error: `Auth check failed: ${err.message}`, status: 500 };
   }
-
-  const { data: member, error: memberError } = await supabase
-    .from("team_members")
-    .select("id, name, role")
-    .eq("id", userData.user.id)
-    .single();
-
-  if (memberError || !member) {
-    return { error: "Not a team member", status: 403 };
-  }
-
-  return { user: userData.user, member };
 }
