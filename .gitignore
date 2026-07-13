@@ -12,3 +12,5 @@ image-originals/
 # Supabase / API secrets — set in Vercel project settings + local .env, never committed
 .env
 .env.local
+.vercel
+.env*
