@@ -44,6 +44,26 @@ export interface TeamMember {
   role: "admin" | "member";
 }
 
+export type ConversationStatus = "open" | "qualified" | "closed";
+
+export interface TranscriptMessage {
+  role: "user" | "assistant";
+  content: string;
+  ts: string;
+}
+
+export interface Conversation {
+  id: string;
+  created_at: string;
+  channel: "chat" | "consultant";
+  client_id: string | null;
+  language: "en" | "ka";
+  transcript: TranscriptMessage[];
+  status: ConversationStatus;
+  summary: string | null;
+  clients: { name: string | null; email: string | null; phone: string | null; company: string | null; status: ClientStatus } | null;
+}
+
 async function unwrap<T>(res: Response, key: string): Promise<T> {
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
@@ -71,5 +91,13 @@ export const api = {
   },
   teamMembers: {
     list: async () => unwrap<TeamMember[]>(await adminFetch("/api/admin/team-members"), "teamMembers"),
+  },
+  conversations: {
+    list: async () => unwrap<Conversation[]>(await adminFetch("/api/admin/ai-conversations"), "conversations"),
+    update: async (id: string, updates: Partial<Conversation>) =>
+      unwrap<Conversation>(
+        await adminFetch("/api/admin/ai-conversations", { method: "PATCH", body: JSON.stringify({ id, ...updates }) }),
+        "conversation",
+      ),
   },
 };

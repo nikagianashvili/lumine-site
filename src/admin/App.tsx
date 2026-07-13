@@ -6,9 +6,17 @@ import { TopNav } from "@/components/shell/TopNav";
 import { OverviewPage } from "@/pages/Overview";
 import { ProgramPage } from "@/pages/Program";
 import { ManagePage } from "@/pages/Manage";
+import { InboxPage } from "@/pages/Inbox";
 import { ComingSoonPage } from "@/pages/ComingSoon";
 
 export type Page = "overview" | "activity" | "inbox" | "manage" | "program" | "folders" | "documents" | "profile";
+
+const PAGES: Partial<Record<Page, React.ComponentType>> = {
+  overview: OverviewPage,
+  program: ProgramPage,
+  manage: ManagePage,
+  inbox: InboxPage,
+};
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
@@ -38,10 +46,10 @@ export default function App() {
         <div className="flex min-w-0 flex-1 flex-col">
           <TopNav page={page} onNavigate={setPage} session={session} />
           <main className="flex-1 overflow-y-auto px-6 pb-6">
-            {page === "overview" && <OverviewPage />}
-            {page === "program" && <ProgramPage />}
-            {page === "manage" && <ManagePage />}
-            {page !== "overview" && page !== "program" && page !== "manage" && <ComingSoonPage page={page} />}
+            {(() => {
+              const PageComponent = PAGES[page];
+              return PageComponent ? <PageComponent /> : <ComingSoonPage page={page} />;
+            })()}
           </main>
         </div>
       </div>
