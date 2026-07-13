@@ -1,6 +1,6 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { packages, singles, pricingNote, pricingNote_ka } from "/js/pricing-data.js";
+import { fetchPricing } from "/js/api-client.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -56,11 +56,13 @@ function buildSingle(item, index) {
   return row;
 }
 
-function init() {
+async function init() {
   const grid = document.getElementById("priceGrid");
   const noteEl = document.getElementById("priceNote");
   const singlesList = document.getElementById("singlesList");
   if (!grid) return;
+
+  const { packages, singles, pricingNote, pricingNote_ka } = await fetchPricing();
 
   packages.forEach((pkg) => grid.appendChild(buildPackage(pkg)));
   noteEl.textContent = isKa ? pricingNote_ka : pricingNote;
