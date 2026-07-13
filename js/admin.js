@@ -207,7 +207,9 @@ function openContextMenu(anchor, items) {
     });
     menu.appendChild(btn);
   });
-  document.body.appendChild(menu);
+  // append inside the shell, not body — the --a-* theme tokens are scoped
+  // to .admin-shell and the menu renders unthemed outside it
+  shell.appendChild(menu);
   const rect = anchor.getBoundingClientRect();
   menu.style.top = `${rect.bottom + 6}px`;
   menu.style.left = `${Math.min(rect.left, window.innerWidth - menu.offsetWidth - 12)}px`;
@@ -370,6 +372,7 @@ function clientRow(client) {
     <td>${client.source}</td>
     <td><select data-id="${client.id}" class="client-status">${statusOptions}</select></td>
     <td>${formatDate(client.created_at)}</td>
+    <td><button class="icon-btn client-delete" data-id="${client.id}" title="Delete client" aria-label="Delete client">✕</button></td>
   `;
   return tr;
 }
@@ -393,16 +396,34 @@ async function loadClients() {
       toast("Client status updated");
     });
   });
+
+  body.querySelectorAll(".client-delete").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!window.confirm("Delete this client? This can't be undone.")) return;
+      await adminFetch("/api/admin/clients", {
+        method: "DELETE",
+        body: JSON.stringify({ id: btn.dataset.id }),
+      });
+      toast("Client deleted");
+      loadClients();
+    });
+  });
 }
 
 document.getElementById("addClientForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
+  const name = form.name.value.trim();
+  const email = form.email.value.trim();
+  if (!name && !email) {
+    toast("Add a name or an email first");
+    return;
+  }
   await adminFetch("/api/admin/clients", {
     method: "POST",
     body: JSON.stringify({
-      name: form.name.value.trim(),
-      email: form.email.value.trim(),
+      name,
+      email,
       company: form.company.value.trim(),
       status: form.status.value,
       source: "manual",
@@ -582,6 +603,8 @@ function renderTimeline() {
   const max = Math.max(...dates, Date.now()) + 1000 * 60 * 60 * 24;
   const span = Math.max(max - min, 1);
 
+  const todayPos = ((Date.now() - min) / span) * 100;
+
   dated.forEach((t, i) => {
     const row = document.createElement("div");
     row.className = "timeline-row rv";
@@ -590,6 +613,7 @@ function renderTimeline() {
     row.innerHTML = `
       <span class="timeline-row-label">${t.title}</span>
       <div class="timeline-track">
+        <span class="timeline-today" style="left:${todayPos}%" title="Today"></span>
         <span class="timeline-bar priority-${t.priority}" style="left:${Math.min(pos, 92)}%">${formatDate(t.due_date)}</span>
       </div>
     `;
@@ -629,6 +653,13 @@ function renderCalendar() {
   const firstDay = new Date(year, month, 1);
   const startOffset = (firstDay.getDay() + 6) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach((dow) => {
+    const cell = document.createElement("div");
+    cell.className = "calendar-dow";
+    cell.textContent = dow;
+    grid.appendChild(cell);
+  });
 
   const byDate = {};
   filteredTasks().forEach((t) => {
