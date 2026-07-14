@@ -117,4 +117,13 @@ export const api = {
         "conversation",
       ),
   },
+  profile: {
+    // returns { ok: true } on success, not a wrapped resource - no unwrap()
+    update: async (updates: { name?: string; role?: string; currentPassword?: string; newPassword?: string }) => {
+      const res = await adminFetch("/api/admin/profile", { method: "PATCH", body: JSON.stringify(updates) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not update profile");
+      return data;
+    },
+  },
 };
