@@ -41,7 +41,9 @@ export interface Task {
 export interface TeamMember {
   id: string;
   name: string | null;
-  role: "admin" | "member";
+  // Free text - a specialty label (Founder, Orchestrator, Media, Design, …),
+  // not an access tier. No permissions are derived from this value.
+  role: string;
 }
 
 export type ConversationStatus = "open" | "qualified" | "closed";

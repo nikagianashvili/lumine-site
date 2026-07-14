@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { adminFetch } from "@/lib/session";
-import type { ClientStatus } from "@/lib/api";
+import { api, type ClientStatus } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -25,10 +25,12 @@ async function createClient(payload: Record<string, unknown>) {
 
 export function NewClientModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const queryClient = useQueryClient();
+  const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
   const [status, setStatus] = useState<ClientStatus>("new");
+  const [assignedTo, setAssignedTo] = useState<string>("unassigned");
   const [error, setError] = useState<string | null>(null);
 
   const mutation = useMutation({
@@ -46,6 +48,7 @@ export function NewClientModal({ open, onOpenChange }: { open: boolean; onOpenCh
     setEmail("");
     setCompany("");
     setStatus("new");
+    setAssignedTo("unassigned");
     setError(null);
   }
 
@@ -61,6 +64,7 @@ export function NewClientModal({ open, onOpenChange }: { open: boolean; onOpenCh
       email: email.trim(),
       company: company.trim(),
       status,
+      assigned_to: assignedTo === "unassigned" ? null : assignedTo,
       source: "manual",
     });
   }
@@ -102,6 +106,22 @@ export function NewClientModal({ open, onOpenChange }: { open: boolean; onOpenCh
                   {STATUS_OPTIONS.map((s) => (
                     <SelectItem key={s} value={s}>
                       {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label>Assigned to</Label>
+              <Select value={assignedTo} onValueChange={setAssignedTo}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Unassigned" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="unassigned">Unassigned</SelectItem>
+                  {(teamQuery.data ?? []).map((m) => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.name || "Unnamed"}
                     </SelectItem>
                   ))}
                 </SelectContent>

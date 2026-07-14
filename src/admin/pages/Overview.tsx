@@ -1,12 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { getSession } from "@/lib/session";
 import { StatCard } from "@/components/overview/StatCard";
 import { LeadsChart, type DayCount } from "@/components/overview/LeadsChart";
 import { SourceBreakdown } from "@/components/overview/SourceBreakdown";
 import { ActivityFeed } from "@/components/overview/ActivityFeed";
+import { MyQueue } from "@/components/overview/MyQueue";
+import { InboxSummary } from "@/components/overview/InboxSummary";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Specialty label on team_members.role -> which Overview variant they see.
+// Free text, no permissions attached - anything unrecognized (including
+// "Founder") falls through to the full agency-wide view below.
+type Variant = "orchestrator" | "media" | "design" | "full";
+
+function variantFor(role: string | undefined) {
+  switch ((role || "").toLowerCase()) {
+    case "orchestrator":
+      return "orchestrator" as Variant;
+    case "media":
+      return "media" as Variant;
+    case "design":
+      return "design" as Variant;
+    default:
+      return "full" as Variant;
+  }
+}
 
 function greeting() {
   const h = new Date().getHours();
@@ -16,8 +37,11 @@ function greeting() {
 }
 
 export function OverviewPage() {
+  const session = getSession();
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
+  const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
+  const convosQuery = useQuery({ queryKey: ["conversations"], queryFn: api.conversations.list });
 
   if (clientsQuery.isLoading || tasksQuery.isLoading) {
     return (
@@ -39,6 +63,10 @@ export function OverviewPage() {
 
   const clients = clientsQuery.data ?? [];
   const tasks = tasksQuery.data ?? [];
+  const me = teamQuery.data?.find((m) => m.id === session?.user.id);
+  const variant = variantFor(me?.role);
+  const myTasks = tasks.filter((t) => t.assignee === session?.user.id);
+  const myClients = clients.filter((c) => c.assigned_to === session?.user.id);
 
   const now = Date.now();
   const weekAgo = now - 7 * DAY_MS;
@@ -69,6 +97,9 @@ export function OverviewPage() {
   const recentTasks = [...tasks]
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     .slice(0, 6);
+  const recentMyClients = [...myClients]
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 6);
 
   return (
     <div className="flex flex-col gap-5 pt-6">
@@ -84,16 +115,37 @@ export function OverviewPage() {
         <StatCard label="AI-qualified" value={aiQualified} accent />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-        <div className="lg:col-span-3">
-          <LeadsChart data={days} />
-        </div>
-        <div className="lg:col-span-2">
-          <SourceBreakdown counts={sourceCounts} />
-        </div>
-      </div>
+      {variant === "full" && (
+        <>
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+            <div className="lg:col-span-3">
+              <LeadsChart data={days} />
+            </div>
+            <div className="lg:col-span-2">
+              <SourceBreakdown counts={sourceCounts} />
+            </div>
+          </div>
+          <ActivityFeed clients={recentClients} tasks={recentTasks} />
+        </>
+      )}
 
-      <ActivityFeed clients={recentClients} tasks={recentTasks} />
+      {variant === "orchestrator" && (
+        <>
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+            <div className="lg:col-span-3">
+              <LeadsChart data={days} />
+            </div>
+            <div className="lg:col-span-2">
+              <SourceBreakdown counts={sourceCounts} />
+            </div>
+          </div>
+          <InboxSummary conversations={convosQuery.data ?? []} />
+          <ActivityFeed clients={recentMyClients} tasks={[]} />
+        </>
+      )}
+
+      {variant === "media" && <MyQueue tasks={myTasks} title="Shoot schedule" />}
+      {variant === "design" && <MyQueue tasks={myTasks} title="Design queue" />}
     </div>
   );
 }

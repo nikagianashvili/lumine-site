@@ -11,7 +11,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpDown, Search, Trash2 } from "lucide-react";
 import { adminFetch } from "@/lib/session";
-import { api, type Client, type ClientStatus } from "@/lib/api";
+import { api, type Client, type ClientStatus, type TeamMember } from "@/lib/api";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -41,6 +41,7 @@ async function deleteClient(id: string) {
 export function ClientsTable() {
   const queryClient = useQueryClient();
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
+  const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
@@ -51,6 +52,23 @@ export function ClientsTable() {
       const previous = queryClient.getQueryData<Client[]>(["clients"]);
       queryClient.setQueryData<Client[]>(["clients"], (old) =>
         (old ?? []).map((c) => (c.id === id ? { ...c, status } : c)),
+      );
+      return { previous };
+    },
+    onError: (_e, _v, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(["clients"], ctx.previous);
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["clients"] }),
+  });
+
+  const assignMutation = useMutation({
+    mutationFn: ({ id, assigned_to }: { id: string; assigned_to: string | null }) =>
+      api.clients.update(id, { assigned_to }),
+    onMutate: async ({ id, assigned_to }) => {
+      await queryClient.cancelQueries({ queryKey: ["clients"] });
+      const previous = queryClient.getQueryData<Client[]>(["clients"]);
+      queryClient.setQueryData<Client[]>(["clients"], (old) =>
+        (old ?? []).map((c) => (c.id === id ? { ...c, assigned_to } : c)),
       );
       return { previous };
     },
@@ -142,6 +160,33 @@ export function ClientsTable() {
         },
       },
       {
+        accessorKey: "assigned_to",
+        header: "Assigned to",
+        cell: (info) => {
+          const client = info.row.original;
+          return (
+            <Select
+              value={client.assigned_to ?? "unassigned"}
+              onValueChange={(v) =>
+                assignMutation.mutate({ id: client.id, assigned_to: v === "unassigned" ? null : v })
+              }
+            >
+              <SelectTrigger className="h-7 w-32 border-none bg-transparent px-2 text-xs shadow-none">
+                <SelectValue placeholder="Unassigned" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="unassigned">Unassigned</SelectItem>
+                {(teamQuery.data ?? []).map((m: TeamMember) => (
+                  <SelectItem key={m.id} value={m.id}>
+                    {m.name || "Unnamed"}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          );
+        },
+      },
+      {
         accessorKey: "created_at",
         header: ({ column }) => (
           <SortHeader label="Added" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
@@ -167,7 +212,7 @@ export function ClientsTable() {
         ),
       },
     ],
-    [statusMutation, deleteMutation],
+    [statusMutation, assignMutation, deleteMutation, teamQuery.data],
   );
 
   const table = useReactTable({
