@@ -50,9 +50,16 @@ export default async function handler(req, res) {
     }
 
     let { data, error } = await supabase.from("engagements").update(updates).eq("id", id).select().single();
-    if (error && /column .*(completed_at|upsell_task_created)/.test(error.message || "")) {
+    if (
+      error &&
+      ("completed_at" in updates || "upsell_task_created" in updates) &&
+      (error.message || "").includes("column") &&
+      (error.message.includes("completed_at") || error.message.includes("upsell_task_created"))
+    ) {
       // Migration for these two columns hasn't run yet - retry without
       // them rather than blocking every status change until it does.
+      // PostgREST's message is "Could not find the '<field>' column of
+      // '<table>'" - field name before "column", not after.
       delete updates.completed_at;
       delete updates.upsell_task_created;
       ({ data, error } = await supabase.from("engagements").update(updates).eq("id", id).select().single());
@@ -61,6 +68,22 @@ export default async function handler(req, res) {
       res.status(500).json({ error: error.message });
       return;
     }
+
+    // Automated Water Cooler celebration (Phase 8) - "project shipped" has
+    // a real trigger (this status transition); "invoice paid" doesn't (no
+    // payments/invoicing system exists - Stripe integration is explicitly
+    // out of scope), so only this one is automated. Best-effort: a missing
+    // water_cooler_posts table (migration pending) shouldn't fail the
+    // status update itself.
+    if (updates.status === "completed") {
+      await supabase.from("water_cooler_posts").insert({
+        author_id: null,
+        type: "celebration",
+        body: `🎉 "${data.title}" shipped!`,
+        engagement_id: data.id,
+      });
+    }
+
     res.status(200).json({ engagement: data });
     return;
   }

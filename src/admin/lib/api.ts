@@ -105,6 +105,22 @@ export interface PortfolioProject {
   created_at: string;
 }
 
+// water_cooler_posts - a new table (Phase 8), not just new columns, so
+// this feature has no partial/degraded state: it's either set up or it
+// isn't. reactions is {emoji: [team_member_id, ...]} - a toggle set per
+// emoji, not a count, so "did I react" is a simple .includes check.
+export interface WaterCoolerPost {
+  id: string;
+  author_id: string | null;
+  type: "manual" | "celebration";
+  body: string;
+  file_url: string | null;
+  reactions: Record<string, string[]>;
+  engagement_id: string | null;
+  created_at: string;
+  team_members: { name: string | null } | null;
+}
+
 export interface TeamMember {
   id: string;
   name: string | null;
@@ -265,6 +281,22 @@ export const api = {
       unwrap<PortfolioProject>(
         await adminFetch("/api/admin/portfolio", { method: "POST", body: JSON.stringify(payload) }),
         "project",
+      ),
+  },
+  waterCooler: {
+    list: async () => unwrap<WaterCoolerPost[]>(await adminFetch("/api/admin/water-cooler"), "posts"),
+    post: async (body: string, fileUrl?: string) =>
+      unwrap<WaterCoolerPost>(
+        await adminFetch("/api/admin/water-cooler", {
+          method: "POST",
+          body: JSON.stringify({ body, file_url: fileUrl || null }),
+        }),
+        "post",
+      ),
+    react: async (id: string, emoji: string) =>
+      unwrap<WaterCoolerPost>(
+        await adminFetch("/api/admin/water-cooler", { method: "PATCH", body: JSON.stringify({ id, emoji }) }),
+        "post",
       ),
   },
   teamMembers: {

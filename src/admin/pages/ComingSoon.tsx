@@ -10,6 +10,7 @@ const LABELS: Record<Page, string> = {
   program: "Program",
   archive: "Archive",
   warroom: "War Room",
+  watercooler: "Water Cooler",
   folders: "Folders",
   documents: "Documents",
   profile: "Settings",
