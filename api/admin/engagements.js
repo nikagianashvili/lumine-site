@@ -39,7 +39,24 @@ export default async function handler(req, res) {
       res.status(400).json({ error: "Missing id" });
       return;
     }
-    const { data, error } = await supabase.from("engagements").update(updates).eq("id", id).select().single();
+
+    // Every status change through "completed" gets its own fresh
+    // completed_at + a reset upsell flag - the offboarding-upsell cron
+    // (Phase 5) counts 7 days from here. Stamped server-side so it can't
+    // drift from client clocks and can't be spoofed by the request body.
+    if (updates.status !== undefined) {
+      updates.completed_at = updates.status === "completed" ? new Date().toISOString() : null;
+      if (updates.status === "completed") updates.upsell_task_created = false;
+    }
+
+    let { data, error } = await supabase.from("engagements").update(updates).eq("id", id).select().single();
+    if (error && /column .*(completed_at|upsell_task_created)/.test(error.message || "")) {
+      // Migration for these two columns hasn't run yet - retry without
+      // them rather than blocking every status change until it does.
+      delete updates.completed_at;
+      delete updates.upsell_task_created;
+      ({ data, error } = await supabase.from("engagements").update(updates).eq("id", id).select().single());
+    }
     if (error) {
       res.status(500).json({ error: error.message });
       return;

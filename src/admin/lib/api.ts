@@ -59,6 +59,21 @@ export interface Engagement {
   // Matches lib/portfolioTaxonomy.ts's INDUSTRIES - used to pre-fill and
   // filter the Archive grid once a project is completed.
   industry?: string | null;
+  // Retainer quota tracking (Phase 5) - only meaningful when is_retainer.
+  // Tier matches lib/retainerTiers.ts's real SMM packages; limits are the
+  // specific number *this* client's contract landed on within the tier's
+  // range, not derived automatically. Solo (non-retainer) projects that
+  // complete trigger the offboarding-upsell cron 7 days later - see
+  // api/cron/offboarding-upsell.js - completed_at/upsell_task_created
+  // are bookkeeping for that, not shown in the UI.
+  is_retainer?: boolean;
+  retainer_tier?: string | null;
+  posters_limit?: number | null;
+  posters_delivered?: number | null;
+  videos_limit?: number | null;
+  videos_delivered?: number | null;
+  completed_at?: string | null;
+  upsell_task_created?: boolean;
 }
 
 // Shape of a row in the public `projects` table (see api/projects.js) -
@@ -161,7 +176,17 @@ async function writeWithFallback<T>(
   throw new Error(errorLabel);
 }
 
-const ENGAGEMENT_OPTIONAL_FIELDS = ["service_type", "cover_image_url", "industry"] as const;
+const ENGAGEMENT_OPTIONAL_FIELDS = [
+  "service_type",
+  "cover_image_url",
+  "industry",
+  "is_retainer",
+  "retainer_tier",
+  "posters_limit",
+  "posters_delivered",
+  "videos_limit",
+  "videos_delivered",
+] as const;
 const TASK_OPTIONAL_FIELDS = ["service_type", "stage"] as const;
 
 export const api = {

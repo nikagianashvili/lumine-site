@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProjectBoard } from "@/components/projects/ProjectBoard";
 import { TaskModal } from "@/components/program/TaskModal";
 import { PublishToPortfolioModal } from "@/components/projects/PublishToPortfolioModal";
+import { QuotaCard } from "@/components/projects/QuotaCard";
 
 const STATUS_OPTIONS: EngagementStatus[] = ["active", "on_hold", "completed", "cancelled"];
 
@@ -153,6 +154,18 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
                 <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">End</span>
                 <span className="text-sm">{formatDate(project.end_date)}</span>
               </div>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Type</span>
+                <label className="flex h-9 items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={project.is_retainer ?? false}
+                    onChange={(e) => updateMutation.mutate({ is_retainer: e.target.checked })}
+                    className="size-4 rounded border-border accent-primary"
+                  />
+                  Ongoing retainer
+                </label>
+              </div>
             </div>
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Notes</span>
@@ -182,6 +195,8 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
           </CardContent>
         </Card>
       </div>
+
+      {project.is_retainer && <QuotaCard project={project} />}
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">

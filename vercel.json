@@ -23,5 +23,6 @@
     { "source": "/ka/journal", "destination": "/ka/journal.html" },
     { "source": "/ka/legal", "destination": "/ka/legal.html" },
     { "source": "/ka/contact", "destination": "/ka/contact.html" }
-  ]
+  ],
+  "crons": [{ "path": "/api/cron/offboarding-upsell", "schedule": "0 9 * * *" }]
 }
