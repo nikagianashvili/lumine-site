@@ -18,6 +18,7 @@ const TABS: { page: Page; label: string }[] = [
   { page: "manage", label: "Manage" },
   { page: "projects", label: "Projects" },
   { page: "archive", label: "Archive" },
+  { page: "warroom", label: "War Room" },
   { page: "program", label: "Program" },
   { page: "folders", label: "Folders" },
   { page: "documents", label: "Documents" },

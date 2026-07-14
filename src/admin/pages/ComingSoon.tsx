@@ -9,6 +9,7 @@ const LABELS: Record<Page, string> = {
   projects: "Projects",
   program: "Program",
   archive: "Archive",
+  warroom: "War Room",
   folders: "Folders",
   documents: "Documents",
   profile: "Settings",

@@ -76,20 +76,33 @@ export function QuotaCard({ project }: { project: Engagement }) {
         <CardTitle>Retainer quota</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <Label>Tier</Label>
-          <Select value={project.retainer_tier ?? ""} onValueChange={applyTier}>
-            <SelectTrigger>
-              <SelectValue placeholder="Choose a tier" />
-            </SelectTrigger>
-            <SelectContent>
-              {RETAINER_TIERS.map((t) => (
-                <SelectItem key={t.name} value={t.name}>
-                  {t.name} ({t.postersRange} posters, {t.videosRange} videos)
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label>Tier</Label>
+            <Select value={project.retainer_tier ?? ""} onValueChange={applyTier}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a tier" />
+              </SelectTrigger>
+              <SelectContent>
+                {RETAINER_TIERS.map((t) => (
+                  <SelectItem key={t.name} value={t.name}>
+                    {t.name} ({t.postersRange} posters, {t.videosRange} videos)
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="monthly-rate">Monthly rate (₾)</Label>
+            <Input
+              id="monthly-rate"
+              type="number"
+              min={0}
+              value={project.monthly_rate ?? ""}
+              onChange={(e) => updateMutation.mutate({ monthly_rate: Number(e.target.value) || 0 })}
+              placeholder="e.g. 1800"
+            />
+          </div>
         </div>
         <QuotaBar
           label="Posters"

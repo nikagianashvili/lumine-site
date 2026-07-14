@@ -7,6 +7,7 @@ import { OverviewPage } from "@/pages/Overview";
 import { ProgramPage } from "@/pages/Program";
 import { ProjectsPage } from "@/pages/Projects";
 import { ArchivePage } from "@/pages/Archive";
+import { WarRoomPage } from "@/pages/WarRoom";
 import { ManagePage } from "@/pages/Manage";
 import { InboxPage } from "@/pages/Inbox";
 import { ProfilePage } from "@/pages/Profile";
@@ -20,6 +21,7 @@ export type Page =
   | "projects"
   | "program"
   | "archive"
+  | "warroom"
   | "folders"
   | "documents"
   | "profile";
@@ -29,6 +31,7 @@ const PAGES: Partial<Record<Page, React.ComponentType>> = {
   program: ProgramPage,
   projects: ProjectsPage,
   archive: ArchivePage,
+  warroom: WarRoomPage,
   manage: ManagePage,
   inbox: InboxPage,
   profile: ProfilePage,

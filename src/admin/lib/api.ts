@@ -74,6 +74,9 @@ export interface Engagement {
   videos_delivered?: number | null;
   completed_at?: string | null;
   upsell_task_created?: boolean;
+  // Structured MRR input (Phase 6/War Room) - a real number to sum, not
+  // parsed out of the free-text `budget` field.
+  monthly_rate?: number | null;
 }
 
 // Shape of a row in the public `projects` table (see api/projects.js) -
@@ -186,6 +189,7 @@ const ENGAGEMENT_OPTIONAL_FIELDS = [
   "posters_delivered",
   "videos_limit",
   "videos_delivered",
+  "monthly_rate",
 ] as const;
 const TASK_OPTIONAL_FIELDS = ["service_type", "stage"] as const;
 
