@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, type Task, type TaskPriority, type TaskStatus } from "@/lib/api";
-import { adminFetch } from "@/lib/session";
+import { api, type TaskPriority, type TaskStatus } from "@/lib/api";
+import { pipelineFor } from "@/lib/pipelines";
 import {
   Dialog,
   DialogContent,
@@ -16,31 +16,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// Same graceful-degradation the vanilla admin used: `service_type` needs a
-// migration that may not have run in every environment yet — retry without
-// the field rather than losing the task if the column doesn't exist yet.
-async function createTaskWithFallback(payload: Record<string, unknown>) {
-  let res = await adminFetch("/api/admin/tasks", { method: "POST", body: JSON.stringify(payload) });
-  if (!res.ok) {
-    const body = await res.json();
-    if (body.error?.includes("service_type")) {
-      const { service_type: _drop, ...rest } = payload;
-      res = await adminFetch("/api/admin/tasks", { method: "POST", body: JSON.stringify(rest) });
-      if (res.ok) return { task: (await res.json()).task, degraded: true };
-    }
-    throw new Error(body.error || "Could not create task");
-  }
-  return { task: (await res.json()).task, degraded: false };
-}
-
 export function TaskModal({
   open,
   onOpenChange,
   defaultStatus,
+  defaultEngagementId,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultStatus?: TaskStatus;
+  defaultEngagementId?: string;
 }) {
   const queryClient = useQueryClient();
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
@@ -48,22 +33,18 @@ export function TaskModal({
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [engagementId, setEngagementId] = useState<string>("");
+  const [engagementId, setEngagementId] = useState<string>(defaultEngagementId ?? "");
   const [priority, setPriority] = useState<TaskPriority>("medium");
   const [dueDate, setDueDate] = useState("");
   const [assignee, setAssignee] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   const createMutation = useMutation({
-    mutationFn: createTaskWithFallback,
-    onSuccess: ({ degraded }) => {
+    mutationFn: api.tasks.create,
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       reset();
       onOpenChange(false);
-      if (degraded) {
-        // task saved, category silently dropped — surface it, don't hide it
-        setTimeout(() => alert("Task added — category will save once the database update runs."), 100);
-      }
     },
     onError: (err: Error) => setError(err.message),
   });
@@ -71,7 +52,7 @@ export function TaskModal({
   function reset() {
     setTitle("");
     setDescription("");
-    setEngagementId("");
+    setEngagementId(defaultEngagementId ?? "");
     setPriority("medium");
     setDueDate("");
     setAssignee("");
@@ -90,10 +71,16 @@ export function TaskModal({
     }
     setError(null);
     const project = (engagementsQuery.data ?? []).find((p) => p.id === engagementId);
+    const pipeline = pipelineFor(project?.service_type);
     createMutation.mutate({
       title: title.trim(),
       description: description.trim() || null,
-      status: defaultStatus || "todo",
+      // A task always starts at its pipeline's first stage (todo by
+      // definition) when the project has one - defaultStatus only applies
+      // to projects with no defined pipeline (dropped onto the generic
+      // board's status columns instead).
+      status: pipeline ? pipeline[0].status : defaultStatus || "todo",
+      stage: pipeline ? pipeline[0].stage : null,
       engagement_id: engagementId,
       // denormalized from the project so Board/Spreadsheet can filter by
       // category without a join - stays in sync because it's only ever set
@@ -197,5 +184,3 @@ export function TaskModal({
     </Dialog>
   );
 }
-
-export type { Task };

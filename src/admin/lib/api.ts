@@ -36,6 +36,10 @@ export interface Task {
   due_date: string | null;
   created_at: string;
   service_type?: string | null;
+  // Fine-grained per-service pipeline stage (e.g. "Shoot Day", "QA") - see
+  // lib/pipelines.ts. status above is derived from this, never set
+  // independently, so a task's coarse and fine-grained state can't drift.
+  stage?: string | null;
 }
 
 export type EngagementStatus = "active" | "on_hold" | "completed" | "cancelled";
@@ -105,25 +109,34 @@ async function unwrap<T>(res: Response, key: string): Promise<T> {
   return data[key] as T;
 }
 
-// engagements.service_type / cover_image_url need a migration that may not
-// have run yet in every environment - same graceful-degradation tasks.
-// service_type already used. PostgREST only reports one missing column per
-// error, so retry in a loop, stripping one field per attempt, rather than
-// a single retry that only fixes the first of two missing columns.
-const ENGAGEMENT_OPTIONAL_FIELDS = ["service_type", "cover_image_url"] as const;
-
-async function writeEngagement(method: "POST" | "PATCH", body: Record<string, unknown>) {
+// Several columns (engagements.service_type/cover_image_url,
+// tasks.service_type/stage) need migrations that may not have run yet in
+// every environment - degrade gracefully rather than losing the write.
+// PostgREST only reports one missing column per error, so retry in a loop,
+// stripping one optional field per attempt, not a single retry (which only
+// fixes the first of several missing columns).
+async function writeWithFallback<T>(
+  path: string,
+  method: "POST" | "PATCH",
+  body: Record<string, unknown>,
+  optionalFields: readonly string[],
+  key: string,
+  errorLabel: string,
+): Promise<T> {
   const payload = { ...body };
-  for (let attempt = 0; attempt <= ENGAGEMENT_OPTIONAL_FIELDS.length; attempt++) {
-    const res = await adminFetch("/api/admin/engagements", { method, body: JSON.stringify(payload) });
-    if (res.ok) return unwrap<Engagement>(res, "engagement");
+  for (let attempt = 0; attempt <= optionalFields.length; attempt++) {
+    const res = await adminFetch(path, { method, body: JSON.stringify(payload) });
+    if (res.ok) return unwrap<T>(res, key);
     const errBody = await res.json();
-    const missing = ENGAGEMENT_OPTIONAL_FIELDS.find((f) => f in payload && errBody.error?.includes(f));
-    if (!missing) throw new Error(errBody.error || "Could not save project");
+    const missing = optionalFields.find((f) => f in payload && errBody.error?.includes(f));
+    if (!missing) throw new Error(errBody.error || errorLabel);
     delete payload[missing];
   }
-  throw new Error("Could not save project");
+  throw new Error(errorLabel);
 }
+
+const ENGAGEMENT_OPTIONAL_FIELDS = ["service_type", "cover_image_url"] as const;
+const TASK_OPTIONAL_FIELDS = ["service_type", "stage"] as const;
 
 export const api = {
   clients: {
@@ -136,18 +149,38 @@ export const api = {
   },
   tasks: {
     list: async () => unwrap<Task[]>(await adminFetch("/api/admin/tasks"), "tasks"),
-    create: async (task: Partial<Task>) =>
-      unwrap<Task>(await adminFetch("/api/admin/tasks", { method: "POST", body: JSON.stringify(task) }), "task"),
+    create: async (task: Record<string, unknown>) =>
+      writeWithFallback<Task>("/api/admin/tasks", "POST", task, TASK_OPTIONAL_FIELDS, "task", "Could not create task"),
     update: async (id: string, updates: Partial<Task>) =>
-      unwrap<Task>(
-        await adminFetch("/api/admin/tasks", { method: "PATCH", body: JSON.stringify({ id, ...updates }) }),
+      writeWithFallback<Task>(
+        "/api/admin/tasks",
+        "PATCH",
+        { id, ...updates },
+        TASK_OPTIONAL_FIELDS,
         "task",
+        "Could not update task",
       ),
   },
   engagements: {
     list: async () => unwrap<Engagement[]>(await adminFetch("/api/admin/engagements"), "engagements"),
-    create: async (payload: Record<string, unknown>) => writeEngagement("POST", payload),
-    update: async (id: string, updates: Partial<Engagement>) => writeEngagement("PATCH", { id, ...updates }),
+    create: async (payload: Record<string, unknown>) =>
+      writeWithFallback<Engagement>(
+        "/api/admin/engagements",
+        "POST",
+        payload,
+        ENGAGEMENT_OPTIONAL_FIELDS,
+        "engagement",
+        "Could not create project",
+      ),
+    update: async (id: string, updates: Partial<Engagement>) =>
+      writeWithFallback<Engagement>(
+        "/api/admin/engagements",
+        "PATCH",
+        { id, ...updates },
+        ENGAGEMENT_OPTIONAL_FIELDS,
+        "engagement",
+        "Could not update project",
+      ),
     delete: async (id: string) => {
       const res = await adminFetch("/api/admin/engagements", { method: "DELETE", body: JSON.stringify({ id }) });
       if (!res.ok) throw new Error((await res.json()).error || "Could not delete project");

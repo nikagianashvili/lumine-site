@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { api, type EngagementStatus } from "@/lib/api";
 import { SERVICE_LABELS } from "@/lib/serviceTypes";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ProjectBoard } from "@/components/projects/ProjectBoard";
+import { TaskModal } from "@/components/program/TaskModal";
 
 const STATUS_OPTIONS: EngagementStatus[] = ["active", "on_hold", "completed", "cancelled"];
-const PRIORITY_VARIANT = { low: "success", medium: "warning", high: "destructive" } as const;
-const STATUS_LABEL: Record<string, string> = { todo: "To do", in_progress: "In progress", review: "In review", done: "Done" };
 
 function formatDate(iso: string | null) {
   if (!iso) return "—";
@@ -23,9 +23,9 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
   const engagementsQuery = useQuery({ queryKey: ["engagements"], queryFn: api.engagements.list });
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
-  const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
 
   const [notes, setNotes] = useState<string | null>(null);
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
 
   const updateMutation = useMutation({
     mutationFn: (updates: Record<string, unknown>) => api.engagements.update(id, updates),
@@ -56,7 +56,6 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
 
   const client = clientsQuery.data?.find((c) => c.id === project.client_id);
   const projectTasks = (tasksQuery.data ?? []).filter((t) => t.engagement_id === id);
-  const teamById = new Map((teamQuery.data ?? []).map((m) => [m.id, m]));
   const total = projectTasks.length;
   const done = projectTasks.filter((t) => t.status === "done").length;
   const progress = total === 0 ? 0 : Math.round((done / total) * 100);
@@ -155,26 +154,19 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Tasks</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>
+            {project.service_type && SERVICE_LABELS[project.service_type]
+              ? `${SERVICE_LABELS[project.service_type]} pipeline`
+              : "Tasks"}
+          </CardTitle>
+          <Button size="sm" onClick={() => setTaskModalOpen(true)}>
+            <Plus className="size-4" />
+            New task
+          </Button>
         </CardHeader>
-        <div className="flex flex-col gap-1 px-5 pb-5">
-          {projectTasks.length === 0 ? (
-            <p className="py-6 text-sm text-muted-foreground">
-              No tasks linked to this project yet — create one from Program and pick this project.
-            </p>
-          ) : (
-            projectTasks.map((t) => (
-              <div key={t.id} className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm">
-                <Badge variant={PRIORITY_VARIANT[t.priority]}>{t.priority}</Badge>
-                <span className="flex-1 truncate">{t.title}</span>
-                <span className="text-xs text-muted-foreground">{STATUS_LABEL[t.status]}</span>
-                <span className="w-24 text-right text-xs text-muted-foreground">
-                  {t.assignee ? teamById.get(t.assignee)?.name || "—" : "Unassigned"}
-                </span>
-              </div>
-            ))
-          )}
+        <div className="px-5 pb-5">
+          <ProjectBoard project={project} tasks={projectTasks} />
         </div>
       </Card>
 
@@ -188,6 +180,8 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
           </p>
         </div>
       </Card>
+
+      <TaskModal open={taskModalOpen} onOpenChange={setTaskModalOpen} defaultEngagementId={project.id} />
     </div>
   );
 }
