@@ -38,7 +38,7 @@ async function deleteClient(id: string) {
   if (!res.ok) throw new Error((await res.json()).error || "Could not delete client");
 }
 
-export function ClientsTable() {
+export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
   const queryClient = useQueryClient();
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
@@ -90,7 +90,18 @@ export function ClientsTable() {
         header: ({ column }) => (
           <SortHeader label="Name" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
         ),
-        cell: (info) => <span className="font-medium">{(info.getValue() as string) || "—"}</span>,
+        cell: (info) => {
+          const client = info.row.original;
+          return (
+            <button
+              type="button"
+              onClick={() => onSelect(client.id)}
+              className="font-medium text-left hover:text-primary hover:underline"
+            >
+              {client.name || "—"}
+            </button>
+          );
+        },
       },
       {
         accessorKey: "phone",
@@ -212,7 +223,7 @@ export function ClientsTable() {
         ),
       },
     ],
-    [statusMutation, assignMutation, deleteMutation, teamQuery.data],
+    [statusMutation, assignMutation, deleteMutation, teamQuery.data, onSelect],
   );
 
   const table = useReactTable({

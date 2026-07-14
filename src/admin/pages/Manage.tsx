@@ -3,9 +3,15 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClientsTable } from "@/components/manage/ClientsTable";
 import { NewClientModal } from "@/components/manage/NewClientModal";
+import { ClientDetail } from "@/components/manage/ClientDetail";
 
 export function ManagePage() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  if (selectedId) {
+    return <ClientDetail id={selectedId} onBack={() => setSelectedId(null)} />;
+  }
 
   return (
     <div className="flex flex-col gap-4 pt-6">
@@ -19,7 +25,7 @@ export function ManagePage() {
           New client
         </Button>
       </div>
-      <ClientsTable />
+      <ClientsTable onSelect={setSelectedId} />
       <NewClientModal open={modalOpen} onOpenChange={setModalOpen} />
     </div>
   );

@@ -16,15 +16,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const SERVICE_TYPES = [
-  { value: "web", label: "Web Development" },
-  { value: "photo-video", label: "Photo & Video" },
-  { value: "design", label: "Graphic Design" },
-];
-
 // Same graceful-degradation the vanilla admin used: `service_type` needs a
-// migration that's never been run (see project memory) — retry without the
-// field rather than losing the task if the column doesn't exist yet.
+// migration that may not have run in every environment yet — retry without
+// the field rather than losing the task if the column doesn't exist yet.
 async function createTaskWithFallback(payload: Record<string, unknown>) {
   let res = await adminFetch("/api/admin/tasks", { method: "POST", body: JSON.stringify(payload) });
   if (!res.ok) {
@@ -50,10 +44,11 @@ export function TaskModal({
 }) {
   const queryClient = useQueryClient();
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
+  const engagementsQuery = useQuery({ queryKey: ["engagements"], queryFn: api.engagements.list });
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [serviceType, setServiceType] = useState<string>("");
+  const [engagementId, setEngagementId] = useState<string>("");
   const [priority, setPriority] = useState<TaskPriority>("medium");
   const [dueDate, setDueDate] = useState("");
   const [assignee, setAssignee] = useState<string>("");
@@ -76,7 +71,7 @@ export function TaskModal({
   function reset() {
     setTitle("");
     setDescription("");
-    setServiceType("");
+    setEngagementId("");
     setPriority("medium");
     setDueDate("");
     setAssignee("");
@@ -89,12 +84,21 @@ export function TaskModal({
       setError("Title is required");
       return;
     }
+    if (!engagementId) {
+      setError("Pick which project this belongs to");
+      return;
+    }
     setError(null);
+    const project = (engagementsQuery.data ?? []).find((p) => p.id === engagementId);
     createMutation.mutate({
       title: title.trim(),
       description: description.trim() || null,
       status: defaultStatus || "todo",
-      service_type: serviceType || null,
+      engagement_id: engagementId,
+      // denormalized from the project so Board/Spreadsheet can filter by
+      // category without a join - stays in sync because it's only ever set
+      // here, from the project's own service_type, never edited independently
+      service_type: project?.service_type || null,
       priority,
       due_date: dueDate || null,
       assignee: assignee || null,
@@ -127,22 +131,25 @@ export function TaskModal({
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Project</Label>
+            <Select value={engagementId} onValueChange={setEngagementId}>
+              <SelectTrigger>
+                <SelectValue placeholder={(engagementsQuery.data ?? []).length === 0 ? "No projects yet" : "Choose a project"} />
+              </SelectTrigger>
+              <SelectContent>
+                {(engagementsQuery.data ?? []).map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    {p.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {(engagementsQuery.data ?? []).length === 0 && !engagementsQuery.isLoading && (
+              <p className="text-xs text-muted-foreground">Create a project first, from the Projects tab.</p>
+            )}
+          </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <Label>Category</Label>
-              <Select value={serviceType} onValueChange={setServiceType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="General" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SERVICE_TYPES.map((s) => (
-                    <SelectItem key={s.value} value={s.value}>
-                      {s.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
             <div className="flex flex-col gap-1.5">
               <Label>Priority</Label>
               <Select value={priority} onValueChange={(v) => setPriority(v as TaskPriority)}>

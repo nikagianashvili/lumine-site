@@ -1,13 +1,8 @@
 import { useDraggable } from "@dnd-kit/core";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import type { Task, TeamMember } from "@/lib/api";
-
-const SERVICE_LABELS: Record<string, string> = {
-  web: "Web Development",
-  "photo-video": "Photo & Video",
-  design: "Graphic Design",
-};
+import { SERVICE_LABELS } from "@/lib/serviceTypes";
+import type { Engagement, Task, TeamMember } from "@/lib/api";
 
 const PRIORITY_VARIANT = { low: "success", medium: "warning", high: "destructive" } as const;
 
@@ -28,10 +23,12 @@ function formatDate(iso: string) {
 export function TaskCard({
   task,
   assignee,
+  project,
   dragging,
 }: {
   task: Task;
   assignee?: TeamMember;
+  project?: Engagement;
   dragging?: boolean;
 }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: task.id });
@@ -54,6 +51,11 @@ export function TaskCard({
         </span>
       </div>
       <p className="text-sm font-medium leading-snug">{task.title}</p>
+      {project && (
+        <span className="w-fit truncate rounded-full bg-muted px-2 py-0.5 text-[0.7rem] text-muted-foreground">
+          {project.title}
+        </span>
+      )}
       <div className="flex items-center justify-between pt-1">
         <span className="text-xs text-muted-foreground">{task.due_date ? `Due ${formatDate(task.due_date)}` : ""}</span>
         {assignee && (

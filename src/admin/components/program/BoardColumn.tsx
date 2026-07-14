@@ -1,7 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import { cn } from "@/lib/utils";
 import { TaskCard } from "@/components/program/TaskCard";
-import type { Task, TaskStatus, TeamMember } from "@/lib/api";
+import type { Engagement, Task, TaskStatus, TeamMember } from "@/lib/api";
 
 const COLUMN_LABELS: Record<TaskStatus, string> = {
   todo: "Not Started",
@@ -14,11 +14,13 @@ export function BoardColumn({
   status,
   tasks,
   teamMembers,
+  engagements,
   activeId,
 }: {
   status: TaskStatus;
   tasks: Task[];
   teamMembers: TeamMember[];
+  engagements: Engagement[];
   activeId: string | null;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: status });
@@ -44,6 +46,7 @@ export function BoardColumn({
             key={t.id}
             task={t}
             assignee={teamMembers.find((m) => m.id === t.assignee)}
+            project={engagements.find((p) => p.id === t.engagement_id)}
             dragging={activeId === t.id}
           />
         ))}

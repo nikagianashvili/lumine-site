@@ -6,6 +6,7 @@ import {
   MessageSquare,
   FileText,
   Users,
+  Briefcase,
   Rows3,
   Settings,
   HelpCircle,
@@ -22,6 +23,7 @@ const NAV: { page: Page; label: string; icon: typeof LayoutGrid }[] = [
   { page: "inbox", label: "AI Inbox", icon: MessageSquare },
   { page: "documents", label: "Documents", icon: FileText },
   { page: "manage", label: "Manage", icon: Users },
+  { page: "projects", label: "Projects", icon: Briefcase },
   { page: "program", label: "Program", icon: Rows3 },
   { page: "profile", label: "Settings", icon: Settings },
 ];

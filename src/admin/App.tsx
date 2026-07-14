@@ -5,16 +5,27 @@ import { Sidebar } from "@/components/shell/Sidebar";
 import { TopNav } from "@/components/shell/TopNav";
 import { OverviewPage } from "@/pages/Overview";
 import { ProgramPage } from "@/pages/Program";
+import { ProjectsPage } from "@/pages/Projects";
 import { ManagePage } from "@/pages/Manage";
 import { InboxPage } from "@/pages/Inbox";
 import { ProfilePage } from "@/pages/Profile";
 import { ComingSoonPage } from "@/pages/ComingSoon";
 
-export type Page = "overview" | "activity" | "inbox" | "manage" | "program" | "folders" | "documents" | "profile";
+export type Page =
+  | "overview"
+  | "activity"
+  | "inbox"
+  | "manage"
+  | "projects"
+  | "program"
+  | "folders"
+  | "documents"
+  | "profile";
 
 const PAGES: Partial<Record<Page, React.ComponentType>> = {
   overview: OverviewPage,
   program: ProgramPage,
+  projects: ProjectsPage,
   manage: ManagePage,
   inbox: InboxPage,
   profile: ProfilePage,

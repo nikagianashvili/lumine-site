@@ -11,16 +11,11 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpDown, Search } from "lucide-react";
 import { api, type Task, type TaskPriority, type TaskStatus, type TeamMember } from "@/lib/api";
+import { SERVICE_LABELS } from "@/lib/serviceTypes";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const SERVICE_LABELS: Record<string, string> = {
-  web: "Web Development",
-  "photo-video": "Photo & Video",
-  design: "Graphic Design",
-};
 
 const PRIORITY_VARIANT = { low: "success", medium: "warning", high: "destructive" } as const;
 // default string sort is alphabetical, which reads wrong for both of these
@@ -44,6 +39,7 @@ export function Spreadsheet() {
   const queryClient = useQueryClient();
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
+  const engagementsQuery = useQuery({ queryKey: ["engagements"], queryFn: api.engagements.list });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
@@ -65,6 +61,8 @@ export function Spreadsheet() {
 
   const teamMembers = teamQuery.data ?? [];
   const teamById = useMemo(() => new Map(teamMembers.map((m) => [m.id, m])), [teamMembers]);
+  const engagements = engagementsQuery.data ?? [];
+  const engagementsById = useMemo(() => new Map(engagements.map((p) => [p.id, p])), [engagements]);
 
   const columns = useMemo<ColumnDef<Task>[]>(
     () => [
@@ -74,6 +72,15 @@ export function Spreadsheet() {
           <SortHeader label="Title" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
         ),
         cell: (info) => <span className="font-medium">{info.getValue() as string}</span>,
+      },
+      {
+        accessorKey: "engagement_id",
+        header: "Project",
+        cell: (info) => {
+          const id = info.getValue() as string | null;
+          const project = id ? engagementsById.get(id) : undefined;
+          return <span className="text-muted-foreground">{project?.title || "—"}</span>;
+        },
       },
       {
         accessorKey: "service_type",
@@ -154,7 +161,7 @@ export function Spreadsheet() {
         },
       },
     ],
-    [teamById, updateMutation],
+    [teamById, engagementsById, updateMutation],
   );
 
   const table = useReactTable({
@@ -169,7 +176,7 @@ export function Spreadsheet() {
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  if (tasksQuery.isLoading || teamQuery.isLoading) {
+  if (tasksQuery.isLoading || teamQuery.isLoading || engagementsQuery.isLoading) {
     return <Skeleton className="h-96" />;
   }
 

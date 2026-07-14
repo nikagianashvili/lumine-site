@@ -38,6 +38,22 @@ export interface Task {
   service_type?: string | null;
 }
 
+export type EngagementStatus = "active" | "on_hold" | "completed" | "cancelled";
+
+export interface Engagement {
+  id: string;
+  client_id: string | null;
+  title: string;
+  status: EngagementStatus;
+  start_date: string | null;
+  end_date: string | null;
+  budget: string | null;
+  notes: string | null;
+  created_at: string;
+  service_type?: string | null;
+  cover_image_url?: string | null;
+}
+
 export interface TeamMember {
   id: string;
   name: string | null;
@@ -89,6 +105,26 @@ async function unwrap<T>(res: Response, key: string): Promise<T> {
   return data[key] as T;
 }
 
+// engagements.service_type / cover_image_url need a migration that may not
+// have run yet in every environment - same graceful-degradation tasks.
+// service_type already used. PostgREST only reports one missing column per
+// error, so retry in a loop, stripping one field per attempt, rather than
+// a single retry that only fixes the first of two missing columns.
+const ENGAGEMENT_OPTIONAL_FIELDS = ["service_type", "cover_image_url"] as const;
+
+async function writeEngagement(method: "POST" | "PATCH", body: Record<string, unknown>) {
+  const payload = { ...body };
+  for (let attempt = 0; attempt <= ENGAGEMENT_OPTIONAL_FIELDS.length; attempt++) {
+    const res = await adminFetch("/api/admin/engagements", { method, body: JSON.stringify(payload) });
+    if (res.ok) return unwrap<Engagement>(res, "engagement");
+    const errBody = await res.json();
+    const missing = ENGAGEMENT_OPTIONAL_FIELDS.find((f) => f in payload && errBody.error?.includes(f));
+    if (!missing) throw new Error(errBody.error || "Could not save project");
+    delete payload[missing];
+  }
+  throw new Error("Could not save project");
+}
+
 export const api = {
   clients: {
     list: async () => unwrap<Client[]>(await adminFetch("/api/admin/clients"), "clients"),
@@ -107,6 +143,15 @@ export const api = {
         await adminFetch("/api/admin/tasks", { method: "PATCH", body: JSON.stringify({ id, ...updates }) }),
         "task",
       ),
+  },
+  engagements: {
+    list: async () => unwrap<Engagement[]>(await adminFetch("/api/admin/engagements"), "engagements"),
+    create: async (payload: Record<string, unknown>) => writeEngagement("POST", payload),
+    update: async (id: string, updates: Partial<Engagement>) => writeEngagement("PATCH", { id, ...updates }),
+    delete: async (id: string) => {
+      const res = await adminFetch("/api/admin/engagements", { method: "DELETE", body: JSON.stringify({ id }) });
+      if (!res.ok) throw new Error((await res.json()).error || "Could not delete project");
+    },
   },
   teamMembers: {
     list: async () => unwrap<TeamMember[]>(await adminFetch("/api/admin/team-members"), "teamMembers"),

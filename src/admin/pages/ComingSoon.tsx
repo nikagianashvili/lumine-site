@@ -6,6 +6,7 @@ const LABELS: Record<Page, string> = {
   activity: "Activity",
   inbox: "AI Inbox",
   manage: "Manage",
+  projects: "Projects",
   program: "Program",
   folders: "Folders",
   documents: "Documents",

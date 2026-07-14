@@ -12,6 +12,7 @@ export function Board() {
   const queryClient = useQueryClient();
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
+  const engagementsQuery = useQuery({ queryKey: ["engagements"], queryFn: api.engagements.list });
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
@@ -42,7 +43,7 @@ export function Board() {
     moveMutation.mutate({ id: task.id, status: newStatus });
   }
 
-  if (tasksQuery.isLoading || teamQuery.isLoading) {
+  if (tasksQuery.isLoading || teamQuery.isLoading || engagementsQuery.isLoading) {
     return (
       <div className="grid grid-cols-4 gap-3">
         {STATUSES.map((s) => (
@@ -58,6 +59,7 @@ export function Board() {
 
   const tasks = tasksQuery.data ?? [];
   const teamMembers = teamQuery.data ?? [];
+  const engagements = engagementsQuery.data ?? [];
   const activeTask = tasks.find((t) => t.id === activeId);
 
   return (
@@ -79,6 +81,7 @@ export function Board() {
               status={status}
               tasks={tasks.filter((t) => t.status === status)}
               teamMembers={teamMembers}
+              engagements={engagements}
               activeId={activeId}
             />
           ))}
@@ -86,7 +89,11 @@ export function Board() {
       )}
       <DragOverlay>
         {activeTask ? (
-          <TaskCard task={activeTask} assignee={teamMembers.find((m) => m.id === activeTask.assignee)} />
+          <TaskCard
+            task={activeTask}
+            assignee={teamMembers.find((m) => m.id === activeTask.assignee)}
+            project={engagements.find((p) => p.id === activeTask.engagement_id)}
+          />
         ) : null}
       </DragOverlay>
     </DndContext>
