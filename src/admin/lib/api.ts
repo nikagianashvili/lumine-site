@@ -56,6 +56,32 @@ export interface Engagement {
   created_at: string;
   service_type?: string | null;
   cover_image_url?: string | null;
+  // Matches lib/portfolioTaxonomy.ts's INDUSTRIES - used to pre-fill and
+  // filter the Archive grid once a project is completed.
+  industry?: string | null;
+}
+
+// Shape of a row in the public `projects` table (see api/projects.js) -
+// what "Publish to Portfolio" writes. `content` is the jsonb blob the
+// public site spreads onto the project object at render time.
+export interface PortfolioProject {
+  id: string;
+  slug: string;
+  title: string;
+  client: string | null;
+  service_type: string;
+  industry: string | null;
+  year: string | null;
+  status: string;
+  featured: boolean;
+  sort_order: number;
+  content: {
+    cover?: string;
+    blurb?: string;
+    testimonial?: { quote: string; author: string };
+    [key: string]: unknown;
+  };
+  created_at: string;
 }
 
 export interface TeamMember {
@@ -135,7 +161,7 @@ async function writeWithFallback<T>(
   throw new Error(errorLabel);
 }
 
-const ENGAGEMENT_OPTIONAL_FIELDS = ["service_type", "cover_image_url"] as const;
+const ENGAGEMENT_OPTIONAL_FIELDS = ["service_type", "cover_image_url", "industry"] as const;
 const TASK_OPTIONAL_FIELDS = ["service_type", "stage"] as const;
 
 export const api = {
@@ -185,6 +211,14 @@ export const api = {
       const res = await adminFetch("/api/admin/engagements", { method: "DELETE", body: JSON.stringify({ id }) });
       if (!res.ok) throw new Error((await res.json()).error || "Could not delete project");
     },
+  },
+  portfolio: {
+    list: async () => unwrap<PortfolioProject[]>(await adminFetch("/api/admin/portfolio"), "projects"),
+    create: async (payload: Record<string, unknown>) =>
+      unwrap<PortfolioProject>(
+        await adminFetch("/api/admin/portfolio", { method: "POST", body: JSON.stringify(payload) }),
+        "project",
+      ),
   },
   teamMembers: {
     list: async () => unwrap<TeamMember[]>(await adminFetch("/api/admin/team-members"), "teamMembers"),

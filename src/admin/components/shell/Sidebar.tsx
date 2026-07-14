@@ -7,6 +7,7 @@ import {
   FileText,
   Users,
   Briefcase,
+  Archive,
   Rows3,
   Settings,
   HelpCircle,
@@ -24,6 +25,7 @@ const NAV: { page: Page; label: string; icon: typeof LayoutGrid }[] = [
   { page: "documents", label: "Documents", icon: FileText },
   { page: "manage", label: "Manage", icon: Users },
   { page: "projects", label: "Projects", icon: Briefcase },
+  { page: "archive", label: "Archive", icon: Archive },
   { page: "program", label: "Program", icon: Rows3 },
   { page: "profile", label: "Settings", icon: Settings },
 ];

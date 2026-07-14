@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Sparkles } from "lucide-react";
 import { api, type EngagementStatus } from "@/lib/api";
 import { SERVICE_LABELS } from "@/lib/serviceTypes";
+import { INDUSTRIES } from "@/lib/portfolioTaxonomy";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProjectBoard } from "@/components/projects/ProjectBoard";
 import { TaskModal } from "@/components/program/TaskModal";
+import { PublishToPortfolioModal } from "@/components/projects/PublishToPortfolioModal";
 
 const STATUS_OPTIONS: EngagementStatus[] = ["active", "on_hold", "completed", "cancelled"];
 
@@ -26,6 +28,7 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
 
   const [notes, setNotes] = useState<string | null>(null);
   const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const [publishModalOpen, setPublishModalOpen] = useState(false);
 
   const updateMutation = useMutation({
     mutationFn: (updates: Record<string, unknown>) => api.engagements.update(id, updates),
@@ -72,18 +75,26 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
             {project.service_type && ` · ${SERVICE_LABELS[project.service_type] || project.service_type}`}
           </p>
         </div>
-        <button
-          type="button"
-          aria-label="Delete project"
-          onClick={() => {
-            if (window.confirm("Delete this project? Its tasks will stay but lose the project link.")) {
-              deleteMutation.mutate();
-            }
-          }}
-          className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-        >
-          <Trash2 className="size-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          {project.status === "completed" && (
+            <Button size="sm" onClick={() => setPublishModalOpen(true)}>
+              <Sparkles className="size-4" />
+              Publish to Portfolio
+            </Button>
+          )}
+          <button
+            type="button"
+            aria-label="Delete project"
+            onClick={() => {
+              if (window.confirm("Delete this project? Its tasks will stay but lose the project link.")) {
+                deleteMutation.mutate();
+              }
+            }}
+            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+          >
+            <Trash2 className="size-4" />
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -106,6 +117,25 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
                     {STATUS_OPTIONS.map((s) => (
                       <SelectItem key={s} value={s}>
                         {s.replace("_", " ")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Industry</span>
+                <Select
+                  value={project.industry ?? "none"}
+                  onValueChange={(v) => updateMutation.mutate({ industry: v === "none" ? null : v })}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Not set" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Not set</SelectItem>
+                    {INDUSTRIES.map((i) => (
+                      <SelectItem key={i} value={i}>
+                        {i}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -182,6 +212,14 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
       </Card>
 
       <TaskModal open={taskModalOpen} onOpenChange={setTaskModalOpen} defaultEngagementId={project.id} />
+      {publishModalOpen && (
+        <PublishToPortfolioModal
+          open={publishModalOpen}
+          onOpenChange={setPublishModalOpen}
+          project={project}
+          client={client}
+        />
+      )}
     </div>
   );
 }

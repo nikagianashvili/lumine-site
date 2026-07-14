@@ -8,6 +8,7 @@ const LABELS: Record<Page, string> = {
   manage: "Manage",
   projects: "Projects",
   program: "Program",
+  archive: "Archive",
   folders: "Folders",
   documents: "Documents",
   profile: "Settings",
