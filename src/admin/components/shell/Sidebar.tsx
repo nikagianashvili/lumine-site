@@ -10,6 +10,8 @@ import {
   Archive,
   TrendingUp,
   Coffee,
+  FolderOpen,
+  BookOpen,
   Rows3,
   Settings,
   HelpCircle,
@@ -30,6 +32,8 @@ const NAV: { page: Page; label: string; icon: typeof LayoutGrid }[] = [
   { page: "archive", label: "Archive", icon: Archive },
   { page: "warroom", label: "War Room", icon: TrendingUp },
   { page: "watercooler", label: "Water Cooler", icon: Coffee },
+  { page: "folders", label: "Folders", icon: FolderOpen },
+  { page: "playbook", label: "Playbook", icon: BookOpen },
   { page: "program", label: "Program", icon: Rows3 },
   { page: "profile", label: "Settings", icon: Settings },
 ];

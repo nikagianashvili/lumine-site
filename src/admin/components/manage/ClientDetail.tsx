@@ -4,6 +4,8 @@ import { api, type EngagementStatus } from "@/lib/api";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FileUploadButton } from "@/components/files/FileUploadButton";
+import { FileList } from "@/components/files/FileList";
 
 const ENGAGEMENT_STATUS_VARIANT: Record<EngagementStatus, "info" | "success" | "secondary" | "destructive"> = {
   active: "info",
@@ -21,6 +23,10 @@ export function ClientDetail({ id, onBack }: { id: string; onBack: () => void })
   const engagementsQuery = useQuery({ queryKey: ["engagements"], queryFn: api.engagements.list });
   const convosQuery = useQuery({ queryKey: ["conversations"], queryFn: api.conversations.list });
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
+  const filesQuery = useQuery({
+    queryKey: ["files", "client", id],
+    queryFn: () => api.files.list({ category: "document", client_id: id }),
+  });
 
   if (clientsQuery.isLoading) return <Skeleton className="h-96" />;
 
@@ -90,6 +96,25 @@ export function ClientDetail({ id, onBack }: { id: string; onBack: () => void })
                 <span className="flex-shrink-0 text-xs text-muted-foreground">{formatDate(c.created_at)}</span>
               </div>
             ))
+          )}
+        </div>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Documents</CardTitle>
+          <FileUploadButton category="document" clientId={id} queryKey={["files", "client", id]} />
+        </CardHeader>
+        <div className="px-5 pb-5">
+          {filesQuery.isError ? (
+            <p className="text-sm text-muted-foreground">Document storage isn't set up yet.</p>
+          ) : (
+            <FileList
+              files={filesQuery.data ?? []}
+              queryKey={["files", "client", id]}
+              emptyLabel="No invoices or contracts on file yet."
+              isLoading={filesQuery.isLoading}
+            />
           )}
         </div>
       </Card>

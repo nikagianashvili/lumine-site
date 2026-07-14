@@ -13,6 +13,8 @@ import { ProjectBoard } from "@/components/projects/ProjectBoard";
 import { TaskModal } from "@/components/program/TaskModal";
 import { PublishToPortfolioModal } from "@/components/projects/PublishToPortfolioModal";
 import { QuotaCard } from "@/components/projects/QuotaCard";
+import { FileUploadButton } from "@/components/files/FileUploadButton";
+import { FileList } from "@/components/files/FileList";
 
 const STATUS_OPTIONS: EngagementStatus[] = ["active", "on_hold", "completed", "cancelled"];
 
@@ -26,6 +28,10 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
   const engagementsQuery = useQuery({ queryKey: ["engagements"], queryFn: api.engagements.list });
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
+  const filesQuery = useQuery({
+    queryKey: ["files", "engagement", id],
+    queryFn: () => api.files.list({ engagement_id: id }),
+  });
 
   const [notes, setNotes] = useState<string | null>(null);
   const [taskModalOpen, setTaskModalOpen] = useState(false);
@@ -216,13 +222,21 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
       </Card>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Files</CardTitle>
+          <FileUploadButton category="creative" engagementId={project.id} queryKey={["files", "engagement", id]} />
         </CardHeader>
         <div className="px-5 pb-5">
-          <p className="text-sm text-muted-foreground">
-            File tracking isn't wired up yet — coming with a later phase.
-          </p>
+          {filesQuery.isError ? (
+            <p className="text-sm text-muted-foreground">File storage isn't set up yet.</p>
+          ) : (
+            <FileList
+              files={filesQuery.data ?? []}
+              queryKey={["files", "engagement", id]}
+              emptyLabel="No files yet — upload the first one."
+              isLoading={filesQuery.isLoading}
+            />
+          )}
         </div>
       </Card>
 

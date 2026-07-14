@@ -105,6 +105,44 @@ export interface PortfolioProject {
   created_at: string;
 }
 
+// Real file storage (Phase 9) - a private Supabase Storage bucket
+// (agency-files), everything routed through api/admin/files.js. `path` is
+// the storage object key; `url` is a short-lived signed URL generated
+// fresh on every GET (never stored - signed URLs expire).
+export interface AgencyFile {
+  id: string;
+  name: string;
+  path: string;
+  url: string | null;
+  content_type: string | null;
+  size_bytes: number | null;
+  category: "creative" | "document";
+  folder_id: string | null;
+  engagement_id: string | null;
+  client_id: string | null;
+  skills_tags: string[];
+  uploaded_by: string | null;
+  created_at: string;
+  team_members: { name: string | null } | null;
+}
+
+// Account-level folders only - project files use engagement_id directly,
+// no folder row needed (see files.js).
+export interface Folder {
+  id: string;
+  name: string;
+  created_at: string;
+}
+
+export interface PlaybookEntry {
+  id: string;
+  title: string;
+  body: string;
+  tags: string[];
+  created_at: string;
+  updated_at: string;
+}
+
 // water_cooler_posts - a new table (Phase 8), not just new columns, so
 // this feature has no partial/degraded state: it's either set up or it
 // isn't. reactions is {emoji: [team_member_id, ...]} - a toggle set per
@@ -184,6 +222,18 @@ async function unwrap<T>(res: Response, key: string): Promise<T> {
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
   return data[key] as T;
+}
+
+// Reads a File as base64 for the JSON upload body (api/admin/files.js) -
+// no multipart parsing needed server-side, at the cost of ~33% payload
+// overhead, acceptable given the 6MB cap on what this accepts anyway.
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve((reader.result as string).split(",")[1] ?? "");
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 // Several columns (engagements.service_type/cover_image_url,
@@ -298,6 +348,61 @@ export const api = {
         await adminFetch("/api/admin/water-cooler", { method: "PATCH", body: JSON.stringify({ id, emoji }) }),
         "post",
       ),
+  },
+  files: {
+    list: async (filters: { category?: string; folder_id?: string; engagement_id?: string; client_id?: string }) => {
+      const params = new URLSearchParams(Object.entries(filters).filter(([, v]) => v) as [string, string][]);
+      return unwrap<AgencyFile[]>(await adminFetch(`/api/admin/files?${params}`), "files");
+    },
+    upload: async (
+      file: File,
+      meta: {
+        category: "creative" | "document";
+        folder_id?: string;
+        engagement_id?: string;
+        client_id?: string;
+        skills_tags?: string[];
+      },
+    ) => {
+      const dataBase64 = await fileToBase64(file);
+      return unwrap<AgencyFile>(
+        await adminFetch("/api/admin/files", {
+          method: "POST",
+          body: JSON.stringify({ filename: file.name, contentType: file.type, dataBase64, ...meta }),
+        }),
+        "file",
+      );
+    },
+    delete: async (id: string) => {
+      const res = await adminFetch("/api/admin/files", { method: "DELETE", body: JSON.stringify({ id }) });
+      if (!res.ok) throw new Error((await res.json()).error || "Could not delete file");
+    },
+  },
+  folders: {
+    list: async () => unwrap<Folder[]>(await adminFetch("/api/admin/folders"), "folders"),
+    create: async (name: string) =>
+      unwrap<Folder>(await adminFetch("/api/admin/folders", { method: "POST", body: JSON.stringify({ name }) }), "folder"),
+    delete: async (id: string) => {
+      const res = await adminFetch("/api/admin/folders", { method: "DELETE", body: JSON.stringify({ id }) });
+      if (!res.ok) throw new Error((await res.json()).error || "Could not delete folder");
+    },
+  },
+  playbook: {
+    list: async () => unwrap<PlaybookEntry[]>(await adminFetch("/api/admin/playbook"), "entries"),
+    create: async (payload: { title: string; body: string; tags: string[] }) =>
+      unwrap<PlaybookEntry>(
+        await adminFetch("/api/admin/playbook", { method: "POST", body: JSON.stringify(payload) }),
+        "entry",
+      ),
+    update: async (id: string, updates: Partial<PlaybookEntry>) =>
+      unwrap<PlaybookEntry>(
+        await adminFetch("/api/admin/playbook", { method: "PATCH", body: JSON.stringify({ id, ...updates }) }),
+        "entry",
+      ),
+    delete: async (id: string) => {
+      const res = await adminFetch("/api/admin/playbook", { method: "DELETE", body: JSON.stringify({ id }) });
+      if (!res.ok) throw new Error((await res.json()).error || "Could not delete entry");
+    },
   },
   teamMembers: {
     list: async () => unwrap<TeamMember[]>(await adminFetch("/api/admin/team-members"), "teamMembers"),

@@ -9,10 +9,13 @@ import { ProjectsPage } from "@/pages/Projects";
 import { ArchivePage } from "@/pages/Archive";
 import { WarRoomPage } from "@/pages/WarRoom";
 import { WaterCoolerPage } from "@/pages/WaterCooler";
+import { FoldersPage } from "@/pages/Folders";
+import { DocumentsPage } from "@/pages/Documents";
+import { PlaybookPage } from "@/pages/Playbook";
+import { ActivityPage } from "@/pages/Activity";
 import { ManagePage } from "@/pages/Manage";
 import { InboxPage } from "@/pages/Inbox";
 import { ProfilePage } from "@/pages/Profile";
-import { ComingSoonPage } from "@/pages/ComingSoon";
 
 export type Page =
   | "overview"
@@ -26,15 +29,23 @@ export type Page =
   | "watercooler"
   | "folders"
   | "documents"
+  | "playbook"
   | "profile";
 
-const PAGES: Partial<Record<Page, React.ComponentType>> = {
+// Every Page value maps to a real component now (Phase 9 was the last
+// placeholder) - a plain Record, not Partial, so TS itself enforces that
+// adding a new Page value here requires wiring its component too.
+const PAGES: Record<Page, React.ComponentType> = {
   overview: OverviewPage,
+  activity: ActivityPage,
   program: ProgramPage,
   projects: ProjectsPage,
   archive: ArchivePage,
   warroom: WarRoomPage,
   watercooler: WaterCoolerPage,
+  folders: FoldersPage,
+  documents: DocumentsPage,
+  playbook: PlaybookPage,
   manage: ManagePage,
   inbox: InboxPage,
   profile: ProfilePage,
@@ -70,7 +81,7 @@ export default function App() {
           <main className="flex-1 overflow-y-auto px-6 pb-6">
             {(() => {
               const PageComponent = PAGES[page];
-              return PageComponent ? <PageComponent /> : <ComingSoonPage page={page} />;
+              return <PageComponent />;
             })()}
           </main>
         </div>

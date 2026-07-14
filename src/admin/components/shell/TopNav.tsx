@@ -26,6 +26,7 @@ const TABS: { page: Page; label: string }[] = [
   { page: "program", label: "Program" },
   { page: "folders", label: "Folders" },
   { page: "documents", label: "Documents" },
+  { page: "playbook", label: "Playbook" },
 ];
 
 export function TopNav({
