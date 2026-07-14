@@ -1,6 +1,9 @@
 import { ChevronDown } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { clearSession, type Session } from "@/lib/session";
+import { api } from "@/lib/api";
+import { StatusDot } from "@/components/shell/StatusDot";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -34,6 +37,8 @@ export function TopNav({
   session: Session;
 }) {
   const initial = (session.user.email || "?").charAt(0).toUpperCase();
+  const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
+  const me = teamQuery.data?.find((m) => m.id === session.user.id);
 
   return (
     <header className="flex flex-wrap items-center gap-3 px-6 pb-2 pt-4">
@@ -59,8 +64,14 @@ export function TopNav({
 
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-1.5 rounded-full p-1 outline-none">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-xs font-semibold text-background">
+          <span
+            className={cn(
+              "relative flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-background",
+              me?.focus_mode ? "bg-muted-foreground" : "bg-foreground",
+            )}
+          >
             {initial}
+            <StatusDot status={me?.status} focusMode={me?.focus_mode} />
           </span>
           <ChevronDown className="size-3.5 text-muted-foreground" />
         </DropdownMenuTrigger>

@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api, type TeamMember } from "@/lib/api";
 import { getSession } from "@/lib/session";
+import { HATS } from "@/lib/hats";
+import { TEAM_STATUSES } from "@/lib/teamStatus";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 export function ProfilePage() {
   const session = getSession();
@@ -17,6 +21,7 @@ export function ProfilePage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [role, setRole] = useState("");
+  const [skillsTags, setSkillsTags] = useState<string[]>([]);
   const [profileMsg, setProfileMsg] = useState<{ text: string; error?: boolean } | null>(null);
 
   useEffect(() => {
@@ -25,16 +30,26 @@ export function ProfilePage() {
     setFirstName(first);
     setLastName(rest.join(" "));
     setRole(me.role);
+    setSkillsTags(me.skills_tags ?? []);
   }, [me]);
 
   const profileMutation = useMutation({
-    mutationFn: () => api.profile.update({ name: `${firstName} ${lastName}`.trim(), role }),
+    mutationFn: () => api.profile.update({ name: `${firstName} ${lastName}`.trim(), role, skills_tags: skillsTags }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["team-members"] });
       setProfileMsg({ text: "Profile updated" });
     },
     onError: (err: Error) => setProfileMsg({ text: err.message, error: true }),
   });
+
+  const statusMutation = useMutation({
+    mutationFn: (updates: { status?: string; focus_mode?: boolean }) => api.profile.update(updates),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["team-members"] }),
+  });
+
+  function toggleSkill(hat: string) {
+    setSkillsTags((tags) => (tags.includes(hat) ? tags.filter((h) => h !== hat) : [...tags, hat]));
+  }
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -82,7 +97,7 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="flex max-w-xl flex-col gap-4 pt-6">
+    <div className="flex max-w-3xl flex-col gap-4 pt-6">
       <div>
         <h1 className="font-display text-2xl font-bold">Settings</h1>
         <p className="text-sm text-muted-foreground">Your account, not the whole team's.</p>
@@ -123,6 +138,26 @@ export function ProfilePage() {
                   nothing on save - not carrying that gap forward */}
               <Input id="profile-email" value={session?.user.email ?? ""} disabled />
             </div>
+            <div className="flex flex-col gap-1.5">
+              <Label>Hats (what you're skilled at)</Label>
+              <div className="flex flex-wrap gap-1.5">
+                {HATS.map((hat) => (
+                  <button
+                    key={hat}
+                    type="button"
+                    onClick={() => toggleSkill(hat)}
+                    className={cn(
+                      "rounded-full border px-2.5 py-1 text-xs transition-colors",
+                      skillsTags.includes(hat)
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border text-muted-foreground hover:border-primary/40",
+                    )}
+                  >
+                    {hat}
+                  </button>
+                ))}
+              </div>
+            </div>
             {profileMsg && (
               <p className={`text-sm ${profileMsg.error ? "text-destructive" : "text-success"}`}>{profileMsg.text}</p>
             )}
@@ -132,6 +167,44 @@ export function ProfilePage() {
               </Button>
             </div>
           </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Status</CardTitle>
+          <CardDescription>Shown as a dot next to your avatar wherever it appears.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label>Right now</Label>
+            <Select value={me?.status ?? "Available"} onValueChange={(v) => statusMutation.mutate({ status: v })}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TEAM_STATUSES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Focus Mode</Label>
+            <button
+              type="button"
+              onClick={() => statusMutation.mutate({ focus_mode: !me?.focus_mode })}
+              className={cn(
+                "flex h-9 items-center gap-2 rounded-full border px-3 text-sm transition-colors",
+                me?.focus_mode ? "border-primary bg-accent text-accent-foreground" : "border-border text-muted-foreground",
+              )}
+            >
+              <span className={cn("size-2 rounded-full", me?.focus_mode ? "bg-primary" : "bg-muted-foreground")} />
+              {me?.focus_mode ? "On — avatar greyed" : "Off"}
+            </button>
+          </div>
         </CardContent>
       </Card>
 
@@ -184,6 +257,55 @@ export function ProfilePage() {
           </form>
         </CardContent>
       </Card>
+
+      <TeamCard team={teamQuery.data ?? []} myId={session?.user.id} />
     </div>
+  );
+}
+
+function TeamCard({ team, myId }: { team: TeamMember[]; myId: string | undefined }) {
+  const queryClient = useQueryClient();
+  const accessMutation = useMutation({
+    mutationFn: ({ id, access_level }: { id: string; access_level: string }) =>
+      api.teamMembers.update(id, { access_level }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["team-members"] }),
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Team</CardTitle>
+        <CardDescription>
+          Access level doesn't restrict anything yet — everyone has full access while the team's this size. It's here
+          so it's ready when that changes.
+        </CardDescription>
+      </CardHeader>
+      <div className="flex flex-col gap-1 px-5 pb-5">
+        {team.map((m) => (
+          <div key={m.id} className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm">
+            <span className="flex-1 truncate font-medium">
+              {m.name || "Unnamed"}
+              {m.id === myId && <span className="ml-1.5 text-xs font-normal text-muted-foreground">(you)</span>}
+            </span>
+            <span className="w-28 truncate text-xs text-muted-foreground">{m.role}</span>
+            <span className="w-40 truncate text-xs text-muted-foreground">
+              {(m.skills_tags ?? []).join(" ") || "No hats set"}
+            </span>
+            <Select
+              value={m.access_level ?? "admin"}
+              onValueChange={(v) => accessMutation.mutate({ id: m.id, access_level: v })}
+            >
+              <SelectTrigger className="h-7 w-36 border-none bg-transparent px-2 text-xs shadow-none">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="admin">Admin</SelectItem>
+                <SelectItem value="member">Team Member</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        ))}
+      </div>
+    </Card>
   );
 }

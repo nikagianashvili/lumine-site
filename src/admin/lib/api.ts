@@ -40,6 +40,9 @@ export interface Task {
   // lib/pipelines.ts. status above is derived from this, never set
   // independently, so a task's coarse and fine-grained state can't drift.
   stage?: string | null;
+  // Which skill(s) this task needs (lib/hats.ts) - independent of the
+  // single `assignee`. Powers the Bandwidth view (Phase 7).
+  hat_tags?: string[];
 }
 
 export type EngagementStatus = "active" | "on_hold" | "completed" | "cancelled";
@@ -108,6 +111,20 @@ export interface TeamMember {
   // Free text - a specialty label (Founder, Orchestrator, Media, Design, …),
   // not an access tier. No permissions are derived from this value.
   role: string;
+  // What they're skilled at (lib/hats.ts) - feeds the Bandwidth view.
+  skills_tags?: string[];
+  // Manual, self-set (lib/teamStatus.ts) - never inferred from activity.
+  status?: string;
+  // Greys their own avatar elsewhere; muting notifications is N/A today
+  // (no notification system exists yet to mute).
+  focus_mode?: boolean;
+  // "admin" (full access) | "member" (scoped) - the field exists and is
+  // editable, but nothing reads it to restrict anything yet. Everyone
+  // defaults to "admin" until real enforcement is built. Decided when
+  // this was added: AI Inbox should stay visible to Team Members even
+  // once enforcement exists (triaging leads is real member-level work),
+  // the restriction is meant for Manage's full client pipeline/financials.
+  access_level?: string;
 }
 
 export type ConversationStatus = "open" | "qualified" | "closed";
@@ -191,7 +208,8 @@ const ENGAGEMENT_OPTIONAL_FIELDS = [
   "videos_delivered",
   "monthly_rate",
 ] as const;
-const TASK_OPTIONAL_FIELDS = ["service_type", "stage"] as const;
+const TASK_OPTIONAL_FIELDS = ["service_type", "stage", "hat_tags"] as const;
+const TEAM_MEMBER_OPTIONAL_FIELDS = ["skills_tags", "status", "focus_mode", "access_level"] as const;
 
 export const api = {
   clients: {
@@ -251,6 +269,15 @@ export const api = {
   },
   teamMembers: {
     list: async () => unwrap<TeamMember[]>(await adminFetch("/api/admin/team-members"), "teamMembers"),
+    update: async (id: string, updates: Partial<TeamMember>) =>
+      writeWithFallback<TeamMember>(
+        "/api/admin/team-members",
+        "PATCH",
+        { id, ...updates },
+        TEAM_MEMBER_OPTIONAL_FIELDS,
+        "teamMember",
+        "Could not update team member",
+      ),
   },
   conversations: {
     list: async () => unwrap<Conversation[]>(await adminFetch("/api/admin/ai-conversations"), "conversations"),
@@ -261,12 +288,28 @@ export const api = {
       ),
   },
   profile: {
-    // returns { ok: true } on success, not a wrapped resource - no unwrap()
-    update: async (updates: { name?: string; role?: string; currentPassword?: string; newPassword?: string }) => {
-      const res = await adminFetch("/api/admin/profile", { method: "PATCH", body: JSON.stringify(updates) });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Could not update profile");
-      return data;
+    // returns { ok: true } on success, not a wrapped resource - no unwrap(),
+    // so this can't reuse writeWithFallback (which expects a wrapped
+    // resource under `key`) - same strip-and-retry logic, inlined.
+    update: async (updates: {
+      name?: string;
+      role?: string;
+      currentPassword?: string;
+      newPassword?: string;
+      skills_tags?: string[];
+      status?: string;
+      focus_mode?: boolean;
+    }) => {
+      const payload: Record<string, unknown> = { ...updates };
+      for (let attempt = 0; attempt <= TEAM_MEMBER_OPTIONAL_FIELDS.length; attempt++) {
+        const res = await adminFetch("/api/admin/profile", { method: "PATCH", body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (res.ok) return data;
+        const missing = TEAM_MEMBER_OPTIONAL_FIELDS.find((f) => f in payload && data.error?.includes(f));
+        if (!missing) throw new Error(data.error || "Could not update profile");
+        delete payload[missing];
+      }
+      throw new Error("Could not update profile");
     },
   },
 };

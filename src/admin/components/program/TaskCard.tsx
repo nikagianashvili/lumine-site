@@ -2,6 +2,7 @@ import { useDraggable } from "@dnd-kit/core";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { SERVICE_LABELS } from "@/lib/serviceTypes";
+import { StatusDot } from "@/components/shell/StatusDot";
 import type { Engagement, Task, TeamMember } from "@/lib/api";
 
 const PRIORITY_VARIANT = { low: "success", medium: "warning", high: "destructive" } as const;
@@ -56,14 +57,21 @@ export function TaskCard({
           {project.title}
         </span>
       )}
+      {task.hat_tags && task.hat_tags.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {task.hat_tags.map((hat) => (
+            <span key={hat} className="rounded-full bg-accent px-1.5 py-0.5 text-[0.65rem] text-accent-foreground">
+              {hat}
+            </span>
+          ))}
+        </div>
+      )}
       <div className="flex items-center justify-between pt-1">
         <span className="text-xs text-muted-foreground">{task.due_date ? `Due ${formatDate(task.due_date)}` : ""}</span>
         {assignee && (
-          <span
-            title={assignee.name || undefined}
-            className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-[0.65rem] font-semibold text-muted-foreground"
-          >
-            {initials(assignee.name)}
+          <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-muted text-[0.65rem] font-semibold text-muted-foreground">
+            <span title={assignee.name || undefined}>{initials(assignee.name)}</span>
+            <StatusDot status={assignee.status} focusMode={assignee.focus_mode} />
           </span>
         )}
       </div>

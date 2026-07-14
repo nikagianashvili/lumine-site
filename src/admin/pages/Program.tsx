@@ -5,15 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Board } from "@/components/program/Board";
 import { Spreadsheet } from "@/components/program/Spreadsheet";
 import { CalendarView } from "@/components/program/CalendarView";
+import { BandwidthView } from "@/components/program/BandwidthView";
 import { TaskModal } from "@/components/program/TaskModal";
 
-type View = "board" | "timeline" | "spreadsheet" | "calendar";
+type View = "board" | "timeline" | "spreadsheet" | "calendar" | "bandwidth";
 
 const VIEWS: { id: View; label: string }[] = [
   { id: "board", label: "Board" },
   { id: "timeline", label: "Timeline" },
   { id: "spreadsheet", label: "Spreadsheet" },
   { id: "calendar", label: "Calendar" },
+  { id: "bandwidth", label: "Bandwidth" },
 ];
 
 export function ProgramPage() {
@@ -52,6 +54,7 @@ export function ProgramPage() {
       {view === "board" && <Board />}
       {view === "spreadsheet" && <Spreadsheet />}
       {view === "calendar" && <CalendarView />}
+      {view === "bandwidth" && <BandwidthView />}
       {view === "timeline" && (
         <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-border text-sm text-muted-foreground">
           Timeline (Gantt) is next in the rebuild queue.

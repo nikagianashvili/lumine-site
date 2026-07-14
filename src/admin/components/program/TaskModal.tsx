@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, type TaskPriority, type TaskStatus } from "@/lib/api";
 import { pipelineFor } from "@/lib/pipelines";
+import { HATS } from "@/lib/hats";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -37,6 +39,7 @@ export function TaskModal({
   const [priority, setPriority] = useState<TaskPriority>("medium");
   const [dueDate, setDueDate] = useState("");
   const [assignee, setAssignee] = useState<string>("");
+  const [hatTags, setHatTags] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const createMutation = useMutation({
@@ -56,7 +59,12 @@ export function TaskModal({
     setPriority("medium");
     setDueDate("");
     setAssignee("");
+    setHatTags([]);
     setError(null);
+  }
+
+  function toggleHat(hat: string) {
+    setHatTags((tags) => (tags.includes(hat) ? tags.filter((h) => h !== hat) : [...tags, hat]));
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -89,6 +97,7 @@ export function TaskModal({
       priority,
       due_date: dueDate || null,
       assignee: assignee || null,
+      hat_tags: hatTags,
     });
   }
 
@@ -135,6 +144,26 @@ export function TaskModal({
             {(engagementsQuery.data ?? []).length === 0 && !engagementsQuery.isLoading && (
               <p className="text-xs text-muted-foreground">Create a project first, from the Projects tab.</p>
             )}
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Hats needed</Label>
+            <div className="flex flex-wrap gap-1.5">
+              {HATS.map((hat) => (
+                <button
+                  key={hat}
+                  type="button"
+                  onClick={() => toggleHat(hat)}
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-xs transition-colors",
+                    hatTags.includes(hat)
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border text-muted-foreground hover:border-primary/40",
+                  )}
+                >
+                  {hat}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
