@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { name, role, currentPassword, newPassword } = req.body || {};
+  const { name, role, currentPassword, newPassword, skills_tags, status, focus_mode } = req.body || {};
   const supabase = getSupabaseServerClient();
 
   if (newPassword) {
@@ -47,10 +47,9 @@ export default async function handler(req, res) {
     }
   }
 
-  if (name !== undefined || role !== undefined) {
-    const updates = {};
-    if (name !== undefined) updates.name = name;
-    if (role !== undefined) updates.role = role;
+  const memberFields = { name, role, skills_tags, status, focus_mode };
+  const updates = Object.fromEntries(Object.entries(memberFields).filter(([, v]) => v !== undefined));
+  if (Object.keys(updates).length > 0) {
     const { error: memberError } = await supabase
       .from("team_members")
       .update(updates)

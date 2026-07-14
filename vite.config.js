@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
 import fs from "fs";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 // Mirrors vercel.json / public/.htaccess clean-URL rewrites for the dev
 // server. Without this, most /ka/* routes happen to resolve anyway because
@@ -77,7 +79,16 @@ function copyToDist() {
 }
 
 export default defineConfig({
-  plugins: [copyToDist(), devCleanUrls()],
+  // react() + tailwindcss() only activate for files that opt in (.tsx
+  // imports, `@import "tailwindcss"` in a stylesheet) — the vanilla public
+  // pages and the old admin.css never reference either, so they're
+  // unaffected. Scoped to /admin's rebuild only.
+  plugins: [copyToDist(), devCleanUrls(), react(), tailwindcss()],
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "src/admin"),
+    },
+  },
   build: {
     rollupOptions: {
       input: {

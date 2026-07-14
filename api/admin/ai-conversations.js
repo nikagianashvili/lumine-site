@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   if (req.method === "GET") {
     const { data, error } = await supabase
       .from("ai_conversations")
-      .select("*, clients(name, email, phone, company, status)")
+      .select("*, clients(name, email, phone, company, status, meta)")
       .order("created_at", { ascending: false });
     if (error) {
       res.status(500).json({ error: error.message });
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
       .from("ai_conversations")
       .update(updates)
       .eq("id", id)
-      .select("*, clients(name, email, phone, company, status)")
+      .select("*, clients(name, email, phone, company, status, meta)")
       .single();
     if (error) {
       res.status(500).json({ error: error.message });
