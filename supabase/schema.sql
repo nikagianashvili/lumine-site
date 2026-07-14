@@ -1,8 +1,10 @@
 -- Lumine's backend schema. Run in Supabase's SQL Editor
--- (Dashboard → SQL Editor → New query). Every CREATE TABLE uses "if not
--- exists" and every new column uses "add column if not exists" — this
--- file is safe to run top-to-bottom at any point, including against a
--- database that already has some or all of it.
+-- (Dashboard → SQL Editor → New query). Base tables use "create table if
+-- not exists" (a no-op if they already exist — it does NOT add missing
+-- columns to an existing table, that's what the ALTER statements below
+-- each table are for). New columns use "add column if not exists". Safe
+-- to run top-to-bottom at any point, including against a database that
+-- already has some or all of it.
 
 -- ── Content tables (currently hardcoded in js/*-data.js) ────────────────
 
@@ -69,15 +71,16 @@ create table if not exists team_members (
   id uuid primary key references auth.users (id) on delete cascade,
   name text,
   role text not null default 'member', -- a specialty label (Founder/Orchestrator/Media/Design/…), not an access tier
-  created_at timestamptz default now(),
-  -- Skills/status/permissions substrate (admin rebuild Phase 7) - role
-  -- above stays a free-text specialty label on purpose; access_level is
-  -- the actual (currently unenforced) permission tier.
-  access_level text default 'admin', -- "admin" (full access) | "member" (scoped) - not yet enforced anywhere in the API
-  skills_tags text[] default '{}', -- @ai-ops / @web-dev / @photo / @brand-design / @smm / @strategy
-  status text default 'Available', -- Available / Focused / On Set / Away - manual, self-set, never inferred
-  focus_mode boolean default false
+  created_at timestamptz default now()
 );
+
+-- Skills/status/permissions substrate (admin rebuild Phase 7) - role
+-- above stays a free-text specialty label on purpose; access_level is
+-- the actual (currently unenforced) permission tier.
+alter table team_members add column if not exists access_level text default 'admin'; -- "admin" (full access) | "member" (scoped) - not yet enforced anywhere in the API
+alter table team_members add column if not exists skills_tags text[] default '{}'; -- @ai-ops / @web-dev / @photo / @brand-design / @smm / @strategy
+alter table team_members add column if not exists status text default 'Available'; -- Available / Focused / On Set / Away - manual, self-set, never inferred
+alter table team_members add column if not exists focus_mode boolean default false;
 
 -- ── Clients (pillar 4) ───────────────────────────────────────────────────
 -- One record per contact, from first inquiry through becoming a real
@@ -114,23 +117,24 @@ create table if not exists engagements (
   end_date date,
   budget text,
   notes text,
-  created_at timestamptz default now(),
-  -- Admin rebuild Phase 2/4 - real Client/Project/Task linking + Archive
-  service_type text, -- web | photo-video | design | smm - drives the Phase 3 pipeline template
-  cover_image_url text,
-  industry text, -- matches the public projects.industry taxonomy - pre-fills Publish to Portfolio
-  -- Phase 5 - retainer quota tracker + offboarding-upsell automation
-  is_retainer boolean default false, -- false = "Solo Service" (one-off), eligible for the upsell cron below
-  retainer_tier text, -- Starter | Growth | Full Beam - matches js/pricing-data.js's real packages
-  posters_limit int,
-  posters_delivered int default 0,
-  videos_limit int,
-  videos_delivered int default 0,
-  completed_at timestamptz, -- stamped server-side whenever status transitions to "completed" - never client-set
-  upsell_task_created boolean default false, -- guards api/cron/offboarding-upsell.js from firing twice on one completion
-  -- Phase 6 - War Room / MRR dashboard
-  monthly_rate numeric -- structured, not parsed out of the free-text `budget` field above
+  created_at timestamptz default now()
 );
+
+-- Admin rebuild Phase 2/4 - real Client/Project/Task linking + Archive
+alter table engagements add column if not exists service_type text; -- web | photo-video | design | smm - drives the Phase 3 pipeline template
+alter table engagements add column if not exists cover_image_url text;
+alter table engagements add column if not exists industry text; -- matches the public projects.industry taxonomy - pre-fills Publish to Portfolio
+-- Phase 5 - retainer quota tracker + offboarding-upsell automation
+alter table engagements add column if not exists is_retainer boolean default false; -- false = "Solo Service" (one-off), eligible for the upsell cron
+alter table engagements add column if not exists retainer_tier text; -- Starter | Growth | Full Beam - matches js/pricing-data.js's real packages
+alter table engagements add column if not exists posters_limit int;
+alter table engagements add column if not exists posters_delivered int default 0;
+alter table engagements add column if not exists videos_limit int;
+alter table engagements add column if not exists videos_delivered int default 0;
+alter table engagements add column if not exists completed_at timestamptz; -- stamped server-side whenever status transitions to "completed" - never client-set
+alter table engagements add column if not exists upsell_task_created boolean default false; -- guards api/cron/offboarding-upsell.js from firing twice on one completion
+-- Phase 6 - War Room / MRR dashboard
+alter table engagements add column if not exists monthly_rate numeric; -- structured, not parsed out of the free-text `budget` column above
 
 create table if not exists tasks (
   id uuid primary key default gen_random_uuid(),
@@ -141,15 +145,16 @@ create table if not exists tasks (
   priority text not null default 'medium', -- low | medium | high
   assignee uuid references team_members (id),
   due_date date,
-  created_at timestamptz default now(),
-  -- Phase 2/3 - denormalized from the task's engagement so Board/Spreadsheet
-  -- can filter without a join; only ever set from the project's own
-  -- service_type, never edited independently
-  service_type text,
-  stage text, -- fine-grained per-service pipeline stage (e.g. "Shoot Day", "QA") - status above is derived from this
-  -- Phase 7 - hat-tags, independent of the single `assignee`
-  hat_tags text[] default '{}'
+  created_at timestamptz default now()
 );
+
+-- Phase 2/3 - denormalized from the task's engagement so Board/Spreadsheet
+-- can filter without a join; only ever set from the project's own
+-- service_type, never edited independently
+alter table tasks add column if not exists service_type text;
+alter table tasks add column if not exists stage text; -- fine-grained per-service pipeline stage (e.g. "Shoot Day", "QA") - status above is derived from this
+-- Phase 7 - hat-tags, independent of the single `assignee`
+alter table tasks add column if not exists hat_tags text[] default '{}';
 
 -- ── Marketing office (pillar 2) ──────────────────────────────────────────
 -- Planning/scheduling for content across channels — distinct from
@@ -189,6 +194,7 @@ create table if not exists ai_conversations (
 -- ── Water Cooler / social feed (admin rebuild Phase 8) ───────────────────
 -- Lightweight team feed, distinct from Activity (a read-only unified
 -- timeline built client-side from the tables above, no table of its own).
+-- Brand new table - CREATE TABLE IF NOT EXISTS is correct here.
 
 create table if not exists water_cooler_posts (
   id uuid primary key default gen_random_uuid(),
@@ -211,6 +217,8 @@ create table if not exists water_cooler_posts (
 -- project work, tied to a project or an account-level folder) are
 -- deliberately separate concepts in the admin UI, but share this one
 -- table — `category` distinguishes them rather than two upload pipelines.
+-- All three tables below are brand new - CREATE TABLE IF NOT EXISTS is
+-- correct for them.
 
 create table if not exists folders (
   id uuid primary key default gen_random_uuid(), -- account-level folders only; project files use files.engagement_id directly, no folder row needed
