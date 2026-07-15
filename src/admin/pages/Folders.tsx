@@ -1,24 +1,37 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Folder as FolderIcon, ArrowLeft } from "lucide-react";
+import { Plus, Folder as FolderIcon, FolderOpen, Database } from "lucide-react";
 import { api } from "@/lib/api";
 import { HATS } from "@/lib/hats";
+import { isMissingTableError } from "@/lib/errors";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { BackButton } from "@/components/ui/back-button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
 import { FileUploadButton } from "@/components/files/FileUploadButton";
 import { FileList } from "@/components/files/FileList";
-import { cn } from "@/lib/utils";
 
 type Mode = "folders" | "library";
+
+const MODES: { value: Mode; label: string }[] = [
+  { value: "folders", label: "Folders" },
+  { value: "library", label: "Creative Library" },
+];
 
 export function FoldersPage() {
   const [mode, setMode] = useState<Mode>("folders");
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [newFolderName, setNewFolderName] = useState("");
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const foldersQuery = useQuery({ queryKey: ["folders"], queryFn: api.folders.list });
   const filesQuery = useQuery({
@@ -33,38 +46,30 @@ export function FoldersPage() {
       queryClient.invalidateQueries({ queryKey: ["folders"] });
       setNewFolderName("");
     },
+    onError: (err: Error) => toast({ title: "Couldn't create folder", description: err.message, variant: "destructive" }),
   });
 
   const deleteFolderMutation = useMutation({
     mutationFn: (id: string) => api.folders.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["folders"] });
+      setConfirmDeleteOpen(false);
       setSelectedFolderId(null);
     },
+    onError: (err: Error) => toast({ title: "Couldn't delete folder", description: err.message, variant: "destructive" }),
   });
 
   if (selectedFolderId) {
     const folder = foldersQuery.data?.find((f) => f.id === selectedFolderId);
     return (
       <div className="flex flex-col gap-4 pt-6">
-        <button
-          type="button"
-          onClick={() => setSelectedFolderId(null)}
-          className="flex w-fit items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="size-3.5" />
-          All folders
-        </button>
-        <div className="flex items-center justify-between">
+        <BackButton onClick={() => setSelectedFolderId(null)} label="All folders" />
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="font-display text-2xl font-bold">{folder?.name ?? "Folder"}</h1>
           <button
             type="button"
-            onClick={() => {
-              if (window.confirm("Delete this folder? Files inside will be unfiled, not deleted.")) {
-                deleteFolderMutation.mutate(selectedFolderId);
-              }
-            }}
-            className="text-xs text-muted-foreground hover:text-destructive"
+            onClick={() => setConfirmDeleteOpen(true)}
+            className="text-xs text-muted-foreground transition-colors hover:text-destructive"
           >
             Delete folder
           </button>
@@ -80,7 +85,13 @@ export function FoldersPage() {
           </CardHeader>
           <div className="px-5 pb-5">
             {filesQuery.isError ? (
-              <p className="text-sm text-muted-foreground">File storage isn't set up yet.</p>
+              isMissingTableError(filesQuery.error) ? (
+                <p className="py-6 text-sm text-muted-foreground">
+                  File storage isn't set up yet — the files table hasn't been created.
+                </p>
+              ) : (
+                <ErrorState message={filesQuery.error.message} onRetry={() => filesQuery.refetch()} />
+              )
             ) : (
               <FileList
                 files={filesQuery.data ?? []}
@@ -91,6 +102,15 @@ export function FoldersPage() {
             )}
           </div>
         </Card>
+        <ConfirmDialog
+          open={confirmDeleteOpen}
+          onOpenChange={setConfirmDeleteOpen}
+          title="Delete this folder?"
+          description="Files inside will be unfiled, not deleted."
+          confirmLabel="Delete folder"
+          pending={deleteFolderMutation.isPending}
+          onConfirm={() => deleteFolderMutation.mutate(selectedFolderId)}
+        />
       </div>
     );
   }
@@ -104,58 +124,55 @@ export function FoldersPage() {
         </p>
       </div>
 
-      <div className="flex w-fit gap-1 rounded-full border border-border bg-card p-1 shadow-sm">
-        {(["folders", "library"] as Mode[]).map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setMode(m)}
-            className={cn(
-              "rounded-full px-4 py-1.5 text-sm text-muted-foreground transition-colors",
-              mode === m && "bg-primary text-primary-foreground",
-            )}
-          >
-            {m === "folders" ? "Folders" : "Creative Library"}
-          </button>
-        ))}
-      </div>
+      <SegmentedControl options={MODES} value={mode} onChange={setMode} />
 
       {mode === "folders" && (
         <>
-          <div className="flex gap-2">
+          {/* a real form so Enter creates the folder, same as clicking */}
+          <form
+            className="flex flex-wrap gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (newFolderName.trim()) createFolderMutation.mutate(newFolderName.trim());
+            }}
+          >
             <Input
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
               placeholder="New folder name…"
               className="w-64"
             />
-            <Button
-              onClick={() => newFolderName.trim() && createFolderMutation.mutate(newFolderName.trim())}
-              disabled={createFolderMutation.isPending}
-            >
+            <Button type="submit" disabled={createFolderMutation.isPending}>
               <Plus className="size-4" />
               Create folder
             </Button>
-          </div>
+          </form>
 
           {foldersQuery.isLoading && (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-24" />
+                <Skeleton key={i} className="h-24 rounded-2xl" />
               ))}
             </div>
           )}
 
-          {foldersQuery.isError && (
-            <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-              Folders aren't set up yet — the database table hasn't been created.
-            </p>
-          )}
+          {foldersQuery.isError &&
+            (isMissingTableError(foldersQuery.error) ? (
+              <EmptyState
+                icon={Database}
+                title="Folders isn't set up yet"
+                description="The folders table hasn't been created in the database."
+              />
+            ) : (
+              <ErrorState message={foldersQuery.error.message} onRetry={() => foldersQuery.refetch()} />
+            ))}
 
           {foldersQuery.data && foldersQuery.data.length === 0 && (
-            <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-              No folders yet — create one for brand assets, templates, or anything not tied to a project.
-            </p>
+            <EmptyState
+              icon={FolderOpen}
+              title="No folders yet"
+              description="Create one for brand assets, templates, or anything not tied to a project."
+            />
           )}
 
           {foldersQuery.data && foldersQuery.data.length > 0 && (
@@ -213,7 +230,13 @@ function CreativeLibrary() {
       <Card>
         <div className="px-5 py-3">
           {allFilesQuery.isError ? (
-            <p className="py-6 text-sm text-muted-foreground">File storage isn't set up yet.</p>
+            isMissingTableError(allFilesQuery.error) ? (
+              <p className="py-6 text-sm text-muted-foreground">
+                File storage isn't set up yet — the files table hasn't been created.
+              </p>
+            ) : (
+              <ErrorState message={allFilesQuery.error.message} onRetry={() => allFilesQuery.refetch()} />
+            )
           ) : (
             <FileList
               files={filtered}

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 @import "../../css/fonts.css";
 
 /*
@@ -56,10 +57,16 @@
 
   --color-destructive: #a3432c;
   --color-destructive-foreground: #ffffff;
+  /* escalated-card wash: a real token so it layers on top of card white
+     instead of replacing bg-card (twMerge collapses two bg-* utilities) */
+  --color-destructive-surface: color-mix(in oklab, #a3432c 4%, #ffffff);
 
-  --color-success: #4c7350;
+  /* success/warning darkened from #4c7350/#a97a2e: at badge size (12px
+     semibold) both failed WCAG AA on their tints (4.36:1 / 3.11:1) —
+     these hit 5.49:1 / 5.11:1 while keeping the same hue family */
+  --color-success: #3f6343;
   --color-success-tint: #e0e9df;
-  --color-warning: #a97a2e;
+  --color-warning: #7d5a1e;
   --color-warning-tint: #f3e7cd;
   --color-info: #3f5c78;
   --color-info-tint: #e0e7ed;
@@ -72,12 +79,15 @@
      family on purpose (ties AI-sourced leads to the AI-layer signature);
      contact_form/manual get unrelated hues so all four stay distinguishable. */
   --chart-contact-form: #2a78d6;
-  --chart-manual: #1baf7a;
+  /* was #1baf7a — 2.82:1 against card, under the 3:1 non-text floor */
+  --chart-manual: #12986b;
   --chart-ai-chat: #6d5ef0;
   --chart-ai-consultant: #4636c7;
 
   --color-border: #ded5bf;
-  --color-input: #ded5bf;
+  /* darker than --color-border on purpose: hairlines can stay soft, but
+     an input's boundary is a control affordance and needs to read */
+  --color-input: #c4b795;
   --color-ring: #6d5ef0;
 }
 
@@ -109,16 +119,18 @@
 
   --color-destructive: #d97256;
   --color-destructive-foreground: #18140f;
+  --color-destructive-surface: color-mix(in oklab, #d97256 6%, #221d16);
 
   --color-success: #82a986;
   --color-success-tint: rgba(130, 169, 134, 0.16);
   --color-warning: #d9a955;
   --color-warning-tint: rgba(217, 169, 85, 0.16);
-  --color-info: #7699b8;
+  /* was #7699b8 — 4.38:1 on its tint at badge size; this passes at 4.93:1 */
+  --color-info: #84a5c4;
   --color-info-tint: rgba(118, 153, 184, 0.16);
 
   --color-border: rgba(242, 237, 226, 0.14);
-  --color-input: rgba(242, 237, 226, 0.14);
+  --color-input: rgba(242, 237, 226, 0.24);
   --color-ring: #9c8fff;
 }
 
@@ -139,14 +151,28 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* tabular figures for anything numeric — stat cards, table cells — so
-   columns of numbers align instead of jittering with proportional digits */
-.tabular-nums {
-  font-variant-numeric: tabular-nums;
-}
-
 :focus-visible {
   outline: 2px solid var(--color-ring);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
+}
+
+/* hides the scrollbar on the TopNav tab strip — it scrolls horizontally on
+   small screens and a visible bar under pill tabs reads as broken chrome */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

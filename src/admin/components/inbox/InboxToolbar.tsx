@@ -6,10 +6,12 @@ import type { ClientStatus, ConversationStatus } from "@/lib/api";
 export type SortMode = "newest" | "oldest" | "urgent";
 
 const CONVO_STATUSES: (ConversationStatus | "all")[] = ["all", "open", "qualified", "closed"];
+// "qualified" renders as "Needs you" — the card pill, the Overview summary,
+// and this filter must all use the same words for the same state
 const CONVO_LABELS: Record<ConversationStatus | "all", string> = {
   all: "All conversations",
   open: "Open",
-  qualified: "Qualified",
+  qualified: "Needs you",
   closed: "Closed",
 };
 

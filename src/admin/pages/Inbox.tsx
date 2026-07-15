@@ -1,9 +1,12 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { MessageSquare, SearchX } from "lucide-react";
 import { api, type Conversation } from "@/lib/api";
 import { ConversationCard } from "@/components/inbox/ConversationCard";
 import { InboxToolbar, type InboxFilters } from "@/components/inbox/InboxToolbar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 
 const URGENCY_RANK: Record<string, number> = { high: 0, medium: 1, low: 2 };
 
@@ -71,14 +74,15 @@ export function InboxPage() {
       )}
 
       {convosQuery.isError && (
-        <p className="text-sm text-destructive">Couldn't load conversations: {convosQuery.error.message}</p>
+        <ErrorState message={convosQuery.error.message} onRetry={() => convosQuery.refetch()} />
       )}
 
       {convosQuery.data && convosQuery.data.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          Lumine AI is live — no conversations yet. It'll answer and qualify the moment someone messages through
-          the contact form or chat.
-        </p>
+        <EmptyState
+          icon={MessageSquare}
+          title="Lumine AI is live — no conversations yet"
+          description="It'll answer and qualify the moment someone messages through the contact form or chat."
+        />
       )}
 
       {convosQuery.data && convosQuery.data.length > 0 && (
@@ -86,9 +90,11 @@ export function InboxPage() {
           <InboxToolbar filters={filters} onChange={(next) => setFilters((f) => ({ ...f, ...next }))} />
 
           {filtered.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-              No conversations match these filters.
-            </p>
+            <EmptyState
+              icon={SearchX}
+              title="No conversations match these filters"
+              description="Try widening the status filters or clearing the search."
+            />
           ) : (
             <div className="flex flex-col gap-3">
               {filtered.map((c) => (

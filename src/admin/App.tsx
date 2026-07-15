@@ -3,6 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { getSession, type Session } from "@/lib/session";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { TopNav } from "@/components/shell/TopNav";
+import { ToastProvider } from "@/components/ui/toast";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { OverviewPage } from "@/pages/Overview";
 import { ProgramPage } from "@/pages/Program";
 import { ProjectsPage } from "@/pages/Projects";
@@ -51,6 +53,22 @@ const PAGES: Record<Page, React.ComponentType> = {
   profile: ProfilePage,
 };
 
+const PAGE_TITLES: Record<Page, string> = {
+  overview: "Overview",
+  activity: "Activity",
+  inbox: "AI Inbox",
+  manage: "Manage",
+  projects: "Projects",
+  program: "Program",
+  archive: "Archive",
+  warroom: "War Room",
+  watercooler: "Water Cooler",
+  folders: "Folders",
+  documents: "Documents",
+  playbook: "Playbook",
+  profile: "Settings",
+};
+
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
 });
@@ -68,24 +86,37 @@ export default function App() {
     setSession(s);
   }, []);
 
+  useEffect(() => {
+    document.title = `${PAGE_TITLES[page]} · Lumine Admin`;
+  }, [page]);
+
   if (session === "checking" || session === null) {
     return <div className="flex h-full items-center justify-center text-muted-foreground">Loading…</div>;
   }
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex h-full">
-        <Sidebar page={page} onNavigate={setPage} />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <TopNav page={page} onNavigate={setPage} session={session} />
-          <main className="flex-1 overflow-y-auto px-6 pb-6">
-            {(() => {
-              const PageComponent = PAGES[page];
-              return <PageComponent />;
-            })()}
-          </main>
-        </div>
-      </div>
+      <TooltipProvider delayDuration={300}>
+        <ToastProvider>
+          <div className="flex h-full">
+            <Sidebar page={page} onNavigate={setPage} />
+            <div className="flex min-w-0 flex-1 flex-col">
+              <TopNav page={page} onNavigate={setPage} session={session} />
+              <main className="flex-1 overflow-y-auto px-4 pb-6 md:px-6">
+                {/* one shared reading width: previously Manage/Program ran
+                    full-bleed on wide monitors while feed pages capped
+                    themselves at arbitrary widths */}
+                <div className="mx-auto w-full max-w-[88rem]">
+                  {(() => {
+                    const PageComponent = PAGES[page];
+                    return <PageComponent />;
+                  })()}
+                </div>
+              </main>
+            </div>
+          </div>
+        </ToastProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }

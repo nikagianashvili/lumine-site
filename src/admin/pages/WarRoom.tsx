@@ -6,6 +6,7 @@ import { StatCard } from "@/components/overview/StatCard";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/ui/error-state";
 
 function formatGel(n: number) {
   return `${n.toLocaleString()}₾`;
@@ -33,11 +34,38 @@ export function WarRoomPage() {
   const avgRate = activeRetainers.length > 0 ? Math.round(mrr / activeRetainers.length) : 0;
 
   if (engagementsQuery.isLoading || clientsQuery.isLoading) {
+    // mirrors the loaded page: title, 4 stat cards, two list cards
     return (
-      <div className="grid grid-cols-3 gap-4 pt-6">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-28" />
-        ))}
+      <div className="flex flex-col gap-4 pt-6">
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-7 w-40" />
+          <Skeleton className="h-4 w-80" />
+        </div>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-xl" />
+          ))}
+        </div>
+        <Skeleton className="h-40 rounded-xl" />
+        <Skeleton className="h-40 rounded-xl" />
+      </div>
+    );
+  }
+
+  // a revenue page must never present a failed fetch as ₾0 MRR — surface
+  // the failure instead of rendering zeros that look like real numbers
+  if (engagementsQuery.isError || clientsQuery.isError) {
+    const failed = engagementsQuery.isError ? engagementsQuery : clientsQuery;
+    return (
+      <div className="pt-6">
+        <ErrorState
+          title="Couldn't load revenue data"
+          message={failed.error?.message}
+          onRetry={() => {
+            engagementsQuery.refetch();
+            clientsQuery.refetch();
+          }}
+        />
       </div>
     );
   }

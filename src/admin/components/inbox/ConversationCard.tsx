@@ -1,32 +1,16 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, MessageSquare, Sparkles, TriangleAlert, Phone, Mail, MessageCircle } from "lucide-react";
-import { api, type Conversation, type ClientStatus } from "@/lib/api";
+import { Bot, ChevronDown, MessageSquare, Sparkles, TriangleAlert, Phone, Mail, MessageCircle } from "lucide-react";
+import { api, type Conversation } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { StatusPill } from "@/components/ui/status-pill";
+import { useToast } from "@/components/ui/toast";
+import { timeAgo } from "@/lib/format";
 import { cn } from "@/lib/utils";
-
-const STATUS_CLASSES: Record<ClientStatus, string> = {
-  hot: "bg-destructive/10 text-destructive",
-  warm: "bg-warning-tint text-warning",
-  new: "bg-info-tint text-info",
-  client: "bg-success-tint text-success",
-  cold: "bg-muted text-muted-foreground",
-  lost: "bg-muted text-muted-foreground",
-};
 
 const URGENCY_VARIANT = { high: "destructive", medium: "warning", low: "secondary" } as const;
 const LOW_CONFIDENCE_THRESHOLD = 0.6;
-
-function timeAgo(iso: string) {
-  const diffMs = Date.now() - new Date(iso).getTime();
-  const mins = Math.round(diffMs / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hours = Math.round(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
-}
 
 function messageTime(iso: string) {
   return new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
@@ -34,28 +18,38 @@ function messageTime(iso: string) {
 
 export function ConversationCard({ convo }: { convo: Conversation }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [expanded, setExpanded] = useState(false);
   const client = convo.clients;
   const escalated = convo.status === "qualified";
   const handled = convo.status === "closed";
   const meta = client?.meta ?? {};
+  const ChannelIcon = convo.channel === "consultant" ? Bot : MessageSquare;
 
   const handleMutation = useMutation({
     mutationFn: () => api.conversations.update(convo.id, { status: "closed" }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["conversations"] }),
+    onError: (err: Error) =>
+      toast({ title: "Couldn't mark as handled", description: err.message, variant: "destructive" }),
   });
 
   return (
     <div
       className={cn(
+        // bg-destructive-surface is a dedicated token: stacking a second
+        // bg-* utility on bg-card just replaces it (twMerge), so the tint
+        // was compositing over the page beige instead of the card white
         "rounded-2xl border bg-card p-4 shadow-sm",
-        escalated ? "border-destructive/30 bg-destructive/[0.03] border-l-4" : "border-border",
+        escalated ? "border-destructive/30 bg-destructive-surface border-l-4" : "border-border",
       )}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2">
-          <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground" title="Channel: chat">
-            <MessageSquare className="size-3.5" />
+          <span
+            className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground"
+            title={convo.channel === "consultant" ? "Channel: AI consultant" : "Channel: chat"}
+          >
+            <ChannelIcon className="size-3.5" />
           </span>
           <div>
             <p className="font-medium">{client?.name || "Unknown visitor"}</p>
@@ -71,9 +65,7 @@ export function ConversationCard({ convo }: { convo: Conversation }) {
               Needs you
             </span>
           )}
-          <span className={cn("rounded-full px-2 py-0.5 text-xs font-semibold uppercase", STATUS_CLASSES[client?.status ?? "new"])}>
-            {client?.status ?? "new"}
-          </span>
+          <StatusPill status={client?.status ?? "new"} />
         </div>
       </div>
 
@@ -133,7 +125,7 @@ export function ConversationCard({ convo }: { convo: Conversation }) {
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}
-        className="mt-2 flex items-center gap-1 text-sm font-medium text-primary"
+        className="mt-2 flex items-center gap-1 text-sm font-medium text-primary hover:underline"
       >
         {expanded ? "Hide conversation" : "View conversation"}
         <ChevronDown className={cn("size-3.5 transition-transform", expanded && "rotate-180")} />

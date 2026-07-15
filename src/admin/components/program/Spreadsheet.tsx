@@ -9,34 +9,33 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowUpDown, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { api, type Task, type TaskPriority, type TaskStatus, type TeamMember } from "@/lib/api";
 import { SERVICE_LABELS } from "@/lib/serviceTypes";
+import { PRIORITY_VARIANT, TASK_STATUS_LABELS } from "@/lib/taskMeta";
+import { formatDateFull } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SortHeader, ariaSort } from "@/components/ui/sort-header";
+import { ErrorState } from "@/components/ui/error-state";
+import { useToast } from "@/components/ui/toast";
 
-const PRIORITY_VARIANT = { low: "success", medium: "warning", high: "destructive" } as const;
 // default string sort is alphabetical, which reads wrong for both of these
 // (alphabetical priority: high, low, medium; alphabetical status: done,
 // in_progress, review, todo) - rank by actual severity/workflow order
 const PRIORITY_RANK: Record<TaskPriority, number> = { high: 0, medium: 1, low: 2 };
 const STATUS_RANK: Record<TaskStatus, number> = { todo: 0, in_progress: 1, review: 2, done: 3 };
-const STATUS_LABELS: Record<TaskStatus, string> = {
-  todo: "Not Started",
-  in_progress: "In Progress",
-  review: "Under Review",
-  done: "Completed",
-};
 
-function formatDate(iso: string | null) {
-  if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-}
+// least-essential columns drop out first as the screen narrows, so the
+// table reads without horizontal scroll-hunting on smaller screens
+type ColumnMeta = { className?: string };
 
 export function Spreadsheet() {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
   const engagementsQuery = useQuery({ queryKey: ["engagements"], queryFn: api.engagements.list });
@@ -53,8 +52,9 @@ export function Spreadsheet() {
       );
       return { previous };
     },
-    onError: (_e, _v, ctx) => {
+    onError: (err: Error, _v, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(["tasks"], ctx.previous);
+      toast({ title: "Couldn't update task", description: err.message, variant: "destructive" });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
@@ -69,13 +69,14 @@ export function Spreadsheet() {
       {
         accessorKey: "title",
         header: ({ column }) => (
-          <SortHeader label="Title" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
+          <SortHeader label="Title" sorted={column.getIsSorted()} onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
         ),
         cell: (info) => <span className="font-medium">{info.getValue() as string}</span>,
       },
       {
         accessorKey: "engagement_id",
         header: "Project",
+        meta: { className: "hidden md:table-cell" } as ColumnMeta,
         cell: (info) => {
           const id = info.getValue() as string | null;
           const project = id ? engagementsById.get(id) : undefined;
@@ -85,6 +86,7 @@ export function Spreadsheet() {
       {
         accessorKey: "service_type",
         header: "Category",
+        meta: { className: "hidden lg:table-cell" } as ColumnMeta,
         cell: (info) => {
           const v = info.getValue() as string | null;
           return <span className="text-muted-foreground">{v ? SERVICE_LABELS[v] || v : "General"}</span>;
@@ -93,7 +95,7 @@ export function Spreadsheet() {
       {
         accessorKey: "priority",
         header: ({ column }) => (
-          <SortHeader label="Priority" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
+          <SortHeader label="Priority" sorted={column.getIsSorted()} onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
         ),
         // default string sort is alphabetical (high, low, medium) which
         // reads wrong for a severity column - rank by actual severity
@@ -120,7 +122,7 @@ export function Spreadsheet() {
       {
         accessorKey: "status",
         header: ({ column }) => (
-          <SortHeader label="Status" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
+          <SortHeader label="Status" sorted={column.getIsSorted()} onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
         ),
         sortingFn: (a, b) => STATUS_RANK[a.original.status] - STATUS_RANK[b.original.status],
         cell: (info) => {
@@ -131,12 +133,12 @@ export function Spreadsheet() {
               onValueChange={(v) => updateMutation.mutate({ id: task.id, updates: { status: v as TaskStatus } })}
             >
               <SelectTrigger className="h-7 w-32 border-none bg-transparent px-0 shadow-none">
-                <SelectValue>{STATUS_LABELS[task.status]}</SelectValue>
+                <SelectValue>{TASK_STATUS_LABELS[task.status]}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                {(Object.keys(STATUS_LABELS) as TaskStatus[]).map((s) => (
+                {(Object.keys(TASK_STATUS_LABELS) as TaskStatus[]).map((s) => (
                   <SelectItem key={s} value={s}>
-                    {STATUS_LABELS[s]}
+                    {TASK_STATUS_LABELS[s]}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -147,13 +149,14 @@ export function Spreadsheet() {
       {
         accessorKey: "due_date",
         header: ({ column }) => (
-          <SortHeader label="Due" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
+          <SortHeader label="Due" sorted={column.getIsSorted()} onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
         ),
-        cell: (info) => <span className="tabular-nums text-muted-foreground">{formatDate(info.getValue() as string | null)}</span>,
+        cell: (info) => <span className="tabular-nums text-muted-foreground">{formatDateFull(info.getValue() as string | null)}</span>,
       },
       {
         accessorKey: "assignee",
         header: "Assignee",
+        meta: { className: "hidden sm:table-cell" } as ColumnMeta,
         cell: (info) => {
           const id = info.getValue() as string | null;
           const member: TeamMember | undefined = id ? teamById.get(id) : undefined;
@@ -177,11 +180,17 @@ export function Spreadsheet() {
   });
 
   if (tasksQuery.isLoading || teamQuery.isLoading || engagementsQuery.isLoading) {
-    return <Skeleton className="h-96" />;
+    // mirrors the loaded layout: search field, then the table card
+    return (
+      <div className="flex flex-col gap-3">
+        <Skeleton className="h-9 w-64 rounded-lg" />
+        <Skeleton className="h-96 rounded-2xl" />
+      </div>
+    );
   }
 
   if (tasksQuery.isError) {
-    return <p className="text-sm text-destructive">Couldn't load tasks: {tasksQuery.error.message}</p>;
+    return <ErrorState message={tasksQuery.error.message} onRetry={() => tasksQuery.refetch()} />;
   }
 
   return (
@@ -201,7 +210,14 @@ export function Spreadsheet() {
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
                 {hg.headers.map((header) => (
-                  <th key={header.id} className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <th
+                    key={header.id}
+                    aria-sort={ariaSort(header.column.getIsSorted())}
+                    className={cn(
+                      "px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground",
+                      (header.column.columnDef.meta as ColumnMeta | undefined)?.className,
+                    )}
+                  >
                     {flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
@@ -212,7 +228,10 @@ export function Spreadsheet() {
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id} className="border-b border-border last:border-0 hover:bg-muted/50">
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-4 py-2.5">
+                  <td
+                    key={cell.id}
+                    className={cn("px-4 py-2.5", (cell.column.columnDef.meta as ColumnMeta | undefined)?.className)}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -229,14 +248,5 @@ export function Spreadsheet() {
         </table>
       </div>
     </div>
-  );
-}
-
-function SortHeader({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button type="button" onClick={onClick} className="flex items-center gap-1 hover:text-foreground">
-      {label}
-      <ArrowUpDown className="size-3" />
-    </button>
   );
 }
