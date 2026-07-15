@@ -1,14 +1,20 @@
 import { useState } from "react";
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Plus, Rows3 } from "lucide-react";
 import { api, type Task, type TaskStatus } from "@/lib/api";
 import { BoardColumn } from "@/components/program/BoardColumn";
 import { TaskCard } from "@/components/program/TaskCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { useToast } from "@/components/ui/toast";
 
 const STATUSES: TaskStatus[] = ["todo", "in_progress", "review", "done"];
 
-export function Board() {
+export function Board({ onCreateTask }: { onCreateTask?: () => void }) {
+  const toast = useToast();
   const queryClient = useQueryClient();
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
@@ -27,8 +33,9 @@ export function Board() {
       );
       return { previous };
     },
-    onError: (_err, _vars, context) => {
+    onError: (err: Error, _vars, context) => {
       if (context?.previous) queryClient.setQueryData(["tasks"], context.previous);
+      toast({ title: "Couldn't move task", description: err.message, variant: "destructive" });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
@@ -44,17 +51,18 @@ export function Board() {
   }
 
   if (tasksQuery.isLoading || teamQuery.isLoading || engagementsQuery.isLoading) {
+    // mirrors the loaded board's responsive grid so nothing jumps on load
     return (
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
         {STATUSES.map((s) => (
-          <Skeleton key={s} className="h-64" />
+          <Skeleton key={s} className="h-64 rounded-2xl" />
         ))}
       </div>
     );
   }
 
   if (tasksQuery.isError) {
-    return <p className="text-sm text-destructive">Couldn't load tasks: {tasksQuery.error.message}</p>;
+    return <ErrorState message={tasksQuery.error.message} onRetry={() => tasksQuery.refetch()} />;
   }
 
   const tasks = tasksQuery.data ?? [];
@@ -70,9 +78,19 @@ export function Board() {
       onDragCancel={() => setActiveId(null)}
     >
       {tasks.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          No tasks yet — create the first one.
-        </p>
+        <EmptyState
+          icon={Rows3}
+          title="No tasks yet"
+          description="Everything the team is working on lands here, organized by status."
+          action={
+            onCreateTask && (
+              <Button size="sm" onClick={onCreateTask}>
+                <Plus className="size-4" />
+                Create the first task
+              </Button>
+            )
+          }
+        />
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
           {STATUSES.map((status) => (

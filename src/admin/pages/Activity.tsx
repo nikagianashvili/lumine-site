@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { UserPlus, ListTodo, Briefcase, MessageSquare, PartyPopper } from "lucide-react";
+import { UserPlus, ListTodo, Briefcase, MessageSquare, PartyPopper, Activity as ActivityIcon } from "lucide-react";
 import { api } from "@/lib/api";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { timeAgo } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 interface Entry {
@@ -12,17 +14,6 @@ interface Entry {
   text: string;
   time: string;
   accent?: boolean;
-}
-
-function timeAgo(iso: string) {
-  const diffMs = Date.now() - new Date(iso).getTime();
-  const mins = Math.round(diffMs / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hours = Math.round(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.round(hours / 24);
-  return `${days}d ago`;
 }
 
 // A real unified feed (Phase 9) - client/project/task/conversation events
@@ -93,7 +84,19 @@ export function ActivityPage() {
         <p className="text-sm text-muted-foreground">Everything that's happened, in one feed.</p>
       </div>
 
-      {loading && <Skeleton className="h-96" />}
+      {loading && (
+        // list-shaped skeleton instead of one gray slab
+        <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
+          <Skeleton className="h-5 w-24" />
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton className="h-8 w-8 flex-shrink-0 rounded-full" />
+              <Skeleton className="h-4 flex-1" />
+              <Skeleton className="h-3 w-12" />
+            </div>
+          ))}
+        </div>
+      )}
 
       {!loading && (
         <Card>
@@ -102,7 +105,12 @@ export function ActivityPage() {
           </CardHeader>
           <div className="flex flex-col gap-1 px-5 pb-5">
             {entries.length === 0 ? (
-              <p className="py-6 text-sm text-muted-foreground">Nothing yet.</p>
+              <EmptyState
+                icon={ActivityIcon}
+                title="Nothing yet"
+                description="New leads, tasks, projects, and AI conversations all land in this feed."
+                className="border-0 py-6"
+              />
             ) : (
               entries.map((e) => (
                 <div key={e.id} className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm">

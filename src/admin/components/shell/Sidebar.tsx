@@ -14,12 +14,12 @@ import {
   BookOpen,
   Rows3,
   Settings,
-  HelpCircle,
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/theme";
 import { clearSession } from "@/lib/session";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import type { Page } from "@/App";
 
 const NAV: { page: Page; label: string; icon: typeof LayoutGrid }[] = [
@@ -38,11 +38,14 @@ const NAV: { page: Page; label: string; icon: typeof LayoutGrid }[] = [
   { page: "profile", label: "Settings", icon: Settings },
 ];
 
+// Hidden below md: on a phone the rail would eat 72px of width while
+// duplicating the TopNav — its unique functions (theme, logout, settings)
+// all exist in the TopNav avatar menu too.
 export function Sidebar({ page, onNavigate }: { page: Page; onNavigate: (p: Page) => void }) {
   const { pref, setTheme } = useTheme();
 
   return (
-    <aside className="flex w-[4.5rem] flex-shrink-0 flex-col items-center gap-1 py-4">
+    <aside className="hidden w-[4.5rem] flex-shrink-0 flex-col items-center gap-1 py-4 md:flex">
       <div className="mb-3 flex flex-col gap-1 rounded-full border border-border bg-card p-1 shadow-sm">
         <RailIcon active={pref === "light"} onClick={() => setTheme("light")} label="Light mode">
           <Sun />
@@ -61,9 +64,6 @@ export function Sidebar({ page, onNavigate }: { page: Page; onNavigate: (p: Page
       </nav>
 
       <div className="flex flex-col gap-1 rounded-full border border-border bg-card p-1 shadow-sm">
-        <RailIcon label="Help">
-          <HelpCircle />
-        </RailIcon>
         <RailIcon
           label="Log out"
           onClick={() => {
@@ -90,19 +90,23 @@ function RailIcon({
   children: React.ReactNode;
 }) {
   return (
-    <button
-      type="button"
-      title={label}
-      aria-label={label}
-      onClick={onClick}
-      className={cn(
-        "flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors [&_svg]:size-[1.1rem]",
-        active
-          ? "bg-primary text-primary-foreground shadow-[0_0.4rem_1rem_-0.4rem_var(--color-primary)]"
-          : "hover:bg-muted hover:text-foreground",
-      )}
-    >
-      {children}
-    </button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          aria-label={label}
+          onClick={onClick}
+          className={cn(
+            "flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors [&_svg]:size-[1.1rem]",
+            active
+              ? "bg-primary text-primary-foreground shadow-[0_0.4rem_1rem_-0.4rem_var(--color-primary)]"
+              : "hover:bg-muted hover:text-foreground",
+          )}
+        >
+          {children}
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="right">{label}</TooltipContent>
+    </Tooltip>
   );
 }

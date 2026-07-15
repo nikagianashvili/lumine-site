@@ -1,14 +1,8 @@
 import { useDroppable } from "@dnd-kit/core";
 import { cn } from "@/lib/utils";
+import { TASK_STATUS_LABELS } from "@/lib/taskMeta";
 import { TaskCard } from "@/components/program/TaskCard";
 import type { Engagement, Task, TaskStatus, TeamMember } from "@/lib/api";
-
-const COLUMN_LABELS: Record<TaskStatus, string> = {
-  todo: "Not Started",
-  in_progress: "In Progress",
-  review: "Under Review",
-  done: "Completed",
-};
 
 export function BoardColumn({
   status,
@@ -35,7 +29,7 @@ export function BoardColumn({
       )}
     >
       <div className="flex items-center gap-2 px-1">
-        <span className="text-sm font-medium">{COLUMN_LABELS[status]}</span>
+        <span className="text-sm font-medium">{TASK_STATUS_LABELS[status]}</span>
         <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-foreground px-1.5 text-xs font-semibold text-background">
           {tasks.length}
         </span>

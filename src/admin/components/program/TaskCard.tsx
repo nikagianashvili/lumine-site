@@ -2,24 +2,10 @@ import { useDraggable } from "@dnd-kit/core";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { SERVICE_LABELS } from "@/lib/serviceTypes";
+import { PRIORITY_VARIANT } from "@/lib/taskMeta";
+import { formatDateShort, initials } from "@/lib/format";
 import { StatusDot } from "@/components/shell/StatusDot";
 import type { Engagement, Task, TeamMember } from "@/lib/api";
-
-const PRIORITY_VARIANT = { low: "success", medium: "warning", high: "destructive" } as const;
-
-function initials(name: string | null | undefined) {
-  if (!name) return "?";
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase())
-    .join("");
-}
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
-}
 
 export function TaskCard({
   task,
@@ -67,7 +53,7 @@ export function TaskCard({
         </div>
       )}
       <div className="flex items-center justify-between pt-1">
-        <span className="text-xs text-muted-foreground">{task.due_date ? `Due ${formatDate(task.due_date)}` : ""}</span>
+        <span className="text-xs text-muted-foreground">{task.due_date ? `Due ${formatDateShort(task.due_date)}` : ""}</span>
         {assignee && (
           <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-muted text-[0.65rem] font-semibold text-muted-foreground">
             <span title={assignee.name || undefined}>{initials(assignee.name)}</span>

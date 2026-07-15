@@ -11,16 +11,12 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, type Engagement, type Task, type TaskStatus, type TeamMember } from "@/lib/api";
 import { pipelineFor } from "@/lib/pipelines";
+import { TASK_STATUS_LABELS } from "@/lib/taskMeta";
 import { TaskCard } from "@/components/program/TaskCard";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 const GENERIC_STATUSES: TaskStatus[] = ["todo", "in_progress", "review", "done"];
-const GENERIC_LABELS: Record<TaskStatus, string> = {
-  todo: "Not Started",
-  in_progress: "In Progress",
-  review: "Under Review",
-  done: "Completed",
-};
 
 // A project with a recognized service_type gets its real pipeline (see
 // lib/pipelines.ts); anything else (no service chosen, or one without a
@@ -28,6 +24,7 @@ const GENERIC_LABELS: Record<TaskStatus, string> = {
 // the cross-project Program board uses - never a project with no board.
 export function ProjectBoard({ project, tasks }: { project: Engagement; tasks: Task[] }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
@@ -35,7 +32,7 @@ export function ProjectBoard({ project, tasks }: { project: Engagement; tasks: T
   const pipeline = pipelineFor(project.service_type);
   const columns: { id: string; label: string }[] = pipeline
     ? pipeline.map((s) => ({ id: s.stage, label: s.stage }))
-    : GENERIC_STATUSES.map((s) => ({ id: s, label: GENERIC_LABELS[s] }));
+    : GENERIC_STATUSES.map((s) => ({ id: s, label: TASK_STATUS_LABELS[s] }));
 
   const moveMutation = useMutation({
     mutationFn: ({ id, updates }: { id: string; updates: Partial<Task> }) => api.tasks.update(id, updates),
@@ -47,8 +44,9 @@ export function ProjectBoard({ project, tasks }: { project: Engagement; tasks: T
       );
       return { previous };
     },
-    onError: (_e, _v, ctx) => {
+    onError: (err: Error, _v, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(["tasks"], ctx.previous);
+      toast({ title: "Couldn't move task", description: err.message, variant: "destructive" });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
