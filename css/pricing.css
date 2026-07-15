@@ -1,4 +1,4 @@
-/* pricing — three tiers + singles */
+﻿/* pricing — three tiers + singles */
 
 body {
   background-color: var(--l);
@@ -58,7 +58,7 @@ body {
   overflow: hidden;
   background-color: var(--white);
   border-radius: 1.5rem;
-  box-shadow: 0 1.5rem 3rem -2rem rgba(18, 18, 18, 0.4);
+  box-shadow: 0 1.5rem 3rem -2rem rgba(23, 19, 15, 0.4);
 }
 
 .price-card.is-featured {
@@ -82,8 +82,8 @@ body {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--d);
-  background-color: var(--l);
+  color: var(--accent-ink);
+  background-color: var(--accent);
   border-radius: 100px;
 }
 
@@ -205,11 +205,11 @@ body {
   align-items: baseline;
   gap: var(--sp-3);
   padding: var(--sp-3) 0;
-  border-top: 1px solid rgba(245, 241, 230, 0.2);
+  border-top: 1px solid rgba(246, 241, 231, 0.2);
 }
 
 .price-singles-list .price-single:last-child {
-  border-bottom: 1px solid rgba(245, 241, 230, 0.2);
+  border-bottom: 1px solid rgba(246, 241, 231, 0.2);
 }
 
 .price-single-index {

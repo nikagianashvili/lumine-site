@@ -1,4 +1,4 @@
-/* admin — internal work tool. Structure mirrors a standard board-tool
+﻿/* admin — internal work tool. Structure mirrors a standard board-tool
    dashboard; visual language stays Lumine (ink/paper, LK Lumina) with one
    deliberate exception: functional color (priority, status) is real here,
    unlike the public site's monochrome-until-hover rule — a work tool earns
@@ -8,13 +8,13 @@
 .admin-shell {
   --a-bg: var(--l);
   --a-surface: var(--white);
-  --a-surface-2: rgba(18, 18, 18, 0.04);
+  --a-surface-2: rgba(23, 19, 15, 0.04);
   --a-text: var(--d);
   --a-text-soft: var(--d-soft);
-  --a-border: rgba(18, 18, 18, 0.14);
-  --a-border-soft: rgba(18, 18, 18, 0.08);
-  --a-shadow: 0 0.75rem 1.5rem -1rem rgba(18, 18, 18, 0.22);
-  --a-shadow-lift: 0 1.5rem 3rem -1.25rem rgba(18, 18, 18, 0.3);
+  --a-border: rgba(23, 19, 15, 0.14);
+  --a-border-soft: rgba(23, 19, 15, 0.08);
+  --a-shadow: 0 0.75rem 1.5rem -1rem rgba(23, 19, 15, 0.22);
+  --a-shadow-lift: 0 1.5rem 3rem -1.25rem rgba(23, 19, 15, 0.3);
 
   /* signature accent — "Signal Violet". Reserved for the AI layer (banner,
      Ask AI, AI Inbox, chat) and primary interactive states (active nav,
@@ -121,7 +121,7 @@
   font-size: 1rem;
   color: inherit;
   background: var(--a-surface, var(--white));
-  border: 1px solid var(--a-border, rgba(18, 18, 18, 0.2));
+  border: 1px solid var(--a-border, rgba(23, 19, 15, 0.2));
   border-radius: 0.6rem;
 }
 
@@ -168,7 +168,7 @@
   background: var(--a-surface);
   border: 1px solid var(--a-border-soft);
   border-radius: 999px;
-  box-shadow: 0 0.4rem 1.2rem -0.8rem rgba(18, 18, 18, 0.25);
+  box-shadow: 0 0.4rem 1.2rem -0.8rem rgba(23, 19, 15, 0.25);
 }
 
 .rail-icon {
@@ -227,7 +227,7 @@
   background: var(--a-surface);
   border: 1px solid var(--a-border-soft);
   border-radius: 999px;
-  box-shadow: 0 0.4rem 1.2rem -0.8rem rgba(18, 18, 18, 0.25);
+  box-shadow: 0 0.4rem 1.2rem -0.8rem rgba(23, 19, 15, 0.25);
 }
 
 .admin-topnav-tabs {
@@ -238,7 +238,7 @@
   background: var(--a-surface);
   border: 1px solid var(--a-border-soft);
   border-radius: 999px;
-  box-shadow: 0 0.4rem 1.2rem -0.8rem rgba(18, 18, 18, 0.25);
+  box-shadow: 0 0.4rem 1.2rem -0.8rem rgba(23, 19, 15, 0.25);
 }
 
 .topnav-tab {
@@ -541,7 +541,7 @@
 }
 
 .admin-board-col.is-drag-over {
-  background: rgba(18, 18, 18, 0.09);
+  background: rgba(23, 19, 15, 0.09);
 }
 
 .admin-shell[data-theme="dark"] .admin-board-col.is-drag-over {
@@ -819,7 +819,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(18, 18, 18, 0.4);
+  background: rgba(23, 19, 15, 0.4);
   z-index: 50;
 }
 

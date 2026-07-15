@@ -1,12 +1,20 @@
-@import "./fonts.css";
+﻿@import "./fonts.css";
 
 :root {
-  /* — color, pulled off the logo itself: pure ink + a warm paper light,
-     white held in reserve as a third tone for surfaces sitting on paper — */
-  --l: #f5f1e6;
-  --d: #121212;
-  --d-soft: #55524a;
+  /* — Final Cut palette: warm ink/paper close to the original baseline,
+     plus a real accent system for the first time. Spark/Blush/Signature
+     Text are the tested "Coral Spark" values kept unchanged; everything
+     else is new. See memory: project-lumine-site color history. — */
+  --l: #f6f1e7;
+  --d: #17130f;
+  --d-soft: #6b6259;
   --white: #ffffff;
+
+  --accent: #f2542d;
+  --accent-bright: #ff6b45;
+  --accent-deep: #7e2810;
+  --accent-pastel: #fad4c8;
+  --accent-ink: #fffaf8;
 
   /* LK Lumina is the brand face for display AND body, Latin + Georgian */
   --f-h: "LK Lumina", "Humane", system-ui, sans-serif;
@@ -180,14 +188,15 @@ p.lg {
 }
 
 .btn-solid {
-  border-color: var(--d);
-  background-color: var(--d);
-  color: var(--l);
+  border-color: var(--accent);
+  background-color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .btn-solid:hover {
-  background-color: transparent;
-  color: var(--d);
+  background-color: var(--accent-bright);
+  border-color: var(--accent-bright);
+  color: var(--accent-ink);
 }
 
 .btn-invert {
@@ -207,9 +216,9 @@ p.lg {
 }
 
 .btn-outline:hover {
-  background-color: var(--d);
-  border-color: var(--d);
-  color: var(--l);
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
 }
 
 /* — cards — */
@@ -218,7 +227,7 @@ p.lg {
   padding: var(--sp-3);
   background-color: var(--white);
   border-radius: 1.25rem;
-  box-shadow: 0 1.5rem 3rem -1.5rem rgba(18, 18, 18, 0.35);
+  box-shadow: 0 1.5rem 3rem -1.5rem rgba(23, 19, 15, 0.35);
   transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 

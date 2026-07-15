@@ -96,6 +96,10 @@ nav.nav-solid .nav-lang-sep {
   color: var(--d);
 }
 
+nav.nav-solid .nav-lang-btn.is-active {
+  color: var(--accent);
+}
+
 .nav-logo a {
   display: inline-flex;
   justify-content: center;
