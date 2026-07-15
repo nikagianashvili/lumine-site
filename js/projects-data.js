@@ -20,16 +20,16 @@ export const SERVICE_TYPES = [
     label: "Web Development",
     label_ka: "ვებ დეველოპმენტი",
     // brand-tone badge, dark end of the ink/paper ramp
-    color: "#121212",
-    onColor: "#f5f1e6",
+    color: "#17130f",
+    onColor: "#f6f1e7",
   },
   {
     id: "photo-video",
     label: "Photo & Video",
     label_ka: "ფოტო და ვიდეო",
     // mid warm-gray, halfway between ink and paper
-    color: "#55524a",
-    onColor: "#f5f1e6",
+    color: "#6b6259",
+    onColor: "#f6f1e7",
   },
   {
     id: "design",
@@ -37,7 +37,7 @@ export const SERVICE_TYPES = [
     label_ka: "გრაფიკული დიზაინი",
     // deep tan, the warm end of the paper family
     color: "#b8ac8f",
-    onColor: "#121212",
+    onColor: "#17130f",
   },
 ];
 
