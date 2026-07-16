@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { MessageSquare, SearchX } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { api, type Conversation } from "@/lib/api";
 import { ConversationCard } from "@/components/inbox/ConversationCard";
 import { InboxToolbar, type InboxFilters } from "@/components/inbox/InboxToolbar";
@@ -38,7 +39,10 @@ function sortConversations(list: Conversation[], sort: InboxFilters["sort"]) {
   return sorted;
 }
 
-export function InboxPage() {
+// embedded: true when rendered inside the TopNav slide-over, which already
+// shows its own "AI Inbox" title/description in SheetHeader - skips the
+// duplicate heading and the page-level top padding meant for full-page use.
+export function InboxPage({ embedded = false }: { embedded?: boolean } = {}) {
   const convosQuery = useQuery({ queryKey: ["conversations"], queryFn: api.conversations.list });
   const [filters, setFilters] = useState<InboxFilters>({
     search: "",
@@ -59,11 +63,13 @@ export function InboxPage() {
   }, [convosQuery.data, filters]);
 
   return (
-    <div className="flex flex-col gap-4 pt-6">
-      <div>
-        <h1 className="font-display text-2xl font-bold">AI Inbox</h1>
-        <p className="text-sm text-muted-foreground">Every conversation Lumine AI has had with a visitor.</p>
-      </div>
+    <div className={cn("flex flex-col gap-4", !embedded && "pt-6")}>
+      {!embedded && (
+        <div>
+          <h1 className="font-display text-2xl font-bold">AI Inbox</h1>
+          <p className="text-sm text-muted-foreground">Every conversation Lumine AI has had with a visitor.</p>
+        </div>
+      )}
 
       {convosQuery.isLoading && (
         <div className="flex flex-col gap-3">
