@@ -78,7 +78,10 @@ export default async function handler(req, res) {
         system: buildSystemPrompt({ packages, singles, language }),
         messages: [{ role: "user", content: visitorLines.join("\n") }],
       });
-      const rawText = response.content?.[0]?.type === "text" ? response.content[0].text : "";
+      // A model can return a "thinking" block ahead of the "text" block
+      // (extended thinking) - the reply is never reliably at index 0.
+      const textBlock = response.content?.find((block) => block.type === "text");
+      const rawText = textBlock?.text || "";
       classification = parseModelJson(rawText);
     } catch (err) {
       res.status(500).json({ error: `AI request failed: ${err.message}` });
