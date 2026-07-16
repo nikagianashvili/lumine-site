@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "../../css/design-tokens.css";
+
+/*
+  Design system for the client portal. Same "Final Cut" tokens as /admin
+  (css/design-tokens.css) so a client's experience of the brand matches
+  the agency's own tools — no second competing visual identity.
+*/

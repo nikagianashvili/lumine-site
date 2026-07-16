@@ -13,6 +13,8 @@
     { "source": "/contact", "destination": "/contact.html" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/admin-login", "destination": "/admin-login.html" },
+    { "source": "/portal", "destination": "/portal.html" },
+    { "source": "/portal-login", "destination": "/portal-login.html" },
     { "source": "/ka", "destination": "/ka/index.html" },
     { "source": "/ka/work", "destination": "/ka/work.html" },
     { "source": "/ka/sample-project", "destination": "/ka/sample-project.html" },

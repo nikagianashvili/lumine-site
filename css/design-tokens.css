@@ -1,0 +1,169 @@
+@import "./fonts.css";
+
+/*
+  Shared design tokens for the React apps under /admin and /portal.
+  Extracted from the admin rebuild's original index.css so both apps draw
+  from one definition instead of two copies that can drift apart.
+
+  Token story — "Final Cut" palette (see memory: project-lumine-site color
+  history), replacing the earlier Signal Violet system:
+  - primary = Spark, the same tested Coral Spark accent shared with the
+    public site — general primary/interactive color (buttons, active nav,
+    focus rings). `accent`/`accent-foreground` carry the Blush Tint /
+    Signature Text pairing for soft pill surfaces, matching the public
+    site's btn-pill treatment.
+  - Functional status colors (success/warning/info/destructive) stay muted
+    and off the Spark hue on purpose, so a priority badge is never mistaken
+    for the brand color.
+  - One typeface family (LK Lumina, brand face, Latin+Georgian) for
+    everything, `font-display` and `font-sans` are the same stack.
+
+  Deliberately NOT importing css/globals.css — that carries the public
+  marketing site's own button/nav styles (.btn-solid, .btn-outline, etc.)
+  which would leak into shadcn's component styling. Only fonts are shared.
+*/
+
+@theme {
+  --font-sans: "LK Lumina", "Neue Montreal", system-ui, sans-serif;
+  --font-display: "LK Lumina", "Humane", system-ui, sans-serif;
+
+  --radius: 0.75rem;
+  --radius-sm: calc(var(--radius) - 0.375rem);
+  --radius-md: calc(var(--radius) - 0.125rem);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 0.25rem);
+
+  --color-background: #f6f1e7;
+  --color-foreground: #17130f;
+  --color-card: #ffffff;
+  --color-card-foreground: #17130f;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #17130f;
+
+  --color-primary: #f2542d;
+  --color-primary-hover: #ff6b45;
+  --color-primary-foreground: #fffaf8;
+
+  --color-secondary: #eee3d3;
+  --color-secondary-foreground: #17130f;
+
+  --color-muted: #eee3d3;
+  --color-muted-foreground: #6b6259;
+
+  --color-accent: #fad4c8;
+  --color-accent-foreground: #7e2810;
+
+  --color-destructive: #8a3a2a;
+  --color-destructive-foreground: #fffaf8;
+  /* escalated-card wash: a real token so it layers on top of card white
+     instead of replacing bg-card (twMerge collapses two bg-* utilities) */
+  --color-destructive-surface: color-mix(in oklab, #8a3a2a 4%, #ffffff);
+
+  /* success/warning kept muted and off the Spark hue on purpose, at 12px
+     semibold badge size both still clear WCAG AA against their tints */
+  --color-success: #3f6343;
+  --color-success-tint: #e0e9df;
+  --color-warning: #8a6a2e;
+  --color-warning-tint: #f3e7cd;
+  --color-info: #3f5c78;
+  --color-info-tint: #e0e7ed;
+
+  /* Chart categorical series — searched + validated with the /dataviz
+     palette validator (all-pairs CVD separation + lightness band + chroma
+     floor + contrast), not hand-eyeballed. */
+  --chart-contact-form: #2a78d6;
+  --chart-manual: #12986b;
+  --chart-ai-chat: #9c99ff;
+  --chart-ai-consultant: #6100c1;
+
+  --color-border: #e4dbc9;
+  /* darker than --color-border on purpose: hairlines can stay soft, but
+     an input's boundary is a control affordance and needs to read */
+  --color-input: #cbb89e;
+  --color-ring: #f2542d;
+}
+
+.dark {
+  --color-background: #18140f;
+  --color-foreground: #f2ede2;
+  --color-card: #221d16;
+  --color-card-foreground: #f2ede2;
+  --color-popover: #221d16;
+  --color-popover-foreground: #f2ede2;
+
+  --color-primary: #ff7a54;
+  --color-primary-hover: #ff9670;
+  --color-primary-foreground: #18140f;
+
+  --color-secondary: #2c261d;
+  --color-secondary-foreground: #f2ede2;
+
+  --color-muted: #2c261d;
+  --color-muted-foreground: #a89c89;
+
+  --color-accent: rgba(255, 122, 84, 0.16);
+  --color-accent-foreground: #ffb99a;
+
+  --chart-contact-form: #3987e5;
+  --chart-manual: #199e70;
+  --chart-ai-chat: #854fff;
+  --chart-ai-consultant: #9200b0;
+
+  --color-destructive: #d9836f;
+  --color-destructive-foreground: #18140f;
+  --color-destructive-surface: color-mix(in oklab, #d9836f 6%, #221d16);
+
+  --color-success: #82a986;
+  --color-success-tint: rgba(130, 169, 134, 0.16);
+  --color-warning: #d9a955;
+  --color-warning-tint: rgba(217, 169, 85, 0.16);
+  --color-info: #84a5c4;
+  --color-info-tint: rgba(118, 153, 184, 0.16);
+
+  --color-border: rgba(242, 237, 226, 0.14);
+  --color-input: rgba(242, 237, 226, 0.24);
+  --color-ring: #ff7a54;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* hides the scrollbar on horizontally-scrolling pill/tab strips — a
+   visible bar under pill tabs reads as broken chrome */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

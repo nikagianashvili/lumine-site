@@ -20,8 +20,9 @@
     "noFallthroughCasesInSwitch": true,
 
     "paths": {
-      "@/*": ["./src/admin/*"]
+      "@/*": ["./src/admin/*"],
+      "@portal/*": ["./src/portal/*"]
     }
   },
-  "include": ["src/admin"]
+  "include": ["src/admin", "src/portal"]
 }
