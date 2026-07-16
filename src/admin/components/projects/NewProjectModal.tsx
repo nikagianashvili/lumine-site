@@ -80,7 +80,7 @@ export function NewProjectModal({ open, onOpenChange }: { open: boolean; onOpenC
         onOpenChange(next);
       }}
     >
-      <DialogContent>
+      <DialogContent open={open}>
         <DialogHeader>
           <DialogTitle>New project</DialogTitle>
           <DialogDescription>Real, paid work for a client — separate from the public portfolio.</DialogDescription>

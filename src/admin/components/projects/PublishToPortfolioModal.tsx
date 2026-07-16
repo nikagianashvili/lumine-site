@@ -155,7 +155,7 @@ export function PublishToPortfolioModal({
   if (publishedSlug) {
     return (
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent>
+        <DialogContent open={open}>
           <DialogHeader>
             <DialogTitle>Published</DialogTitle>
             <DialogDescription>
@@ -174,7 +174,7 @@ export function PublishToPortfolioModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent open={open}>
         <DialogHeader>
           <DialogTitle>Publish to Portfolio</DialogTitle>
           <DialogDescription>Creates a real, live case study on the public site.</DialogDescription>
