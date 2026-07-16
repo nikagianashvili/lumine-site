@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { getSession } from "@/lib/session";
-import { StatCard } from "@/components/overview/StatCard";
 import { LeadsChart, type DayCount } from "@/components/overview/LeadsChart";
 import { SourceBreakdown } from "@/components/overview/SourceBreakdown";
 import { ActivityFeed } from "@/components/overview/ActivityFeed";
@@ -59,17 +59,16 @@ export function OverviewPage() {
   const convosQuery = useQuery({ queryKey: ["conversations"], queryFn: api.conversations.list });
 
   if (clientsQuery.isLoading || tasksQuery.isLoading) {
-    // mirrors the loaded page: greeting block, stat grid, chart row
+    // mirrors the loaded page: greeting block, hero stat, ledger, chart row
     return (
       <div className="flex flex-col gap-5 pt-6">
         <div className="flex flex-col gap-2">
           <Skeleton className="h-7 w-48" />
           <Skeleton className="h-4 w-72" />
         </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 rounded-xl" />
-          ))}
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-16 w-32" />
+          <Skeleton className="h-16 rounded-xl" />
         </div>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
           <Skeleton className="h-72 rounded-xl lg:col-span-3" />
@@ -137,33 +136,79 @@ export function OverviewPage() {
 
   const firstName = me?.name?.trim().split(/\s+/)[0];
 
+  // The dashboard leads with whichever number most needs a decision today,
+  // set as a real headline — not boxed into a card equal to the rest. The
+  // other three step back into a quiet ledger strip. Priority: a hot lead
+  // outranks a routine weekly count, which outranks a passive booked total.
+  const allStats = [
+    { key: "leadsThisWeek", label: "Leads this wk", value: leadsThisWeek, accent: false },
+    { key: "hotLeads", label: "Hot leads", value: hotLeads, accent: false },
+    { key: "booked", label: "Booked", value: booked, accent: false },
+    { key: "aiQualified", label: "AI-qualified", value: aiQualified, accent: true },
+  ] as const;
+  const heroKey =
+    (["hotLeads", "leadsThisWeek", "booked"] as const).find(
+      (k) => allStats.find((s) => s.key === k)!.value > 0,
+    ) ?? "leadsThisWeek";
+  const hero = allStats.find((s) => s.key === heroKey)!;
+  const heroLabel =
+    heroKey === "hotLeads"
+      ? hero.value === 1
+        ? "hot lead waiting"
+        : "hot leads waiting"
+      : heroKey === "booked"
+        ? hero.value === 1
+          ? "booked client"
+          : "booked clients"
+        : "new leads this week";
+  const ledgerStats = allStats.filter((s) => s.key !== heroKey);
+
   return (
     <div className="flex flex-col gap-5 pt-6">
-      <div>
-        <h1 className="font-display text-2xl font-bold">
-          {greeting()}
-          {firstName ? `, ${firstName}` : ""}
-        </h1>
-        <p className="text-sm text-muted-foreground">Here's what's moved since you last checked in.</p>
+      <div className="flex items-baseline justify-between gap-3">
+        <div>
+          <h1 className="font-display text-2xl font-bold">
+            {greeting()}
+            {firstName ? `, ${firstName}` : ""}
+          </h1>
+          <p className="text-sm text-muted-foreground">Here's what's moved since you last checked in.</p>
+        </div>
+        <p className="hidden shrink-0 text-sm text-muted-foreground sm:block">
+          {new Date().toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+        </p>
       </div>
 
       <motion.div
-        className="grid grid-cols-2 gap-4 md:grid-cols-4"
+        className="flex flex-col gap-4"
         initial={reduceMotion ? false : "hidden"}
         animate="show"
         variants={STAGGER_CONTAINER}
       >
-        <motion.div variants={STAGGER_ITEM}>
-          <StatCard label="Leads this week" value={leadsThisWeek} />
+        <motion.div variants={STAGGER_ITEM} className="flex flex-col gap-2">
+          <p className="font-display text-6xl font-bold leading-none tabular-nums sm:text-7xl">{hero.value}</p>
+          <div className="flex items-center gap-3">
+            <span className="h-[3px] w-8 bg-primary" aria-hidden="true" />
+            <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">{heroLabel}</p>
+          </div>
         </motion.div>
-        <motion.div variants={STAGGER_ITEM}>
-          <StatCard label="Hot leads" value={hotLeads} />
-        </motion.div>
-        <motion.div variants={STAGGER_ITEM}>
-          <StatCard label="Booked clients" value={booked} />
-        </motion.div>
-        <motion.div variants={STAGGER_ITEM}>
-          <StatCard label="AI-qualified" value={aiQualified} accent />
+
+        <motion.div
+          variants={STAGGER_ITEM}
+          className="flex flex-wrap divide-x divide-border overflow-hidden rounded-xl border border-border bg-card"
+        >
+          {ledgerStats.map((s) => (
+            <div key={s.key} className="min-w-[8rem] flex-1 px-5 py-3.5">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{s.label}</p>
+              <p
+                className={cn(
+                  "mt-1 font-display text-xl font-semibold tabular-nums",
+                  s.accent && "text-primary",
+                )}
+              >
+                {s.value}
+              </p>
+            </div>
+          ))}
         </motion.div>
       </motion.div>
 
