@@ -21,6 +21,8 @@ const CLEAN_ROUTES = {
   "/contact": "/contact.html",
   "/admin": "/admin.html",
   "/admin-login": "/admin-login.html",
+  "/portal": "/portal.html",
+  "/portal-login": "/portal-login.html",
   "/ka": "/ka/index.html",
   "/ka/work": "/ka/work.html",
   "/ka/sample-project": "/ka/sample-project.html",
@@ -87,6 +89,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "src/admin"),
+      "@portal": resolve(__dirname, "src/portal"),
     },
   },
   build: {
@@ -104,6 +107,8 @@ export default defineConfig({
         contact: resolve(__dirname, "contact.html"),
         admin: resolve(__dirname, "admin.html"),
         "admin-login": resolve(__dirname, "admin-login.html"),
+        portal: resolve(__dirname, "portal.html"),
+        "portal-login": resolve(__dirname, "portal-login.html"),
         "ka-main": resolve(__dirname, "ka/index.html"),
         "ka-work": resolve(__dirname, "ka/work.html"),
         "ka-sample-project": resolve(__dirname, "ka/sample-project.html"),

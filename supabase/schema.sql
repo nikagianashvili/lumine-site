@@ -250,6 +250,41 @@ create table if not exists playbook_entries (
   updated_at timestamptz default now()
 );
 
+-- ── Client Portal (admin rebuild Track 4) ────────────────────────────────
+-- Client-facing login, riding on auth.users exactly like team_members does
+-- (see that table's comment) - one row per contact person, linked to the
+-- CRM record they belong to. A client company can have more than one
+-- logged-in contact.
+
+create table if not exists client_users (
+  id uuid primary key references auth.users (id) on delete cascade,
+  client_id uuid not null references clients (id) on delete cascade,
+  name text,
+  created_at timestamptz default now()
+);
+
+-- Client-portal review state on a deliverable - null for files never sent
+-- for approval (documents, internal creative work-in-progress).
+alter table files add column if not exists approval_status text; -- null | pending | approved | changes_requested
+
+-- Visual proofing comments (Track 4) - one table for both plain comments
+-- and pinned annotations: x_pct/y_pct place a pin on an image (0-100,
+-- percent of rendered width/height so it survives responsive resizing),
+-- timecode_seconds places a marker on a video's scrubber. All three null
+-- means a plain threaded comment with no spatial/temporal anchor.
+create table if not exists deliverable_comments (
+  id uuid primary key default gen_random_uuid(),
+  file_id uuid not null references files (id) on delete cascade,
+  body text not null,
+  author_client_user_id uuid references client_users (id) on delete set null,
+  author_team_member_id uuid references team_members (id) on delete set null,
+  x_pct numeric,
+  y_pct numeric,
+  timecode_seconds numeric,
+  resolved boolean not null default false,
+  created_at timestamptz default now()
+);
+
 -- ── Row-level security ───────────────────────────────────────────────────
 -- All API writes go through /api serverless functions using the
 -- service_role key, which bypasses RLS entirely — these policies only
@@ -269,6 +304,8 @@ alter table water_cooler_posts enable row level security;
 alter table folders enable row level security;
 alter table files enable row level security;
 alter table playbook_entries enable row level security;
+alter table client_users enable row level security;
+alter table deliverable_comments enable row level security;
 
 -- Public site can read content tables directly with the anon key...
 drop policy if exists "public read projects" on projects;
@@ -282,5 +319,7 @@ create policy "public read journal_posts" on journal_posts for select using (tru
 
 -- ...but nothing else is anon-readable: clients, engagements, tasks,
 -- content_calendar, ai_conversations, team_members, water_cooler_posts,
--- folders, files, and playbook_entries are all service_role (server-side
--- /api) only. No policies means no anon access at all.
+-- folders, files, playbook_entries, client_users, and deliverable_comments
+-- are all service_role (server-side /api) only. No policies means no anon
+-- access at all - api/portal/* scopes every query to the caller's
+-- client_id itself, the same trust model as api/admin/*.
