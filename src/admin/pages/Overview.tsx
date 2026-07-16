@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { api } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { StatCard } from "@/components/overview/StatCard";
@@ -30,6 +31,18 @@ function variantFor(role: string | undefined) {
   }
 }
 
+// One deliberate motion moment on this dashboard, not scattered everywhere:
+// the stat cards stagger in on load. staggerChildren is skipped entirely
+// under reduced-motion rather than just shortened, so nothing moves.
+const STAGGER_CONTAINER = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06 } },
+};
+const STAGGER_ITEM = {
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] as const } },
+};
+
 function greeting() {
   const h = new Date().getHours();
   if (h < 12) return "Good morning";
@@ -38,6 +51,7 @@ function greeting() {
 }
 
 export function OverviewPage() {
+  const reduceMotion = useReducedMotion();
   const session = getSession();
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
@@ -133,12 +147,25 @@ export function OverviewPage() {
         <p className="text-sm text-muted-foreground">Here's what's moved since you last checked in.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard label="Leads this week" value={leadsThisWeek} />
-        <StatCard label="Hot leads" value={hotLeads} />
-        <StatCard label="Booked clients" value={booked} />
-        <StatCard label="AI-qualified" value={aiQualified} accent />
-      </div>
+      <motion.div
+        className="grid grid-cols-2 gap-4 md:grid-cols-4"
+        initial={reduceMotion ? false : "hidden"}
+        animate="show"
+        variants={STAGGER_CONTAINER}
+      >
+        <motion.div variants={STAGGER_ITEM}>
+          <StatCard label="Leads this week" value={leadsThisWeek} />
+        </motion.div>
+        <motion.div variants={STAGGER_ITEM}>
+          <StatCard label="Hot leads" value={hotLeads} />
+        </motion.div>
+        <motion.div variants={STAGGER_ITEM}>
+          <StatCard label="Booked clients" value={booked} />
+        </motion.div>
+        <motion.div variants={STAGGER_ITEM}>
+          <StatCard label="AI-qualified" value={aiQualified} accent />
+        </motion.div>
+      </motion.div>
 
       {variant === "full" && (
         <>

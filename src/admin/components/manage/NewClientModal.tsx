@@ -77,7 +77,7 @@ export function NewClientModal({ open, onOpenChange }: { open: boolean; onOpenCh
         onOpenChange(next);
       }}
     >
-      <DialogContent>
+      <DialogContent open={open}>
         <DialogHeader>
           <DialogTitle>New client</DialogTitle>
           <DialogDescription>Add a lead or client manually.</DialogDescription>

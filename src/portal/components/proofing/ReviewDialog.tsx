@@ -88,7 +88,7 @@ export function ReviewDialog({ file, open, onOpenChange }: { file: PortalFile; o
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl">
+      <DialogContent open={open} className="max-w-4xl">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <DialogTitle className="truncate">{file.name}</DialogTitle>

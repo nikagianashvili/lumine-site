@@ -109,7 +109,7 @@ export function TaskModal({
         onOpenChange(next);
       }}
     >
-      <DialogContent>
+      <DialogContent open={open}>
         <DialogHeader>
           <DialogTitle>New task</DialogTitle>
           <DialogDescription>Add a task to the board.</DialogDescription>
