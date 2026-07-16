@@ -20,6 +20,18 @@ export const ChatReplySchema = z.object({
   summary: z.string(),
 });
 
+// Same fix, same reason, for the contact-form intake endpoint - it carries
+// two extra fields (intent/urgency) chat doesn't need.
+export const IntakeReplySchema = z.object({
+  reply: z.string(),
+  intent: z.string(),
+  urgency: z.enum(["low", "medium", "high"]),
+  status: z.enum(["new", "hot", "warm", "cold"]),
+  escalate: z.boolean(),
+  confidence: z.number().min(0).max(1),
+  summary: z.string(),
+});
+
 export const SERVICES_CONTEXT = `
 Lumine is a creative agency based in Tbilisi, Georgia, offering three service types:
 - Web: websites and web apps (design + development)

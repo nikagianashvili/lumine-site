@@ -3,8 +3,9 @@
 // price), classifies the lead, and writes both a `clients` row and an
 // `ai_conversations` row so it's reviewable from /admin's AI Inbox.
 import Anthropic from "@anthropic-ai/sdk";
+import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { getSupabaseServerClient } from "../_lib/supabase.js";
-import { SERVICES_CONTEXT, fetchPricing, pricingBlock, parseModelJson, CLIENT_STATUSES } from "./_lib/grounding.js";
+import { SERVICES_CONTEXT, fetchPricing, pricingBlock, IntakeReplySchema, CLIENT_STATUSES } from "./_lib/grounding.js";
 
 const MODEL = "claude-haiku-4-5-20251001";
 
@@ -21,10 +22,10 @@ Rules:
 - If it needs something not covered here (a custom quote, a firm timeline, contract terms, anything you're not certain of), do NOT guess or invent numbers — say a team member will follow up shortly, and set "escalate" to true.
 - Reply in the same language the visitor wrote in (their message language takes priority over any language code given).
 - Keep the reply short: 2-4 sentences, warm, specific, no filler.
+- Write the reply as plain prose - no markdown, no **bold**, no bullet lists. This shows to the visitor as plain text, so any markup would appear as literal asterisks and dashes instead of formatting.
 - Visitor's declared language preference: ${language || "unknown"}.
 
-Respond with ONLY a JSON object (no markdown, no other text) matching exactly this shape:
-{"reply": string, "intent": string, "urgency": "low"|"medium"|"high", "status": "new"|"hot"|"warm"|"cold", "escalate": boolean, "confidence": number between 0 and 1, "summary": string (one short sentence for an internal dashboard)}
+Fill in every field of the structured response: "intent" is a short label for what the visitor wants, "urgency" is your read on how time-sensitive it is, "confidence" reflects how well the information above actually covers this reply, and "summary" is one short sentence for an internal dashboard.
 `.trim();
 }
 
@@ -72,17 +73,17 @@ export default async function handler(req, res) {
     let classification;
     try {
       const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-      const response = await anthropic.messages.create({
+      // Structured output (output_config.format), same fix as chat/message.js:
+      // guarantees the schema shape at the API level instead of hoping the
+      // model wraps its answer in JSON on request alone.
+      const response = await anthropic.messages.parse({
         model: MODEL,
         max_tokens: 500,
         system: buildSystemPrompt({ packages, singles, language }),
         messages: [{ role: "user", content: visitorLines.join("\n") }],
+        output_config: { format: zodOutputFormat(IntakeReplySchema) },
       });
-      // A model can return a "thinking" block ahead of the "text" block
-      // (extended thinking) - the reply is never reliably at index 0.
-      const textBlock = response.content?.find((block) => block.type === "text");
-      const rawText = textBlock?.text || "";
-      classification = parseModelJson(rawText);
+      classification = response.parsed_output;
     } catch (err) {
       res.status(500).json({ error: `AI request failed: ${err.message}` });
       return;

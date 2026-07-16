@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Static sitemap for the fixed pages (EN + KA). Individual project pages
+  (/project?slug=...) are left out on purpose: they're client-rendered from
+  live Supabase data with no per-slug static route to point a crawler at,
+  and every project on the site right now is a labeled concept, not real
+  client work worth indexing. Once real projects exist, this is the natural
+  place to add a dynamic /api/sitemap route that lists real slugs - a static
+  file can't do that today.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://lumine-site.vercel.app/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka" />
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/work</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/work" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/work" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/services</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/services" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/services" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/pricing" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/pricing" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/contact</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/contact" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/contact" />
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/studio</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/studio" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/studio" />
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/journal</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/journal" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/journal" />
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/sample-project</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/sample-project" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/sample-project" />
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/legal</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/legal" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/legal" />
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/ka</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka" />
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/ka/work</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/work" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/work" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/ka/services</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/services" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/services" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/ka/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/pricing" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/pricing" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/ka/contact</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/contact" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/contact" />
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/ka/studio</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/studio" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/studio" />
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/ka/journal</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/journal" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/journal" />
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/ka/sample-project</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/sample-project" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/sample-project" />
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://lumine-site.vercel.app/ka/legal</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lumine-site.vercel.app/legal" />
+    <xhtml:link rel="alternate" hreflang="ka" href="https://lumine-site.vercel.app/ka/legal" />
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+</urlset>
