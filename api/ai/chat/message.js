@@ -3,8 +3,9 @@
 // way as the contact-form intake. Multi-turn: the full prior transcript is
 // replayed as conversation history on every call.
 import Anthropic from "@anthropic-ai/sdk";
+import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { getSupabaseServerClient } from "../../_lib/supabase.js";
-import { fetchPricing, buildChatSystemPrompt, parseModelJson, CLIENT_STATUSES } from "../_lib/grounding.js";
+import { fetchPricing, fetchPortfolio, buildChatSystemPrompt, ChatReplySchema, CLIENT_STATUSES } from "../_lib/grounding.js";
 
 const MODEL = "claude-sonnet-5";
 const MAX_MESSAGE_LENGTH = 2000;
@@ -74,9 +75,9 @@ export default async function handler(req, res) {
       return;
     }
 
-    let packages, singles;
+    let packages, singles, projects;
     try {
-      ({ packages, singles } = await fetchPricing());
+      [{ packages, singles }, projects] = await Promise.all([fetchPricing(), fetchPortfolio()]);
     } catch (err) {
       res.status(500).json({ error: err.message });
       return;
@@ -90,19 +91,25 @@ export default async function handler(req, res) {
     let classification;
     try {
       const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-      const response = await anthropic.messages.create({
+      // Structured output (output_config.format) - not just a prompt
+      // instruction - so the reply is always the schema shape even when it
+      // contains markdown-formatted lists, and even if the model reasons
+      // first (a "thinking" block ahead of the actual answer no longer
+      // matters, since parsing isn't done by hand from raw text anymore).
+      const response = await anthropic.messages.parse({
         model: MODEL,
         max_tokens: 500,
         system: buildChatSystemPrompt({
           packages,
           singles,
+          projects,
           language: conversation.language,
           visitorName: conversation.clients?.name,
         }),
         messages: [...priorMessages, { role: "user", content: trimmedMessage }],
+        output_config: { format: zodOutputFormat(ChatReplySchema) },
       });
-      const rawText = response.content?.[0]?.type === "text" ? response.content[0].text : "";
-      classification = parseModelJson(rawText);
+      classification = response.parsed_output;
     } catch (err) {
       res.status(500).json({ error: `AI request failed: ${err.message}` });
       return;
@@ -114,10 +121,11 @@ export default async function handler(req, res) {
     }
 
     const escalate = Boolean(classification.escalate);
+    const confidence = typeof classification.confidence === "number" ? classification.confidence : null;
     const nextTranscript = [
       ...transcript,
       { role: "user", content: trimmedMessage, ts: new Date().toISOString() },
-      { role: "assistant", content: classification.reply, ts: new Date().toISOString() },
+      { role: "assistant", content: classification.reply, ts: new Date().toISOString(), confidence },
     ];
 
     const { error: updateError } = await supabase

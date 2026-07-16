@@ -7,6 +7,12 @@
 const STORAGE_KEY = "lumine_chat_conversation";
 const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
 
+// The reticle/viewfinder mark (public/logo/lumine-mark-2.svg) - deliberately
+// NOT the sparkle glyph used everywhere else on the site (nav, hero, footer,
+// CTA panel). Inlined with fill="currentColor" so it inherits ink/paper like
+// every other on-brand mark; no accent color anywhere in this widget.
+const RETICLE_SVG = `<svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M229.91,145.323v-26.593c0-2.227-1.805-4.033-4.033-4.033h-20.288c-11.221,0-20.318-9.097-20.318-20.318V17.154c0-2.227-1.805-4.033-4.033-4.033h-27.483c-2.227,0-4.033,1.805-4.033,4.033v48.506c0,2.431-1.971,4.402-4.402,4.402h-26.592c-2.227,0-4.033,1.805-4.033,4.033v20.287c0,11.221-9.096,20.317-20.317,20.317H17.153c-2.227,0-4.033,1.805-4.033,4.033v27.512c0,2.227,1.805,4.033,4.033,4.033h48.506c2.431,0,4.402,1.971,4.402,4.402v26.564c0,2.227,1.805,4.033,4.033,4.033h20.288c11.221,0,20.318,9.097,20.318,20.318v77.256c0,2.227,1.805,4.033,4.033,4.033h27.512c2.227,0,4.033-1.805,4.033-4.033v-48.506c0-2.431,1.971-4.402,4.402-4.402h26.563c2.227,0,4.033-1.805,4.033-4.033v-20.287c0-11.237,9.109-20.346,20.346-20.346h77.228c2.227,0,4.033-1.805,4.033-4.033v-27.482c0-2.227-1.805-4.033-4.033-4.033h-48.535c-2.431,0-4.402-1.971-4.402-4.402ZM147.57,189.133c-5.598-17.367-19.343-31.114-36.694-36.69-2.398-.771-2.4-4.095-.002-4.868,17.352-5.59,31.098-19.34,36.696-36.709.773-2.397,4.098-2.395,4.867.004,5.57,17.367,19.31,31.115,36.66,36.705,2.398.773,2.396,4.097-.002,4.868-17.349,5.576-31.088,19.321-36.658,36.687-.769,2.398-4.095,2.401-4.867.004Z" fill="currentColor"/></svg>`;
+
 const MSG = isKa
   ? {
       bubbleLabel: "Lumine AI-სთან საუბარი",
@@ -54,14 +60,71 @@ function saveState(state) {
   }
 }
 
+// — markdown-lite: bold, bullet/numbered lists, paragraphs. Escapes HTML
+// first so neither the model's output nor a visitor's own message (echoed
+// back into the thread) can inject markup. Intentionally not a full
+// markdown parser — just the handful of shapes a pricing/services answer
+// actually needs. —
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function inlineFormat(str) {
+  return str.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
+
+function formatContent(text) {
+  const lines = escapeHtml(text).split("\n");
+  const out = [];
+  let list = null; // { type: "ul"|"ol", items: [] }
+
+  const flush = () => {
+    if (list) {
+      out.push(`<${list.type}>${list.items.map((li) => `<li>${li}</li>`).join("")}</${list.type}>`);
+      list = null;
+    }
+  };
+
+  for (const line of lines) {
+    const bullet = line.match(/^\s*[-*]\s+(.+)$/);
+    const numbered = line.match(/^\s*\d+[.)]\s+(.+)$/);
+    if (bullet) {
+      if (!list || list.type !== "ul") {
+        flush();
+        list = { type: "ul", items: [] };
+      }
+      list.items.push(inlineFormat(bullet[1]));
+    } else if (numbered) {
+      if (!list || list.type !== "ol") {
+        flush();
+        list = { type: "ol", items: [] };
+      }
+      list.items.push(inlineFormat(numbered[1]));
+    } else {
+      flush();
+      if (line.trim() !== "") out.push(`<p>${inlineFormat(line)}</p>`);
+    }
+  }
+  flush();
+  return out.join("") || "<p></p>";
+}
+
+function formatTime(ts) {
+  try {
+    return new Date(ts).toLocaleTimeString(isKa ? "ka-GE" : "en-US", { hour: "numeric", minute: "2-digit" });
+  } catch {
+    return "";
+  }
+}
+
 function buildWidget() {
   const wrap = document.createElement("div");
   wrap.className = "chat-widget";
   wrap.innerHTML = `
-    <button class="chat-bubble" type="button" aria-label="${MSG.bubbleLabel}">✦</button>
+    <button class="chat-bubble" type="button" aria-label="${MSG.bubbleLabel}">${RETICLE_SVG}</button>
     <div class="chat-panel" role="dialog" aria-label="${MSG.title}">
       <div class="chat-panel-head">
-        <span class="chat-panel-head-title"><span class="sparkle">✦</span> ${MSG.title}</span>
+        <span class="chat-panel-head-title"><span class="chat-mark">${RETICLE_SVG}</span> ${MSG.title}</span>
         <button class="chat-panel-close" type="button" aria-label="${MSG.close}">✕</button>
       </div>
       <div class="chat-panel-body"></div>
@@ -112,10 +175,17 @@ function renderIntake(body, onStart) {
   body.appendChild(form);
 }
 
-function messageEl(role, content) {
+function messageEl(role, content, ts) {
   const el = document.createElement("div");
   el.className = `chat-msg role-${role}`;
-  el.textContent = content;
+  const bubble = document.createElement("div");
+  bubble.className = "chat-msg-bubble";
+  bubble.innerHTML = formatContent(content);
+  el.appendChild(bubble);
+  const time = document.createElement("span");
+  time.className = "chat-msg-time";
+  time.textContent = formatTime(ts || new Date().toISOString());
+  el.appendChild(time);
   return el;
 }
 
@@ -126,6 +196,11 @@ function typingEl() {
   return el;
 }
 
+function autoResize(textarea) {
+  textarea.style.height = "auto";
+  textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
+}
+
 function renderThread(body, getState, persist) {
   body.innerHTML = "";
   const messages = document.createElement("div");
@@ -134,19 +209,19 @@ function renderThread(body, getState, persist) {
   if (state.messages.length === 0) {
     messages.appendChild(messageEl("assistant", MSG.greeting));
   } else {
-    state.messages.forEach((m) => messages.appendChild(messageEl(m.role, m.content)));
+    state.messages.forEach((m) => messages.appendChild(messageEl(m.role, m.content, m.ts)));
   }
   body.appendChild(messages);
 
   const inputRow = document.createElement("div");
   inputRow.className = "chat-input-row";
   inputRow.innerHTML = `
-    <input type="text" placeholder="${MSG.placeholder}" autocomplete="off" />
+    <textarea rows="1" placeholder="${MSG.placeholder}" autocomplete="off"></textarea>
     <button class="chat-send-btn" type="button" aria-label="${MSG.send}">➤</button>
   `;
   body.appendChild(inputRow);
 
-  const input = inputRow.querySelector("input");
+  const input = inputRow.querySelector("textarea");
   const sendBtn = inputRow.querySelector(".chat-send-btn");
 
   function scrollToBottom() {
@@ -158,11 +233,13 @@ function renderThread(body, getState, persist) {
     const text = input.value.trim();
     if (!text || sendBtn.disabled) return;
     input.value = "";
+    autoResize(input);
     sendBtn.disabled = true;
 
     const current = getState();
-    messages.appendChild(messageEl("user", text));
-    current.messages.push({ role: "user", content: text });
+    const userTs = new Date().toISOString();
+    messages.appendChild(messageEl("user", text, userTs));
+    current.messages.push({ role: "user", content: text, ts: userTs });
     persist(current);
     scrollToBottom();
 
@@ -178,9 +255,10 @@ function renderThread(body, getState, persist) {
       });
       if (!res.ok) throw new Error(`Request failed (${res.status})`);
       const { reply } = await res.json();
+      const replyTs = new Date().toISOString();
       typing.remove();
-      messages.appendChild(messageEl("assistant", reply));
-      current.messages.push({ role: "assistant", content: reply });
+      messages.appendChild(messageEl("assistant", reply, replyTs));
+      current.messages.push({ role: "assistant", content: reply, ts: replyTs });
       persist(current);
     } catch {
       typing.remove();
@@ -193,8 +271,12 @@ function renderThread(body, getState, persist) {
   }
 
   sendBtn.addEventListener("click", send);
+  input.addEventListener("input", () => autoResize(input));
   input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") send();
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
   });
 }
 
@@ -223,7 +305,7 @@ function init() {
 
   bubble.addEventListener("click", () => {
     wrap.classList.add("is-open");
-    panel.querySelector("input")?.focus();
+    panel.querySelector("textarea, input")?.focus();
   });
   closeBtn.addEventListener("click", () => {
     wrap.classList.remove("is-open");
