@@ -282,6 +282,21 @@ nav.nav-solid .nav-lang-btn.is-active {
   will-change: transform;
 }
 
+/* small, muted - matches the 01/02 index treatment already used on the
+   FAQ and featured-work cards elsewhere on the site, so numbering a link
+   list reads as this site's own convention rather than a new idea. */
+.menu-overlay .menu-link-index {
+  position: absolute;
+  top: 0.5rem;
+  left: 0;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 .menu-overlay .menu-link a {
   position: relative;
   display: inline-block;
@@ -321,7 +336,41 @@ html[lang="ka"] .menu-overlay .menu-link a {
   will-change: transform;
 }
 
-@media (max-width: 1000px) {
+/* The link row is wider than the viewport by design (mouse position
+   scrubs it horizontally) - `overflow: hidden` on .menu-overlay was
+   clipping it with a hard edge and no visual cue there was more. These
+   sit fixed at the viewport edges (not the scrolling content) and fade
+   the last sliver of a cut-off word into the background, reading as
+   "this continues" instead of an arbitrary crop. Desktop-scrub only -
+   hidden below alongside the other desktop-only menu chrome. */
+.menu-overlay::before,
+.menu-overlay::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.menu-overlay::before {
+  left: 0;
+  background: linear-gradient(to left, transparent, var(--d) 85%);
+}
+
+.menu-overlay::after {
+  right: 0;
+  background: linear-gradient(to right, transparent, var(--d) 85%);
+}
+
+/* max-width covers small screens; pointer:coarse covers a touch-primary
+   device that's still wide (a tablet in landscape, a touchscreen desktop)
+   - it would otherwise land in "desktop" mode with no mouse to scrub
+   with and no way to reach the links running off past the viewport,
+   since the vertical-stack fallback below previously only kicked in
+   under 1000px regardless of whether a mouse was actually present. */
+@media (max-width: 1000px), (pointer: coarse) {
   nav {
     padding: 1.5rem;
   }
@@ -351,7 +400,9 @@ html[lang="ka"] .menu-overlay .menu-link a {
   }
 
   .menu-overlay .menu-img,
-  .menu-overlay .link-highlighter {
+  .menu-overlay .link-highlighter,
+  .menu-overlay::before,
+  .menu-overlay::after {
     display: none;
   }
 
@@ -364,5 +415,19 @@ html[lang="ka"] .menu-overlay .menu-link a {
   .menu-overlay .menu-link a {
     /* 7 items must fit a phone screen above the wrapper padding */
     font-size: min(11vh, 4.5rem);
+  }
+
+  /* stacked links have zero gap between rows, so an index sitting above
+     the word (the desktop treatment) would overlap the row above it -
+     inline-left instead avoids that entirely. */
+  .menu-overlay .menu-link {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+
+  .menu-overlay .menu-link-index {
+    position: static;
+    font-size: 0.7rem;
   }
 }

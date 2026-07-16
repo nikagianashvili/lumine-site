@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { RETAINER_TIERS } from "@/lib/retainerTiers";
 import { StatCard } from "@/components/overview/StatCard";
+import { MRRTrend } from "@/components/warroom/MRRTrend";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -34,7 +35,7 @@ export function WarRoomPage() {
   const avgRate = activeRetainers.length > 0 ? Math.round(mrr / activeRetainers.length) : 0;
 
   if (engagementsQuery.isLoading || clientsQuery.isLoading) {
-    // mirrors the loaded page: title, 4 stat cards, two list cards
+    // mirrors the loaded page: title, 4 stat cards, trend chart, two list cards
     return (
       <div className="flex flex-col gap-4 pt-6">
         <div className="flex flex-col gap-2">
@@ -46,6 +47,7 @@ export function WarRoomPage() {
             <Skeleton key={i} className="h-28 rounded-xl" />
           ))}
         </div>
+        <Skeleton className="h-64 rounded-xl" />
         <Skeleton className="h-40 rounded-xl" />
         <Skeleton className="h-40 rounded-xl" />
       </div>
@@ -83,6 +85,8 @@ export function WarRoomPage() {
         <StatCard label="Average rate" value={activeRetainers.length > 0 ? formatGel(avgRate) : "—"} />
         <StatCard label="Annualized (ARR)" value={formatGel(mrr * 12)} />
       </div>
+
+      <MRRTrend engagements={engagementsQuery.data ?? []} />
 
       <Card>
         <CardHeader>

@@ -69,15 +69,21 @@
   --color-info: #3f5c78;
   --color-info-tint: #e0e7ed;
 
-  /* Chart categorical series — validated with the /dataviz palette
-     validator (CVD separation + chroma floor + contrast), not hand-eyeballed.
-     ai_chat/ai_consultant share the Spark family on purpose (ties AI-sourced
-     leads to the app's primary/interactive color); contact_form/manual get
-     unrelated hues so all four stay distinguishable. */
+  /* Chart categorical series — searched + validated with the /dataviz
+     palette validator (all-pairs CVD separation + lightness band + chroma
+     floor + contrast), not hand-eyeballed. ai_chat/ai_consultant used to
+     be #f2542d/#7e2810 - identical to --color-primary and its own dark
+     text respectively, so the one chart meant to show "where did this
+     lead come from" was visually indistinguishable from every button and
+     the active nav state. Given a real violet family instead (a callback
+     to this admin's original Signal Violet system, back when violet meant
+     "AI" specifically) - contact_form/manual keep their existing unrelated
+     hues so all four stay distinguishable via all-pairs, not just adjacent
+     (a donut can place any two slices next to each other depending on data). */
   --chart-contact-form: #2a78d6;
   --chart-manual: #12986b;
-  --chart-ai-chat: #f2542d;
-  --chart-ai-consultant: #7e2810;
+  --chart-ai-chat: #9c99ff;
+  --chart-ai-consultant: #6100c1;
 
   --color-border: #e4dbc9;
   /* darker than --color-border on purpose: hairlines can stay soft, but
@@ -109,8 +115,8 @@
 
   --chart-contact-form: #3987e5;
   --chart-manual: #199e70;
-  --chart-ai-chat: #ff7a54;
-  --chart-ai-consultant: #d4835f;
+  --chart-ai-chat: #854fff;
+  --chart-ai-consultant: #9200b0;
 
   --color-destructive: #d9836f;
   --color-destructive-foreground: #18140f;

@@ -28,6 +28,11 @@ export function BandwidthView() {
     }));
   }, [teamQuery.data]);
 
+  // The count badge alone can't be compared across cards at a glance - a bar
+  // scaled to the busiest hat right now makes relative load visible without
+  // reading six separate numbers.
+  const maxTasks = Math.max(1, ...byHat.map(({ tasks }) => tasks.length));
+
   if (tasksQuery.isLoading || teamQuery.isLoading) {
     return (
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -50,6 +55,14 @@ export function BandwidthView() {
                 {tasks.length}
               </span>
             </CardHeader>
+            <div className="px-5">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary transition-[width]"
+                  style={{ width: `${(tasks.length / maxTasks) * 100}%` }}
+                />
+              </div>
+            </div>
             <div className="flex flex-col gap-1 px-5 pb-5">
               <p className="text-xs text-muted-foreground">
                 {people.length === 0 ? "No one has this hat yet" : people.map((p) => p.name).join(", ")}
