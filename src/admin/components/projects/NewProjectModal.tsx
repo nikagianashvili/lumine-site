@@ -90,7 +90,7 @@ export function NewProjectModal({ open, onOpenChange }: { open: boolean; onOpenC
             <Label htmlFor="project-title">Project name</Label>
             <Input id="project-title" value={title} onChange={(e) => setTitle(e.target.value)} autoFocus />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Label>Client</Label>
               <Select value={clientId} onValueChange={setClientId}>

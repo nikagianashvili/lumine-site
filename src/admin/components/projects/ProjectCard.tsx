@@ -40,7 +40,7 @@ export function ProjectCard({
     >
       <div className="flex h-28 items-center justify-center bg-muted">
         {project.cover_image_url ? (
-          <img src={project.cover_image_url} alt="" className="h-full w-full object-cover" />
+          <img src={project.cover_image_url} alt="" loading="lazy" className="h-full w-full object-cover" />
         ) : (
           <ImageOff className="size-6 text-muted-foreground" />
         )}

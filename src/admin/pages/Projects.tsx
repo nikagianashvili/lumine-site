@@ -1,13 +1,15 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "framer-motion";
-import { Plus, Search } from "lucide-react";
+import { Briefcase, Plus, Search } from "lucide-react";
 import { api, type EngagementStatus } from "@/lib/api";
 import { SERVICE_TYPES } from "@/lib/serviceTypes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { NewProjectModal } from "@/components/projects/NewProjectModal";
 import { ProjectDetail } from "@/components/projects/ProjectDetail";
@@ -51,7 +53,7 @@ export function ProjectsPage() {
 
   return (
     <div className="flex flex-col gap-4 pt-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-bold">Projects</h1>
           <p className="text-sm text-muted-foreground">Real, paid work — one card per client engagement.</p>
@@ -103,15 +105,15 @@ export function ProjectsPage() {
       )}
 
       {engagementsQuery.isError && (
-        <p className="text-sm text-destructive">Couldn't load projects: {engagementsQuery.error.message}</p>
+        <ErrorState message={engagementsQuery.error.message} onRetry={() => engagementsQuery.refetch()} />
       )}
 
       {engagementsQuery.data && filtered.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          {engagementsQuery.data.length === 0
-            ? "No projects yet — create the first one."
-            : "No projects match these filters."}
-        </p>
+        <EmptyState
+          icon={Briefcase}
+          title={engagementsQuery.data.length === 0 ? "No projects yet" : "No projects match these filters"}
+          description={engagementsQuery.data.length === 0 ? "Create the first one." : "Try widening a filter."}
+        />
       )}
 
       {filtered.length > 0 && (

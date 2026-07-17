@@ -83,7 +83,7 @@ export function NewClientModal({ open, onOpenChange }: { open: boolean; onOpenCh
           <DialogDescription>Add a lead or client manually.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="client-name">Name</Label>
               <Input id="client-name" value={name} onChange={(e) => setName(e.target.value)} autoFocus />

@@ -1,13 +1,11 @@
+import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash2, FileIcon } from "lucide-react";
 import { api, type AgencyFile } from "@/lib/api";
+import { formatSize } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
-
-function formatSize(bytes: number | null) {
-  if (!bytes) return "";
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)}KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)}MB`;
-}
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
 
 export function FileList({
   files,
@@ -23,9 +21,15 @@ export function FileList({
   isLoading?: boolean;
 }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
+  const [deleteTarget, setDeleteTarget] = useState<AgencyFile | null>(null);
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.files.delete(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+      setDeleteTarget(null);
+    },
+    onError: (err: Error) => toast({ title: "Couldn't delete file", description: err.message, variant: "destructive" }),
   });
 
   if (isLoading) {
@@ -56,15 +60,22 @@ export function FileList({
           <button
             type="button"
             aria-label="Delete file"
-            onClick={() => {
-              if (window.confirm(`Delete "${f.name}"? This can't be undone.`)) deleteMutation.mutate(f.id);
-            }}
+            onClick={() => setDeleteTarget(f)}
             className="flex-shrink-0 rounded-full p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 className="size-3.5" />
           </button>
         </div>
       ))}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        title="Delete this file?"
+        description={`"${deleteTarget?.name}" will be permanently removed. This can't be undone.`}
+        confirmLabel="Delete file"
+        pending={deleteMutation.isPending}
+        onConfirm={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
+      />
     </div>
   );
 }

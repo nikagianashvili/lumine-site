@@ -180,7 +180,7 @@ export function PublishToPortfolioModal({
           <DialogDescription>Creates a real, live case study on the public site.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="pub-title">Title</Label>
               <Input id="pub-title" value={title} onChange={(e) => setTitle(e.target.value)} />

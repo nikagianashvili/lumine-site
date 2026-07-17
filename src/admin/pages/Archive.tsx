@@ -1,12 +1,14 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "framer-motion";
-import { Search } from "lucide-react";
+import { Archive as ArchiveIcon, Search } from "lucide-react";
 import { api } from "@/lib/api";
 import { PORTFOLIO_SERVICE_TYPES, INDUSTRIES } from "@/lib/portfolioTaxonomy";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { ProjectDetail } from "@/components/projects/ProjectDetail";
 
@@ -96,12 +98,18 @@ export function ArchivePage() {
         </div>
       )}
 
+      {engagementsQuery.isError && (
+        <ErrorState message={engagementsQuery.error.message} onRetry={() => engagementsQuery.refetch()} />
+      )}
+
       {engagementsQuery.data && filtered.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          {completed.length === 0
-            ? "Nothing archived yet — mark a project's status as Completed to see it here."
-            : "No archived work matches these filters."}
-        </p>
+        <EmptyState
+          icon={ArchiveIcon}
+          title={completed.length === 0 ? "Nothing archived yet" : "No archived work matches these filters"}
+          description={
+            completed.length === 0 ? "Mark a project's status as Completed to see it here." : "Try widening a filter."
+          }
+        />
       )}
 
       {filtered.length > 0 && (

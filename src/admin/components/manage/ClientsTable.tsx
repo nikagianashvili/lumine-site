@@ -9,29 +9,28 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowUpDown, Search, Trash2 } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { adminFetch } from "@/lib/session";
 import { api, type Client, type ClientStatus, type TeamMember } from "@/lib/api";
+import { formatDateFull } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/ui/error-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
+import { CLIENT_STATUS_CLASSES } from "@/components/ui/status-pill";
+import { SortHeader, ariaSort } from "@/components/ui/sort-header";
 
 const STATUS_OPTIONS: ClientStatus[] = ["new", "hot", "warm", "cold", "client", "lost"];
-// rank + color both taken from the vanilla admin's css/admin.css mapping,
-// not invented fresh - keeps the pipeline-stage vocabulary consistent
+// rank taken from the vanilla admin's css/admin.css mapping, not invented
+// fresh - keeps the pipeline-stage vocabulary consistent
 const STATUS_RANK: Record<ClientStatus, number> = { hot: 0, warm: 1, new: 2, client: 3, cold: 4, lost: 5 };
-const STATUS_CLASSES: Record<ClientStatus, string> = {
-  hot: "bg-destructive/10 text-destructive",
-  warm: "bg-warning-tint text-warning",
-  new: "bg-info-tint text-info",
-  client: "bg-success-tint text-success",
-  cold: "bg-muted text-muted-foreground",
-  lost: "bg-muted text-muted-foreground",
-};
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-}
+// least-essential columns drop out first as the screen narrows, same
+// pattern as Spreadsheet.tsx
+type ColumnMeta = { className?: string };
 
 async function deleteClient(id: string) {
   const res = await adminFetch("/api/admin/clients", { method: "DELETE", body: JSON.stringify({ id }) });
@@ -40,10 +39,12 @@ async function deleteClient(id: string) {
 
 export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<Client | null>(null);
 
   const statusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: ClientStatus }) => api.clients.update(id, { status }),
@@ -55,8 +56,9 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
       );
       return { previous };
     },
-    onError: (_e, _v, ctx) => {
+    onError: (err: Error, _v, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(["clients"], ctx.previous);
+      toast({ title: "Couldn't update status", description: err.message, variant: "destructive" });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["clients"] }),
   });
@@ -72,15 +74,20 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
       );
       return { previous };
     },
-    onError: (_e, _v, ctx) => {
+    onError: (err: Error, _v, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(["clients"], ctx.previous);
+      toast({ title: "Couldn't reassign client", description: err.message, variant: "destructive" });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["clients"] }),
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteClient,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["clients"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      setDeleteTarget(null);
+    },
+    onError: (err: Error) => toast({ title: "Couldn't delete client", description: err.message, variant: "destructive" }),
   });
 
   const columns = useMemo<ColumnDef<Client>[]>(
@@ -88,7 +95,7 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
       {
         accessorKey: "name",
         header: ({ column }) => (
-          <SortHeader label="Name" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
+          <SortHeader label="Name" sorted={column.getIsSorted()} onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
         ),
         cell: (info) => {
           const client = info.row.original;
@@ -106,6 +113,7 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
       {
         accessorKey: "phone",
         header: "Phone",
+        meta: { className: "hidden sm:table-cell" } as ColumnMeta,
         cell: (info) => {
           const phone = info.getValue() as string | null;
           return phone ? (
@@ -120,6 +128,7 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
       {
         accessorKey: "email",
         header: "Email",
+        meta: { className: "hidden md:table-cell" } as ColumnMeta,
         cell: (info) => {
           const email = info.getValue() as string | null;
           return email ? (
@@ -134,17 +143,19 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
       {
         accessorKey: "company",
         header: "Company",
+        meta: { className: "hidden lg:table-cell" } as ColumnMeta,
         cell: (info) => <span className="text-muted-foreground">{(info.getValue() as string) || "—"}</span>,
       },
       {
         accessorKey: "source",
         header: "Source",
+        meta: { className: "hidden lg:table-cell" } as ColumnMeta,
         cell: (info) => <span className="text-muted-foreground">{(info.getValue() as string).replace("_", " ")}</span>,
       },
       {
         accessorKey: "status",
         header: ({ column }) => (
-          <SortHeader label="Status" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
+          <SortHeader label="Status" sorted={column.getIsSorted()} onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
         ),
         sortingFn: (a, b) => STATUS_RANK[a.original.status] - STATUS_RANK[b.original.status],
         cell: (info) => {
@@ -155,7 +166,7 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
               onValueChange={(v) => statusMutation.mutate({ id: client.id, status: v as ClientStatus })}
             >
               <SelectTrigger
-                className={`h-7 w-24 rounded-full border-none px-2.5 text-xs font-semibold uppercase shadow-none ${STATUS_CLASSES[client.status]}`}
+                className={`h-7 w-24 rounded-full border-none px-2.5 text-xs font-semibold uppercase shadow-none ${CLIENT_STATUS_CLASSES[client.status]}`}
               >
                 <SelectValue />
               </SelectTrigger>
@@ -173,6 +184,7 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
       {
         accessorKey: "assigned_to",
         header: "Assigned to",
+        meta: { className: "hidden md:table-cell" } as ColumnMeta,
         cell: (info) => {
           const client = info.row.original;
           return (
@@ -200,9 +212,10 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
       {
         accessorKey: "created_at",
         header: ({ column }) => (
-          <SortHeader label="Added" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
+          <SortHeader label="Added" sorted={column.getIsSorted()} onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} />
         ),
-        cell: (info) => <span className="tabular-nums text-muted-foreground">{formatDate(info.getValue() as string)}</span>,
+        meta: { className: "hidden sm:table-cell" } as ColumnMeta,
+        cell: (info) => <span className="tabular-nums text-muted-foreground">{formatDateFull(info.getValue() as string)}</span>,
       },
       {
         id: "actions",
@@ -211,11 +224,7 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
           <button
             type="button"
             aria-label="Delete client"
-            onClick={() => {
-              if (window.confirm("Delete this client? This can't be undone.")) {
-                deleteMutation.mutate(info.row.original.id);
-              }
-            }}
+            onClick={() => setDeleteTarget(info.row.original)}
             className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 className="size-4" />
@@ -223,7 +232,7 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
         ),
       },
     ],
-    [statusMutation, assignMutation, deleteMutation, teamQuery.data, onSelect],
+    [statusMutation, assignMutation, teamQuery.data, onSelect],
   );
 
   const table = useReactTable({
@@ -244,7 +253,7 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
 
   if (clientsQuery.isLoading) return <Skeleton className="h-96" />;
   if (clientsQuery.isError) {
-    return <p className="text-sm text-destructive">Couldn't load clients: {clientsQuery.error.message}</p>;
+    return <ErrorState message={clientsQuery.error.message} onRetry={() => clientsQuery.refetch()} />;
   }
 
   return (
@@ -264,7 +273,14 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
                 {hg.headers.map((header) => (
-                  <th key={header.id} className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <th
+                    key={header.id}
+                    aria-sort={ariaSort(header.column.getIsSorted())}
+                    className={cn(
+                      "px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground",
+                      (header.column.columnDef.meta as ColumnMeta | undefined)?.className,
+                    )}
+                  >
                     {flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
@@ -275,7 +291,10 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id} className="border-b border-border last:border-0 hover:bg-muted/50">
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-4 py-2.5">
+                  <td
+                    key={cell.id}
+                    className={cn("px-4 py-2.5", (cell.column.columnDef.meta as ColumnMeta | undefined)?.className)}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -291,15 +310,15 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
           </tbody>
         </table>
       </div>
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        title="Delete this client?"
+        description={`${deleteTarget?.name || "This client"} will be permanently removed. This can't be undone.`}
+        confirmLabel="Delete client"
+        pending={deleteMutation.isPending}
+        onConfirm={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
+      />
     </div>
-  );
-}
-
-function SortHeader({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button type="button" onClick={onClick} className="flex items-center gap-1 hover:text-foreground">
-      {label}
-      <ArrowUpDown className="size-3" />
-    </button>
   );
 }

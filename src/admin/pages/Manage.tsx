@@ -17,7 +17,7 @@ export function ManagePage() {
 
   return (
     <div className="flex flex-col gap-4 pt-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-bold">Manage</h1>
           <p className="text-sm text-muted-foreground">Every client and lead, one pipeline.</p>
