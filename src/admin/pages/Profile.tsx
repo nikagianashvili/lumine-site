@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { api, type TeamMember } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { HATS } from "@/lib/hats";
@@ -12,7 +13,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
+const STAGGER_CONTAINER = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
+const STAGGER_ITEM = { hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] as const } } };
+
 export function ProfilePage() {
+  const reduceMotion = useReducedMotion();
   const session = getSession();
   const queryClient = useQueryClient();
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
@@ -103,6 +108,13 @@ export function ProfilePage() {
         <p className="text-sm text-muted-foreground">Your account, not the whole team's.</p>
       </div>
 
+      <motion.div
+        className="flex flex-col gap-4"
+        initial={reduceMotion ? false : "hidden"}
+        animate="show"
+        variants={STAGGER_CONTAINER}
+      >
+      <motion.div variants={STAGGER_ITEM}>
       <Card>
         <CardHeader>
           <CardTitle>Profile</CardTitle>
@@ -169,7 +181,9 @@ export function ProfilePage() {
           </form>
         </CardContent>
       </Card>
+      </motion.div>
 
+      <motion.div variants={STAGGER_ITEM}>
       <Card>
         <CardHeader>
           <CardTitle>Status</CardTitle>
@@ -207,7 +221,9 @@ export function ProfilePage() {
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
+      <motion.div variants={STAGGER_ITEM}>
       <Card>
         <CardHeader>
           <CardTitle>Password</CardTitle>
@@ -257,8 +273,12 @@ export function ProfilePage() {
           </form>
         </CardContent>
       </Card>
+      </motion.div>
 
-      <TeamCard team={teamQuery.data ?? []} myId={session?.user.id} />
+      <motion.div variants={STAGGER_ITEM}>
+        <TeamCard team={teamQuery.data ?? []} myId={session?.user.id} />
+      </motion.div>
+      </motion.div>
     </div>
   );
 }

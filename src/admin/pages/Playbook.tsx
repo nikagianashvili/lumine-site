@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, Plus, Search, Trash2 } from "lucide-react";
 import { api, type PlaybookEntry } from "@/lib/api";
 import { Card } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function PlaybookPage() {
+  const reduceMotion = useReducedMotion();
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -80,19 +82,26 @@ export function PlaybookPage() {
       )}
 
       {filtered.length > 0 && (
-        <div className="flex flex-col gap-2">
+        <motion.div
+          className="flex flex-col gap-2"
+          initial={reduceMotion ? false : "hidden"}
+          animate="show"
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.035 } } }}
+        >
           {filtered.map((e) => (
-            <button
+            <motion.button
               key={e.id}
               type="button"
               onClick={() => setSelectedId(e.id)}
+              variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col gap-1 rounded-2xl border border-border bg-card p-4 text-left shadow-sm transition-shadow hover:shadow-md"
             >
               <span className="font-medium">{e.title}</span>
               <span className="line-clamp-1 text-sm text-muted-foreground">{e.body}</span>
-            </button>
+            </motion.button>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );
