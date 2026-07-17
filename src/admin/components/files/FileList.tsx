@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Trash2, FileIcon } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { Trash2, FileIcon, Share2 } from "lucide-react";
 import { api, type AgencyFile } from "@/lib/api";
 import { formatSize } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
+import { ShareDialog, type ShareItem } from "@/components/shell/ShareDialog";
 
 export function FileList({
   files,
@@ -20,9 +22,11 @@ export function FileList({
   // way - briefly claims empty on every load, not just when it's true.
   isLoading?: boolean;
 }) {
+  const reduceMotion = useReducedMotion();
   const queryClient = useQueryClient();
   const toast = useToast();
   const [deleteTarget, setDeleteTarget] = useState<AgencyFile | null>(null);
+  const [shareTarget, setShareTarget] = useState<AgencyFile | null>(null);
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.files.delete(id),
     onSuccess: () => {
@@ -41,9 +45,19 @@ export function FileList({
   }
 
   return (
-    <div className="flex flex-col gap-1">
+    <motion.div
+      className="flex flex-col gap-1"
+      initial={reduceMotion ? false : "hidden"}
+      animate="show"
+      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.035 } } }}
+    >
       {files.map((f) => (
-        <div key={f.id} className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm">
+        <motion.div
+          key={f.id}
+          variants={{ hidden: { opacity: 0, y: 6 }, show: { opacity: 1, y: 0 } }}
+          transition={{ duration: 0.18 }}
+          className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-muted/50"
+        >
           <FileIcon className="size-4 flex-shrink-0 text-muted-foreground" />
           {f.url ? (
             <a href={f.url} target="_blank" rel="noreferrer" className="flex-1 truncate text-primary hover:underline">
@@ -59,13 +73,21 @@ export function FileList({
           <span className="w-24 flex-shrink-0 truncate text-xs text-muted-foreground">{f.team_members?.name || "—"}</span>
           <button
             type="button"
+            aria-label="Share file"
+            onClick={() => setShareTarget(f)}
+            className="flex-shrink-0 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <Share2 className="size-3.5" />
+          </button>
+          <button
+            type="button"
             aria-label="Delete file"
             onClick={() => setDeleteTarget(f)}
             className="flex-shrink-0 rounded-full p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 className="size-3.5" />
           </button>
-        </div>
+        </motion.div>
       ))}
       <ConfirmDialog
         open={!!deleteTarget}
@@ -76,6 +98,11 @@ export function FileList({
         pending={deleteMutation.isPending}
         onConfirm={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
       />
-    </div>
+      <ShareDialog
+        open={!!shareTarget}
+        onOpenChange={(open) => !open && setShareTarget(null)}
+        item={shareTarget ? ({ kind: "file", name: shareTarget.name, fileId: shareTarget.id, url: shareTarget.url } satisfies ShareItem) : null}
+      />
+    </motion.div>
   );
 }

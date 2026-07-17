@@ -9,19 +9,19 @@ import {
   useSensors,
   type DragEndEvent,
 } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
+import { SortableContext, rectSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { LayoutGrid, Eye, RotateCcw, Check } from "lucide-react";
 import { api } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
-import { useDashboardLayout, WIDGET_LABELS, ROW_WIDGETS, type RowId, type WidgetId } from "@/lib/dashboardLayout";
+import { useDashboardLayout, WIDGET_LABELS, WIDGET_SPAN, type WidgetId } from "@/lib/dashboardLayout";
 import { HighlightsCard } from "@/components/overview/HighlightsCard";
 import { LeadsChart, type DayCount } from "@/components/overview/LeadsChart";
 import { SourceBreakdown } from "@/components/overview/SourceBreakdown";
 import { ActivityFeed } from "@/components/overview/ActivityFeed";
 import { MyQueue } from "@/components/overview/MyQueue";
 import { InboxSummary } from "@/components/overview/InboxSummary";
-import { SortableRow } from "@/components/overview/SortableRow";
+import { SortableWidget } from "@/components/overview/SortableWidget";
 import { WidgetChrome } from "@/components/overview/WidgetChrome";
 import { Button } from "@/components/ui/button";
 import {
@@ -227,12 +227,12 @@ export function OverviewPage() {
     }
   }
 
-  function handleRowDragEnd(event: DragEndEvent) {
+  function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-    const oldIndex = layout.rowOrder.indexOf(active.id as RowId);
-    const newIndex = layout.rowOrder.indexOf(over.id as RowId);
-    layout.setRowOrder(arrayMove(layout.rowOrder, oldIndex, newIndex));
+    const oldIndex = layout.order.indexOf(active.id as WidgetId);
+    const newIndex = layout.order.indexOf(over.id as WidgetId);
+    layout.setOrder(arrayMove(layout.order, oldIndex, newIndex));
   }
 
   const allHiddenWidgets = (Object.keys(WIDGET_LABELS) as WidgetId[]).filter((id) => layout.isHidden(id));
@@ -292,50 +292,29 @@ export function OverviewPage() {
       </div>
 
       {variant === "full" && (
-        <DndContext sensors={dndSensors} collisionDetection={closestCenter} onDragEnd={handleRowDragEnd}>
-          <SortableContext items={layout.rowOrder} strategy={verticalListSortingStrategy}>
+        <DndContext sensors={dndSensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={layout.order} strategy={rectSortingStrategy}>
             <motion.div
-              className="flex flex-col gap-4"
+              className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2"
               initial={reduceMotion ? false : "hidden"}
               animate="show"
               variants={STAGGER_CONTAINER}
             >
-              {layout.rowOrder.map((rowId) => {
-                const widgets = ROW_WIDGETS[rowId].filter((id) => !layout.isHidden(id));
-                if (widgets.length === 0) return null;
-                return (
-                  <motion.div key={rowId} variants={STAGGER_ITEM}>
-                    <SortableRow id={rowId} editing={editingLayout}>
-                      {rowId === "highlights" && (
-                        <div className={cn("grid grid-cols-1 gap-4", widgets.length === 2 && "sm:grid-cols-2")}>
-                          {widgets.map((id) => (
-                            <WidgetChrome key={id} editing={editingLayout} onHide={() => layout.toggleWidget(id)}>
-                              {renderWidget(id)}
-                            </WidgetChrome>
-                          ))}
-                        </div>
-                      )}
-                      {rowId === "insights" && (
-                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-                          {widgets.map((id) => (
-                            <div key={id} className={id === "leads-chart" ? "lg:col-span-3" : "lg:col-span-2"}>
-                              <WidgetChrome editing={editingLayout} onHide={() => layout.toggleWidget(id)}>
-                                {renderWidget(id)}
-                              </WidgetChrome>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {rowId === "activity" &&
-                        widgets.map((id) => (
-                          <WidgetChrome key={id} editing={editingLayout} onHide={() => layout.toggleWidget(id)}>
-                            {renderWidget(id)}
-                          </WidgetChrome>
-                        ))}
-                    </SortableRow>
+              {layout.order
+                .filter((id) => !layout.isHidden(id))
+                .map((id) => (
+                  <motion.div
+                    key={id}
+                    variants={STAGGER_ITEM}
+                    className={cn(WIDGET_SPAN[id] === 2 && "sm:col-span-2")}
+                  >
+                    <SortableWidget id={id} editing={editingLayout}>
+                      <WidgetChrome editing={editingLayout} onHide={() => layout.toggleWidget(id)}>
+                        {renderWidget(id)}
+                      </WidgetChrome>
+                    </SortableWidget>
                   </motion.div>
-                );
-              })}
+                ))}
             </motion.div>
           </SortableContext>
         </DndContext>

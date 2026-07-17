@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { CalendarDays, ChevronLeft, ChevronRight, UserPlus } from "lucide-react";
 import { api, type Task, type TaskPriority, type Client } from "@/lib/api";
 import { PRIORITY_VARIANT, TASK_STATUS_LABELS } from "@/lib/taskMeta";
@@ -42,6 +43,7 @@ function parseDayKey(key: string) {
 }
 
 export function CalendarView() {
+  const reduceMotion = useReducedMotion();
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
   const [cursor, setCursor] = useState(() => new Date());
@@ -135,8 +137,16 @@ export function CalendarView() {
       </div>
 
       {/* month grid — at phone width the 7 columns truncate chips to
-          nothing, so it swaps for the agenda list below */}
-      <div className="hidden grid-cols-7 gap-2 sm:grid">
+          nothing, so it swaps for the agenda list below. key={monthKey}
+          crossfades the whole grid on Prev/Next instead of a per-cell
+          stagger, which would be excessive across up to 42 cells. */}
+      <motion.div
+        key={`${year}-${month}`}
+        initial={reduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.15 }}
+        className="hidden grid-cols-7 gap-2 sm:grid"
+      >
         {DOW.map((d) => (
           <div key={d} className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {d}
@@ -188,7 +198,7 @@ export function CalendarView() {
             </button>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* agenda list for phone width */}
       <div className="flex flex-col gap-2 sm:hidden">

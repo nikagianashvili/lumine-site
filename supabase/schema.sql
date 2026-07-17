@@ -206,6 +206,18 @@ create table if not exists water_cooler_posts (
   engagement_id uuid references engagements (id) on delete set null,
   created_at timestamptz default now()
 );
+-- Real shared attachment (post-Phase-9 real file storage) - distinct from
+-- the legacy file_url paste-a-link field above, which stays for backward
+-- compatibility with old posts.
+alter table water_cooler_posts add column if not exists file_id uuid references files (id) on delete set null;
+-- Threaded replies on a post - flat (no nested replies), newest last.
+create table if not exists water_cooler_comments (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references water_cooler_posts (id) on delete cascade,
+  author_id uuid not null references team_members (id) on delete cascade,
+  body text not null,
+  created_at timestamptz default now()
+);
 
 -- ── Agency Brain: Folders, real files, Playbook (admin rebuild Phase 9) ──
 -- Real file storage lives in a private Supabase Storage bucket
@@ -263,8 +275,14 @@ create table if not exists team_messages (
   recipient_id uuid not null references team_members (id) on delete cascade,
   body text not null,
   created_at timestamptz default now(),
-  read_at timestamptz -- null until the recipient's client marks it read
+  read_at timestamptz, -- null until the recipient's client marks it read
+  delivered_at timestamptz -- stamped server-side the first time the recipient's client fetches it
 );
+-- {kind: "file"|"project", name, url?, fileId?, engagementId?} - a message
+-- can carry a shared file/project alongside or instead of body text. Not a
+-- separate table since a thread only ever needs the latest state, no
+-- history of the attachment itself.
+alter table team_messages add column if not exists attachment jsonb;
 
 -- ── Client Portal (admin rebuild Track 4) ────────────────────────────────
 -- Client-facing login, riding on auth.users exactly like team_members does
@@ -298,6 +316,19 @@ create table if not exists deliverable_comments (
   y_pct numeric,
   timecode_seconds numeric,
   resolved boolean not null default false,
+  created_at timestamptz default now()
+);
+
+-- ── Assistant ─────────────────────────────────────────────────────────────
+-- One continuous private thread per team member with the in-admin AI
+-- assistant - not shared across the team, not connected to live
+-- clients/tasks/projects data (scoped deliberately: a general-purpose
+-- helper, not an agent with write/read access to the business).
+create table if not exists assistant_messages (
+  id uuid primary key default gen_random_uuid(),
+  team_member_id uuid not null references team_members (id) on delete cascade,
+  role text not null, -- user | assistant
+  content text not null,
   created_at timestamptz default now()
 );
 
@@ -341,6 +372,8 @@ alter table playbook_entries enable row level security;
 alter table client_users enable row level security;
 alter table deliverable_comments enable row level security;
 alter table notifications enable row level security;
+alter table assistant_messages enable row level security;
+alter table water_cooler_comments enable row level security;
 
 -- Public site can read content tables directly with the anon key...
 drop policy if exists "public read projects" on projects;
