@@ -6,6 +6,8 @@ import { timeAgo } from "@/lib/format";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetBody } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 const TYPE_ICON: Record<NotificationType, typeof Bell> = {
@@ -28,6 +30,7 @@ export function NotificationsPanel({
   onNavigate: (target: DeepLinkTarget) => void;
 }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   // Same short-poll-while-open pattern as TeamChatPanel - a real feed
   // without standing up a Realtime subscription for what's still a small
   // team's occasional events.
@@ -42,10 +45,12 @@ export function NotificationsPanel({
   const markReadMutation = useMutation({
     mutationFn: (id: string) => api.notifications.markRead(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+    onError: (err: Error) => toast({ title: "Couldn't mark notification read", description: err.message, variant: "destructive" }),
   });
   const markAllReadMutation = useMutation({
     mutationFn: () => api.notifications.markAllRead(),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+    onError: (err: Error) => toast({ title: "Couldn't mark all read", description: err.message, variant: "destructive" }),
   });
 
   function handleClick(n: Notification) {
@@ -73,7 +78,9 @@ export function NotificationsPanel({
           </div>
         </SheetHeader>
         <SheetBody className="flex flex-col gap-1 p-2">
-          {notifications.length === 0 ? (
+          {notificationsQuery.isError ? (
+            <ErrorState message={notificationsQuery.error.message} onRetry={() => notificationsQuery.refetch()} />
+          ) : notifications.length === 0 ? (
             <EmptyState icon={Bell} title="Nothing yet" description="Task assignments, new leads, and deliverable comments will show up here." />
           ) : (
             notifications.map((n) => {
