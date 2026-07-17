@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { Plus, Folder as FolderIcon, FolderOpen, Database } from "lucide-react";
 import { api } from "@/lib/api";
 import { HATS } from "@/lib/hats";
@@ -26,6 +27,7 @@ const MODES: { value: Mode; label: string }[] = [
 ];
 
 export function FoldersPage() {
+  const reduceMotion = useReducedMotion();
   const [mode, setMode] = useState<Mode>("folders");
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [newFolderName, setNewFolderName] = useState("");
@@ -176,19 +178,27 @@ export function FoldersPage() {
           )}
 
           {foldersQuery.data && foldersQuery.data.length > 0 && (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <motion.div
+              className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4"
+              initial={reduceMotion ? false : "hidden"}
+              animate="show"
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
+            >
               {foldersQuery.data.map((f) => (
-                <button
+                <motion.button
                   key={f.id}
                   type="button"
                   onClick={() => setSelectedFolderId(f.id)}
+                  variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0 } }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                  whileHover={reduceMotion ? undefined : { y: -2 }}
                   className="flex flex-col items-start gap-2 rounded-2xl border border-border bg-card p-4 text-left shadow-sm transition-shadow hover:shadow-md"
                 >
                   <FolderIcon className="size-5 text-primary" />
                   <span className="font-medium">{f.name}</span>
-                </button>
+                </motion.button>
               ))}
-            </div>
+            </motion.div>
           )}
         </>
       )}

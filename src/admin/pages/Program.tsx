@@ -7,6 +7,7 @@ import { Spreadsheet } from "@/components/program/Spreadsheet";
 import { CalendarView } from "@/components/program/CalendarView";
 import { BandwidthView } from "@/components/program/BandwidthView";
 import { TaskModal } from "@/components/program/TaskModal";
+import { useDeepLink } from "@/lib/deepLink";
 
 // No Timeline entry until a real Gantt exists — a shipped view switcher
 // with a "coming soon" pane undercuts every view next to it.
@@ -22,6 +23,11 @@ const VIEWS: { value: View; label: string }[] = [
 export function ProgramPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [view, setView] = useState<View>("board");
+  const [taskSearch, setTaskSearch] = useState("");
+  useDeepLink("program", (target) => {
+    setView("spreadsheet");
+    setTaskSearch(target.taskQuery);
+  });
 
   return (
     <div className="flex flex-col gap-4 pt-6">
@@ -39,7 +45,7 @@ export function ProgramPage() {
       <SegmentedControl options={VIEWS} value={view} onChange={setView} />
 
       {view === "board" && <Board onCreateTask={() => setModalOpen(true)} />}
-      {view === "spreadsheet" && <Spreadsheet />}
+      {view === "spreadsheet" && <Spreadsheet initialSearch={taskSearch} />}
       {view === "calendar" && <CalendarView />}
       {view === "bandwidth" && <BandwidthView />}
 

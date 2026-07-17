@@ -11,20 +11,31 @@
   </head>
   <body>
     <div class="admin-shell admin-login">
-      <form class="admin-login-card card-base" id="loginForm">
-        <h1>Client Portal</h1>
-        <p style="opacity: 0.65; margin-top: -0.75rem; margin-bottom: 1rem">Sign in to review your projects and deliverables.</p>
-        <div class="admin-field">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" autocomplete="username" required />
+      <div class="login-brand-panel grain">
+        <div class="login-brand-content">
+          <span class="login-wordmark">LUMINE</span>
+          <h1>Your projects, in one place.</h1>
+          <p>Review deliverables, leave feedback, and track progress on everything we're building together.</p>
         </div>
-        <div class="admin-field">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" autocomplete="current-password" required />
-        </div>
-        <button type="submit" class="btn btn-solid" id="loginSubmit">Log In</button>
-        <p class="admin-error" id="loginError" hidden></p>
-      </form>
+        <p class="login-brand-foot">Client portal &middot; Lumine Studio</p>
+      </div>
+
+      <div class="login-form-panel">
+        <form class="admin-login-card" id="loginForm">
+          <h2>Client Portal</h2>
+          <p class="login-form-sub">Sign in to review your projects and deliverables.</p>
+          <div class="admin-field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" autocomplete="username" required placeholder="you@company.com" />
+          </div>
+          <div class="admin-field">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn btn-solid login-submit" id="loginSubmit">Log in</button>
+          <p class="admin-error" id="loginError" hidden></p>
+        </form>
+      </div>
     </div>
     <script type="module" src="/js/portal-login.js"></script>
   </body>

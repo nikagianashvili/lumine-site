@@ -169,8 +169,8 @@ export interface TeamMember {
   skills_tags?: string[];
   // Manual, self-set (lib/teamStatus.ts) - never inferred from activity.
   status?: string;
-  // Greys their own avatar elsewhere; muting notifications is N/A today
-  // (no notification system exists yet to mute).
+  // Greys their own avatar elsewhere; also mutes the notification bell's
+  // badge/toast (the feed itself still fills up, see useUnreadNotificationCount).
   focus_mode?: boolean;
   // "admin" (full access) | "member" (scoped) - the field exists and is
   // editable, but nothing reads it to restrict anything yet. Everyone
@@ -179,6 +179,33 @@ export interface TeamMember {
   // once enforcement exists (triaging leads is real member-level work),
   // the restriction is meant for Manage's full client pipeline/financials.
   access_level?: string;
+}
+
+export interface TeamMessage {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  body: string;
+  created_at: string;
+  read_at: string | null;
+}
+
+export type NotificationType = "task_assigned" | "new_lead" | "new_comment";
+
+// `target` mirrors DeepLinkTarget (lib/deepLink.ts) so a notification can be
+// clicked straight into the record it's about, reusing the same navigation
+// the command palette uses. Untyped here (server writes it as jsonb) since
+// the two files can't share a type without api.ts depending on a page-level
+// module - callers cast at the point of use.
+export interface Notification {
+  id: string;
+  recipient_id: string;
+  type: NotificationType;
+  title: string;
+  body: string | null;
+  target: Record<string, unknown> | null;
+  created_at: string;
+  read_at: string | null;
 }
 
 export type ConversationStatus = "open" | "qualified" | "closed";
@@ -415,6 +442,29 @@ export const api = {
         "teamMember",
         "Could not update team member",
       ),
+  },
+  teamMessages: {
+    list: async () => unwrap<TeamMessage[]>(await adminFetch("/api/admin/team-messages"), "messages"),
+    send: async (recipient_id: string, body: string) =>
+      unwrap<TeamMessage>(
+        await adminFetch("/api/admin/team-messages", { method: "POST", body: JSON.stringify({ recipient_id, body }) }),
+        "message",
+      ),
+    markRead: async (id: string) =>
+      unwrap<TeamMessage>(
+        await adminFetch("/api/admin/team-messages", { method: "PATCH", body: JSON.stringify({ id }) }),
+        "message",
+      ),
+  },
+  notifications: {
+    list: async () => unwrap<Notification[]>(await adminFetch("/api/admin/notifications"), "notifications"),
+    markRead: async (id: string) =>
+      unwrap<Notification>(
+        await adminFetch("/api/admin/notifications", { method: "PATCH", body: JSON.stringify({ id }) }),
+        "notification",
+      ),
+    markAllRead: async () =>
+      adminFetch("/api/admin/notifications", { method: "PATCH", body: JSON.stringify({ markAllRead: true }) }),
   },
   conversations: {
     list: async () => unwrap<Conversation[]>(await adminFetch("/api/admin/ai-conversations"), "conversations"),

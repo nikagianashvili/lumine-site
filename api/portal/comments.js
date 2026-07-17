@@ -5,6 +5,7 @@
 // comments on another client's deliverable by guessing a file id.
 import { getSupabaseServerClient } from "../_lib/supabase.js";
 import { requireClientMember } from "./_lib/auth.js";
+import { notify } from "../_lib/notify.js";
 
 async function fileInScope(supabase, fileId, clientId) {
   const { data: file } = await supabase.from("files").select("id, client_id, engagement_id").eq("id", fileId).single();
@@ -77,6 +78,20 @@ export default async function handler(req, res) {
       res.status(500).json({ error: error.message });
       return;
     }
+
+    // No admin-side "who owns this deliverable" field exists yet - the
+    // uploader is the best available proxy for who should hear about client
+    // feedback on it.
+    const { data: file } = await supabase.from("files").select("uploaded_by, name").eq("id", file_id).single();
+    if (file?.uploaded_by) {
+      await notify(supabase, {
+        recipientIds: [file.uploaded_by],
+        type: "new_comment",
+        title: `New comment on ${file.name}`,
+        body: body.trim(),
+      });
+    }
+
     res.status(201).json({ comment: data });
     return;
   }

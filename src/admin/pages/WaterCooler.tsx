@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { api, type WaterCoolerPost } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { Card } from "@/components/ui/card";
@@ -75,6 +76,7 @@ function PostCard({ post }: { post: WaterCoolerPost }) {
 }
 
 export function WaterCoolerPage() {
+  const reduceMotion = useReducedMotion();
   const queryClient = useQueryClient();
   const postsQuery = useQuery({ queryKey: ["water-cooler"], queryFn: api.waterCooler.list });
   const [body, setBody] = useState("");
@@ -151,11 +153,22 @@ export function WaterCoolerPage() {
       )}
 
       {postsQuery.data && postsQuery.data.length > 0 && (
-        <div className="flex flex-col gap-3">
+        <motion.div
+          className="flex flex-col gap-3"
+          initial={reduceMotion ? false : "hidden"}
+          animate="show"
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05 } } }}
+        >
           {postsQuery.data.map((p) => (
-            <PostCard key={p.id} post={p} />
+            <motion.div
+              key={p.id}
+              variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <PostCard post={p} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

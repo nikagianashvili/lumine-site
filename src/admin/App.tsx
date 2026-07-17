@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { getSession, type Session } from "@/lib/session";
+import { DeepLinkContext, type DeepLinkTarget } from "@/lib/deepLink";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { TopNav } from "@/components/shell/TopNav";
 import { ToastProvider } from "@/components/ui/toast";
@@ -76,6 +77,12 @@ const queryClient = new QueryClient({
 export default function App() {
   const [session, setSession] = useState<Session | null | "checking">("checking");
   const [page, setPage] = useState<Page>("overview");
+  const [deepLinkTarget, setDeepLinkTarget] = useState<DeepLinkTarget | null>(null);
+
+  function navigateTo(target: DeepLinkTarget) {
+    setDeepLinkTarget(target);
+    setPage(target.page);
+  }
 
   useEffect(() => {
     const s = getSession();
@@ -98,23 +105,25 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider delayDuration={300}>
         <ToastProvider>
-          <div className="flex h-full">
-            <Sidebar page={page} onNavigate={setPage} />
-            <div className="flex min-w-0 flex-1 flex-col">
-              <TopNav page={page} onNavigate={setPage} session={session} />
-              <main className="flex-1 overflow-y-auto px-4 pb-6 md:px-6">
-                {/* one shared reading width: previously Manage/Program ran
-                    full-bleed on wide monitors while feed pages capped
-                    themselves at arbitrary widths */}
-                <div className="mx-auto w-full max-w-[88rem]">
-                  {(() => {
-                    const PageComponent = PAGES[page];
-                    return <PageComponent />;
-                  })()}
-                </div>
-              </main>
+          <DeepLinkContext.Provider value={{ target: deepLinkTarget, clear: () => setDeepLinkTarget(null) }}>
+            <div className="flex h-full">
+              <Sidebar page={page} onNavigate={setPage} />
+              <div className="flex min-w-0 flex-1 flex-col">
+                <TopNav page={page} onNavigate={setPage} onNavigateTo={navigateTo} session={session} />
+                <main className="flex-1 overflow-y-auto px-4 pb-6 md:px-6">
+                  {/* one shared reading width: previously Manage/Program ran
+                      full-bleed on wide monitors while feed pages capped
+                      themselves at arbitrary widths */}
+                  <div className="mx-auto w-full max-w-[88rem]">
+                    {(() => {
+                      const PageComponent = PAGES[page];
+                      return <PageComponent />;
+                    })()}
+                  </div>
+                </main>
+              </div>
             </div>
-          </div>
+          </DeepLinkContext.Provider>
         </ToastProvider>
       </TooltipProvider>
     </QueryClientProvider>

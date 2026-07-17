@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { Plus, Search } from "lucide-react";
 import { api, type EngagementStatus } from "@/lib/api";
 import { SERVICE_TYPES } from "@/lib/serviceTypes";
@@ -10,10 +11,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { NewProjectModal } from "@/components/projects/NewProjectModal";
 import { ProjectDetail } from "@/components/projects/ProjectDetail";
+import { useDeepLink } from "@/lib/deepLink";
 
 export function ProjectsPage() {
+  const reduceMotion = useReducedMotion();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  useDeepLink("projects", (target) => setSelectedId(target.engagementId));
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<EngagementStatus | "all">("all");
   const [serviceFilter, setServiceFilter] = useState<string>("all");
@@ -111,20 +115,30 @@ export function ProjectsPage() {
       )}
 
       {filtered.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          initial={reduceMotion ? false : "hidden"}
+          animate="show"
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
+        >
           {filtered.map((p) => {
             const client = clientsById.get(p.client_id ?? "");
             return (
-              <ProjectCard
+              <motion.div
                 key={p.id}
-                project={p}
-                clientName={client?.name || client?.email || "No client linked"}
-                tasks={(tasksQuery.data ?? []).filter((t) => t.engagement_id === p.id)}
-                onClick={() => setSelectedId(p.id)}
-              />
+                variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <ProjectCard
+                  project={p}
+                  clientName={client?.name || client?.email || "No client linked"}
+                  tasks={(tasksQuery.data ?? []).filter((t) => t.engagement_id === p.id)}
+                  onClick={() => setSelectedId(p.id)}
+                />
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       )}
 
       <NewProjectModal open={modalOpen} onOpenChange={setModalOpen} />

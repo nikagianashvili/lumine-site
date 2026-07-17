@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { UserPlus, ListTodo, Briefcase, MessageSquare, PartyPopper, Activity as ActivityIcon } from "lucide-react";
 import { api } from "@/lib/api";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +21,7 @@ interface Entry {
 // merged and sorted by recency, reusing Overview's ActivityFeed item
 // pattern but page-scoped and covering everything, not just clients+tasks.
 export function ActivityPage() {
+  const reduceMotion = useReducedMotion();
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
   const engagementsQuery = useQuery({ queryKey: ["engagements"], queryFn: api.engagements.list });
@@ -112,20 +114,32 @@ export function ActivityPage() {
                 className="border-0 py-6"
               />
             ) : (
-              entries.map((e) => (
-                <div key={e.id} className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm">
-                  <span
-                    className={cn(
-                      "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
-                      e.accent ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground",
-                    )}
+              <motion.div
+                className="flex flex-col gap-1"
+                initial={reduceMotion ? false : "hidden"}
+                animate="show"
+                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.025 } } }}
+              >
+                {entries.map((e) => (
+                  <motion.div
+                    key={e.id}
+                    variants={{ hidden: { opacity: 0, x: -6 }, show: { opacity: 1, x: 0 } }}
+                    transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm"
                   >
-                    <e.icon className="size-4" />
-                  </span>
-                  <span className="flex-1 truncate">{e.text}</span>
-                  <span className="flex-shrink-0 text-xs text-muted-foreground">{timeAgo(e.time)}</span>
-                </div>
-              ))
+                    <span
+                      className={cn(
+                        "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
+                        e.accent ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      <e.icon className="size-4" />
+                    </span>
+                    <span className="flex-1 truncate">{e.text}</span>
+                    <span className="flex-shrink-0 text-xs text-muted-foreground">{timeAgo(e.time)}</span>
+                  </motion.div>
+                ))}
+              </motion.div>
             )}
           </div>
         </Card>

@@ -1,13 +1,37 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "framer-motion";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
+import { LayoutGrid, Eye, RotateCcw, Check } from "lucide-react";
 import { api } from "@/lib/api";
 import { getSession } from "@/lib/session";
-import { StatCard } from "@/components/overview/StatCard";
+import { cn } from "@/lib/utils";
+import { useDashboardLayout, WIDGET_LABELS, ROW_WIDGETS, type RowId, type WidgetId } from "@/lib/dashboardLayout";
+import { HighlightsCard } from "@/components/overview/HighlightsCard";
 import { LeadsChart, type DayCount } from "@/components/overview/LeadsChart";
 import { SourceBreakdown } from "@/components/overview/SourceBreakdown";
 import { ActivityFeed } from "@/components/overview/ActivityFeed";
 import { MyQueue } from "@/components/overview/MyQueue";
 import { InboxSummary } from "@/components/overview/InboxSummary";
+import { SortableRow } from "@/components/overview/SortableRow";
+import { WidgetChrome } from "@/components/overview/WidgetChrome";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
 
@@ -52,6 +76,9 @@ function greeting() {
 
 export function OverviewPage() {
   const reduceMotion = useReducedMotion();
+  const [editingLayout, setEditingLayout] = useState(false);
+  const layout = useDashboardLayout();
+  const dndSensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
   const session = getSession();
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
@@ -59,17 +86,16 @@ export function OverviewPage() {
   const convosQuery = useQuery({ queryKey: ["conversations"], queryFn: api.conversations.list });
 
   if (clientsQuery.isLoading || tasksQuery.isLoading) {
-    // mirrors the loaded page: greeting block, stat grid, chart row
+    // mirrors the loaded page: greeting block, highlight cards, chart row
     return (
       <div className="flex flex-col gap-5 pt-6">
         <div className="flex flex-col gap-2">
           <Skeleton className="h-7 w-48" />
           <Skeleton className="h-4 w-72" />
         </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 rounded-xl" />
-          ))}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Skeleton className="h-48 rounded-xl" />
+          <Skeleton className="h-48 rounded-xl" />
         </div>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
           <Skeleton className="h-72 rounded-xl lg:col-span-3" />
@@ -137,48 +163,194 @@ export function OverviewPage() {
 
   const firstName = me?.name?.trim().split(/\s+/)[0];
 
+  // Two Highlights widgets (Metronic's stat-card pattern: headline number +
+  // badge, segmented proportion bar, divider, icon-dot breakdown rows) - one
+  // for the lead pipeline, one for the task pipeline. Every value and every
+  // segment weight comes from real data, no fabricated trend arrows.
+  const leadSegments = [
+    { key: "contact_form", color: "var(--chart-contact-form)", weight: sourceCounts.contact_form || 0 },
+    { key: "manual", color: "var(--chart-manual)", weight: sourceCounts.manual || 0 },
+    { key: "ai_chat", color: "var(--chart-ai-chat)", weight: sourceCounts.ai_chat || 0 },
+    { key: "ai_consultant", color: "var(--chart-ai-consultant)", weight: sourceCounts.ai_consultant || 0 },
+  ];
+  const leadRows = [
+    { key: "hot", label: "Hot leads", value: hotLeads, color: "var(--color-destructive)" },
+    { key: "booked", label: "Booked", value: booked, color: "var(--color-success)" },
+    { key: "ai", label: "AI-qualified", value: aiQualified, color: "var(--color-primary)" },
+  ];
+
+  const todo = tasks.filter((t) => t.status === "todo").length;
+  const inProgress = tasks.filter((t) => t.status === "in_progress").length;
+  const review = tasks.filter((t) => t.status === "review").length;
+  const done = tasks.filter((t) => t.status === "done").length;
+  const openTasks = todo + inProgress + review;
+  const taskSegments = [
+    { key: "todo", color: "var(--color-muted-foreground)", weight: todo },
+    { key: "in_progress", color: "var(--color-info)", weight: inProgress },
+    { key: "review", color: "var(--color-warning)", weight: review },
+    { key: "done", color: "var(--color-success)", weight: done },
+  ];
+  const taskRows = [
+    { key: "todo", label: "Not started", value: todo, color: "var(--color-muted-foreground)" },
+    { key: "in_progress", label: "In progress", value: inProgress, color: "var(--color-info)" },
+    { key: "review", label: "Under review", value: review, color: "var(--color-warning)" },
+  ];
+
+  function renderWidget(id: WidgetId) {
+    switch (id) {
+      case "leads-highlights":
+        return (
+          <HighlightsCard
+            title="Leads"
+            value={leadsThisWeek}
+            badge={hotLeads > 0 ? `${hotLeads} hot` : undefined}
+            segments={leadSegments}
+            rows={leadRows}
+          />
+        );
+      case "tasks-highlights":
+        return (
+          <HighlightsCard
+            title="Tasks"
+            value={openTasks}
+            badge={done > 0 ? `${done} done` : undefined}
+            segments={taskSegments}
+            rows={taskRows}
+          />
+        );
+      case "leads-chart":
+        return <LeadsChart data={days} />;
+      case "source-breakdown":
+        return <SourceBreakdown counts={sourceCounts} />;
+      case "activity-feed":
+        return <ActivityFeed clients={recentClients} tasks={recentTasks} />;
+    }
+  }
+
+  function handleRowDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = layout.rowOrder.indexOf(active.id as RowId);
+    const newIndex = layout.rowOrder.indexOf(over.id as RowId);
+    layout.setRowOrder(arrayMove(layout.rowOrder, oldIndex, newIndex));
+  }
+
+  const allHiddenWidgets = (Object.keys(WIDGET_LABELS) as WidgetId[]).filter((id) => layout.isHidden(id));
+
   return (
     <div className="flex flex-col gap-5 pt-6">
-      <div>
-        <h1 className="font-display text-2xl font-bold">
-          {greeting()}
-          {firstName ? `, ${firstName}` : ""}
-        </h1>
-        <p className="text-sm text-muted-foreground">Here's what's moved since you last checked in.</p>
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <h1 className="font-display text-2xl font-bold">
+            {greeting()}
+            {firstName ? `, ${firstName}` : ""}
+          </h1>
+          <p className="text-sm text-muted-foreground">Here's what's moved since you last checked in.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <p className="hidden shrink-0 text-sm text-muted-foreground sm:block">
+            {new Date().toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+          </p>
+          {variant === "full" && (
+            <div className="flex items-center gap-2">
+              {editingLayout && allHiddenWidgets.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Eye className="size-3.5" />
+                      Add widget
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Hidden widgets</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {allHiddenWidgets.map((id) => (
+                      <DropdownMenuItem key={id} onClick={() => layout.toggleWidget(id)}>
+                        {WIDGET_LABELS[id]}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              {editingLayout && (
+                <Button variant="outline" size="sm" onClick={() => layout.reset()}>
+                  <RotateCcw className="size-3.5" />
+                  Reset
+                </Button>
+              )}
+              <Button
+                variant={editingLayout ? "default" : "outline"}
+                size="sm"
+                onClick={() => setEditingLayout((v) => !v)}
+              >
+                {editingLayout ? <Check className="size-3.5" /> : <LayoutGrid className="size-3.5" />}
+                {editingLayout ? "Done" : "Customize"}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
-      <motion.div
-        className="grid grid-cols-2 gap-4 md:grid-cols-4"
-        initial={reduceMotion ? false : "hidden"}
-        animate="show"
-        variants={STAGGER_CONTAINER}
-      >
-        <motion.div variants={STAGGER_ITEM}>
-          <StatCard label="Leads this week" value={leadsThisWeek} />
-        </motion.div>
-        <motion.div variants={STAGGER_ITEM}>
-          <StatCard label="Hot leads" value={hotLeads} />
-        </motion.div>
-        <motion.div variants={STAGGER_ITEM}>
-          <StatCard label="Booked clients" value={booked} />
-        </motion.div>
-        <motion.div variants={STAGGER_ITEM}>
-          <StatCard label="AI-qualified" value={aiQualified} accent />
-        </motion.div>
-      </motion.div>
-
       {variant === "full" && (
-        <>
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-            <div className="lg:col-span-3">
-              <LeadsChart data={days} />
-            </div>
-            <div className="lg:col-span-2">
-              <SourceBreakdown counts={sourceCounts} />
-            </div>
-          </div>
-          <ActivityFeed clients={recentClients} tasks={recentTasks} />
-        </>
+        <DndContext sensors={dndSensors} collisionDetection={closestCenter} onDragEnd={handleRowDragEnd}>
+          <SortableContext items={layout.rowOrder} strategy={verticalListSortingStrategy}>
+            <motion.div
+              className="flex flex-col gap-4"
+              initial={reduceMotion ? false : "hidden"}
+              animate="show"
+              variants={STAGGER_CONTAINER}
+            >
+              {layout.rowOrder.map((rowId) => {
+                const widgets = ROW_WIDGETS[rowId].filter((id) => !layout.isHidden(id));
+                if (widgets.length === 0) return null;
+                return (
+                  <motion.div key={rowId} variants={STAGGER_ITEM}>
+                    <SortableRow id={rowId} editing={editingLayout}>
+                      {rowId === "highlights" && (
+                        <div className={cn("grid grid-cols-1 gap-4", widgets.length === 2 && "sm:grid-cols-2")}>
+                          {widgets.map((id) => (
+                            <WidgetChrome key={id} editing={editingLayout} onHide={() => layout.toggleWidget(id)}>
+                              {renderWidget(id)}
+                            </WidgetChrome>
+                          ))}
+                        </div>
+                      )}
+                      {rowId === "insights" && (
+                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+                          {widgets.map((id) => (
+                            <div key={id} className={id === "leads-chart" ? "lg:col-span-3" : "lg:col-span-2"}>
+                              <WidgetChrome editing={editingLayout} onHide={() => layout.toggleWidget(id)}>
+                                {renderWidget(id)}
+                              </WidgetChrome>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {rowId === "activity" &&
+                        widgets.map((id) => (
+                          <WidgetChrome key={id} editing={editingLayout} onHide={() => layout.toggleWidget(id)}>
+                            {renderWidget(id)}
+                          </WidgetChrome>
+                        ))}
+                    </SortableRow>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </SortableContext>
+        </DndContext>
+      )}
+
+      {variant !== "full" && (
+        <motion.div
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2"
+          initial={reduceMotion ? false : "hidden"}
+          animate="show"
+          variants={STAGGER_CONTAINER}
+        >
+          <motion.div variants={STAGGER_ITEM}>{renderWidget("leads-highlights")}</motion.div>
+          <motion.div variants={STAGGER_ITEM}>{renderWidget("tasks-highlights")}</motion.div>
+        </motion.div>
       )}
 
       {variant === "orchestrator" && (

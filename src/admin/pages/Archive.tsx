@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { Search } from "lucide-react";
 import { api } from "@/lib/api";
 import { PORTFOLIO_SERVICE_TYPES, INDUSTRIES } from "@/lib/portfolioTaxonomy";
@@ -10,6 +11,7 @@ import { ProjectCard } from "@/components/projects/ProjectCard";
 import { ProjectDetail } from "@/components/projects/ProjectDetail";
 
 export function ArchivePage() {
+  const reduceMotion = useReducedMotion();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [serviceFilter, setServiceFilter] = useState<string>("all");
@@ -103,20 +105,30 @@ export function ArchivePage() {
       )}
 
       {filtered.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          initial={reduceMotion ? false : "hidden"}
+          animate="show"
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
+        >
           {filtered.map((p) => {
             const client = clientsById.get(p.client_id ?? "");
             return (
-              <ProjectCard
+              <motion.div
                 key={p.id}
-                project={p}
-                clientName={client?.name || client?.email || "No client linked"}
-                tasks={(tasksQuery.data ?? []).filter((t) => t.engagement_id === p.id)}
-                onClick={() => setSelectedId(p.id)}
-              />
+                variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <ProjectCard
+                  project={p}
+                  clientName={client?.name || client?.email || "No client linked"}
+                  tasks={(tasksQuery.data ?? []).filter((t) => t.engagement_id === p.id)}
+                  onClick={() => setSelectedId(p.id)}
+                />
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       )}
     </div>
   );
