@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { ClientsTable } from "@/components/manage/ClientsTable";
 import { NewClientModal } from "@/components/manage/NewClientModal";
 import { ClientDetail } from "@/components/manage/ClientDetail";
+import { useDeepLink } from "@/lib/deepLink";
 
 export function ManagePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  useDeepLink("manage", (target) => setSelectedId(target.clientId));
 
   if (selectedId) {
     return <ClientDetail id={selectedId} onBack={() => setSelectedId(null)} />;

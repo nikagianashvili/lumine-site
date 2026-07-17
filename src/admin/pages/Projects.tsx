@@ -11,11 +11,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { NewProjectModal } from "@/components/projects/NewProjectModal";
 import { ProjectDetail } from "@/components/projects/ProjectDetail";
+import { useDeepLink } from "@/lib/deepLink";
 
 export function ProjectsPage() {
   const reduceMotion = useReducedMotion();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  useDeepLink("projects", (target) => setSelectedId(target.engagementId));
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<EngagementStatus | "all">("all");
   const [serviceFilter, setServiceFilter] = useState<string>("all");

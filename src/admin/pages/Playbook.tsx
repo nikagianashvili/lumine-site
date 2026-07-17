@@ -9,12 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useDeepLink } from "@/lib/deepLink";
 
 export function PlaybookPage() {
   const reduceMotion = useReducedMotion();
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  useDeepLink("playbook", (target) => setSelectedId(target.playbookId));
 
   const entriesQuery = useQuery({ queryKey: ["playbook"], queryFn: api.playbook.list });
 

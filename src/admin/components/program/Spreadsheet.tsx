@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -65,14 +65,20 @@ type QuickFilterKey = (typeof QUICK_FILTERS)[number]["key"];
 // table reads without horizontal scroll-hunting on smaller screens
 type ColumnMeta = { className?: string };
 
-export function Spreadsheet() {
+export function Spreadsheet({ initialSearch }: { initialSearch?: string } = {}) {
   const queryClient = useQueryClient();
   const toast = useToast();
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
   const engagementsQuery = useQuery({ queryKey: ["engagements"], queryFn: api.engagements.list });
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState(initialSearch ?? "");
+  // initialSearch can change after mount (a second command-palette jump
+  // while already on this view) - sync it in rather than relying on the
+  // useState initializer, which only runs once.
+  useEffect(() => {
+    if (initialSearch) setGlobalFilter(initialSearch);
+  }, [initialSearch]);
   const [statusFilter, setStatusFilter] = useState<"all" | TaskStatus>("all");
   const [priorityFilter, setPriorityFilter] = useState<"all" | TaskPriority>("all");
   const [assigneeFilter, setAssigneeFilter] = useState<"all" | "unassigned" | string>("all");

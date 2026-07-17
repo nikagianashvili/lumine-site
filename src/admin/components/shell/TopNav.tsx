@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { Check, ChevronDown, MessageSquare, MessageCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, ChevronDown, MessageSquare, MessageCircle, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { clearSession, type Session } from "@/lib/session";
 import { api } from "@/lib/api";
 import { useTheme, type ThemePref } from "@/lib/theme";
+import type { DeepLinkTarget } from "@/lib/deepLink";
 import { StatusDot } from "@/components/shell/StatusDot";
 import { TeamChatPanel, useUnreadTeamMessageCount } from "@/components/shell/TeamChatPanel";
+import { CommandPalette } from "@/components/shell/CommandPalette";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -44,10 +46,12 @@ const THEME_OPTIONS: { value: ThemePref; label: string }[] = [
 export function TopNav({
   page,
   onNavigate,
+  onNavigateTo,
   session,
 }: {
   page: Page;
   onNavigate: (p: Page) => void;
+  onNavigateTo: (target: DeepLinkTarget) => void;
   session: Session;
 }) {
   const initial = (session.user.email || "?").charAt(0).toUpperCase();
@@ -69,6 +73,20 @@ export function TopNav({
   // Inbox above (visitor <-> AI conversations).
   const [chatOpen, setChatOpen] = useState(false);
   const unreadMessages = useUnreadTeamMessageCount();
+
+  // Global search - Cmd/Ctrl+K from anywhere in the admin, not just when
+  // focus happens to be inside this header.
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen(true);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <header className="flex flex-wrap items-center gap-3 px-4 pb-2 pt-4 md:px-6">
@@ -103,6 +121,22 @@ export function TopNav({
       </nav>
 
       <div className="ml-auto flex items-center gap-3 lg:ml-0">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => setPaletteOpen(true)}
+              aria-label="Search everything"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <Search className="size-4.5" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Search · ⌘K</TooltipContent>
+        </Tooltip>
+
+        <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onNavigate={onNavigateTo} />
+
         <Tooltip>
           <TooltipTrigger asChild>
             <button
