@@ -35,8 +35,12 @@ type DueFilter = "all" | "overdue" | "today" | "week" | "no-date";
 
 function dueBucket(task: Task): Exclude<DueFilter, "all"> | null {
   if (!task.due_date) return "no-date";
-  const due = new Date(task.due_date);
-  const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate()).getTime();
+  // due_date is a date-only Postgres column ("2026-07-18") - new Date(str) on
+  // a bare date parses it as UTC midnight, which reads back as the *previous*
+  // local day in any UTC-negative timezone. Parse the y/m/d parts directly
+  // instead of round-tripping through a UTC Date.
+  const [y, m, d] = task.due_date.slice(0, 10).split("-").map(Number);
+  const dueDay = new Date(y, m - 1, d).getTime();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const diffDays = Math.round((dueDay - today.getTime()) / 86400000);

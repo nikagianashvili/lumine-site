@@ -66,9 +66,21 @@ export function TeamChatPanel({ open, onOpenChange }: { open: boolean; onOpenCha
     bottomRef.current?.scrollIntoView({ block: "end" });
   }, [activeThread.length, activeId]);
 
+  // markingRef tracks ids already sent to the server this "session" (cleared
+  // when switching threads) so the 5s poll doesn't refire a PATCH for a
+  // message whose read_at hasn't round-tripped back into `messages` yet.
+  const markingRef = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    markingRef.current.clear();
+  }, [activeId]);
   useEffect(() => {
     if (!activeId) return;
-    activeThread.filter((m) => m.recipient_id === me && !m.read_at).forEach((m) => markReadMutation.mutate(m.id));
+    activeThread
+      .filter((m) => m.recipient_id === me && !m.read_at && !markingRef.current.has(m.id))
+      .forEach((m) => {
+        markingRef.current.add(m.id);
+        markReadMutation.mutate(m.id);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeId, messages]);
 

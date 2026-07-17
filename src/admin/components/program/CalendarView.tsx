@@ -33,6 +33,14 @@ function dayKey(y: number, m: number, d: number) {
   return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 }
 
+// A "YYYY-MM-DD" key parsed via new Date(key) is read as UTC midnight, which
+// renders as the *previous* local day in any UTC-negative timezone. Parse
+// the parts directly instead.
+function parseDayKey(key: string) {
+  const [y, m, d] = key.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
 export function CalendarView() {
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
@@ -89,11 +97,17 @@ export function CalendarView() {
     ...Array.from({ length: daysInMonth }, (_, i) => ({ day: i + 1 })),
   ];
 
-  // agenda data for the phone-width fallback: this month's due days in order
+  // agenda data for the phone-width fallback: this month's activity days in
+  // order - a day counts if it has due tasks OR new leads, not tasks alone,
+  // so lead-only days (visible on the desktop grid via the UserPlus badge)
+  // aren't invisible on phone.
   const monthPrefix = `${year}-${String(month + 1).padStart(2, "0")}`;
-  const agenda = [...byDate.entries()]
-    .filter(([key]) => key.startsWith(monthPrefix))
-    .sort(([a], [b]) => a.localeCompare(b));
+  const agendaKeys = new Set(
+    [...byDate.keys(), ...clientsByDate.keys()].filter((k) => k.startsWith(monthPrefix)),
+  );
+  const agenda = [...agendaKeys]
+    .sort()
+    .map((key) => ({ key, tasks: byDate.get(key) ?? [], clients: clientsByDate.get(key) ?? [] }));
 
   const selectedTasks = selectedDay ? (byDate.get(selectedDay) ?? []) : [];
   const selectedClients = selectedDay ? (clientsByDate.get(selectedDay) ?? []) : [];
@@ -179,10 +193,10 @@ export function CalendarView() {
       {/* agenda list for phone width */}
       <div className="flex flex-col gap-2 sm:hidden">
         {agenda.length === 0 ? (
-          <EmptyState icon={CalendarDays} title="Nothing due this month" description="Tasks with a due date show up here." />
+          <EmptyState icon={CalendarDays} title="Nothing yet this month" description="Due tasks and new leads show up here." />
         ) : (
-          agenda.map(([key, dayTasks]) => {
-            const date = new Date(key);
+          agenda.map(({ key, tasks: dayTasks, clients: dayClients }) => {
+            const date = parseDayKey(key);
             const isToday = isCurrentMonth && today.getDate() === date.getDate();
             return (
               <button
@@ -191,9 +205,10 @@ export function CalendarView() {
                 onClick={() => setSelectedDay(key)}
                 className="rounded-xl border border-border bg-card p-3 text-left"
               >
-                <p className={cn("mb-1.5 text-xs font-medium uppercase tracking-wide", isToday ? "text-primary" : "text-muted-foreground")}>
+                <p className={cn("mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide", isToday ? "text-primary" : "text-muted-foreground")}>
                   {date.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short" })}
                   {isToday && " · Today"}
+                  {dayClients.length > 0 && <UserPlus className="size-3" />}
                 </p>
                 <div className="flex flex-col gap-1">
                   {dayTasks.map((t) => (
@@ -202,6 +217,11 @@ export function CalendarView() {
                       {t.title}
                     </span>
                   ))}
+                  {dayClients.length > 0 && (
+                    <span className="truncate rounded-md bg-muted px-2 py-1 text-sm text-muted-foreground">
+                      {dayClients.length} new lead{dayClients.length === 1 ? "" : "s"}
+                    </span>
+                  )}
                 </div>
               </button>
             );
@@ -214,12 +234,12 @@ export function CalendarView() {
           <SheetHeader>
             <SheetTitle>
               {selectedDay &&
-                new Date(selectedDay).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
+                parseDayKey(selectedDay).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
             </SheetTitle>
             <SheetDescription>
-              {selectedTasks.length} task{selectedTasks.length === 1 ? "" : "s"} due
-              {selectedClients.length > 0 &&
-                ` · ${selectedClients.length} new lead${selectedClients.length === 1 ? "" : "s"}`}
+              {selectedTasks.length > 0 && `${selectedTasks.length} task${selectedTasks.length === 1 ? "" : "s"} due`}
+              {selectedTasks.length > 0 && selectedClients.length > 0 && " · "}
+              {selectedClients.length > 0 && `${selectedClients.length} new lead${selectedClients.length === 1 ? "" : "s"}`}
             </SheetDescription>
           </SheetHeader>
           <SheetBody className="flex flex-col gap-5">

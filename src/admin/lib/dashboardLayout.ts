@@ -29,16 +29,24 @@ interface LayoutState {
   hiddenWidgets: WidgetId[];
 }
 
+const KNOWN_ROW_IDS = new Set<RowId>(DEFAULT_ROW_ORDER);
+const KNOWN_WIDGET_IDS = new Set<WidgetId>(Object.keys(WIDGET_LABELS) as WidgetId[]);
+
 function loadLayout(): LayoutState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { rowOrder: DEFAULT_ROW_ORDER, hiddenWidgets: [] };
     const parsed = JSON.parse(raw) as Partial<LayoutState>;
-    const known = new Set(parsed.rowOrder ?? []);
+    // drop any saved id that no longer maps to a real row/widget (a row or
+    // widget renamed/removed since the layout was saved) - an unknown row id
+    // would otherwise index ROW_WIDGETS[id] as undefined and crash the page
+    const savedRowOrder = (parsed.rowOrder ?? []).filter((id) => KNOWN_ROW_IDS.has(id));
+    const known = new Set(savedRowOrder);
     // merge in any row introduced after a user's layout was saved, so
     // shipping a new row later doesn't silently vanish it for existing users
-    const rowOrder = [...(parsed.rowOrder ?? []), ...DEFAULT_ROW_ORDER.filter((id) => !known.has(id))];
-    return { rowOrder, hiddenWidgets: parsed.hiddenWidgets ?? [] };
+    const rowOrder = [...savedRowOrder, ...DEFAULT_ROW_ORDER.filter((id) => !known.has(id))];
+    const hiddenWidgets = (parsed.hiddenWidgets ?? []).filter((id) => KNOWN_WIDGET_IDS.has(id));
+    return { rowOrder, hiddenWidgets };
   } catch {
     return { rowOrder: DEFAULT_ROW_ORDER, hiddenWidgets: [] };
   }

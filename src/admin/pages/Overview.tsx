@@ -348,24 +348,8 @@ export function OverviewPage() {
           animate="show"
           variants={STAGGER_CONTAINER}
         >
-          <motion.div variants={STAGGER_ITEM}>
-            <HighlightsCard
-              title="Leads"
-              value={leadsThisWeek}
-              badge={hotLeads > 0 ? `${hotLeads} hot` : undefined}
-              segments={leadSegments}
-              rows={leadRows}
-            />
-          </motion.div>
-          <motion.div variants={STAGGER_ITEM}>
-            <HighlightsCard
-              title="Tasks"
-              value={openTasks}
-              badge={done > 0 ? `${done} done` : undefined}
-              segments={taskSegments}
-              rows={taskRows}
-            />
-          </motion.div>
+          <motion.div variants={STAGGER_ITEM}>{renderWidget("leads-highlights")}</motion.div>
+          <motion.div variants={STAGGER_ITEM}>{renderWidget("tasks-highlights")}</motion.div>
         </motion.div>
       )}
 
