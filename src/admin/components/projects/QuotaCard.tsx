@@ -1,3 +1,4 @@
+import { useEffect, useState, type KeyboardEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, type Engagement } from "@/lib/api";
 import { RETAINER_TIERS } from "@/lib/retainerTiers";
@@ -5,7 +6,12 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+
+function blurOnEnter(e: KeyboardEvent<HTMLInputElement>) {
+  if (e.key === "Enter") e.currentTarget.blur();
+}
 
 function QuotaBar({
   label,
@@ -23,6 +29,26 @@ function QuotaBar({
   const over = limit > 0 && delivered > limit;
   const pct = limit > 0 ? Math.min(100, Math.round((delivered / limit) * 100)) : 0;
 
+  // Local staging state, committed on blur - typing "10" into a number
+  // input previously fired a PATCH per keystroke (1, then 10). The server
+  // value (`delivered`/`limit` props) stays the source of truth; this just
+  // buffers what's being typed until the field loses focus.
+  const [deliveredInput, setDeliveredInput] = useState(String(delivered));
+  const [limitInput, setLimitInput] = useState(String(limit));
+  useEffect(() => setDeliveredInput(String(delivered)), [delivered]);
+  useEffect(() => setLimitInput(String(limit)), [limit]);
+
+  function commitDelivered() {
+    const n = Math.max(0, Number(deliveredInput) || 0);
+    setDeliveredInput(String(n));
+    if (n !== delivered) onDeliveredChange(n);
+  }
+  function commitLimit() {
+    const n = Math.max(0, Number(limitInput) || 0);
+    setLimitInput(String(n));
+    if (n !== limit) onLimitChange(n);
+  }
+
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between text-sm">
@@ -36,16 +62,20 @@ function QuotaBar({
         <Input
           type="number"
           min={0}
-          value={delivered}
-          onChange={(e) => onDeliveredChange(Math.max(0, Number(e.target.value) || 0))}
+          value={deliveredInput}
+          onChange={(e) => setDeliveredInput(e.target.value)}
+          onBlur={commitDelivered}
+          onKeyDown={blurOnEnter}
           className="h-7 w-16 text-center"
         />
         <span>delivered of</span>
         <Input
           type="number"
           min={0}
-          value={limit}
-          onChange={(e) => onLimitChange(Math.max(0, Number(e.target.value) || 0))}
+          value={limitInput}
+          onChange={(e) => setLimitInput(e.target.value)}
+          onBlur={commitLimit}
+          onKeyDown={blurOnEnter}
           className="h-7 w-16 text-center"
         />
       </div>
@@ -55,10 +85,12 @@ function QuotaBar({
 
 export function QuotaCard({ project }: { project: Engagement }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const updateMutation = useMutation({
     mutationFn: (updates: Partial<Engagement>) => api.engagements.update(project.id, updates),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["engagements"] }),
+    onError: (err: Error) => toast({ title: "Couldn't update quota", description: err.message, variant: "destructive" }),
   });
 
   function applyTier(tierName: string) {
@@ -70,13 +102,22 @@ export function QuotaCard({ project }: { project: Engagement }) {
     });
   }
 
+  const [rateInput, setRateInput] = useState(String(project.monthly_rate ?? ""));
+  useEffect(() => setRateInput(String(project.monthly_rate ?? "")), [project.monthly_rate]);
+
+  function commitRate() {
+    const n = Math.max(0, Number(rateInput) || 0);
+    setRateInput(String(n || ""));
+    if (n !== (project.monthly_rate ?? 0)) updateMutation.mutate({ monthly_rate: n });
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Retainer quota</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">
             <Label>Tier</Label>
             <Select value={project.retainer_tier ?? ""} onValueChange={applyTier}>
@@ -98,8 +139,10 @@ export function QuotaCard({ project }: { project: Engagement }) {
               id="monthly-rate"
               type="number"
               min={0}
-              value={project.monthly_rate ?? ""}
-              onChange={(e) => updateMutation.mutate({ monthly_rate: Number(e.target.value) || 0 })}
+              value={rateInput}
+              onChange={(e) => setRateInput(e.target.value)}
+              onBlur={commitRate}
+              onKeyDown={blurOnEnter}
               placeholder="e.g. 1800"
             />
           </div>

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, Plus, Search, Trash2 } from "lucide-react";
+import { Plus, Search, Trash2 } from "lucide-react";
 import { api, type PlaybookEntry } from "@/lib/api";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BackButton } from "@/components/ui/back-button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useDeepLink } from "@/lib/deepLink";
 
 export function PlaybookPage() {
@@ -47,7 +49,7 @@ export function PlaybookPage() {
 
   return (
     <div className="flex flex-col gap-4 pt-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-bold">Playbook</h1>
           <p className="text-sm text-muted-foreground">SOPs and how-we-do-things, written down instead of remembered.</p>
@@ -112,6 +114,7 @@ export function PlaybookPage() {
 function PlaybookDetail({ entry, onBack }: { entry: PlaybookEntry; onBack: () => void }) {
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const deleteMutation = useMutation({
     mutationFn: () => api.playbook.delete(entry.id),
@@ -127,10 +130,7 @@ function PlaybookDetail({ entry, onBack }: { entry: PlaybookEntry; onBack: () =>
 
   return (
     <div className="flex max-w-2xl flex-col gap-4 pt-6">
-      <button type="button" onClick={onBack} className="flex w-fit items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="size-3.5" />
-        All entries
-      </button>
+      <BackButton onClick={onBack} label="All entries" />
       <div className="flex items-start justify-between gap-4">
         <h1 className="font-display text-2xl font-bold">{entry.title}</h1>
         <div className="flex items-center gap-2">
@@ -140,9 +140,7 @@ function PlaybookDetail({ entry, onBack }: { entry: PlaybookEntry; onBack: () =>
           <button
             type="button"
             aria-label="Delete entry"
-            onClick={() => {
-              if (window.confirm("Delete this entry?")) deleteMutation.mutate();
-            }}
+            onClick={() => setConfirmDeleteOpen(true)}
             className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 className="size-4" />
@@ -152,6 +150,15 @@ function PlaybookDetail({ entry, onBack }: { entry: PlaybookEntry; onBack: () =>
       <Card className="p-5">
         <p className="whitespace-pre-wrap text-sm leading-relaxed">{entry.body}</p>
       </Card>
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title="Delete this entry?"
+        description="This can't be undone."
+        confirmLabel="Delete entry"
+        pending={deleteMutation.isPending}
+        onConfirm={() => deleteMutation.mutate()}
+      />
     </div>
   );
 }

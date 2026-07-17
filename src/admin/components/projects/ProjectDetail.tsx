@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Plus, Trash2, Sparkles } from "lucide-react";
+import { Plus, Trash2, Sparkles } from "lucide-react";
 import { api, type EngagementStatus } from "@/lib/api";
 import { SERVICE_LABELS } from "@/lib/serviceTypes";
 import { INDUSTRIES } from "@/lib/portfolioTaxonomy";
+import { isMissingTableError } from "@/lib/errors";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BackButton } from "@/components/ui/back-button";
+import { ErrorState } from "@/components/ui/error-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
 import { ProjectBoard } from "@/components/projects/ProjectBoard";
 import { TaskModal } from "@/components/program/TaskModal";
 import { PublishToPortfolioModal } from "@/components/projects/PublishToPortfolioModal";
@@ -25,6 +30,7 @@ function formatDate(iso: string | null) {
 
 export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const engagementsQuery = useQuery({ queryKey: ["engagements"], queryFn: api.engagements.list });
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
@@ -36,10 +42,12 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
   const [notes, setNotes] = useState<string | null>(null);
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [publishModalOpen, setPublishModalOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const updateMutation = useMutation({
     mutationFn: (updates: Record<string, unknown>) => api.engagements.update(id, updates),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["engagements"] }),
+    onError: (err: Error) => toast({ title: "Couldn't save change", description: err.message, variant: "destructive" }),
   });
 
   const deleteMutation = useMutation({
@@ -48,6 +56,7 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
       queryClient.invalidateQueries({ queryKey: ["engagements"] });
       onBack();
     },
+    onError: (err: Error) => toast({ title: "Couldn't delete project", description: err.message, variant: "destructive" }),
   });
 
   if (engagementsQuery.isLoading || clientsQuery.isLoading || tasksQuery.isLoading) {
@@ -58,7 +67,7 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
   if (!project) {
     return (
       <div className="flex flex-col gap-4 pt-6">
-        <BackButton onBack={onBack} />
+        <BackButton onClick={onBack} label="All projects" />
         <p className="text-sm text-muted-foreground">This project no longer exists.</p>
       </div>
     );
@@ -72,7 +81,7 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
 
   return (
     <div className="flex flex-col gap-4 pt-6">
-      <BackButton onBack={onBack} />
+      <BackButton onClick={onBack} label="All projects" />
 
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -92,11 +101,7 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
           <button
             type="button"
             aria-label="Delete project"
-            onClick={() => {
-              if (window.confirm("Delete this project? Its tasks will stay but lose the project link.")) {
-                deleteMutation.mutate();
-              }
-            }}
+            onClick={() => setConfirmDeleteOpen(true)}
             className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 className="size-4" />
@@ -110,7 +115,7 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
             <CardTitle>Details</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Status</span>
                 <Select
@@ -228,7 +233,11 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
         </CardHeader>
         <div className="px-5 pb-5">
           {filesQuery.isError ? (
-            <p className="text-sm text-muted-foreground">File storage isn't set up yet.</p>
+            isMissingTableError(filesQuery.error) ? (
+              <p className="py-6 text-sm text-muted-foreground">File storage isn't set up yet.</p>
+            ) : (
+              <ErrorState message={filesQuery.error.message} onRetry={() => filesQuery.refetch()} />
+            )
           ) : (
             <FileList
               files={filesQuery.data ?? []}
@@ -249,19 +258,15 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
           client={client}
         />
       )}
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title="Delete this project?"
+        description="Its tasks will stay but lose the project link. This can't be undone."
+        confirmLabel="Delete project"
+        pending={deleteMutation.isPending}
+        onConfirm={() => deleteMutation.mutate()}
+      />
     </div>
-  );
-}
-
-function BackButton({ onBack }: { onBack: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onBack}
-      className="flex w-fit items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-    >
-      <ArrowLeft className="size-3.5" />
-      All projects
-    </button>
   );
 }

@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
 import { api, type EngagementStatus } from "@/lib/api";
+import { isMissingTableError } from "@/lib/errors";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BackButton } from "@/components/ui/back-button";
+import { ErrorState } from "@/components/ui/error-state";
 import { FileUploadButton } from "@/components/files/FileUploadButton";
 import { FileList } from "@/components/files/FileList";
 
@@ -34,7 +36,7 @@ export function ClientDetail({ id, onBack }: { id: string; onBack: () => void })
   if (!client) {
     return (
       <div className="flex flex-col gap-4 pt-6">
-        <BackButton onBack={onBack} />
+        <BackButton onClick={onBack} label="All clients" />
         <p className="text-sm text-muted-foreground">This client no longer exists.</p>
       </div>
     );
@@ -47,7 +49,7 @@ export function ClientDetail({ id, onBack }: { id: string; onBack: () => void })
 
   return (
     <div className="flex flex-col gap-4 pt-6">
-      <BackButton onBack={onBack} />
+      <BackButton onClick={onBack} label="All clients" />
 
       <div>
         <h1 className="font-display text-2xl font-bold">{client.name || client.email || "Unnamed"}</h1>
@@ -107,7 +109,11 @@ export function ClientDetail({ id, onBack }: { id: string; onBack: () => void })
         </CardHeader>
         <div className="px-5 pb-5">
           {filesQuery.isError ? (
-            <p className="text-sm text-muted-foreground">Document storage isn't set up yet.</p>
+            isMissingTableError(filesQuery.error) ? (
+              <p className="py-6 text-sm text-muted-foreground">Document storage isn't set up yet.</p>
+            ) : (
+              <ErrorState message={filesQuery.error.message} onRetry={() => filesQuery.refetch()} />
+            )
           ) : (
             <FileList
               files={filesQuery.data ?? []}
@@ -147,18 +153,5 @@ export function ClientDetail({ id, onBack }: { id: string; onBack: () => void })
         </Card>
       )}
     </div>
-  );
-}
-
-function BackButton({ onBack }: { onBack: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onBack}
-      className="flex w-fit items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-    >
-      <ArrowLeft className="size-3.5" />
-      All clients
-    </button>
   );
 }

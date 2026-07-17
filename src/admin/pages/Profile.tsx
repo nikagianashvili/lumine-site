@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 const STAGGER_CONTAINER = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
@@ -20,6 +21,7 @@ export function ProfilePage() {
   const reduceMotion = useReducedMotion();
   const session = getSession();
   const queryClient = useQueryClient();
+  const toast = useToast();
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
   const me = teamQuery.data?.find((m) => m.id === session?.user.id);
 
@@ -50,6 +52,7 @@ export function ProfilePage() {
   const statusMutation = useMutation({
     mutationFn: (updates: { status?: string; focus_mode?: boolean }) => api.profile.update(updates),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["team-members"] }),
+    onError: (err: Error) => toast({ title: "Couldn't update status", description: err.message, variant: "destructive" }),
   });
 
   function toggleSkill(hat: string) {
@@ -129,7 +132,7 @@ export function ProfilePage() {
             }}
             className="flex flex-col gap-4"
           >
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="first-name">First name</Label>
                 <Input id="first-name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
@@ -241,7 +244,7 @@ export function ProfilePage() {
                 autoComplete="current-password"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="pw-new">New password</Label>
                 <Input
@@ -302,13 +305,13 @@ function TeamCard({ team, myId }: { team: TeamMember[]; myId: string | undefined
       </CardHeader>
       <div className="flex flex-col gap-1 px-5 pb-5">
         {team.map((m) => (
-          <div key={m.id} className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm">
-            <span className="flex-1 truncate font-medium">
+          <div key={m.id} className="flex flex-col gap-1.5 rounded-lg px-2 py-2 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+            <span className="truncate font-medium sm:flex-1">
               {m.name || "Unnamed"}
               {m.id === myId && <span className="ml-1.5 text-xs font-normal text-muted-foreground">(you)</span>}
             </span>
-            <span className="w-28 truncate text-xs text-muted-foreground">{m.role}</span>
-            <span className="w-40 truncate text-xs text-muted-foreground">
+            <span className="truncate text-xs text-muted-foreground sm:w-28">{m.role}</span>
+            <span className="truncate text-xs text-muted-foreground sm:w-40">
               {(m.skills_tags ?? []).join(" ") || "No hats set"}
             </span>
             <Select
