@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { MessageSquare, SearchX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api, type Conversation } from "@/lib/api";
@@ -43,6 +44,7 @@ function sortConversations(list: Conversation[], sort: InboxFilters["sort"]) {
 // shows its own "AI Inbox" title/description in SheetHeader - skips the
 // duplicate heading and the page-level top padding meant for full-page use.
 export function InboxPage({ embedded = false }: { embedded?: boolean } = {}) {
+  const reduceMotion = useReducedMotion();
   const convosQuery = useQuery({ queryKey: ["conversations"], queryFn: api.conversations.list });
   const [filters, setFilters] = useState<InboxFilters>({
     search: "",
@@ -102,11 +104,22 @@ export function InboxPage({ embedded = false }: { embedded?: boolean } = {}) {
               description="Try widening the status filters or clearing the search."
             />
           ) : (
-            <div className="flex flex-col gap-3">
+            <motion.div
+              className="flex flex-col gap-3"
+              initial={reduceMotion ? false : "hidden"}
+              animate="show"
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
+            >
               {filtered.map((c) => (
-                <ConversationCard key={c.id} convo={c} />
+                <motion.div
+                  key={c.id}
+                  variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0 } }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <ConversationCard convo={c} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </>
       )}

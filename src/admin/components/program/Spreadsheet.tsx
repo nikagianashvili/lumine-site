@@ -9,6 +9,7 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { Search, AlarmClock, CalendarClock, UserX, Flame, X } from "lucide-react";
 import { api, type Task, type TaskPriority, type TaskStatus, type TeamMember } from "@/lib/api";
 import { SERVICE_TYPES, SERVICE_LABELS } from "@/lib/serviceTypes";
@@ -66,6 +67,7 @@ type QuickFilterKey = (typeof QUICK_FILTERS)[number]["key"];
 type ColumnMeta = { className?: string };
 
 export function Spreadsheet({ initialSearch }: { initialSearch?: string } = {}) {
+  const reduceMotion = useReducedMotion();
   const queryClient = useQueryClient();
   const toast = useToast();
   const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
@@ -398,8 +400,14 @@ export function Spreadsheet({ initialSearch }: { initialSearch?: string } = {}) 
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b border-border last:border-0 hover:bg-muted/50">
+            {table.getRowModel().rows.map((row, i) => (
+              <motion.tr
+                key={row.id}
+                initial={reduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.18, delay: Math.min(i, 10) * 0.02 }}
+                className="border-b border-border last:border-0 hover:bg-muted/50"
+              >
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
@@ -408,7 +416,7 @@ export function Spreadsheet({ initialSearch }: { initialSearch?: string } = {}) 
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
-              </tr>
+              </motion.tr>
             ))}
             {table.getRowModel().rows.length === 0 && (
               <tr>

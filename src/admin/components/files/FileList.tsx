@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { Trash2, FileIcon, Share2 } from "lucide-react";
 import { api, type AgencyFile } from "@/lib/api";
 import { formatSize } from "@/lib/format";
@@ -21,6 +22,7 @@ export function FileList({
   // way - briefly claims empty on every load, not just when it's true.
   isLoading?: boolean;
 }) {
+  const reduceMotion = useReducedMotion();
   const queryClient = useQueryClient();
   const toast = useToast();
   const [deleteTarget, setDeleteTarget] = useState<AgencyFile | null>(null);
@@ -43,9 +45,19 @@ export function FileList({
   }
 
   return (
-    <div className="flex flex-col gap-1">
+    <motion.div
+      className="flex flex-col gap-1"
+      initial={reduceMotion ? false : "hidden"}
+      animate="show"
+      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.035 } } }}
+    >
       {files.map((f) => (
-        <div key={f.id} className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm">
+        <motion.div
+          key={f.id}
+          variants={{ hidden: { opacity: 0, y: 6 }, show: { opacity: 1, y: 0 } }}
+          transition={{ duration: 0.18 }}
+          className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-muted/50"
+        >
           <FileIcon className="size-4 flex-shrink-0 text-muted-foreground" />
           {f.url ? (
             <a href={f.url} target="_blank" rel="noreferrer" className="flex-1 truncate text-primary hover:underline">
@@ -75,7 +87,7 @@ export function FileList({
           >
             <Trash2 className="size-3.5" />
           </button>
-        </div>
+        </motion.div>
       ))}
       <ConfirmDialog
         open={!!deleteTarget}
@@ -91,6 +103,6 @@ export function FileList({
         onOpenChange={(open) => !open && setShareTarget(null)}
         item={shareTarget ? ({ kind: "file", name: shareTarget.name, fileId: shareTarget.id, url: shareTarget.url } satisfies ShareItem) : null}
       />
-    </div>
+    </motion.div>
   );
 }

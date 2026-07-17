@@ -9,6 +9,7 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
 import { Search, Trash2 } from "lucide-react";
 import { adminFetch } from "@/lib/session";
 import { api, type Client, type ClientStatus, type TeamMember } from "@/lib/api";
@@ -38,6 +39,7 @@ async function deleteClient(id: string) {
 }
 
 export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
+  const reduceMotion = useReducedMotion();
   const queryClient = useQueryClient();
   const toast = useToast();
   const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
@@ -288,8 +290,14 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b border-border last:border-0 hover:bg-muted/50">
+            {table.getRowModel().rows.map((row, i) => (
+              <motion.tr
+                key={row.id}
+                initial={reduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.18, delay: Math.min(i, 10) * 0.02 }}
+                className="border-b border-border last:border-0 hover:bg-muted/50"
+              >
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
@@ -298,7 +306,7 @@ export function ClientsTable({ onSelect }: { onSelect: (id: string) => void }) {
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
-              </tr>
+              </motion.tr>
             ))}
             {table.getRowModel().rows.length === 0 && (
               <tr>
