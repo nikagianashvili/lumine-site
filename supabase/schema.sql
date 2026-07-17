@@ -301,6 +301,23 @@ create table if not exists deliverable_comments (
   created_at timestamptz default now()
 );
 
+-- ── Notifications ─────────────────────────────────────────────────────────
+-- One row per recipient per event (a broadcast like "new lead" inserts one
+-- row per team member, not a shared row + join table) so read state is a
+-- plain per-row timestamp. `target` mirrors the admin app's DeepLinkTarget
+-- shape (src/admin/lib/deepLink.ts) so clicking a notification can jump
+-- straight to the record via the same navigation the command palette uses.
+create table if not exists notifications (
+  id uuid primary key default gen_random_uuid(),
+  recipient_id uuid not null references team_members (id) on delete cascade,
+  type text not null, -- task_assigned | new_lead | new_comment
+  title text not null,
+  body text,
+  target jsonb,
+  created_at timestamptz default now(),
+  read_at timestamptz
+);
+
 -- ── Row-level security ───────────────────────────────────────────────────
 -- All API writes go through /api serverless functions using the
 -- service_role key, which bypasses RLS entirely — these policies only
@@ -323,6 +340,7 @@ alter table files enable row level security;
 alter table playbook_entries enable row level security;
 alter table client_users enable row level security;
 alter table deliverable_comments enable row level security;
+alter table notifications enable row level security;
 
 -- Public site can read content tables directly with the anon key...
 drop policy if exists "public read projects" on projects;
@@ -336,7 +354,7 @@ create policy "public read journal_posts" on journal_posts for select using (tru
 
 -- ...but nothing else is anon-readable: clients, engagements, tasks,
 -- content_calendar, ai_conversations, team_members, water_cooler_posts,
--- folders, files, playbook_entries, client_users, and deliverable_comments
--- are all service_role (server-side /api) only. No policies means no anon
--- access at all - api/portal/* scopes every query to the caller's
--- client_id itself, the same trust model as api/admin/*.
+-- folders, files, playbook_entries, client_users, deliverable_comments, and
+-- notifications are all service_role (server-side /api) only. No policies
+-- means no anon access at all - api/portal/* scopes every query to the
+-- caller's client_id itself, the same trust model as api/admin/*.

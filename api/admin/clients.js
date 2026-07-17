@@ -1,5 +1,6 @@
 import { getSupabaseServerClient } from "../_lib/supabase.js";
 import { requireTeamMember } from "./_lib/auth.js";
+import { notify } from "../_lib/notify.js";
 
 export default async function handler(req, res) {
   const auth = await requireTeamMember(req);
@@ -29,6 +30,13 @@ export default async function handler(req, res) {
       res.status(500).json({ error: error.message });
       return;
     }
+    const { data: teammates } = await supabase.from("team_members").select("id").neq("id", auth.member.id);
+    await notify(supabase, {
+      recipientIds: (teammates ?? []).map((t) => t.id),
+      type: "new_lead",
+      title: `New lead: ${data.name || data.email || data.company || "Unnamed"}`,
+      target: { page: "manage", clientId: data.id },
+    });
     res.status(201).json({ client: data });
     return;
   }

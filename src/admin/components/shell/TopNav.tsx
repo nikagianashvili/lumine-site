@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, ChevronDown, MessageSquare, MessageCircle, Search } from "lucide-react";
+import { Bell, Check, ChevronDown, MessageSquare, MessageCircle, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { clearSession, type Session } from "@/lib/session";
@@ -8,6 +8,7 @@ import { useTheme, type ThemePref } from "@/lib/theme";
 import type { DeepLinkTarget } from "@/lib/deepLink";
 import { StatusDot } from "@/components/shell/StatusDot";
 import { TeamChatPanel, useUnreadTeamMessageCount } from "@/components/shell/TeamChatPanel";
+import { NotificationsPanel, useUnreadNotificationCount } from "@/components/shell/NotificationsPanel";
 import { CommandPalette } from "@/components/shell/CommandPalette";
 import {
   DropdownMenu,
@@ -74,6 +75,13 @@ export function TopNav({
   const [chatOpen, setChatOpen] = useState(false);
   const unreadMessages = useUnreadTeamMessageCount();
 
+  // Task assigned to you, new lead, new deliverable comment - the badge and
+  // its count go quiet in focus mode (me.focus_mode), but the feed itself
+  // still fills up so nothing's lost once focus mode turns back off.
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const unreadNotifications = useUnreadNotificationCount();
+  const showNotificationBadge = unreadNotifications > 0 && !me?.focus_mode;
+
   // Global search - Cmd/Ctrl+K from anywhere in the admin, not just when
   // focus happens to be inside this header.
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -136,6 +144,27 @@ export function TopNav({
         </Tooltip>
 
         <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onNavigate={onNavigateTo} />
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => setNotificationsOpen(true)}
+              aria-label="Open notifications"
+              className="relative flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <Bell className="size-4.5" />
+              {showNotificationBadge && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+                  {unreadNotifications > 9 ? "9+" : unreadNotifications}
+                </span>
+              )}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Notifications{unreadNotifications > 0 ? ` · ${unreadNotifications} unread` : ""}</TooltipContent>
+        </Tooltip>
+
+        <NotificationsPanel open={notificationsOpen} onOpenChange={setNotificationsOpen} onNavigate={onNavigateTo} />
 
         <Tooltip>
           <TooltipTrigger asChild>
