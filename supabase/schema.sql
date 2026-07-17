@@ -250,6 +250,22 @@ create table if not exists playbook_entries (
   updated_at timestamptz default now()
 );
 
+-- ── Team direct messages ─────────────────────────────────────────────────
+-- 1:1 chat between team members - distinct from Water Cooler above (a
+-- public team-wide feed with reactions) and from ai_conversations (visitor
+-- <-> AI, not teammate <-> teammate). recipient_id is always set (no
+-- broadcast/group messages in this table) so a thread is fully identified
+-- by the unordered pair {sender_id, recipient_id}.
+
+create table if not exists team_messages (
+  id uuid primary key default gen_random_uuid(),
+  sender_id uuid not null references team_members (id) on delete cascade,
+  recipient_id uuid not null references team_members (id) on delete cascade,
+  body text not null,
+  created_at timestamptz default now(),
+  read_at timestamptz -- null until the recipient's client marks it read
+);
+
 -- ── Client Portal (admin rebuild Track 4) ────────────────────────────────
 -- Client-facing login, riding on auth.users exactly like team_members does
 -- (see that table's comment) - one row per contact person, linked to the
@@ -301,6 +317,7 @@ alter table tasks enable row level security;
 alter table content_calendar enable row level security;
 alter table ai_conversations enable row level security;
 alter table water_cooler_posts enable row level security;
+alter table team_messages enable row level security;
 alter table folders enable row level security;
 alter table files enable row level security;
 alter table playbook_entries enable row level security;

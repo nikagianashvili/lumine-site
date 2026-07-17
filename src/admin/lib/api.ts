@@ -181,6 +181,15 @@ export interface TeamMember {
   access_level?: string;
 }
 
+export interface TeamMessage {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  body: string;
+  created_at: string;
+  read_at: string | null;
+}
+
 export type ConversationStatus = "open" | "qualified" | "closed";
 
 export interface TranscriptMessage {
@@ -414,6 +423,19 @@ export const api = {
         TEAM_MEMBER_OPTIONAL_FIELDS,
         "teamMember",
         "Could not update team member",
+      ),
+  },
+  teamMessages: {
+    list: async () => unwrap<TeamMessage[]>(await adminFetch("/api/admin/team-messages"), "messages"),
+    send: async (recipient_id: string, body: string) =>
+      unwrap<TeamMessage>(
+        await adminFetch("/api/admin/team-messages", { method: "POST", body: JSON.stringify({ recipient_id, body }) }),
+        "message",
+      ),
+    markRead: async (id: string) =>
+      unwrap<TeamMessage>(
+        await adminFetch("/api/admin/team-messages", { method: "PATCH", body: JSON.stringify({ id }) }),
+        "message",
       ),
   },
   conversations: {

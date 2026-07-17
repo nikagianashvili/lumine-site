@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Check, ChevronDown, MessageSquare } from "lucide-react";
+import { Check, ChevronDown, MessageSquare, MessageCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { clearSession, type Session } from "@/lib/session";
 import { api } from "@/lib/api";
 import { useTheme, type ThemePref } from "@/lib/theme";
 import { StatusDot } from "@/components/shell/StatusDot";
+import { TeamChatPanel, useUnreadTeamMessageCount } from "@/components/shell/TeamChatPanel";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -63,6 +64,11 @@ export function TopNav({
   const [inboxOpen, setInboxOpen] = useState(false);
   const convosQuery = useQuery({ queryKey: ["conversations"], queryFn: api.conversations.list });
   const openConvoCount = (convosQuery.data ?? []).filter((c) => c.status === "open").length;
+
+  // Team direct messages - teammate-to-teammate chat, separate from the AI
+  // Inbox above (visitor <-> AI conversations).
+  const [chatOpen, setChatOpen] = useState(false);
+  const unreadMessages = useUnreadTeamMessageCount();
 
   return (
     <header className="flex flex-wrap items-center gap-3 px-4 pb-2 pt-4 md:px-6">
@@ -127,6 +133,27 @@ export function TopNav({
             </SheetBody>
           </SheetContent>
         </Sheet>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => setChatOpen(true)}
+              aria-label="Open team chat"
+              className="relative flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <MessageCircle className="size-4.5" />
+              {unreadMessages > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+                  {unreadMessages > 9 ? "9+" : unreadMessages}
+                </span>
+              )}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Team chat{unreadMessages > 0 ? ` · ${unreadMessages} unread` : ""}</TooltipContent>
+        </Tooltip>
+
+        <TeamChatPanel open={chatOpen} onOpenChange={setChatOpen} />
 
         {/* team presence — who else is around, at a glance. Excludes "me";
             hidden below sm since there's no room next to the tab strip there. */}
