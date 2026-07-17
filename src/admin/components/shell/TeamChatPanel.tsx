@@ -8,12 +8,15 @@ import { StatusDot } from "@/components/shell/StatusDot";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetBody } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 export function TeamChatPanel({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const session = getSession();
   const me = session?.user.id;
   const queryClient = useQueryClient();
+  const toast = useToast();
   const teamQuery = useQuery({ queryKey: ["team-members"], queryFn: api.teamMembers.list });
   // Short poll while the panel is open - a real chat feature without
   // standing up a websocket/Realtime subscription for what is, for now, a
@@ -30,10 +33,12 @@ export function TeamChatPanel({ open, onOpenChange }: { open: boolean; onOpenCha
   const sendMutation = useMutation({
     mutationFn: ({ recipientId, body }: { recipientId: string; body: string }) => api.teamMessages.send(recipientId, body),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["team-messages"] }),
+    onError: (err: Error) => toast({ title: "Message didn't send", description: err.message, variant: "destructive" }),
   });
   const markReadMutation = useMutation({
     mutationFn: (id: string) => api.teamMessages.markRead(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["team-messages"] }),
+    onError: (err: Error) => toast({ title: "Couldn't mark message read", description: err.message, variant: "destructive" }),
   });
 
   const teammates = (teamQuery.data ?? []).filter((m) => m.id !== me);
@@ -86,8 +91,12 @@ export function TeamChatPanel({ open, onOpenChange }: { open: boolean; onOpenCha
 
   function handleSend() {
     if (!activeId || !draft.trim()) return;
-    sendMutation.mutate({ recipientId: activeId, body: draft.trim() });
-    setDraft("");
+    // Clear on success, not immediately - a failed send previously wiped the
+    // composer with no error shown, silently losing what was typed.
+    sendMutation.mutate(
+      { recipientId: activeId, body: draft.trim() },
+      { onSuccess: () => setDraft("") },
+    );
   }
 
   return (
@@ -122,7 +131,9 @@ export function TeamChatPanel({ open, onOpenChange }: { open: boolean; onOpenCha
 
         {!activeMember && (
           <SheetBody className="flex flex-col gap-1 p-2">
-            {threads.length === 0 ? (
+            {messagesQuery.isError ? (
+              <ErrorState message={messagesQuery.error.message} onRetry={() => messagesQuery.refetch()} />
+            ) : threads.length === 0 ? (
               <EmptyState icon={MessageCircle} title="No teammates yet" description="Add team members to start a conversation." />
             ) : (
               threads.map(({ member, last, unread }) => (

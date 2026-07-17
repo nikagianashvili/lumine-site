@@ -463,8 +463,13 @@ export const api = {
         await adminFetch("/api/admin/notifications", { method: "PATCH", body: JSON.stringify({ id }) }),
         "notification",
       ),
-    markAllRead: async () =>
-      adminFetch("/api/admin/notifications", { method: "PATCH", body: JSON.stringify({ markAllRead: true }) }),
+    markAllRead: async () => {
+      const res = await adminFetch("/api/admin/notifications", { method: "PATCH", body: JSON.stringify({ markAllRead: true }) });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Request failed (${res.status})`);
+      }
+    },
   },
   conversations: {
     list: async () => unwrap<Conversation[]>(await adminFetch("/api/admin/ai-conversations"), "conversations"),
