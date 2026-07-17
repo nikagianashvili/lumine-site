@@ -178,9 +178,14 @@ export function DashboardPage() {
                 <p className="py-3 text-sm text-muted-foreground">Nothing delivered yet.</p>
               ) : (
                 recentFiles.map((f) => (
-                  <div key={f.id} className="truncate rounded-lg py-1 text-sm" title={f.name}>
+                  <a
+                    key={f.id}
+                    href={`/portal?page=deliverables&file=${f.id}`}
+                    className="truncate rounded-lg py-1 text-sm text-foreground hover:text-primary hover:underline"
+                    title={f.name}
+                  >
                     {f.name}
-                  </div>
+                  </a>
                 ))
               )}
             </div>

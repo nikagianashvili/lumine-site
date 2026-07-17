@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ImageIcon, Film, FileIcon } from "lucide-react";
 import { api, type PortalFile } from "@portal/lib/api";
@@ -27,6 +27,22 @@ export function DeliverablesPage() {
   const filesQuery = useQuery({ queryKey: ["portal", "files", "creative"], queryFn: () => api.files.list("creative") });
   const [reviewing, setReviewing] = useState<PortalFile | null>(null);
   const showLoading = useDelayedLoading(filesQuery.isLoading);
+
+  // Dashboard's "Recent Deliverables" links here as /portal?page=deliverables&file=<id>
+  // - open that file's review dialog once its data has loaded. Guarded by a
+  // ref (not just "file already open") so closing the dialog doesn't
+  // immediately reopen it on the next files refetch.
+  const consumedFileParam = useRef(false);
+  useEffect(() => {
+    if (consumedFileParam.current) return;
+    const fileId = new URLSearchParams(window.location.search).get("file");
+    if (!fileId) return;
+    const match = (filesQuery.data ?? []).find((f) => f.id === fileId);
+    if (match) {
+      consumedFileParam.current = true;
+      setReviewing(match);
+    }
+  }, [filesQuery.data]);
 
   if (showLoading) {
     return (
