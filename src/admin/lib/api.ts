@@ -153,8 +153,19 @@ export interface WaterCoolerPost {
   type: "manual" | "celebration";
   body: string;
   file_url: string | null;
+  file: { id: string; name: string; content_type: string | null; size_bytes: number | null; url: string | null } | null;
+  comment_count: number;
   reactions: Record<string, string[]>;
   engagement_id: string | null;
+  created_at: string;
+  team_members: { name: string | null } | null;
+}
+
+export interface WaterCoolerComment {
+  id: string;
+  post_id: string;
+  author_id: string;
+  body: string;
   created_at: string;
   team_members: { name: string | null } | null;
 }
@@ -181,13 +192,33 @@ export interface TeamMember {
   access_level?: string;
 }
 
+// A message can carry a shared file/project instead of, or alongside, body
+// text - set by the Share action on a file row or project card.
+export interface MessageAttachment {
+  kind: "file" | "project";
+  name: string;
+  url?: string | null;
+  fileId?: string;
+  engagementId?: string;
+}
+
 export interface TeamMessage {
   id: string;
   sender_id: string;
   recipient_id: string;
   body: string;
+  attachment: MessageAttachment | null;
   created_at: string;
   read_at: string | null;
+  delivered_at: string | null;
+}
+
+export interface AssistantMessage {
+  id: string;
+  team_member_id: string;
+  role: "user" | "assistant";
+  content: string;
+  created_at: string;
 }
 
 export type NotificationType = "task_assigned" | "new_lead" | "new_comment";
@@ -362,11 +393,11 @@ export const api = {
   },
   waterCooler: {
     list: async () => unwrap<WaterCoolerPost[]>(await adminFetch("/api/admin/water-cooler"), "posts"),
-    post: async (body: string, fileUrl?: string) =>
+    post: async (body: string, opts?: { fileUrl?: string; fileId?: string }) =>
       unwrap<WaterCoolerPost>(
         await adminFetch("/api/admin/water-cooler", {
           method: "POST",
-          body: JSON.stringify({ body, file_url: fileUrl || null }),
+          body: JSON.stringify({ body, file_url: opts?.fileUrl || null, file_id: opts?.fileId || null }),
         }),
         "post",
       ),
@@ -374,6 +405,18 @@ export const api = {
       unwrap<WaterCoolerPost>(
         await adminFetch("/api/admin/water-cooler", { method: "PATCH", body: JSON.stringify({ id, emoji }) }),
         "post",
+      ),
+  },
+  waterCoolerComments: {
+    list: async (postId: string) =>
+      unwrap<WaterCoolerComment[]>(await adminFetch(`/api/admin/water-cooler-comments?post_id=${postId}`), "comments"),
+    post: async (postId: string, body: string) =>
+      unwrap<WaterCoolerComment>(
+        await adminFetch("/api/admin/water-cooler-comments", {
+          method: "POST",
+          body: JSON.stringify({ post_id: postId, body }),
+        }),
+        "comment",
       ),
   },
   files: {
@@ -445,9 +488,12 @@ export const api = {
   },
   teamMessages: {
     list: async () => unwrap<TeamMessage[]>(await adminFetch("/api/admin/team-messages"), "messages"),
-    send: async (recipient_id: string, body: string) =>
+    send: async (recipient_id: string, body: string, attachment?: MessageAttachment) =>
       unwrap<TeamMessage>(
-        await adminFetch("/api/admin/team-messages", { method: "POST", body: JSON.stringify({ recipient_id, body }) }),
+        await adminFetch("/api/admin/team-messages", {
+          method: "POST",
+          body: JSON.stringify({ recipient_id, body, attachment }),
+        }),
         "message",
       ),
     markRead: async (id: string) =>
@@ -455,6 +501,22 @@ export const api = {
         await adminFetch("/api/admin/team-messages", { method: "PATCH", body: JSON.stringify({ id }) }),
         "message",
       ),
+  },
+  assistant: {
+    list: async () => unwrap<AssistantMessage[]>(await adminFetch("/api/admin/assistant"), "messages"),
+    send: async (content: string) => {
+      const res = await adminFetch("/api/admin/assistant", { method: "POST", body: JSON.stringify({ content }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+      return data as { userMessage: AssistantMessage; assistantMessage: AssistantMessage };
+    },
+    clear: async () => {
+      const res = await adminFetch("/api/admin/assistant", { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Request failed (${res.status})`);
+      }
+    },
   },
   notifications: {
     list: async () => unwrap<Notification[]>(await adminFetch("/api/admin/notifications"), "notifications"),

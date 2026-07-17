@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bell, Check, ChevronDown, MessageSquare, MessageCircle, Search } from "lucide-react";
+import { Bell, Bot, Check, ChevronDown, MessageSquare, MessageCircle, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { clearSession, type Session } from "@/lib/session";
@@ -9,6 +9,7 @@ import type { DeepLinkTarget } from "@/lib/deepLink";
 import { StatusDot } from "@/components/shell/StatusDot";
 import { TeamChatPanel, useUnreadTeamMessageCount } from "@/components/shell/TeamChatPanel";
 import { NotificationsPanel, useUnreadNotificationCount } from "@/components/shell/NotificationsPanel";
+import { AssistantPanel } from "@/components/shell/AssistantPanel";
 import { CommandPalette } from "@/components/shell/CommandPalette";
 import {
   DropdownMenu,
@@ -74,6 +75,11 @@ export function TopNav({
   // Inbox above (visitor <-> AI conversations).
   const [chatOpen, setChatOpen] = useState(false);
   const unreadMessages = useUnreadTeamMessageCount();
+
+  // Lumine Assistant - a private, general-purpose AI helper per team
+  // member. No badge/count: unlike the other panels this isn't tracking
+  // anything incoming, it's a tool you open when you want it.
+  const [assistantOpen, setAssistantOpen] = useState(false);
 
   // Task assigned to you, new lead, new deliverable comment - the badge and
   // its count go quiet in focus mode (me.focus_mode), but the feed itself
@@ -216,7 +222,23 @@ export function TopNav({
           <TooltipContent>Team chat{unreadMessages > 0 ? ` · ${unreadMessages} unread` : ""}</TooltipContent>
         </Tooltip>
 
-        <TeamChatPanel open={chatOpen} onOpenChange={setChatOpen} />
+        <TeamChatPanel open={chatOpen} onOpenChange={setChatOpen} onNavigate={onNavigateTo} />
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => setAssistantOpen(true)}
+              aria-label="Open Lumine Assistant"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <Bot className="size-4.5" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Lumine Assistant</TooltipContent>
+        </Tooltip>
+
+        <AssistantPanel open={assistantOpen} onOpenChange={setAssistantOpen} />
 
         {/* team presence — who else is around, at a glance. Excludes "me";
             hidden below sm since there's no room next to the tab strip there. */}

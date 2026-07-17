@@ -1,9 +1,11 @@
 import { useMemo, useRef, useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Send, MessageCircle } from "lucide-react";
-import { api, type TeamMessage } from "@/lib/api";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { ArrowLeft, Send, MessageCircle, Check, CheckCheck, FileIcon, Briefcase, ExternalLink } from "lucide-react";
+import { api, type TeamMessage, type MessageAttachment } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { initials, timeAgo } from "@/lib/format";
+import type { DeepLinkTarget } from "@/lib/deepLink";
 import { StatusDot } from "@/components/shell/StatusDot";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetBody } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -12,7 +14,74 @@ import { ErrorState } from "@/components/ui/error-state";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
-export function TeamChatPanel({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+// Sent (left the client) -> Delivered (recipient's client has fetched it,
+// server-stamped) -> Read (recipient opened the thread). Only meaningful on
+// my own outgoing messages.
+function ReceiptIcon({ message }: { message: TeamMessage }) {
+  if (message.read_at) return <CheckCheck className="size-3.5 text-primary-foreground" />;
+  if (message.delivered_at) return <CheckCheck className="size-3.5 opacity-70" />;
+  return <Check className="size-3.5 opacity-70" />;
+}
+
+function AttachmentCard({
+  attachment,
+  tone,
+  onNavigate,
+}: {
+  attachment: MessageAttachment;
+  tone: "sent" | "received";
+  onNavigate?: (target: DeepLinkTarget) => void;
+}) {
+  const Icon = attachment.kind === "project" ? Briefcase : FileIcon;
+  const className = cn(
+    "flex w-full items-center gap-2 rounded-xl border px-2.5 py-2 text-xs transition-colors",
+    tone === "sent"
+      ? "border-primary-foreground/25 bg-primary-foreground/10 hover:bg-primary-foreground/15"
+      : "border-border bg-card hover:border-primary/30",
+  );
+  const inner = (
+    <>
+      <span
+        className={cn(
+          "flex size-7 shrink-0 items-center justify-center rounded-lg",
+          tone === "sent" ? "bg-primary-foreground/15" : "bg-muted",
+        )}
+      >
+        <Icon className="size-3.5" />
+      </span>
+      <span className="min-w-0 flex-1 truncate text-left font-medium">{attachment.name}</span>
+      {(attachment.url || attachment.kind === "project") && <ExternalLink className="size-3 shrink-0 opacity-60" />}
+    </>
+  );
+
+  if (attachment.kind === "project" && attachment.engagementId) {
+    return (
+      <button
+        type="button"
+        onClick={() => onNavigate?.({ page: "projects", engagementId: attachment.engagementId! })}
+        className={className}
+      >
+        {inner}
+      </button>
+    );
+  }
+  return (
+    <a href={attachment.url ?? undefined} target={attachment.url ? "_blank" : undefined} rel="noreferrer" className={className}>
+      {inner}
+    </a>
+  );
+}
+
+export function TeamChatPanel({
+  open,
+  onOpenChange,
+  onNavigate,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onNavigate?: (target: DeepLinkTarget) => void;
+}) {
+  const reduceMotion = useReducedMotion();
   const session = getSession();
   const me = session?.user.id;
   const queryClient = useQueryClient();
@@ -68,8 +137,8 @@ export function TeamChatPanel({ open, onOpenChange }: { open: boolean; onOpenCha
   const activeMember = teammates.find((m) => m.id === activeId);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ block: "end" });
-  }, [activeThread.length, activeId]);
+    bottomRef.current?.scrollIntoView({ block: "end", behavior: reduceMotion ? "auto" : "smooth" });
+  }, [activeThread.length, activeId, reduceMotion]);
 
   // markingRef tracks ids already sent to the server this "session" (cleared
   // when switching threads) so the 5s poll doesn't refire a PATCH for a
@@ -113,6 +182,10 @@ export function TeamChatPanel({ open, onOpenChange }: { open: boolean; onOpenCha
               >
                 <ArrowLeft className="size-4" />
               </button>
+              <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground text-xs font-semibold text-background">
+                {initials(activeMember.name || activeMember.role)}
+                <StatusDot status={activeMember.status} focusMode={activeMember.focus_mode} />
+              </span>
               <div>
                 <SheetTitle>{activeMember.name || activeMember.role}</SheetTitle>
                 <SheetDescription>{activeMember.role}</SheetDescription>
@@ -141,7 +214,7 @@ export function TeamChatPanel({ open, onOpenChange }: { open: boolean; onOpenCha
                   key={member.id}
                   type="button"
                   onClick={() => setActiveId(member.id)}
-                  className="flex items-center gap-3 rounded-xl p-2.5 text-left hover:bg-muted"
+                  className="flex items-center gap-3 rounded-xl p-2.5 text-left transition-colors hover:bg-muted"
                 >
                   <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-foreground text-xs font-semibold text-background">
                     {initials(member.name || member.role)}
@@ -152,8 +225,16 @@ export function TeamChatPanel({ open, onOpenChange }: { open: boolean; onOpenCha
                       <span className="truncate text-sm font-medium">{member.name || member.role}</span>
                       {last && <span className="shrink-0 text-xs text-muted-foreground">{timeAgo(last.created_at)}</span>}
                     </span>
-                    <span className="block truncate text-xs text-muted-foreground">
-                      {last ? (last.sender_id === me ? `You: ${last.body}` : last.body) : "No messages yet"}
+                    <span className="flex items-center gap-1 truncate text-xs text-muted-foreground">
+                      {last?.sender_id === me && <ReceiptIcon message={last} />}
+                      {last ? (
+                        <span className="truncate">
+                          {last.sender_id === me && "You: "}
+                          {last.attachment ? `📎 ${last.attachment.name}` : last.body}
+                        </span>
+                      ) : (
+                        "No messages yet"
+                      )}
                     </span>
                   </span>
                   {unread > 0 && (
@@ -169,23 +250,53 @@ export function TeamChatPanel({ open, onOpenChange }: { open: boolean; onOpenCha
 
         {activeMember && (
           <>
-            <div className="flex flex-1 flex-col gap-2 overflow-y-auto p-5">
+            <div className="flex flex-1 flex-col gap-1.5 overflow-y-auto p-5">
               {activeThread.length === 0 ? (
                 <EmptyState icon={MessageCircle} title="Say hello" description={`Start the conversation with ${activeMember.name || activeMember.role}.`} />
               ) : (
-                activeThread.map((m) => (
-                  <div key={m.id} className={cn("flex", m.sender_id === me ? "justify-end" : "justify-start")}>
-                    <div
-                      className={cn(
-                        "max-w-[80%] rounded-2xl px-3 py-2 text-sm",
-                        m.sender_id === me ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
-                      )}
-                    >
-                      <p>{m.body}</p>
-                      <p className={cn("mt-0.5 text-[10px] opacity-70")}>{timeAgo(m.created_at)}</p>
-                    </div>
-                  </div>
-                ))
+                <AnimatePresence initial={false}>
+                  {activeThread.map((m, i) => {
+                    const mine = m.sender_id === me;
+                    const prevSameSender = i > 0 && activeThread[i - 1].sender_id === m.sender_id;
+                    return (
+                      <motion.div
+                        key={m.id}
+                        initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.16 }}
+                        className={cn("flex", mine ? "justify-end" : "justify-start", prevSameSender ? "mt-0.5" : "mt-2.5")}
+                      >
+                        <div
+                          className={cn(
+                            "flex max-w-[80%] flex-col gap-1.5 rounded-2xl px-3 py-2 text-sm",
+                            mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
+                          )}
+                        >
+                          {m.body && <p className="whitespace-pre-wrap">{m.body}</p>}
+                          {m.attachment && (
+                            <AttachmentCard
+                              attachment={m.attachment}
+                              tone={mine ? "sent" : "received"}
+                              onNavigate={(target) => {
+                                onNavigate?.(target);
+                                onOpenChange(false);
+                              }}
+                            />
+                          )}
+                          <p
+                            className={cn(
+                              "flex items-center justify-end gap-1 text-[10px]",
+                              mine ? "text-primary-foreground/70" : "text-muted-foreground",
+                            )}
+                          >
+                            {timeAgo(m.created_at)}
+                            {mine && <ReceiptIcon message={m} />}
+                          </p>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
               )}
               <div ref={bottomRef} />
             </div>

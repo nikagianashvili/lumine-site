@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Trash2, Sparkles } from "lucide-react";
+import { Plus, Trash2, Sparkles, Share2 } from "lucide-react";
 import { api, type EngagementStatus } from "@/lib/api";
 import { SERVICE_LABELS } from "@/lib/serviceTypes";
 import { INDUSTRIES } from "@/lib/portfolioTaxonomy";
@@ -20,6 +20,7 @@ import { PublishToPortfolioModal } from "@/components/projects/PublishToPortfoli
 import { QuotaCard } from "@/components/projects/QuotaCard";
 import { FileUploadButton } from "@/components/files/FileUploadButton";
 import { FileList } from "@/components/files/FileList";
+import { ShareDialog, type ShareItem } from "@/components/shell/ShareDialog";
 
 const STATUS_OPTIONS: EngagementStatus[] = ["active", "on_hold", "completed", "cancelled"];
 
@@ -43,6 +44,7 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [publishModalOpen, setPublishModalOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const updateMutation = useMutation({
     mutationFn: (updates: Record<string, unknown>) => api.engagements.update(id, updates),
@@ -98,6 +100,14 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
               Publish to Portfolio
             </Button>
           )}
+          <button
+            type="button"
+            aria-label="Share project"
+            onClick={() => setShareOpen(true)}
+            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <Share2 className="size-4" />
+          </button>
           <button
             type="button"
             aria-label="Delete project"
@@ -266,6 +276,11 @@ export function ProjectDetail({ id, onBack }: { id: string; onBack: () => void }
         confirmLabel="Delete project"
         pending={deleteMutation.isPending}
         onConfirm={() => deleteMutation.mutate()}
+      />
+      <ShareDialog
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        item={{ kind: "project", name: project.title, engagementId: project.id } satisfies ShareItem}
       />
     </div>
   );
