@@ -7,6 +7,7 @@
     { "source": "/project", "destination": "/project.html" },
     { "source": "/studio", "destination": "/studio.html" },
     { "source": "/services", "destination": "/services.html" },
+    { "source": "/service", "destination": "/service.html" },
     { "source": "/pricing", "destination": "/pricing.html" },
     { "source": "/journal", "destination": "/journal.html" },
     { "source": "/legal", "destination": "/legal.html" },

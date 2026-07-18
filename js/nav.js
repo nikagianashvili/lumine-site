@@ -85,9 +85,9 @@ function buildNav() {
         </div>
         <div class="menu-content-group">
           <p>რას ვაკეთებთ</p>
-          <p>ფოტო და ვიდეო</p>
-          <p>დიზაინი და ბრენდინგი</p>
-          <p>მარკეტინგი და ვები</p>
+          <p>სტრატეგია და ბრენდი</p>
+          <p>ფოტო, ვიდეო და AI</p>
+          <p>ვები და მარკეტინგი</p>
         </div>
         <div class="menu-content-group">
           <p>მოგვწერეთ</p>
@@ -144,9 +144,9 @@ function buildNav() {
         </div>
         <div class="menu-content-group">
           <p>What We Do</p>
-          <p>Photo &amp; Video</p>
-          <p>Design &amp; Branding</p>
-          <p>Marketing &amp; Web</p>
+          <p>Strategy &amp; Brand</p>
+          <p>Photo, Video &amp; AI</p>
+          <p>Web &amp; Marketing</p>
         </div>
         <div class="menu-content-group">
           <p>Say Hello</p>
