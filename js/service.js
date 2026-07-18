@@ -1,6 +1,8 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { services, getService } from "/js/services-data.js";
+import { initAnimatedCopy } from "/js/animated-copy.js";
+import { initMagneticButtons } from "/js/home-extras.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -42,7 +44,11 @@ function heroSection(service) {
     <section class="svcd-hero">
       <div class="container">
         <p class="svcd-hero-index pd-reveal">${service.index}</p>
-        <h1 class="pd-reveal">${t(service, "title")}</h1>
+        <h1
+          data-animate-variant="slide-words"
+          data-animate-on-scroll="false"
+          data-animate-delay="0.15"
+        >${t(service, "title")}</h1>
         <p class="pd-hero-tagline pd-reveal">${t(service, "heroTagline")}</p>
         <div class="pd-hero-tech pd-reveal">${chips}</div>
       </div>
@@ -124,7 +130,7 @@ function deliverablesSection(service) {
         ${
           service.workFilter
             ? `<div style="margin-top:2.5rem;">
-                <a href="${p("/work")}?service=${service.workFilter}" class="btn btn-outline pd-reveal">${L.seeWork}</a>
+                <a href="${p("/work")}?service=${service.workFilter}" class="btn btn-outline pd-reveal" data-magnetic>${L.seeWork}</a>
               </div>`
             : ""
         }
@@ -140,7 +146,7 @@ function nextSection(current) {
     <a href="${p("/service")}?slug=${next.slug}" class="cs-next grain">
       <div class="container">
         <span class="cs-next-label">${L.nextService}</span>
-        <h3>${t(next, "title")}</h3>
+        <h3 data-animate-variant="slide" data-animate-on-scroll="true">${t(next, "title")}</h3>
         <span class="cs-next-arrow">↗</span>
       </div>
     </a>
@@ -150,7 +156,10 @@ function nextSection(current) {
 function buildTemplate(service) {
   return [
     heroSection(service),
-    twoColSection(L.theProblem, `<h6 class="pd-reveal">${t(service, "problem")}</h6>`),
+    twoColSection(
+      L.theProblem,
+      `<h6 data-animate-variant="slide" data-animate-on-scroll="true">${t(service, "problem")}</h6>`,
+    ),
     twoColSection(L.whatWeDo, `<p class="svcd-problem-copy pd-reveal">${t(service, "whatWeDo")}</p>`),
     subservicesSection(service),
     processSection(service),
@@ -197,8 +206,24 @@ function init() {
   gsap.set(main.querySelectorAll(".pd-reveal"), { opacity: 0, y: 30 });
   requestAnimationFrame(() => {
     initReveals(main);
+    initMagneticButtons();
     ScrollTrigger.refresh();
   });
+
+  // The hero title and problem statement use the site's real SplitText
+  // line-mask reveal (animated-copy.js) instead of the simpler block fade
+  // above - initAnimatedCopy() only auto-runs once at initial page load, so
+  // it has to be called again explicitly now that this content exists.
+  const fontsReady = document.fonts?.ready;
+  const runAnimatedCopy = () => {
+    initAnimatedCopy(main);
+    ScrollTrigger.refresh();
+  };
+  if (fontsReady && typeof fontsReady.then === "function") {
+    fontsReady.then(runAnimatedCopy);
+  } else {
+    runAnimatedCopy();
+  }
 }
 
 if (document.readyState === "loading") {

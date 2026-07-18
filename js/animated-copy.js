@@ -90,14 +90,18 @@ function initSlideMaskAnimation(element, { isPreloaderShowing, hero }) {
   });
 }
 
-export function initAnimatedCopy() {
+// `root` lets pages that inject markup after this module's own
+// DOMContentLoaded pass (e.g. service.js, project.js) re-run it scoped to
+// just the new subtree - re-querying the whole document would re-split
+// elements the initial pass already handled (the footer, nav, etc.).
+export function initAnimatedCopy(root = document) {
   const preloader = document.querySelector(".preloader");
   const hasSeenPreloader =
     sessionStorage.getItem(PRELOADER_SEEN_KEY) === "true";
   const isPreloaderShowing = !!preloader && !hasSeenPreloader;
   const hero = document.querySelector(".hero");
 
-  const animatedElements = document.querySelectorAll("[data-animate-variant]");
+  const animatedElements = root.querySelectorAll("[data-animate-variant]");
 
   animatedElements.forEach((element) => {
     const variant = element.getAttribute("data-animate-variant");
