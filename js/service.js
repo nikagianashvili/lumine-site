@@ -11,6 +11,7 @@ const L = isKa
   ? {
       theProblem: "პრობლემა",
       whatWeDo: "რას ვაკეთებთ",
+      subservices: "დეტალურად",
       howItRuns: "როგორ მუშაობს",
       whatYouGet: "რას იღებთ",
       nextService: "შემდეგი სერვისი",
@@ -19,6 +20,7 @@ const L = isKa
   : {
       theProblem: "The Problem",
       whatWeDo: "What We Do",
+      subservices: "In Detail",
       howItRuns: "How It Runs",
       whatYouGet: "What You Walk Away With",
       nextService: "Next Service",
@@ -43,6 +45,30 @@ function heroSection(service) {
         <h1 class="pd-reveal">${t(service, "title")}</h1>
         <p class="pd-hero-tagline pd-reveal">${t(service, "heroTagline")}</p>
         <div class="pd-hero-tech pd-reveal">${chips}</div>
+      </div>
+    </section>
+  `;
+}
+
+function subservicesSection(service) {
+  const items = service.subservices || [];
+  return `
+    <section class="svcd-subservices">
+      <div class="container">
+        <p class="cs-phase pd-reveal">${L.subservices}</p>
+        <div class="svcd-subgrid">
+          ${items
+            .map(
+              (s, i) => `
+            <div class="svcd-subcard pd-reveal">
+              <span class="svcd-subcard-num">${String(i + 1).padStart(2, "0")}</span>
+              <h5>${isKa && s.name_ka ? s.name_ka : s.name}</h5>
+              <p>${isKa && s.desc_ka ? s.desc_ka : s.desc}</p>
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
       </div>
     </section>
   `;
@@ -126,6 +152,7 @@ function buildTemplate(service) {
     heroSection(service),
     twoColSection(L.theProblem, `<h6 class="pd-reveal">${t(service, "problem")}</h6>`),
     twoColSection(L.whatWeDo, `<p class="svcd-problem-copy pd-reveal">${t(service, "whatWeDo")}</p>`),
+    subservicesSection(service),
     processSection(service),
     deliverablesSection(service),
     nextSection(service),
