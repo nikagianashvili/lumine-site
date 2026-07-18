@@ -31,8 +31,303 @@
 }
 
 .svcd-hero h1 {
-  max-width: 20ch;
+  max-width: 22ch;
   font-size: clamp(3rem, 7.5vw, 7.5rem);
+  position: relative;
+  z-index: 2;
+}
+
+.svcd-hero h1 .accent {
+  color: var(--accent);
+}
+
+.svcd-hero-inner {
+  position: relative;
+  z-index: 2;
+}
+
+/* — per-service hero motif: a distinct visual signature behind the title,
+   never behind the reading column, always decorative/non-interactive
+   except where the mechanic itself is the point (photography's grayscale
+   reveal - the same monochrome-until-touched rule the rest of the site
+   already runs on). — */
+.svcd-motif {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.motif-strategy svg {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 55%;
+  height: 100%;
+  opacity: 0.4;
+}
+.motif-strategy .draw {
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  animation: svcDrawLine 2.4s ease forwards;
+}
+.motif-strategy .draw2 { animation-delay: 0.3s; }
+.motif-strategy .draw3 { animation-delay: 0.6s; }
+@keyframes svcDrawLine { to { stroke-dashoffset: 0; } }
+
+.motif-photography {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 58%;
+  top: 30%;
+  display: flex;
+  gap: 4px;
+  pointer-events: auto;
+}
+.motif-photography .frame {
+  flex: 1;
+  align-self: flex-end;
+  height: 100%;
+  background: linear-gradient(155deg, var(--accent-bright), var(--accent-deep));
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.5s ease;
+}
+.motif-photography .frame:hover,
+.motif-photography .frame:focus {
+  filter: grayscale(0) contrast(1);
+}
+
+.motif-video {
+  position: absolute;
+  left: 58%;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: rgba(246, 241, 231, 0.15);
+  transform: translateY(-50%);
+}
+.motif-video .scrub {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: svcScrub 3.2s ease-in-out infinite;
+}
+.motif-video .frame-tick {
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 18px;
+  margin-top: -9px;
+  background: rgba(246, 241, 231, 0.25);
+}
+@keyframes svcScrub {
+  0%, 100% { left: 0%; }
+  50% { left: calc(100% - 14px); }
+}
+
+.motif-brand {
+  position: absolute;
+  right: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 0.6rem;
+}
+.motif-brand span {
+  width: 34px;
+  height: 150px;
+  opacity: 0;
+  animation: svcChipIn 0.6s ease forwards;
+}
+.motif-brand span:nth-child(1) { background: var(--accent); animation-delay: 0.05s; }
+.motif-brand span:nth-child(2) { background: var(--accent-deep); animation-delay: 0.15s; }
+.motif-brand span:nth-child(3) { background: var(--accent-pastel); animation-delay: 0.25s; }
+.motif-brand span:nth-child(4) { background: var(--l); animation-delay: 0.35s; }
+.motif-brand span:nth-child(5) { background: var(--accent-bright); animation-delay: 0.45s; }
+@keyframes svcChipIn {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.motif-smm {
+  position: absolute;
+  right: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  grid-template-columns: repeat(2, 74px);
+  gap: 10px;
+}
+.motif-smm span {
+  aspect-ratio: 4/5;
+  opacity: 0;
+  animation: svcCardIn 0.6s ease forwards;
+}
+.motif-smm span:nth-child(1) { background: var(--accent); animation-delay: 0.05s; }
+.motif-smm span:nth-child(2) { background: var(--accent-pastel); animation-delay: 0.2s; margin-top: 1.5rem; }
+.motif-smm span:nth-child(3) { background: var(--l); animation-delay: 0.35s; }
+.motif-smm span:nth-child(4) { background: var(--accent-deep); animation-delay: 0.5s; margin-top: -1.5rem; }
+@keyframes svcCardIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.motif-marketing {
+  position: absolute;
+  right: 5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 200px;
+  height: 200px;
+}
+.motif-marketing .ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  opacity: 0;
+  animation: svcPulseRing 3s ease-out infinite;
+}
+.motif-marketing .ring:nth-child(1) { width: 50px; height: 50px; margin: -25px 0 0 -25px; }
+.motif-marketing .ring:nth-child(2) { width: 110px; height: 110px; margin: -55px 0 0 -55px; animation-delay: 0.7s; }
+.motif-marketing .ring:nth-child(3) { width: 180px; height: 180px; margin: -90px 0 0 -90px; animation-delay: 1.4s; }
+@keyframes svcPulseRing {
+  0% { opacity: 0.6; transform: scale(0.8); }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+
+.motif-web {
+  position: absolute;
+  right: 3.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  grid-template-columns: repeat(4, 26px);
+  grid-template-rows: repeat(4, 26px);
+  gap: 6px;
+}
+.motif-web span { opacity: 0; animation: svcBlockIn 0.5s ease forwards; }
+.motif-web span:nth-child(4n+1) { background: var(--accent); }
+.motif-web span:nth-child(4n+2) { background: var(--l); }
+.motif-web span:nth-child(4n+3) { background: var(--accent-pastel); }
+.motif-web span:nth-child(4n+4) { background: var(--accent-deep); }
+@keyframes svcBlockIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.motif-printing {
+  position: absolute;
+  left: 58%;
+  right: 3rem;
+  top: 20%;
+  bottom: 20%;
+  border: 1px dashed rgba(246, 241, 231, 0.25);
+}
+.motif-printing .sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 12px 1px var(--accent-bright);
+  animation: svcSweep 2.6s ease-in-out infinite;
+}
+@keyframes svcSweep {
+  0%, 100% { top: 0%; }
+  50% { top: calc(100% - 2px); }
+}
+
+/* — AI hero: live auto-cycling demo panel, the flagship motif — */
+.motif-ai-demo {
+  position: absolute;
+  right: 4vw;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(360px, 34vw);
+  background: rgba(246, 241, 231, 0.04);
+  border: 1px solid rgba(246, 241, 231, 0.15);
+  border-radius: 1rem;
+  padding: 1.1rem;
+  backdrop-filter: blur(6px);
+}
+.motif-ai-demo-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+  font-family: var(--f-nm);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.motif-ai-demo-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 6px 1px var(--accent-bright);
+}
+.motif-ai-demo-msg {
+  max-width: 88%;
+  padding: 0.65rem 0.9rem;
+  margin-bottom: 0.6rem;
+  border-radius: 0.9rem;
+  font-family: var(--f-nm);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-transform: none;
+  line-height: 1.3;
+  opacity: 0;
+}
+.motif-ai-demo-msg.from-user {
+  background: rgba(246, 241, 231, 0.1);
+  border-bottom-left-radius: 0.25rem;
+}
+.motif-ai-demo-msg.from-bot {
+  margin-left: auto;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-bottom-right-radius: 0.25rem;
+}
+
+@media (max-width: 1000px) {
+  .motif-photography,
+  .motif-video,
+  .motif-brand,
+  .motif-smm,
+  .motif-marketing,
+  .motif-web,
+  .motif-printing,
+  .motif-ai-demo,
+  .motif-strategy svg {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motif-strategy .draw,
+  .motif-brand span,
+  .motif-smm span,
+  .motif-web span {
+    animation: none;
+    opacity: 1;
+  }
+  .motif-video .scrub,
+  .motif-marketing .ring,
+  .motif-printing .sweep {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 .svcd-hero .pd-hero-tagline {
@@ -42,6 +337,20 @@
 
 .svcd-hero .pd-hero-tech {
   margin-top: 2.5rem;
+}
+
+.svcd-hero-price {
+  margin-top: 2rem;
+  font-family: var(--f-nm);
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.svcd-hero-price span {
+  margin-right: 0.6rem;
+  opacity: 0.55;
+  letter-spacing: 0.06em;
 }
 
 /* — problem statement: reuses .sample-project-details / .cs-phase — */
@@ -159,6 +468,135 @@
 /* — chips row directly under hero copy (capability tags) — */
 .svcd-hero .pd-hero-tech .cs-chip {
   border-color: rgba(246, 241, 231, 0.4);
+}
+
+/* — FAQ: same single-open accordion mechanic as journal.css, own styling — */
+.svcd-faq {
+  padding: 1rem 0 5rem;
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.svcd-faq-list {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(23, 19, 15, 0.15);
+}
+
+.svcd-faq-item {
+  border-bottom: 1px solid rgba(23, 19, 15, 0.15);
+}
+
+.svcd-faq-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 100%;
+  padding: 1.75rem 3.5rem 1.75rem 0;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+}
+
+.svcd-faq-q {
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(1.2rem, 2.2vw, 1.75rem);
+  line-height: 1.15;
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.svcd-faq-head:hover .svcd-faq-q {
+  transform: translateX(0.75rem);
+  color: var(--accent);
+}
+
+.svcd-faq-plus {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  transform: translateY(-50%);
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.svcd-faq-plus::before,
+.svcd-faq-plus::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.svcd-faq-plus::before {
+  width: 100%;
+  height: 1.5px;
+}
+
+.svcd-faq-plus::after {
+  width: 1.5px;
+  height: 100%;
+}
+
+.svcd-faq-item.is-open .svcd-faq-plus {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.svcd-faq-body {
+  height: 0;
+  overflow: hidden;
+}
+
+.svcd-faq-a {
+  padding-bottom: 1.75rem;
+  max-width: 42rem;
+  text-transform: none;
+  opacity: 0.75;
+}
+
+/* — CTA: a service-specific reason to reach out, not just the global footer — */
+.svcd-cta {
+  padding: 6rem 0;
+  text-align: center;
+  background-color: var(--d);
+  color: var(--l);
+}
+
+.svcd-cta-eyebrow {
+  display: block;
+  margin-bottom: 1rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.svcd-cta h3 {
+  max-width: 30rem;
+  margin: 0 auto 2.5rem;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+}
+
+.svcd-cta .btn {
+  border-color: var(--accent);
+  background-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.svcd-cta .btn:hover {
+  background-color: var(--accent-bright);
+  border-color: var(--accent-bright);
 }
 
 @media (max-width: 1000px) {

@@ -54,6 +54,16 @@ function init() {
   initChips(serviceChips);
   initChips(budgetChips);
 
+  // Deep link from a service detail page (service.html's Get In Touch
+  // button links here with ?service=<slug>) - pre-select the matching
+  // chip so a visitor never lands on a blank form after already telling
+  // us what they're interested in.
+  const wantedSlug = new URLSearchParams(window.location.search).get("service");
+  if (wantedSlug && serviceChips) {
+    const match = serviceChips.querySelector(`.form-chip[data-slug="${wantedSlug}"]`);
+    if (match) match.classList.add("is-active");
+  }
+
   function sendMailtoFallback({ name, brand, reach, message, services, budget }) {
     const subject = `Project inquiry — ${name}${brand ? ` (${brand})` : ""}`;
     const bodyLines = [

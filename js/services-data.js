@@ -44,6 +44,12 @@ export const services = [
       "A single accountable account owner",
       "A campaign timeline with real milestones",
     ],
+    faq: [
+      { q: "How long does the strategy phase take?", a: "Usually one to two weeks for a full strategy document, depending on how much research is needed." },
+      { q: "Do I need this if I just want one thing designed, like a logo?", a: "No — for a single deliverable you can skip straight to that service. Strategy is included automatically once you're on a retainer." },
+      { q: "Who actually owns my account?", a: "One person, named at kickoff, who stays on the account start to finish — you're never re-explaining the brand to someone new." },
+      { q: "What if my brief changes halfway through?", a: "It happens. The account owner re-scopes with you rather than quietly absorbing the extra work or ignoring the change." },
+    ],
     workFilter: null,
   },
 
@@ -81,6 +87,12 @@ export const services = [
       "Platform-cut versions (feed, story, print)",
       "Raw select files on request",
       "A repeatable shoot cadence",
+    ],
+    faq: [
+      { q: "Do you provide the location and props, or do we?", a: "For product and food shoots we typically use our own studio and basic props. For lifestyle and corporate shoots, we'll scout your space together beforehand." },
+      { q: "How many final images do we get?", a: "It depends on the package — we agree on a number before the shoot, then deliver the best of what we shot, not a random dump of every frame." },
+      { q: "Can we request more retouching after delivery?", a: "Light revisions are included. Heavier reshoots or new retouching requests are quoted separately." },
+      { q: "How fast is turnaround?", a: "Typically three to five business days after the shoot for a standard batch, faster for a rush fee." },
     ],
     workFilter: "Photography",
   },
@@ -120,6 +132,12 @@ export const services = [
       "Raw select files on request",
       "A repeatable shoot cadence",
     ],
+    faq: [
+      { q: "Do you write the script, or do we?", a: "Either — bring your own script, or we'll write and storyboard it with you as part of the concept phase." },
+      { q: "How long is a typical turnaround?", a: "Short-form social video: a few days. A full commercial or brand film: two to four weeks depending on shoot complexity." },
+      { q: "How many revision rounds are included?", a: "Two rounds of edits are standard. More extensive rework beyond that is quoted separately." },
+      { q: "Do you handle voiceover and music licensing?", a: "Yes — voiceover casting and licensed music or sound design are part of post-production." },
+    ],
     workFilter: "Video",
   },
 
@@ -157,6 +175,12 @@ export const services = [
       "Primary & secondary logo files",
       "A defined type & color system",
       "Ready-to-use collateral templates",
+    ],
+    faq: [
+      { q: "How many logo concepts do we see?", a: "Usually two or three real directions, not twenty half-ideas — we'd rather go deep on a few strong options than shallow on many." },
+      { q: "Do we own the final files?", a: "Yes, full usage rights transfer once the final invoice is paid." },
+      { q: "What file formats do we get?", a: "Everything you'd need — vector source files, PNGs, web-ready assets, and print-ready formats where relevant." },
+      { q: "Can you work with an existing logo we like and build the system around it?", a: "Yes — we don't require starting from zero if there's a mark worth keeping." },
     ],
     workFilter: "Design",
   },
@@ -196,6 +220,12 @@ export const services = [
       "On-voice copy across every post",
       "Regular performance reporting",
     ],
+    faq: [
+      { q: "Do you need access to our accounts?", a: "Yes, admin access to whichever platforms are in scope — that's how we publish and manage comments directly." },
+      { q: "Who approves posts before they go live?", a: "You do, unless we agree on a lighter-touch approval flow — the default is a review step before anything publishes." },
+      { q: "What happens if a post underperforms?", a: "It gets flagged in the monthly report along with what we're adjusting — we don't just repeat what isn't working." },
+      { q: "Can you match a tone of voice we already have?", a: "Yes — the SMM strategy phase captures your existing voice before we write a single caption." },
+    ],
     workFilter: null,
   },
 
@@ -233,6 +263,12 @@ export const services = [
       "An SEO baseline and roadmap",
       "Analytics & pixel tracking set up correctly",
       "A monthly ROI/ROAS report",
+    ],
+    faq: [
+      { q: "What's the minimum ad spend to get started?", a: "There's no hard minimum, but campaigns need enough budget to actually gather data — we'll tell you honestly if a budget is too small to optimize." },
+      { q: "Do you take a percentage of ad spend?", a: "No hidden ad-spend cut — management is priced as a service, not a commission on your budget." },
+      { q: "How often do we see results and reporting?", a: "Monthly reports as standard, with real-time dashboard access if you want to check in between." },
+      { q: "What if the campaign isn't converting?", a: "We adjust targeting, creative, or budget allocation before recommending more spend — throwing more money at an underperforming campaign isn't the first move." },
     ],
     workFilter: null,
   },
@@ -272,6 +308,12 @@ export const services = [
       "Documentation for anything custom-built",
       "A direct line for support after launch",
     ],
+    faq: [
+      { q: "Can you work with our existing hosting and domain?", a: "Yes, or we can set up new hosting and a domain if you'd rather not manage it yourself." },
+      { q: "Do we need to know how to code to update the site after launch?", a: "No — everything's built so you can edit real content yourself; anything genuinely custom comes with documentation." },
+      { q: "How long does a typical site take?", a: "A landing page: one to two weeks. A full corporate or e-commerce site: four to eight weeks depending on scope." },
+      { q: "What happens if something breaks after launch?", a: "Technical support is available separately from the build itself — a direct line, not a ticket queue." },
+    ],
     workFilter: "Web",
   },
 
@@ -310,6 +352,12 @@ export const services = [
       "Documentation of what's automated",
       "No black-box decisions on your brand",
     ],
+    faq: [
+      { q: "Is our customer data safe with an AI system?", a: "Yes — data handling is scoped and disclosed upfront, and nothing is sent anywhere without your sign-off on the integration." },
+      { q: "Will the AI ever talk to a customer without a human checking it first?", a: "For live customer-facing replies, yes, within rules we define together — but every workflow has a human review step before it's deployed, and you can require approval on anything sensitive." },
+      { q: "What if the AI gets something wrong?", a: "It's built to hand off to a person when it's unsure, rather than guess — and we tune it based on real transcripts, not assumptions." },
+      { q: "Can this replace our support team?", a: "It's built to handle the repetitive first layer — qualifying, scheduling, FAQs — not to replace judgment calls a person should make." },
+    ],
     workFilter: null,
   },
 
@@ -347,6 +395,12 @@ export const services = [
       "A checked physical proof",
       "The completed, delivered run",
       "A saved spec for reordering",
+    ],
+    faq: [
+      { q: "What's the minimum order quantity?", a: "Depends on the item — business cards and flyers can run in small batches, large-format and merchandise usually have a practical minimum we'll flag upfront." },
+      { q: "Can you match our exact brand colors?", a: "Yes — we work from your brand guideline's actual color values and proof physically before the full run." },
+      { q: "How long does printing take?", a: "Standard promotional print: three to five business days. Large format and merchandise: one to two weeks depending on the run." },
+      { q: "Do you deliver, or do we pick up?", a: "Both — local delivery is available, or pickup from our print partner if you'd rather." },
     ],
     workFilter: null,
   },
