@@ -1,12 +1,16 @@
 /* ══════════════════════════════════════════════════════════════════
-   Brand & Graphic Design — off-white swatch wall. Light paper ground
-   throughout (the one service page that stays light end to end), huge
-   margins, and subservices presented as literal color swatches instead
-   of cards.
+   Brand & Graphic Design — rebuilt around the actual Lumine mark
+   drawing itself (js/services/brand-mark.js, adapted from the
+   scroll-powered-svg-stroke technique in the assets reference folder),
+   a poster-style CENTERED hero instead of a left-text/right-empty
+   split, a build-up progress bar for the workflow (the system visibly
+   accumulating, not numbered circles on a line), and a real type +
+   color specimen sheet for proof (not gradient mockup tiles).
    ══════════════════════════════════════════════════════════════════ */
 
 .brnd {
   background-color: var(--l);
+  background-image: radial-gradient(60% 50% at 50% 0%, rgba(242, 84, 45, 0.07), transparent 62%);
   color: var(--d);
 }
 
@@ -20,64 +24,86 @@
   opacity: 0.45;
 }
 
-/* — hero — */
+/* — hero: centered poster composition. Index line, headline half,
+   the mark drawing itself at full size as the visual anchor, second
+   headline half, then supporting copy — a vertical stack that reads
+   top-to-bottom instead of a text column beside dead space — */
 .brnd-hero {
-  padding: clamp(9rem, 16vw, 13rem) clamp(1.75rem, 8vw, 9rem) clamp(5rem, 9vw, 7rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: clamp(5rem, 11vw, 8rem) clamp(1.5rem, 8vw, 9rem) clamp(3rem, 7vw, 5rem);
 }
 
 .brnd-index {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   font-family: var(--f-nm);
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.5;
+  opacity: 0.55;
 }
 
 .brnd-hero h1 {
-  max-width: 44rem;
-  font-size: clamp(2.75rem, 6.5vw, 5.5rem);
-  margin-bottom: 2rem;
+  font-size: clamp(2.25rem, 7vw, 5rem);
+  line-height: 0.98;
 }
 
-.brnd-hero h1 .accent {
+.brnd-hero-h1-accent {
+  margin-top: -0.15em;
+}
+
+.brnd-hero-h1-accent .accent {
   color: var(--accent);
 }
 
+.brnd-mark {
+  width: clamp(7rem, 16vw, 11rem);
+  height: clamp(7rem, 16vw, 11rem);
+  margin: clamp(1.25rem, 4vw, 2.5rem) 0;
+}
+
+.brnd-mark path {
+  fill: none;
+  stroke: var(--accent);
+}
+
 .brnd-hero-sub {
-  max-width: 36rem;
+  max-width: 34rem;
+  margin-top: 1.5rem;
   text-transform: none;
-  opacity: 0.7;
-  font-size: 1.05rem;
-  line-height: 1.5;
+  opacity: 0.75;
+  font-size: 1.02rem;
+  line-height: 1.55;
 }
 
 /* — agitation — */
 .brnd-agitation {
-  padding: clamp(4rem, 9vw, 8rem) clamp(1.75rem, 8vw, 9rem);
+  padding: clamp(3rem, 7vw, 6rem) clamp(1.75rem, 8vw, 9rem);
+  border-top: 1px solid rgba(23, 19, 15, 0.1);
 }
 
 .brnd-agitation blockquote {
   max-width: 42rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
   font-family: var(--f-h);
   font-weight: 700;
   text-transform: uppercase;
   line-height: 1.05;
-  font-size: clamp(1.75rem, 3.8vw, 3rem);
+  font-size: clamp(1.6rem, 3.4vw, 2.5rem);
 }
 
 .brnd-agitation-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  max-width: 46rem;
+  gap: 2.5rem;
 }
 
 .brnd-agitation-grid p {
   text-transform: none;
   line-height: 1.5;
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 .brnd-turn {
@@ -92,13 +118,13 @@
 
 /* — swatch wall — */
 .brnd-swatches {
-  padding: clamp(4rem, 9vw, 8rem) clamp(1.75rem, 8vw, 9rem);
+  padding: clamp(3rem, 7vw, 6rem) clamp(1.75rem, 8vw, 9rem);
 }
 
 .brnd-swatch-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 0.5rem;
+  gap: 0.85rem;
 }
 
 .brnd-swatch {
@@ -109,14 +135,14 @@
   aspect-ratio: 3/4;
   padding: 1.5rem;
   border: none;
-  border-radius: 0.5rem;
-  background-color: var(--sw);
+  border-radius: 1rem;
+  background: var(--sw);
   color: var(--l);
   font: inherit;
   text-align: left;
   cursor: pointer;
   overflow: hidden;
-  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .brnd-swatch:hover,
@@ -150,40 +176,73 @@
   opacity: 0.9;
 }
 
-/* — workflow — */
+/* — workflow: one continuous bar that builds up in four color
+   segments (the system's own palette), each segment growing in on
+   scroll — the accumulation IS the four steps, not an abstraction
+   layered over them — */
 .brnd-workflow {
-  padding: clamp(4rem, 9vw, 8rem) clamp(1.75rem, 8vw, 9rem);
+  padding: clamp(3rem, 7vw, 6rem) clamp(1.75rem, 8vw, 9rem);
   border-top: 1px solid rgba(23, 19, 15, 0.1);
 }
 
-.brnd-wf-grid {
+.brnd-buildbar {
+  display: flex;
+  gap: 0.4rem;
+  height: 0.85rem;
+  margin-bottom: 3rem;
+}
+
+.brnd-buildbar-seg {
+  flex: 1;
+  border-radius: 100px;
+  background: var(--seg-color);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: brnd-seg-fill 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  animation-play-state: paused;
+}
+
+.brnd-buildbar.is-visible .brnd-buildbar-seg:nth-child(1) { animation-delay: 0s; }
+.brnd-buildbar.is-visible .brnd-buildbar-seg:nth-child(2) { animation-delay: 0.25s; }
+.brnd-buildbar.is-visible .brnd-buildbar-seg:nth-child(3) { animation-delay: 0.5s; }
+.brnd-buildbar.is-visible .brnd-buildbar-seg:nth-child(4) { animation-delay: 0.75s; }
+.brnd-buildbar.is-visible .brnd-buildbar-seg { animation-play-state: running; }
+
+@keyframes brnd-seg-fill {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.brnd-buildbar-labels {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 3rem;
+  gap: 1.75rem;
 }
 
-.brnd-wf-num {
+.brnd-bb-swatch {
   display: block;
-  margin-bottom: 1rem;
-  font-family: var(--f-h);
-  color: var(--accent);
-  font-size: 0.9rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-bottom: 1.1rem;
+  border-radius: 50%;
 }
 
-.brnd-wf-item h6 {
-  margin-bottom: 0.6rem;
-  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+.brnd-bb-item h6 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
 }
 
-.brnd-wf-item p {
+.brnd-bb-item p {
   text-transform: none;
   opacity: 0.65;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  max-width: 16rem;
 }
 
-/* — proof: mockup wall — */
+/* — proof: real type + color specimen sheet — */
 .brnd-proof {
-  padding: clamp(4rem, 9vw, 8rem) clamp(1.75rem, 8vw, 9rem);
+  padding: clamp(3rem, 7vw, 6rem) clamp(1.75rem, 8vw, 9rem);
   border-top: 1px solid rgba(23, 19, 15, 0.1);
 }
 
@@ -194,40 +253,95 @@
   opacity: 0.6;
 }
 
-.brnd-proof-grid {
+.brnd-specimen {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  grid-template-rows: repeat(2, 11rem);
-  gap: 1rem;
-  max-width: 44rem;
-}
-
-.brnd-proof-tile {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  padding: 1rem;
-  border-radius: 0.85rem;
-  background: linear-gradient(135deg, var(--accent-pastel), var(--accent));
-  box-shadow: none;
-}
-
-.brnd-proof-tile-lg {
-  grid-row: 1 / 3;
-  background: linear-gradient(135deg, var(--l), var(--accent-pastel));
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1px;
+  background: rgba(23, 19, 15, 0.1);
   border: 1px solid rgba(23, 19, 15, 0.1);
+  border-radius: 1rem;
+  overflow: hidden;
 }
 
-.brnd-proof-tag {
+.brnd-specimen-type,
+.brnd-specimen-colors {
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  background: var(--l);
+}
+
+.brnd-specimen-label {
+  display: block;
+  margin-bottom: 0.75rem;
   font-family: var(--f-nm);
-  font-size: 0.75rem;
-  letter-spacing: 0.03em;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--d);
-  opacity: 0.6;
+  opacity: 0.45;
 }
 
-/* — pricing includes list — */
+.brnd-specimen-giant {
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(5rem, 12vw, 9rem);
+  line-height: 0.85;
+  margin-bottom: 2rem;
+}
+
+.brnd-specimen-sentence {
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  line-height: 1.2;
+}
+
+.brnd-specimen-colors {
+  display: flex;
+  flex-direction: column;
+}
+
+.brnd-specimen-swatch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-height: 3.4rem;
+  padding: 0 1rem;
+  margin: 0 -2.75rem;
+}
+
+.brnd-specimen-swatch:first-of-type {
+  margin-top: 0.25rem;
+}
+
+.brnd-specimen-swatch span {
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+}
+
+.brnd-specimen-swatch code {
+  font-family: var(--f-nm);
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
+/* — pricing — */
+.brnd-pricing {
+  padding: 4rem clamp(1.75rem, 8vw, 9rem);
+  border-top: 1px solid rgba(23, 19, 15, 0.1);
+}
+
+.brnd-pricing-note {
+  max-width: 32rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.15;
+  font-size: clamp(1.15rem, 2.2vw, 1.65rem);
+}
+
 .brnd-pricing-includes {
   display: flex;
   flex-wrap: wrap;
@@ -246,32 +360,21 @@
   opacity: 0.7;
 }
 
-/* — pricing — */
-.brnd-pricing {
-  padding: 4rem clamp(1.75rem, 8vw, 9rem);
-  border-top: 1px solid rgba(23, 19, 15, 0.1);
-}
-
-.brnd-pricing-note {
-  max-width: 32rem;
-  font-family: var(--f-h);
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: 1.15;
-  font-size: clamp(1.15rem, 2.2vw, 1.65rem);
-}
-
 /* — hook — */
 .brnd-hook {
-  padding: 7rem clamp(1.75rem, 8vw, 9rem);
+  min-height: 20rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
   text-align: center;
+  padding: 4rem clamp(1.75rem, 8vw, 9rem);
   background-color: var(--d);
-  color: var(--l);
 }
 
 .brnd-hook h3 {
-  max-width: 28rem;
-  margin: 0 auto 2rem;
+  color: var(--l);
   font-size: clamp(2rem, 4.5vw, 3.5rem);
 }
 
@@ -318,11 +421,18 @@
   .brnd-swatch-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  .brnd-wf-grid {
+  .brnd-buildbar-labels {
     grid-template-columns: 1fr 1fr;
+    row-gap: 2rem;
   }
   .brnd-agitation-grid {
     grid-template-columns: 1fr;
+  }
+  .brnd-specimen {
+    grid-template-columns: 1fr;
+  }
+  .brnd-specimen-swatch {
+    margin: 0 -1.75rem;
   }
 }
 
@@ -330,14 +440,7 @@
   .brnd-swatch-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .brnd-wf-grid {
+  .brnd-buildbar-labels {
     grid-template-columns: 1fr;
-  }
-  .brnd-proof-grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(3, 9rem);
-  }
-  .brnd-proof-tile-lg {
-    grid-row: auto;
   }
 }

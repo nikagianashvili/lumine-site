@@ -44,11 +44,23 @@
     <div id="custom-cursor"></div>
 
     <main class="page brnd">
-      <!-- 01 hero: enormous whitespace, small type, huge margins -->
+      <!-- 01 hero: centered, full-width. The actual Lumine mark draws
+           itself stroke-by-stroke then fills solid - a real brand-design
+           artifact in motion, headline set above and below it rather than
+           pinned to one side with the other half empty -->
       <section class="brnd-hero">
         <p class="brnd-index pd-reveal">04 / Brand &amp; Graphic Design</p>
         <h1 data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.15">
-          A System. <span class="accent">Not A Logo.</span>
+          A System.
+        </h1>
+        <svg id="brndMarkSvg" class="brnd-mark" viewBox="0 0 300 300" aria-hidden="true">
+          <path
+            id="brndMarkPath"
+            d="M229.91,145.323v-26.593c0-2.227-1.805-4.033-4.033-4.033h-20.288c-11.221,0-20.318-9.097-20.318-20.318V17.154c0-2.227-1.805-4.033-4.033-4.033h-27.483c-2.227,0-4.033,1.805-4.033,4.033v48.506c0,2.431-1.971,4.402-4.402,4.402h-26.592c-2.227,0-4.033,1.805-4.033,4.033v20.287c0,11.221-9.096,20.317-20.317,20.317H17.153c-2.227,0-4.033,1.805-4.033,4.033v27.512c0,2.227,1.805,4.033,4.033,4.033h48.506c2.431,0,4.402,1.971,4.402,4.402v26.564c0,2.227,1.805,4.033,4.033,4.033h20.288c11.221,0,20.318,9.097,20.318,20.318v77.256c0,2.227,1.805,4.033,4.033,4.033h27.512c2.227,0,4.033-1.805,4.033-4.033v-48.506c0-2.431,1.971-4.402,4.402-4.402h26.563c2.227,0,4.033-1.805,4.033-4.033v-20.287c0-11.237,9.109-20.346,20.346-20.346h77.228c2.227,0,4.033-1.805,4.033-4.033v-27.482c0-2.227-1.805-4.033-4.033-4.033h-48.535c-2.431,0-4.402-1.971-4.402-4.402ZM147.57,189.133c-5.598-17.367-19.343-31.114-36.694-36.69-2.398-.771-2.4-4.095-.002-4.868,17.352-5.59,31.098-19.34,36.696-36.709.773-2.397,4.098-2.395,4.867.004,5.57,17.367,19.31,31.115,36.66,36.705,2.398.773,2.396,4.097-.002,4.868-17.349,5.576-31.088,19.321-36.658,36.687-.769,2.398-4.095,2.401-4.867.004Z"
+          />
+        </svg>
+        <h1 class="brnd-hero-h1-accent" data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.35">
+          Not A <span class="accent">Logo.</span>
         </h1>
         <p class="brnd-hero-sub pd-reveal">
           A brand that looks improvised gets treated like one. Type, color, and usage rules
@@ -74,7 +86,8 @@
         </div>
       </section>
 
-      <!-- 03 subservices: swatch wall (the signature element) -->
+      <!-- 03 subservices: swatch wall (kept - this one was never flagged as
+           repeated, it's an interactive hover-reveal, not a static tile) -->
       <section class="brnd-swatches">
         <p class="brnd-kicker pd-reveal">In Detail — Pick A Swatch</p>
         <div class="brnd-swatch-grid">
@@ -101,48 +114,70 @@
         </div>
       </section>
 
-      <!-- 04 workflow -->
+      <!-- 04 workflow: a build-up bar, not numbered circles on a line. Each
+           step fills in its own segment of a single continuous bar - the
+           system visibly accumulating, which is literally what the four
+           steps do -->
       <section class="brnd-workflow">
         <p class="brnd-kicker pd-reveal">How It Runs</p>
-        <div class="brnd-wf-grid">
-          <div class="brnd-wf-item pd-reveal">
-            <span class="brnd-wf-num">01</span>
+        <div class="brnd-buildbar pd-reveal">
+          <div class="brnd-buildbar-seg" style="--seg-color: var(--d);"></div>
+          <div class="brnd-buildbar-seg" style="--seg-color: var(--accent-deep);"></div>
+          <div class="brnd-buildbar-seg" style="--seg-color: var(--accent);"></div>
+          <div class="brnd-buildbar-seg" style="--seg-color: var(--accent-pastel);"></div>
+        </div>
+        <div class="brnd-buildbar-labels">
+          <div class="brnd-bb-item pd-reveal">
+            <span class="brnd-bb-swatch" style="background: var(--d);"></span>
             <h6>Discovery</h6>
             <p>Competitors, audience, and what the brand needs to say that it currently doesn't.</p>
           </div>
-          <div class="brnd-wf-item pd-reveal">
-            <span class="brnd-wf-num">02</span>
+          <div class="brnd-bb-item pd-reveal">
+            <span class="brnd-bb-swatch" style="background: var(--accent-deep);"></span>
             <h6>Direction</h6>
             <p>Two or three real visual directions, not ten half-finished ones to choose blind.</p>
           </div>
-          <div class="brnd-wf-item pd-reveal">
-            <span class="brnd-wf-num">03</span>
+          <div class="brnd-bb-item pd-reveal">
+            <span class="brnd-bb-swatch" style="background: var(--accent);"></span>
             <h6>System Build</h6>
             <p>The chosen direction becomes rules — type scale, color roles, spacing, logo usage.</p>
           </div>
-          <div class="brnd-wf-item pd-reveal">
-            <span class="brnd-wf-num">04</span>
+          <div class="brnd-bb-item pd-reveal">
+            <span class="brnd-bb-swatch" style="background: var(--accent-pastel);"></span>
             <h6>Rollout</h6>
             <p>The system applied across the first real set of assets, so day one already looks finished.</p>
           </div>
         </div>
       </section>
 
-      <!-- 05 proof: mockup wall -->
+      <!-- 05 proof: a real type + color specimen sheet - the site's own
+           actual typeface and palette, shown honestly, instead of a fake
+           mockup wall of business cards that don't exist yet -->
       <section class="brnd-proof">
-        <p class="brnd-kicker pd-reveal">Proof Of Concept — The Mockup Wall</p>
+        <p class="brnd-kicker pd-reveal">Proof Of Concept — The Specimen Sheet</p>
         <p class="brnd-proof-note pd-reveal">
-          The format a finished system gets presented in: applied across real-world formats side
-          by side. Once real client work exists, this is where it's shown.
+          What a finished system actually is: a typeface and a palette with rules, not a stack of
+          mockups. This is Lumine's own — the exact type and color running this page.
         </p>
-        <div class="brnd-proof-grid">
-          <div class="brnd-proof-tile brnd-proof-tile-lg pd-reveal"><span class="brnd-proof-tag">Business Card</span></div>
-          <div class="brnd-proof-tile pd-reveal"><span class="brnd-proof-tag">Letterhead</span></div>
-          <div class="brnd-proof-tile pd-reveal"><span class="brnd-proof-tag">Social Template</span></div>
+        <div class="brnd-specimen">
+          <div class="brnd-specimen-type pd-reveal">
+            <span class="brnd-specimen-label">LK Lumina — Display</span>
+            <p class="brnd-specimen-giant">Aa</p>
+            <span class="brnd-specimen-label">The quick brown fox</span>
+            <p class="brnd-specimen-sentence">THE QUICK BROWN FOX JUMPS</p>
+          </div>
+          <div class="brnd-specimen-colors pd-reveal">
+            <span class="brnd-specimen-label">Palette</span>
+            <div class="brnd-specimen-swatch" style="background: var(--d); color: var(--l);"><span>Ink</span><code>#17130F</code></div>
+            <div class="brnd-specimen-swatch" style="background: var(--accent); color: var(--accent-ink);"><span>Accent</span><code>#F2542D</code></div>
+            <div class="brnd-specimen-swatch" style="background: var(--accent-deep); color: var(--l);"><span>Deep</span><code>#7E2810</code></div>
+            <div class="brnd-specimen-swatch" style="background: var(--accent-pastel); color: var(--d);"><span>Pastel</span><code>#FAD4C8</code></div>
+            <div class="brnd-specimen-swatch" style="background: var(--l); color: var(--d); border: 1px solid rgba(23,19,15,0.15);"><span>Paper</span><code>#F6F1E7</code></div>
+          </div>
         </div>
       </section>
 
-      <!-- 06 pricing + hook -->
+      <!-- 06 pricing -->
       <section class="brnd-pricing">
         <p class="brnd-kicker pd-reveal">Investment</p>
         <p class="brnd-pricing-note pd-reveal">Full brand book — 1,500–2,500₾, scoped to the number of applications you need on day one.</p>
@@ -188,6 +223,7 @@
     <script type="module" src="/js/nav.js"></script>
     <script type="module" src="/js/home-extras.js"></script>
     <script type="module" src="/js/scroll-reveal.js"></script>
+    <script type="module" src="/js/services/brand-mark.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>
   </body>
