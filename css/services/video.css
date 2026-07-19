@@ -349,7 +349,11 @@
   .vid-wf-track {
     grid-template-columns: 1fr;
   }
+  .vid-scrubber {
+    padding-right: 3.75rem;
+    gap: 0.6rem;
+  }
   .vid-scrubber-time {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
   }
 }

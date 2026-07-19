@@ -318,4 +318,7 @@
   .photo-wf-grid {
     grid-template-columns: 1fr;
   }
+  .photo-proof-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
