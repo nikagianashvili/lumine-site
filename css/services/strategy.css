@@ -1,8 +1,12 @@
 /* ══════════════════════════════════════════════════════════════════
-   Strategy & Creative Management — editorial magazine.
+   Strategy & Creative Management — editorial magazine, rebuilt long-form.
    A fixed masthead rail running the page height + a single wide reading
-   column. No cards, no chips, no grid-of-tiles — just type, a drop cap,
-   a pull-quote, and a footnoted list, the way a magazine feature reads.
+   column, but each of the twelve sections below gets its own distinct
+   visual treatment rather than one repeated card pattern: a drawn-thread
+   hero, a checklist diagnosis, a pinned word-crossfade manifesto, a
+   flip-card deep dive, a struck-through comparison table, a cursor-lit
+   framework grid, a thread-connected workflow, a scroll-snap audit
+   slider, a radial service-ecosystem map, and an accordion FAQ.
    ══════════════════════════════════════════════════════════════════ */
 
 .strat {
@@ -25,6 +29,7 @@
   justify-content: space-between;
   padding: 6.5rem 0 2.5rem;
   border-right: 1px solid rgba(23, 19, 15, 0.12);
+  z-index: 4;
 }
 
 .strat-rail-mast {
@@ -70,9 +75,24 @@
   opacity: 0.6;
 }
 
-/* — hero: asymmetric two-zone. Text left, a live GPU particle-fluid
-   panel right — the page's one real animated centerpiece, not another
-   flat text column. */
+.strat-kicker {
+  margin-bottom: 2rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.strat-kicker-invert {
+  color: var(--l);
+  opacity: 0.55;
+}
+
+/* ── 01 — cover: text left, a single hand-drawn accent thread right,
+   stroke-drawn on load via scroll-scrub instead of the reused sitewide
+   particle-fluid panel. ── */
 .strat-hero {
   display: flex;
   align-items: center;
@@ -86,20 +106,20 @@
   min-width: 0;
 }
 
-.strat-hero-fluid {
+.strat-hero-thread {
   position: relative;
   flex: 1 1 48%;
   align-self: stretch;
-  min-height: 26rem;
-  border-radius: 1rem;
-  overflow: hidden;
-  background: linear-gradient(155deg, rgba(242, 84, 45, 0.06), rgba(23, 19, 15, 0.03));
-  border: 1px solid rgba(23, 19, 15, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
 }
 
-.strat-hero-fluid canvas {
-  display: block;
-  cursor: none;
+.strat-hero-thread svg {
+  width: 100%;
+  height: 100%;
+  max-height: 30rem;
 }
 
 .strat-hero h1 {
@@ -131,20 +151,18 @@
   color: var(--accent);
 }
 
-.strat-kicker {
-  margin-bottom: 2rem;
+.strat-meta-line {
+  margin-top: 1.5rem;
   font-family: var(--f-nm);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 0.85rem;
+  font-style: italic;
   opacity: 0.5;
 }
 
-/* — agitation — */
-.strat-agitation blockquote {
+/* ── 02 — the diagnosis: pull-quote + a struck-mark checklist ── */
+.strat-diagnosis blockquote {
   max-width: 40rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   font-family: var(--f-h);
   font-weight: 700;
   text-transform: uppercase;
@@ -152,18 +170,35 @@
   font-size: clamp(1.9rem, 4.2vw, 3.25rem);
 }
 
-.strat-agitation-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  max-width: 44rem;
+.strat-diag-lead {
+  max-width: 34rem;
+  margin-bottom: 1.5rem;
+  text-transform: none;
+  opacity: 0.75;
 }
 
-.strat-agitation-grid p {
+.strat-diag-list {
+  list-style: none;
+  max-width: 38rem;
+  margin-bottom: 2.5rem;
+}
+
+.strat-diag-list li {
+  position: relative;
+  padding: 1.1rem 0 1.1rem 2.25rem;
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
   text-transform: none;
-  font-size: 1rem;
-  line-height: 1.5;
-  opacity: 0.75;
+  opacity: 0.8;
+}
+
+.strat-diag-list li::before {
+  content: "×";
+  position: absolute;
+  left: 0;
+  top: 1.1rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  color: var(--accent);
 }
 
 .strat-turn {
@@ -179,44 +214,265 @@
   font-family: var(--f-h);
 }
 
-/* — footnoted subservice list — */
-.strat-footnotes {
-  list-style: none;
-  max-width: 42rem;
-}
-
-.strat-footnotes li {
+/* ── 03 — the argument: full-bleed pinned scroll-scrubbed word morph ── */
+.strat-manifesto {
+  grid-column: 2;
   position: relative;
-  padding: 1.75rem 0 1.75rem 3.25rem;
-  border-top: 1px solid rgba(23, 19, 15, 0.12);
+  height: 280vh;
+  max-width: none;
+  background-color: var(--d);
+  color: var(--l);
+  border-bottom: 1px solid rgba(23, 19, 15, 0.1);
 }
 
-.strat-fn-num {
+.strat-manifesto-inner {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 clamp(1.75rem, 6vw, 6rem);
+  text-align: center;
+}
+
+.strat-manifesto-stage {
+  position: relative;
+  width: min(90vw, 52rem);
+  height: clamp(9rem, 20vw, 13rem);
+  margin-top: 2rem;
+  overflow: hidden;
+}
+
+.strat-m-block {
   position: absolute;
-  left: 0;
-  top: 1.85rem;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.strat-m-block p {
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.08;
+  font-size: clamp(1.75rem, 4.5vw, 3.25rem);
+}
+
+.strat-m-block .word {
+  overflow: hidden;
+}
+
+.strat-manifesto-ring {
+  margin-top: 2.5rem;
+}
+
+/* ── 04 — three disciplines: pinned 3D flip-card sequence ── */
+.strat-disciplines {
+  grid-column: 2;
+  position: relative;
+  height: 340vh;
+  max-width: none;
+  background-color: var(--l);
+  border-bottom: 1px solid rgba(23, 19, 15, 0.1);
+}
+
+.strat-disc-kicker {
+  position: absolute;
+  top: 3rem;
+  left: clamp(1.75rem, 6vw, 6rem);
+  z-index: 2;
+  margin-bottom: 0;
+}
+
+.strat-disc-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.strat-disc-card {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: min(88vw, 40rem);
+  aspect-ratio: 16 / 10;
+  perspective: 1800px;
+  opacity: 0;
+}
+
+.strat-disc-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 1.25rem;
+  padding: clamp(2rem, 4vw, 3.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.strat-disc-front {
+  background-color: var(--d);
+  color: var(--l);
+}
+
+.strat-disc-back {
+  background-color: var(--accent);
+  color: var(--accent-ink);
+  transform: rotateY(180deg);
+}
+
+.strat-disc-num {
+  font-family: var(--f-h);
+  font-size: 0.9rem;
+  opacity: 0.55;
+  margin-bottom: 1rem;
+}
+
+.strat-disc-front h3 {
+  margin-bottom: 0.75rem;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.strat-disc-tagline {
+  font-size: 1.05rem;
+  opacity: 0.7;
+}
+
+.strat-disc-back p {
+  margin-bottom: 1.25rem;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.strat-disc-looks {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+/* ── 05 — the difference: struck-through comparison table ── */
+.strat-compare-head {
+  margin-bottom: 2.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.strat-compare-table {
+  max-width: 48rem;
+  border-top: 1px solid rgba(23, 19, 15, 0.15);
+}
+
+.strat-compare-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 1.35rem 0;
+  border-bottom: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.strat-compare-row-head {
+  padding-top: 0;
+  padding-bottom: 0.75rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.strat-compare-no {
+  text-decoration: line-through;
+  text-decoration-color: rgba(23, 19, 15, 0.35);
+  opacity: 0.55;
+}
+
+.strat-compare-yes {
+  font-weight: 600;
+}
+
+.strat-compare-yes::before {
+  content: "✓ ";
+  color: var(--accent);
+}
+
+/* ── 06 — the tools: cursor-lit framework grid ── */
+.strat-fw-head {
+  margin-bottom: 2rem;
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+}
+
+.strat-fw-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  max-width: 48rem;
+  background-color: rgba(23, 19, 15, 0.12);
+}
+
+.strat-fw-card {
+  position: relative;
+  padding: 2.25rem;
+  background-color: var(--white);
+  overflow: hidden;
+}
+
+.strat-fw-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(242, 84, 45, 0.16), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.strat-fw-card:hover::before {
+  opacity: 1;
+}
+
+.strat-fw-num {
   font-family: var(--f-h);
   font-size: 0.85rem;
   color: var(--accent);
 }
 
-.strat-footnotes h6 {
-  margin-bottom: 0.5rem;
-  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+.strat-fw-card h5 {
+  margin: 0.75rem 0 0.5rem;
+  font-size: 1.35rem;
 }
 
-.strat-footnotes p {
-  max-width: 34rem;
-  text-transform: none;
+.strat-fw-card p {
+  font-size: 0.95rem;
   opacity: 0.7;
 }
 
-/* — workflow: marginal-note rows — */
+/* ── 07 — how it runs: marginal-note rows with a drawn connector spine ── */
+.strat-workflow-list {
+  position: relative;
+  max-width: 42rem;
+}
+
+.strat-wf-spine {
+  position: absolute;
+  left: -1.35rem;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 3px;
+  height: calc(100% - 1rem);
+  overflow: visible;
+}
+
 .strat-wf-row {
   display: grid;
   grid-template-columns: 3.5rem 1fr;
   gap: 0 1.5rem;
-  max-width: 42rem;
   padding: 1.5rem 0;
   border-top: 1px solid rgba(23, 19, 15, 0.12);
 }
@@ -240,16 +496,12 @@
   opacity: 0.7;
 }
 
-/* — proof: audit spread, dark tonal shift for contrast — */
+/* ── 08 — the audit: dark tonal shift, scroll-snap slider ── */
 .strat-proof {
   background-color: var(--d);
   color: var(--l);
   max-width: none;
   border-bottom: none;
-}
-
-.strat-proof .strat-kicker {
-  opacity: 0.5;
 }
 
 .strat-proof-note {
@@ -259,25 +511,43 @@
   opacity: 0.65;
 }
 
-.strat-proof-spread {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+.strat-proof-slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.strat-proof-slider {
+  display: flex;
+  max-width: 42rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
   gap: 1px;
-  max-width: 58rem;
-  background: rgba(246, 241, 231, 0.15);
+  background-color: rgba(246, 241, 231, 0.15);
+  scrollbar-width: none;
+}
+
+.strat-proof-slider::-webkit-scrollbar {
+  display: none;
 }
 
 .strat-proof-col {
-  padding: 2rem;
-  background: var(--d);
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  min-height: 16rem;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--d);
 }
 
 .strat-proof-col-mid {
-  background: #241d17;
+  background-color: #241d17;
 }
 
 .strat-proof-col-after {
-  background: var(--accent-deep);
+  background-color: var(--accent-deep);
 }
 
 .strat-proof-tag {
@@ -298,7 +568,169 @@
   font-size: clamp(1.1rem, 2vw, 1.5rem);
 }
 
-/* — pricing — */
+.strat-proof-arrow {
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid rgba(246, 241, 231, 0.3);
+  background: transparent;
+  color: var(--l);
+  font-family: var(--f-nm);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.strat-proof-arrow:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.strat-proof-dots {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.strat-proof-dots span {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: rgba(246, 241, 231, 0.25);
+  transition: background-color 0.25s ease;
+}
+
+.strat-proof-dots span.is-active {
+  background-color: var(--accent);
+}
+
+/* ── 09 — where it sits: radial ecosystem map, unique to Lumine's own
+   nine-service structure — a diagram no template could ship generically ── */
+.strat-ecosystem {
+  grid-column: 2;
+  max-width: none;
+}
+
+.strat-eco-head {
+  max-width: 36rem;
+  margin-bottom: 3rem;
+  font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+}
+
+.strat-eco-map {
+  position: relative;
+  width: 100%;
+  max-width: 46rem;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
+
+#stratEcoSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.strat-eco-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: var(--d);
+  color: var(--l);
+  font-family: var(--f-h);
+  font-size: 1rem;
+}
+
+.strat-eco-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  padding: 0.6rem 1.1rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(23, 19, 15, 0.15);
+  background-color: var(--l);
+  color: var(--d);
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.strat-eco-node:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* ── 10 — questions: accordion ── */
+.strat-faq-list {
+  max-width: 44rem;
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.strat-faq-item {
+  border-bottom: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.strat-faq-q {
+  position: relative;
+  width: 100%;
+  padding: 1.5rem 2.5rem 1.5rem 0;
+  border: none;
+  background: none;
+  font-family: var(--f-nm);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--d);
+  text-align: left;
+  cursor: pointer;
+}
+
+.strat-faq-q::after {
+  content: "+";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-size: 1.3rem;
+  transition: transform 0.3s ease;
+}
+
+.strat-faq-item.is-open .strat-faq-q::after {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.strat-faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.strat-faq-a p {
+  max-width: 38rem;
+  padding-bottom: 1.5rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+.strat-faq-item.is-open .strat-faq-a {
+  max-height: 12rem;
+}
+
+/* ── 11 — investment ── */
 .strat-pricing-note {
   max-width: 32rem;
   font-family: var(--f-h);
@@ -308,7 +740,7 @@
   font-size: clamp(1.15rem, 2.2vw, 1.65rem);
 }
 
-/* — closing hook — */
+/* ── 12 — closing hook ── */
 .strat-hook {
   grid-column: 2;
   padding: 6rem clamp(1.75rem, 6vw, 6rem);
@@ -322,7 +754,7 @@
   font-size: clamp(2rem, 4.5vw, 3.5rem);
 }
 
-/* — next-service banner — */
+/* ── next-service banner ── */
 .strat-next {
   grid-column: 2;
   display: block;
@@ -373,8 +805,8 @@
     min-height: 0;
   }
 
-  .strat-hero-fluid {
-    display: none;
+  .strat-hero-thread {
+    max-height: 14rem;
   }
 
   .strat-rail {
@@ -385,11 +817,70 @@
     font-size: 0.6rem;
   }
 
-  .strat-agitation-grid {
+  .strat-manifesto,
+  .strat-disciplines {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .strat-manifesto-inner,
+  .strat-disc-stage {
+    position: relative;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .strat-manifesto-stage {
+    position: static;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .strat-m-block {
+    position: static;
+  }
+
+  .strat-disc-card {
+    position: relative;
+    width: 100%;
+    margin: 1.5rem 0;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .strat-disc-face {
+    position: relative;
+    backface-visibility: visible;
+    transform: none !important;
+  }
+
+  .strat-disc-back {
+    margin-top: 1rem;
+  }
+
+  .strat-fw-grid {
     grid-template-columns: 1fr;
   }
 
-  .strat-proof-spread {
+  .strat-compare-row {
     grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .strat-compare-row-head span:last-child {
+    display: none;
+  }
+
+  .strat-eco-node {
+    font-size: 0.68rem;
+    padding: 0.45rem 0.75rem;
+  }
+
+  .strat-eco-center {
+    width: 5.5rem;
+    height: 5.5rem;
+    font-size: 0.85rem;
   }
 }

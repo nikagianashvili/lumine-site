@@ -7,7 +7,7 @@
     <meta name="author" content="Lumine" />
     <meta
       name="description"
-      content="Account management, brand positioning, and campaign management — one thread from pitch to delivery."
+      content="Account management, brand positioning, and campaign management — one thread from pitch to delivery, and the one service the other eight take direction from."
     />
     <meta name="theme-color" content="#f6f1e7" />
     <meta property="og:title" content="Strategy &amp; Creative Management — Lumine" />
@@ -22,8 +22,6 @@
     <link rel="stylesheet" href="/css/footer.css" />
     <link rel="stylesheet" href="/css/chat-widget.css" />
     <link rel="stylesheet" href="/css/services/strategy.css" />
-    <script src="/js/wrappedgl.js"></script>
-    <script src="/js/simulator.js"></script>
   </head>
   <body class="strategy-page">
     <nav>
@@ -44,139 +42,327 @@
     <div id="custom-cursor"></div>
 
     <main class="page strat">
-      <!-- masthead rail: runs the full page height, ticks a section counter -->
+      <!-- masthead rail: sticky full-height, ticks a running section counter
+           as the reader passes each numbered block -->
       <aside class="strat-rail" aria-hidden="true">
         <span class="strat-rail-mast">LUMINE JOURNAL — STRATEGY</span>
-        <span class="strat-rail-count"><em data-rail-current>01</em>/06</span>
+        <span class="strat-rail-count"><em data-rail-current>01</em>/12</span>
       </aside>
 
-      <!-- 01 hero: text left, real GPU particle-fluid sim right (same
-           engine that drives the site-wide footer, retuned + remounted) -->
+      <!-- 01 — cover -->
       <section class="strat-block strat-hero" data-rail="01 — Cover">
         <div class="strat-hero-text">
-          <p class="strat-eyebrow pd-reveal">Issue №01 — Strategy &amp; Creative Management</p>
+          <p class="strat-eyebrow" data-animate-variant="slide" data-animate-on-scroll="false">
+            Issue №01 — Strategy &amp; Creative Management
+          </p>
           <h1 data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.15">
             Strategy &amp; <span class="accent">Creative</span> Management
           </h1>
-          <p class="strat-dropcap-para pd-reveal">
+          <p class="strat-dropcap-para" data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.3">
             <span class="strat-dropcap">G</span>ood creative built on the wrong brief is just expensive
             guessing. Account management, brand positioning, and campaign management run as one thread
             from pitch to delivery — the audience gets named and the brief gets right before anything
             is made.
           </p>
+          <p class="strat-meta-line">Twelve sections — the long version, for when "trust us" isn't enough.</p>
         </div>
-        <div class="strat-hero-fluid" id="stratHeroFluid" aria-hidden="true"></div>
+        <div class="strat-hero-thread" aria-hidden="true">
+          <svg viewBox="0 0 400 520" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <path
+              id="stratHeroThread"
+              d="M40 40C40 40 300 20 340 110C380 200 60 190 70 290C80 390 360 340 320 460C300 500 220 500 180 480"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
       </section>
 
-      <!-- 02 agitation: pull-quote spread -->
-      <section class="strat-block strat-agitation" data-rail="02 — The Argument">
-        <p class="strat-kicker pd-reveal">The Argument</p>
+      <!-- 02 — the diagnosis -->
+      <section class="strat-block strat-diagnosis" data-rail="02 — The Diagnosis">
+        <p class="strat-kicker" data-animate-variant="slide" data-animate-on-scroll="true">The Diagnosis</p>
         <blockquote data-animate-variant="slide" data-animate-on-scroll="true">
           Most agencies start with the deliverable. We start with the decision it's supposed to change.
         </blockquote>
-        <div class="strat-agitation-grid">
-          <p class="pd-reveal">
-            A logo, a reel, a media plan — none of it means anything if nobody agreed what it's for.
-            Teams end up producing work that's technically good and strategically homeless: on-brand,
-            on-brief, off-target.
-          </p>
-          <p class="strat-turn pd-reveal">
-            <span class="strat-turn-mark">→</span> So the account lead is the first hire on every
-            project, not the last review before it ships.
-          </p>
+        <p class="strat-diag-lead" data-animate-variant="slide" data-animate-on-scroll="true">
+          Five signs the brief — not the execution — is the actual problem:
+        </p>
+        <ul class="strat-diag-list">
+          <li data-animate-variant="slide" data-animate-on-scroll="true">Every channel has a different voice, and nobody planned it that way.</li>
+          <li data-animate-variant="slide" data-animate-on-scroll="true">The team can produce work fast but can't say why any specific piece exists.</li>
+          <li data-animate-variant="slide" data-animate-on-scroll="true">"Premium but approachable" gets used a lot. Defined never.</li>
+          <li data-animate-variant="slide" data-animate-on-scroll="true">A campaign wraps, and the next one starts from zero instead of from what was learned.</li>
+          <li data-animate-variant="slide" data-animate-on-scroll="true">The account gets discussed in three separate group chats.</li>
+        </ul>
+        <p class="strat-turn" data-animate-variant="slide" data-animate-on-scroll="true">
+          <span class="strat-turn-mark">→</span> So the account lead is the first hire on every
+          project, not the last review before it ships.
+        </p>
+      </section>
+
+      <!-- 03 — the argument: pinned, scroll-scrubbed word-crossfade manifesto -->
+      <section class="strat-manifesto" data-rail="03 — The Argument" id="stratManifesto">
+        <div class="strat-manifesto-inner">
+          <p class="strat-kicker strat-kicker-invert">The Argument</p>
+          <div class="strat-manifesto-stage">
+            <div class="copy-block strat-m-block" data-phase="0"><p>A logo doesn't have an opinion.</p></div>
+            <div class="copy-block strat-m-block" data-phase="1"><p>A media plan doesn't know your competitor's next move.</p></div>
+            <div class="copy-block strat-m-block" data-phase="2"><p>Someone has to hold the whole picture. That's this service.</p></div>
+          </div>
+          <svg class="strat-manifesto-ring" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="32" cy="32" r="28" stroke="rgba(246,241,231,0.2)" stroke-width="2" fill="none" />
+            <circle
+              id="stratManifestoRingProgress"
+              cx="32"
+              cy="32"
+              r="28"
+              stroke="var(--accent)"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              transform="rotate(-90 32 32)"
+            />
+          </svg>
         </div>
       </section>
 
-      <!-- 03 subservices: footnoted list, not cards -->
-      <section class="strat-block strat-detail" data-rail="03 — In Detail">
-        <p class="strat-kicker pd-reveal">In Detail</p>
-        <ol class="strat-footnotes">
-          <li class="pd-reveal">
-            <span class="strat-fn-num">01</span>
-            <h6>Account Management</h6>
-            <p>One point of contact across every service you use — briefs, timelines, and revisions
-            run through a single desk instead of getting re-explained to a new freelancer each time.</p>
-          </li>
-          <li class="pd-reveal">
-            <span class="strat-fn-num">02</span>
-            <h6>Brand Positioning</h6>
-            <p>Where you sit against competitors, in language specific enough that a designer or
-            copywriter can act on it without guessing what "premium but approachable" means.</p>
-          </li>
-          <li class="pd-reveal">
-            <span class="strat-fn-num">03</span>
-            <h6>Campaign Management</h6>
-            <p>A single campaign brief that photography, video, social, and paid media all work from,
-            so a launch doesn't fragment into five unrelated executions of the same idea.</p>
-          </li>
-        </ol>
+      <!-- 04 — the three disciplines, in depth: pinned flip sequence -->
+      <section class="strat-disciplines" data-rail="04 — In Depth" id="stratDisciplines">
+        <div class="strat-disc-stage">
+          <p class="strat-kicker strat-disc-kicker">In Detail</p>
+          <div class="strat-disc-card" id="disc-1" data-flip-index="0">
+            <div class="strat-disc-face strat-disc-front">
+              <span class="strat-disc-num">01</span>
+              <h3>Account Management</h3>
+              <p class="strat-disc-tagline">One desk, every brief.</p>
+            </div>
+            <div class="strat-disc-face strat-disc-back">
+              <p>
+                One point of contact across every service you use — briefs, timelines, and revisions
+                run through a single desk instead of getting re-explained to a new freelancer each time.
+              </p>
+              <p class="strat-disc-looks"><strong>Looks like:</strong> one shared brief doc every discipline reads from, updated once, not five times.</p>
+            </div>
+          </div>
+          <div class="strat-disc-card" id="disc-2" data-flip-index="1">
+            <div class="strat-disc-face strat-disc-front">
+              <span class="strat-disc-num">02</span>
+              <h3>Brand Positioning</h3>
+              <p class="strat-disc-tagline">Specific enough to act on.</p>
+            </div>
+            <div class="strat-disc-face strat-disc-back">
+              <p>
+                Where you sit against competitors, in language specific enough that a designer or
+                copywriter can act on it without guessing what "premium but approachable" means.
+              </p>
+              <p class="strat-disc-looks"><strong>Looks like:</strong> a one-page positioning statement any freelancer could pick up cold and get right.</p>
+            </div>
+          </div>
+          <div class="strat-disc-card" id="disc-3" data-flip-index="2">
+            <div class="strat-disc-face strat-disc-front">
+              <span class="strat-disc-num">03</span>
+              <h3>Campaign Management</h3>
+              <p class="strat-disc-tagline">One idea, every channel.</p>
+            </div>
+            <div class="strat-disc-face strat-disc-back">
+              <p>
+                A single campaign brief that photography, video, social, and paid media all work from,
+                so a launch doesn't fragment into five unrelated executions of the same idea.
+              </p>
+              <p class="strat-disc-looks"><strong>Looks like:</strong> one launch brief that photography, video, and social all cite by name.</p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <!-- 04 workflow: marginal notes -->
-      <section class="strat-block strat-workflow" data-rail="04 — How It Runs">
-        <p class="strat-kicker pd-reveal">How It Runs</p>
+      <!-- 05 — how we're different -->
+      <section class="strat-block strat-compare" data-rail="05 — The Difference">
+        <p class="strat-kicker" data-animate-variant="slide" data-animate-on-scroll="true">The Difference</p>
+        <h2 class="strat-compare-head" data-animate-variant="slide" data-animate-on-scroll="true">Same title. Different job.</h2>
+        <div class="strat-compare-table">
+          <div class="strat-compare-row strat-compare-row-head">
+            <span>Typical Agency</span>
+            <span>Lumine Strategy</span>
+          </div>
+          <div class="strat-compare-row" data-animate-variant="slide" data-animate-on-scroll="true">
+            <span class="strat-compare-no">A strategy deck you read once.</span>
+            <span class="strat-compare-yes">A brief the whole team works from every day.</span>
+          </div>
+          <div class="strat-compare-row" data-animate-variant="slide" data-animate-on-scroll="true">
+            <span class="strat-compare-no">A separate "strategist" who never touches production.</span>
+            <span class="strat-compare-yes">Tamuna runs the brief and sits in on delivery.</span>
+          </div>
+          <div class="strat-compare-row" data-animate-variant="slide" data-animate-on-scroll="true">
+            <span class="strat-compare-no">Quarterly review, three months after drift started.</span>
+            <span class="strat-compare-yes">A standing review that catches drift while it's cheap to fix.</span>
+          </div>
+          <div class="strat-compare-row" data-animate-variant="slide" data-animate-on-scroll="true">
+            <span class="strat-compare-no">Positioning language borrowed from a template.</span>
+            <span class="strat-compare-yes">Specific enough that a freelancer could act on it cold.</span>
+          </div>
+          <div class="strat-compare-row" data-animate-variant="slide" data-animate-on-scroll="true">
+            <span class="strat-compare-no">Billed as an add-on once you're already over budget.</span>
+            <span class="strat-compare-yes">Included in every package, from the first conversation.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 — the frameworks we use: cursor-spotlight card grid -->
+      <section class="strat-block strat-frameworks" id="stratFrameworks" data-rail="06 — The Tools">
+        <p class="strat-kicker" data-animate-variant="slide" data-animate-on-scroll="true">The Tools</p>
+        <h2 class="strat-fw-head" data-animate-variant="slide" data-animate-on-scroll="true">Named frameworks, not vibes.</h2>
+        <div class="strat-fw-grid">
+          <div class="strat-fw-card">
+            <span class="strat-fw-num">01</span>
+            <h5>Positioning Canvas</h5>
+            <p>A one-page map of where you sit against direct competitors, filled out before any design starts.</p>
+          </div>
+          <div class="strat-fw-card">
+            <span class="strat-fw-num">02</span>
+            <h5>Campaign Brief Template</h5>
+            <p>The single document every discipline — photo, video, social, paid — is required to work from.</p>
+          </div>
+          <div class="strat-fw-card">
+            <span class="strat-fw-num">03</span>
+            <h5>Content Pillar Map</h5>
+            <p>The 3–5 themes every post, ad, and shoot has to trace back to, so a calendar never turns into forty unrelated ideas.</p>
+          </div>
+          <div class="strat-fw-card">
+            <span class="strat-fw-num">04</span>
+            <h5>Voice &amp; Tone Matrix</h5>
+            <p>Specific enough that two different copywriters produce work that reads like one brand.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 — how it runs: workflow with a drawn connector spine -->
+      <section class="strat-block strat-workflow" data-rail="07 — How It Runs">
+        <p class="strat-kicker" data-animate-variant="slide" data-animate-on-scroll="true">How It Runs</p>
         <div class="strat-workflow-list">
-          <div class="strat-wf-row pd-reveal">
+          <svg class="strat-wf-spine" aria-hidden="true" viewBox="0 0 4 100" preserveAspectRatio="none">
+            <path id="stratWfSpine" d="M2 0 L2 100" stroke="var(--accent)" stroke-width="2" />
+          </svg>
+          <div class="strat-wf-row">
             <span class="strat-wf-num">01</span>
-            <h6>The Intake Call</h6>
-            <p>Thirty minutes, no deck. We ask what's actually failing right now, not what package
-            you think you need.</p>
+            <h6 data-animate-variant="slide" data-animate-on-scroll="true">The Intake Call</h6>
+            <p data-animate-variant="slide" data-animate-on-scroll="true">Thirty minutes, no deck. We ask what's actually failing right now, not what package you think you need.</p>
           </div>
-          <div class="strat-wf-row pd-reveal">
+          <div class="strat-wf-row">
             <span class="strat-wf-num">02</span>
-            <h6>The Brief</h6>
-            <p>Tamuna turns the call into a written brief — audience, objective, constraints — and it
-            doesn't move to production until you've signed off on it.</p>
+            <h6 data-animate-variant="slide" data-animate-on-scroll="true">The Brief</h6>
+            <p data-animate-variant="slide" data-animate-on-scroll="true">Tamuna turns the call into a written brief — audience, objective, constraints — and it doesn't move to production until you've signed off on it.</p>
           </div>
-          <div class="strat-wf-row pd-reveal">
+          <div class="strat-wf-row">
             <span class="strat-wf-num">03</span>
-            <h6>Allocation</h6>
-            <p>The right internal team gets assigned against the brief, not against whoever's free —
-            photography and copy don't get handed to the same generalist.</p>
+            <h6 data-animate-variant="slide" data-animate-on-scroll="true">Allocation</h6>
+            <p data-animate-variant="slide" data-animate-on-scroll="true">The right internal team gets assigned against the brief, not against whoever's free — photography and copy don't get handed to the same generalist.</p>
           </div>
-          <div class="strat-wf-row pd-reveal">
+          <div class="strat-wf-row">
             <span class="strat-wf-num">04</span>
-            <h6>The Standing Review</h6>
-            <p>A recurring check-in against the original brief, not a status meeting — so scope drift
-            gets caught while it's still cheap to fix.</p>
+            <h6 data-animate-variant="slide" data-animate-on-scroll="true">The Standing Review</h6>
+            <p data-animate-variant="slide" data-animate-on-scroll="true">A recurring check-in against the original brief, not a status meeting — so scope drift gets caught while it's still cheap to fix.</p>
+          </div>
+          <div class="strat-wf-row">
+            <span class="strat-wf-num">05</span>
+            <h6 data-animate-variant="slide" data-animate-on-scroll="true">The Retro</h6>
+            <p data-animate-variant="slide" data-animate-on-scroll="true">What worked gets written down before the next campaign starts, so the brief compounds instead of resetting to zero.</p>
           </div>
         </div>
       </section>
 
-      <!-- 05 proof: before/after audit spread -->
-      <section class="strat-block strat-proof grain" data-rail="05 — The Audit">
-        <p class="strat-kicker pd-reveal">Proof Of Concept — The Audit Spread</p>
-        <p class="strat-proof-note pd-reveal">
-          The format every strategy engagement starts with: a one-page audit of what's currently
-          running against what the brief actually calls for. Once real client work exists, this is
-          where it's shown.
+      <!-- 08 — the audit in practice: scroll-snap slider -->
+      <section class="strat-block strat-proof grain" data-rail="08 — The Audit">
+        <p class="strat-kicker strat-kicker-invert" data-animate-variant="slide" data-animate-on-scroll="true">Proof Of Concept — The Audit Spread</p>
+        <p class="strat-proof-note" data-animate-variant="slide" data-animate-on-scroll="true">
+          The format every strategy engagement starts with — a one-page audit of what's currently
+          running against what the brief actually calls for. Swipe through it; the first real client
+          audit gets published here.
         </p>
-        <div class="strat-proof-spread">
-          <div class="strat-proof-col">
-            <span class="strat-proof-tag">Before — As Found</span>
-            <p class="strat-proof-line">Three channels, three different voices, no shared brief.</p>
+        <div class="strat-proof-slider-wrap">
+          <button class="strat-proof-arrow strat-proof-prev" type="button" aria-label="Previous">←</button>
+          <div class="strat-proof-slider" id="stratProofSlider">
+            <div class="strat-proof-col">
+              <span class="strat-proof-tag">Before — As Found</span>
+              <p class="strat-proof-line">Three channels, three different voices, no shared brief.</p>
+            </div>
+            <div class="strat-proof-col strat-proof-col-mid">
+              <span class="strat-proof-tag">The Audit</span>
+              <p class="strat-proof-line">Every asset checked against one question: does this serve the objective?</p>
+            </div>
+            <div class="strat-proof-col strat-proof-col-after">
+              <span class="strat-proof-tag">After — Realigned</span>
+              <p class="strat-proof-line">One brief, one calendar, every channel reading from it.</p>
+            </div>
           </div>
-          <div class="strat-proof-col strat-proof-col-mid">
-            <span class="strat-proof-tag">The Audit</span>
-            <p class="strat-proof-line">Every asset checked against one question: does this serve the objective?</p>
+          <button class="strat-proof-arrow strat-proof-next" type="button" aria-label="Next">→</button>
+        </div>
+        <div class="strat-proof-dots" id="stratProofDots">
+          <span class="is-active"></span><span></span><span></span>
+        </div>
+      </section>
+
+      <!-- 09 — where strategy sits: radial ecosystem map -->
+      <section class="strat-block strat-ecosystem" data-rail="09 — Where It Sits" id="stratEcosystem">
+        <p class="strat-kicker" data-animate-variant="slide" data-animate-on-scroll="true">Where It Sits</p>
+        <h2 class="strat-eco-head" data-animate-variant="slide" data-animate-on-scroll="true">
+          The other eight services take direction from here.
+        </h2>
+        <div class="strat-eco-map" id="stratEcoMap">
+          <svg id="stratEcoSvg" viewBox="0 0 800 800" aria-hidden="true"></svg>
+          <div class="strat-eco-center">
+            <span>Strategy</span>
           </div>
-          <div class="strat-proof-col strat-proof-col-after">
-            <span class="strat-proof-tag">After — Realigned</span>
-            <p class="strat-proof-line">One brief, one calendar, every channel reading from it.</p>
+          <a href="/services/photography" class="strat-eco-node" data-node="0">Photography</a>
+          <a href="/services/video" class="strat-eco-node" data-node="1">Video Production</a>
+          <a href="/services/brand" class="strat-eco-node" data-node="2">Brand &amp; Design</a>
+          <a href="/services/smm" class="strat-eco-node" data-node="3">Social Media</a>
+          <a href="/services/marketing" class="strat-eco-node" data-node="4">Ads &amp; Marketing</a>
+          <a href="/services/web" class="strat-eco-node" data-node="5">Web Development</a>
+          <a href="/services/ai" class="strat-eco-node" data-node="6">AI Front Office</a>
+          <a href="/services/printing" class="strat-eco-node" data-node="7">Printing</a>
+        </div>
+      </section>
+
+      <!-- 10 — faq -->
+      <section class="strat-block strat-faq" data-rail="10 — Questions">
+        <p class="strat-kicker" data-animate-variant="slide" data-animate-on-scroll="true">Questions</p>
+        <div class="strat-faq-list" id="stratFaqList">
+          <div class="strat-faq-item">
+            <button class="strat-faq-q" type="button">Do I need this if I already have someone doing marketing in-house?</button>
+            <div class="strat-faq-a"><p>Usually yes, in a lighter form — most in-house marketers are running channels, not holding a cross-discipline brief. Strategy can run alongside your team instead of replacing them.</p></div>
+          </div>
+          <div class="strat-faq-item">
+            <button class="strat-faq-q" type="button">Can I book this on its own, without the other eight services?</button>
+            <div class="strat-faq-a"><p>Yes. It's most valuable feeding the other services, but a standalone audit-and-brief engagement is available on request — see Investment below.</p></div>
+          </div>
+          <div class="strat-faq-item">
+            <button class="strat-faq-q" type="button">What if I only need one of the three disciplines, not all of them?</button>
+            <div class="strat-faq-a"><p>Say so on the intake call. Account Management, Brand Positioning, and Campaign Management can run independently — most clients end up wanting at least two.</p></div>
+          </div>
+          <div class="strat-faq-item">
+            <button class="strat-faq-q" type="button">How is this different from a brand book?</button>
+            <div class="strat-faq-a"><p>A brand book documents how the brand looks. This documents what every campaign is trying to do — the layer above the visual system, not a replacement for Brand &amp; Graphic Design.</p></div>
+          </div>
+          <div class="strat-faq-item">
+            <button class="strat-faq-q" type="button">Who actually runs this day to day?</button>
+            <div class="strat-faq-a"><p>Tamuna, named on every brief — not a rotating point of contact.</p></div>
           </div>
         </div>
       </section>
 
-      <!-- 06 pricing + hook -->
-      <section class="strat-block strat-pricing" data-rail="06 — Investment">
-        <p class="strat-kicker pd-reveal">Investment</p>
-        <p class="strat-pricing-note pd-reveal">
+      <!-- 11 — pricing -->
+      <section class="strat-block strat-pricing" data-rail="11 — Investment">
+        <p class="strat-kicker" data-animate-variant="slide" data-animate-on-scroll="true">Investment</p>
+        <p class="strat-pricing-note" data-animate-variant="slide" data-animate-on-scroll="true">
           Included in every package — strategy isn't a line item you add later, it's how the other
-          eight services stay pointed at the same target.
+          eight services stay pointed at the same target. Running it standalone, with no bundled
+          production, is available by request after the intake call.
         </p>
       </section>
 
-      <section class="strat-hook">
+      <!-- 12 — hook -->
+      <section class="strat-hook" data-rail="12 — Start Here">
         <h3 data-animate-variant="slide" data-animate-on-scroll="true">
           Stop guessing what the work is for.
         </h3>
@@ -213,12 +399,12 @@
     <script type="module" src="/js/lenis-scroll.js"></script>
     <script type="module" src="/js/cursor.js"></script>
     <script type="module" src="/js/animated-copy.js"></script>
-    <script type="module" src="/js/simulation.js"></script>
     <script type="module" src="/js/nav.js"></script>
-    <script type="module" src="/js/home-extras.js"></script>
-    <script type="module" src="/js/scroll-reveal.js"></script>
     <script type="module" src="/js/services/strategy.js"></script>
-    <script type="module" src="/js/services/strategy-fluid.js"></script>
+    <script type="module" src="/js/services/strategy-thread.js"></script>
+    <script type="module" src="/js/services/strategy-manifesto.js"></script>
+    <script type="module" src="/js/services/strategy-disciplines.js"></script>
+    <script type="module" src="/js/services/strategy-map.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>
   </body>
