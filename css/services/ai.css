@@ -79,8 +79,22 @@
 
 /* — hero — */
 .ai-hero {
+  position: relative;
   padding: clamp(6rem, 11vw, 9rem) clamp(1.75rem, 5vw, 5rem) clamp(3rem, 6vw, 5rem);
   background-image: repeating-linear-gradient(180deg, rgba(242, 84, 45, 0.03) 0 1px, transparent 1px 3px);
+  overflow: hidden;
+}
+
+.ai-ascii-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: auto;
+}
+
+.ai-hero > *:not(.ai-ascii-bg) {
+  position: relative;
+  z-index: 1;
 }
 
 .ai-index {
