@@ -46,7 +46,9 @@
     <main class="page photo">
       <!-- 01 hero: one huge frame, grayscale until it loads its "color" -->
       <section class="photo-hero">
-        <div class="photo-hero-frame" data-photo-earn></div>
+        <div class="photo-hero-frame" data-photo-earn>
+          <canvas id="photoAperture" aria-hidden="true"></canvas>
+        </div>
         <div class="photo-hero-copy">
           <p class="photo-index pd-reveal">02 / Photography</p>
           <h1 data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.15">
