@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brand &amp; Graphic Design | Lumine | Creative Agency — Tbilisi</title>
+    <meta name="author" content="Lumine" />
+    <meta
+      name="description"
+      content="A system, not a logo in isolation — type, color, and usage rules written down once."
+    />
+    <meta name="theme-color" content="#f6f1e7" />
+    <meta property="og:title" content="Brand &amp; Graphic Design — Lumine" />
+    <meta property="og:description" content="A brand that looks improvised gets treated like one." />
+    <meta property="og:type" content="article" />
+    <meta property="og:image" content="/logo/lumine-logo-black.png" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon-mark.svg" />
+    <link rel="icon" type="image/png" href="/icons/favicon-mark.png" />
+    <link rel="stylesheet" href="/css/globals.css" />
+    <link rel="stylesheet" href="/css/nav.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/chat-widget.css" />
+    <link rel="stylesheet" href="/css/services/brand.css" />
+    <script src="/js/wrappedgl.js"></script>
+    <script src="/js/simulator.js"></script>
+  </head>
+  <body class="brand-page">
+    <nav>
+      <div class="nav-logo">
+        <a href="/"><img src="/logo/lumine-logo-white.png" alt="Lumine" /></a>
+      </div>
+      <div class="nav-icon"><img src="/logo/lumine-mark-2.svg" alt="" /></div>
+      <div class="nav-right">
+        <div class="nav-lang" role="group" aria-label="Language">
+          <span class="nav-lang-btn is-active">EN</span>
+          <span class="nav-lang-sep">/</span>
+          <a href="/ka/services" class="nav-lang-btn">GE</a>
+        </div>
+        <div class="nav-toggler"><p>Menu</p></div>
+      </div>
+    </nav>
+
+    <div id="custom-cursor"></div>
+
+    <main class="page brnd">
+      <!-- 01 hero: an interactive stage, not a static stack. The Lumine mark
+           sits center as a set of masked depth-layers - move the cursor and
+           four brand-colored echoes of the mark trail behind it with
+           staggered delay (adapted from the moblinks-interactive-logo
+           depth-parallax technique in the assets reference folder, swapped
+           to our own mark shape and palette). Copy is pinned to opposite
+           corners - top-left / bottom-right - instead of centered or
+           left-stacked, so the interactive mark has the whole stage. -->
+      <section class="brnd-hero">
+        <div class="brnd-hero-stage" aria-hidden="true">
+          <div class="brnd-depth-layer" style="--size: 92%; --tone: var(--d);"><div class="brnd-depth-mask"></div></div>
+          <div class="brnd-depth-layer" style="--size: 68%; --tone: var(--accent-deep);"><div class="brnd-depth-mask"></div></div>
+          <div class="brnd-depth-layer" style="--size: 46%; --tone: var(--accent);"><div class="brnd-depth-mask"></div></div>
+          <div class="brnd-depth-layer" style="--size: 26%; --tone: var(--accent-pastel);"><div class="brnd-depth-mask"></div></div>
+          <div class="brnd-depth-layer brnd-depth-layer-mark">
+            <img src="/logo/lumine-mark-2.svg" alt="" class="brnd-hero-mark-img" />
+          </div>
+        </div>
+
+        <div class="brnd-hero-top">
+          <p class="brnd-index pd-reveal">04 / Brand &amp; Graphic Design</p>
+          <h1 data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.15">
+            A System.
+          </h1>
+        </div>
+
+        <div class="brnd-hero-bottom">
+          <h1 class="brnd-hero-h1-accent" data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.35">
+            Not A <span class="accent">Logo.</span>
+          </h1>
+          <p class="brnd-hero-sub pd-reveal">
+            A brand that looks improvised gets treated like one. Type, color, and usage rules
+            written down once — logos and full brand books, posters, banners, business cards,
+            decks, packaging, and UI/UX, one visual language across all of it.
+          </p>
+        </div>
+      </section>
+
+      <!-- everything below the hero shares one continuous ambient
+           background (agitation through the hook) instead of each
+           section being its own flat rectangle of solid paper -->
+      <div class="brnd-below-hero">
+        <div class="brnd-ambient" aria-hidden="true"></div>
+
+      <!-- 02 agitation -->
+      <section class="brnd-agitation">
+        <blockquote data-animate-variant="slide" data-animate-on-scroll="true">
+          If every asset needs a new decision, you don't have a brand — you have a folder.
+        </blockquote>
+        <div class="brnd-agitation-grid">
+          <p class="pd-reveal">
+            A logo file with no rules around it turns every new asset into a fresh design
+            argument: which blue, which weight, how much padding. Nothing compounds.
+          </p>
+          <p class="brnd-turn pd-reveal">
+            <span class="brnd-turn-mark">→</span> So Lasha builds the system first — the logo
+            is just the first thing it gets applied to.
+          </p>
+        </div>
+      </section>
+
+      <!-- 03 subservices: a pinned horizontal filmstrip, not a static
+           grid - scrolling down moves you sideways through five reels,
+           each a full card with a number, focus line, and deliverables
+           list, so the five subservices read as a guided tour rather
+           than a wall of scroll. Adapted from the pinned scroll-scrub
+           pattern (Codegrid assets reference: maximatherapy-sticky-cards
+           and the wider template collection's pinned/scrubbed sections). -->
+      <section class="brnd-subs" id="brndSubs">
+        <div class="brnd-subs-pin">
+          <div class="brnd-subs-head">
+            <p class="brnd-kicker pd-reveal">The Subservices</p>
+            <h2 class="pd-reveal">Five disciplines. One system.</h2>
+            <div class="brnd-subs-rail" aria-hidden="true">
+              <span class="brnd-subs-rail-fill" id="brndSubsRailFill"></span>
+            </div>
+          </div>
+
+          <div class="brnd-subs-track" id="brndSubsTrack">
+            <article class="brnd-subs-card" style="--card-tone: var(--d); --card-ink: var(--l);">
+              <span class="brnd-subs-num">01</span>
+              <h3>Visual Identity</h3>
+              <p class="brnd-subs-focus"><strong>The Focus —</strong> The core DNA of the business.</p>
+              <p class="brnd-subs-deliv-label">The Deliverables</p>
+              <ul class="brnd-subs-deliv">
+                <li>Custom logo systems</li>
+                <li>Scalable color palettes</li>
+                <li>Strict typography rules</li>
+                <li>Comprehensive brand books</li>
+              </ul>
+            </article>
+
+            <article class="brnd-subs-card" style="--card-tone: var(--accent); --card-ink: var(--accent-ink);">
+              <span class="brnd-subs-num">02</span>
+              <h3>Digital Assets</h3>
+              <p class="brnd-subs-focus"><strong>The Focus —</strong> High-performance visuals for digital spaces.</p>
+              <p class="brnd-subs-deliv-label">The Deliverables</p>
+              <ul class="brnd-subs-deliv">
+                <li>Social media template kits</li>
+                <li>Dynamic ad creatives</li>
+                <li>Email newsletter graphics</li>
+                <li>High-stakes presentation decks</li>
+              </ul>
+            </article>
+
+            <article class="brnd-subs-card" style="--card-tone: var(--accent-deep); --card-ink: var(--l);">
+              <span class="brnd-subs-num">03</span>
+              <h3>Print</h3>
+              <p class="brnd-subs-focus"><strong>The Focus —</strong> Tactile extensions of the digital brand.</p>
+              <p class="brnd-subs-deliv-label">The Deliverables</p>
+              <ul class="brnd-subs-deliv">
+                <li>Premium business cards</li>
+                <li>Editorial-style brochures</li>
+                <li>Event posters</li>
+                <li>Corporate collateral</li>
+              </ul>
+            </article>
+
+            <article class="brnd-subs-card" style="--card-tone: var(--accent-pastel); --card-ink: var(--d);">
+              <span class="brnd-subs-num">04</span>
+              <h3>Packaging</h3>
+              <p class="brnd-subs-focus"><strong>The Focus —</strong> The unboxing experience as a marketing event.</p>
+              <p class="brnd-subs-deliv-label">The Deliverables</p>
+              <ul class="brnd-subs-deliv">
+                <li>Custom box design</li>
+                <li>Product labels</li>
+                <li>Material sourcing consultation</li>
+                <li>High-fidelity 3D mockups</li>
+              </ul>
+            </article>
+
+            <article class="brnd-subs-card" style="--card-tone: var(--d-soft); --card-ink: var(--l);">
+              <span class="brnd-subs-num">05</span>
+              <h3>UI/UX</h3>
+              <p class="brnd-subs-focus"><strong>The Focus —</strong> Frictionless digital interaction design.</p>
+              <p class="brnd-subs-deliv-label">The Deliverables</p>
+              <ul class="brnd-subs-deliv">
+                <li>Wireframing</li>
+                <li>Intuitive user-flow mapping</li>
+                <li>High-fidelity prototyping</li>
+                <li>Clean design-system handoffs for development</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 workflow: a build-up bar, not numbered circles on a line. Each
+           step fills in its own segment of a single continuous bar - the
+           system visibly accumulating, which is literally what the four
+           steps do -->
+      <section class="brnd-workflow">
+        <p class="brnd-kicker pd-reveal">How It Runs</p>
+        <div class="brnd-buildbar pd-reveal">
+          <div class="brnd-buildbar-seg" style="--seg-color: var(--d);"></div>
+          <div class="brnd-buildbar-seg" style="--seg-color: var(--accent-deep);"></div>
+          <div class="brnd-buildbar-seg" style="--seg-color: var(--accent);"></div>
+          <div class="brnd-buildbar-seg" style="--seg-color: var(--accent-pastel);"></div>
+        </div>
+        <div class="brnd-buildbar-labels">
+          <div class="brnd-bb-item pd-reveal">
+            <span class="brnd-bb-swatch" style="background: var(--d);"></span>
+            <h6>Discovery</h6>
+            <p>Competitors, audience, and what the brand needs to say that it currently doesn't.</p>
+          </div>
+          <div class="brnd-bb-item pd-reveal">
+            <span class="brnd-bb-swatch" style="background: var(--accent-deep);"></span>
+            <h6>Direction</h6>
+            <p>Two or three real visual directions, not ten half-finished ones to choose blind.</p>
+          </div>
+          <div class="brnd-bb-item pd-reveal">
+            <span class="brnd-bb-swatch" style="background: var(--accent);"></span>
+            <h6>System Build</h6>
+            <p>The chosen direction becomes rules — type scale, color roles, spacing, logo usage.</p>
+          </div>
+          <div class="brnd-bb-item pd-reveal">
+            <span class="brnd-bb-swatch" style="background: var(--accent-pastel);"></span>
+            <h6>Rollout</h6>
+            <p>The system applied across the first real set of assets, so day one already looks finished.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 proof: a real type + color specimen sheet - the site's own
+           actual typeface and palette, shown honestly, instead of a fake
+           mockup wall of business cards that don't exist yet -->
+      <section class="brnd-proof">
+        <p class="brnd-kicker pd-reveal">Proof Of Concept — The Specimen Sheet</p>
+        <p class="brnd-proof-note pd-reveal">
+          What a finished system actually is: a typeface and a palette with rules, not a stack of
+          mockups. This is Lumine's own — the exact type and color running this page.
+        </p>
+        <div class="brnd-specimen">
+          <div class="brnd-specimen-type pd-reveal">
+            <span class="brnd-specimen-label">LK Lumina — Display</span>
+            <p class="brnd-specimen-giant">Aa</p>
+            <span class="brnd-specimen-label">The quick brown fox</span>
+            <p class="brnd-specimen-sentence">THE QUICK BROWN FOX JUMPS</p>
+          </div>
+          <div class="brnd-specimen-colors pd-reveal">
+            <span class="brnd-specimen-label">Palette</span>
+            <div class="brnd-specimen-swatch" style="background: var(--d); color: var(--l);"><span>Ink</span><code>#17130F</code></div>
+            <div class="brnd-specimen-swatch" style="background: var(--accent); color: var(--accent-ink);"><span>Accent</span><code>#F2542D</code></div>
+            <div class="brnd-specimen-swatch" style="background: var(--accent-deep); color: var(--l);"><span>Deep</span><code>#7E2810</code></div>
+            <div class="brnd-specimen-swatch" style="background: var(--accent-pastel); color: var(--d);"><span>Pastel</span><code>#FAD4C8</code></div>
+            <div class="brnd-specimen-swatch" style="background: var(--l); color: var(--d); border: 1px solid rgba(23,19,15,0.15);"><span>Paper</span><code>#F6F1E7</code></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 pricing -->
+      <section class="brnd-pricing">
+        <p class="brnd-kicker pd-reveal">Investment</p>
+        <p class="brnd-pricing-note pd-reveal">Full brand book — 1,500–2,500₾, scoped to the number of applications you need on day one.</p>
+        <ul class="brnd-pricing-includes pd-reveal">
+          <li>Logo system + usage rules</li>
+          <li>Color &amp; type specification</li>
+          <li>First-application rollout</li>
+        </ul>
+      </section>
+
+      <section class="brnd-hook">
+        <h3 data-animate-variant="slide" data-animate-on-scroll="true">Give the next asset a rule to follow.</h3>
+        <a href="/contact?service=brand" class="btn btn-solid" data-magnetic>Build The System</a>
+      </section>
+      </div>
+
+      <a href="/services/smm" class="brnd-next">
+        <div class="container">
+          <span class="brnd-next-label">Next — 05</span>
+          <h3 data-animate-variant="slide" data-animate-on-scroll="true">Social Media Management</h3>
+          <span class="brnd-next-arrow">↗</span>
+        </div>
+      </a>
+    </main>
+
+    <footer>
+      <div id="footer-canvas"></div>
+      <div class="footer-inner">
+        <div class="footer-cta">
+          <span class="footer-cta-eyebrow" data-animate-variant="slide" data-animate-on-scroll="true">We Are Listening</span>
+          <h3 class="footer-cta-heading" data-animate-variant="slide" data-animate-on-scroll="true" data-animate-delay="0.1">Your Next Big Thing Starts Here</h3>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-logo">Lumine</p>
+          <p class="footer-copy">Tbilisi, Georgia</p>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/js/lenis-scroll.js"></script>
+    <script type="module" src="/js/cursor.js"></script>
+    <script type="module" src="/js/animated-copy.js"></script>
+    <script type="module" src="/js/simulation.js"></script>
+    <script type="module" src="/js/nav.js"></script>
+    <script type="module" src="/js/home-extras.js"></script>
+    <script type="module" src="/js/scroll-reveal.js"></script>
+    <script type="module" src="/js/services/brand-mark.js"></script>
+    <script type="module" src="/js/services/brand-subs.js"></script>
+    <script type="module" src="/js/footer.js"></script>
+    <script type="module" src="/js/chat-widget.js"></script>
+  </body>
+</html>

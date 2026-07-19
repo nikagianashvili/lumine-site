@@ -562,40 +562,8 @@ function initMenu() {
   // Desktop tracking loop starts only when menu is open.
 }
 
-// Nav uses mix-blend-mode:difference to auto-invert against whatever's
-// behind it — clean against a flat section background, but garbled when a
-// big bold heading scrolls directly underneath (two "busy" patterns
-// difference-blending together instead of one clean color inversion).
-// Past a small scroll threshold, give it a solid backdrop in the same
-// paper tone as the logo itself: difference-blending white-on-white still
-// resolves to a clean dark silhouette, so the look doesn't change, it just
-// stops depending on what happens to be scrolling past.
-function initNavSolidOnScroll() {
-  const nav = document.querySelector("nav");
-  if (!nav) return;
-
-  const THRESHOLD = 40;
-  let ticking = false;
-
-  function update() {
-    nav.classList.toggle("nav-solid", window.scrollY > THRESHOLD);
-    ticking = false;
-  }
-
-  function onScroll() {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(update);
-  }
-
-  update();
-  window.addEventListener("scroll", onScroll, { passive: true });
-}
-
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initMenu);
-  document.addEventListener("DOMContentLoaded", initNavSolidOnScroll);
 } else {
   initMenu();
-  initNavSolidOnScroll();
 }

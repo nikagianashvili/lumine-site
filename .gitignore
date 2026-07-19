@@ -3,8 +3,8 @@ dist/
 .DS_Store
 *.zip
 
-# personal Claude Code settings, not project config
-.claude/settings.local.json
+# personal Claude Code settings and local worktree checkouts, not project config
+.claude/
 
 # raw backups of pre-compression images — not part of the deployed site
 image-originals/

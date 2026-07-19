@@ -1,3 +1,13 @@
+/* Was a scroll-triggered difference-blend/solid toggle (transparent,
+   auto-inverting overlay at the top of the page; opaque bar past a scroll
+   threshold). mix-blend-mode can't be animated, so any transition between
+   those two states meant a window where a non-zero-alpha background was
+   paired with the wrong blend mode - which is what produced a black/grey
+   flash. Several attempts at fixing the transition timing (delaying the
+   blend-mode flip, matching it to the fade) still left edge cases that
+   flickered when scroll direction reversed mid-transition. Simpler and
+   more robust: nav is just always solid. No toggle, no transition, no
+   flicker class to chase. */
 nav {
   position: fixed;
   top: 0;
@@ -6,42 +16,7 @@ nav {
   display: flex;
   width: 100%;
   padding: 2rem;
-  background-color: transparent;
-  mix-blend-mode: difference;
-  transition: background-color 0.3s ease;
-}
-
-/*
-  Past a small scroll threshold (js/nav.js). Difference-blend can't just be
-  layered under an opaque background and left active — the WHOLE nav box
-  (background included) is the blend source, so the bar would still show
-  through/distort based on whatever's scrolled behind it, just less
-  obviously than before. Solid state opts out of blend-mode entirely
-  instead: real opaque background, real dark text/icon colors, and the
-  white logo/icon assets get CSS-inverted to black (their alpha channel is
-  untouched, so this needs no second logo file or extra <img>).
-*/
-nav.nav-solid {
   background-color: var(--l);
-  mix-blend-mode: normal;
-}
-
-nav.nav-solid .open-label,
-nav.nav-solid .close-label,
-nav.nav-solid .nav-lang-btn {
-  color: var(--d);
-}
-
-nav.nav-solid .nav-logo img {
-  filter: invert(1);
-}
-
-/* nav-icon is a black-on-transparent PNG (not the white sparkle SVG this
-   used to be), so its base state needs to be pushed white first — brightness(0)
-   crushes any anti-aliasing to solid black, invert(1) then flips it white.
-   Solid state just needs plain black, so brightness(0) alone (no invert). */
-nav.nav-solid .nav-icon img {
-  filter: brightness(0);
 }
 
 .nav-logo,
@@ -73,7 +48,7 @@ nav.nav-solid .nav-icon img {
   font-weight: 500;
   line-height: 1.125;
   text-transform: uppercase;
-  color: var(--l);
+  color: var(--d);
   background: none;
   border: none;
   cursor: pointer;
@@ -83,21 +58,14 @@ nav.nav-solid .nav-icon img {
 
 .nav-lang-btn.is-active {
   opacity: 1;
+  color: var(--accent);
 }
 
 .nav-lang-sep {
   font-family: var(--f-nm);
   font-size: 0.85rem;
-  color: var(--l);
-  opacity: 0.35;
-}
-
-nav.nav-solid .nav-lang-sep {
   color: var(--d);
-}
-
-nav.nav-solid .nav-lang-btn.is-active {
-  color: var(--accent);
+  opacity: 0.35;
 }
 
 .nav-logo a {
@@ -113,6 +81,9 @@ nav.nav-solid .nav-lang-btn.is-active {
   width: auto;
   height: 1.65rem;
   object-fit: contain;
+  /* asset is a white wordmark - always inverted now that nav is always
+     solid (was only inverted past the old scroll threshold) */
+  filter: invert(1);
 }
 
 .nav-icon {
@@ -126,7 +97,9 @@ nav.nav-solid .nav-lang-btn.is-active {
   width: auto;
   height: 1.75rem;
   object-fit: contain;
-  filter: brightness(0) invert(1);
+  /* black-on-transparent PNG - brightness(0) crushes any anti-aliasing to
+     solid black, which is already correct now that nav is always solid */
+  filter: brightness(0);
   /* scale, not height — a bigger box height here would grow the whole nav
      bar's row height (flex, no fixed height); transform paints larger
      without touching layout, so the header stays the same size */
@@ -165,7 +138,7 @@ nav.nav-solid .nav-lang-btn.is-active {
   line-height: 1.125;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--l);
+  color: var(--d);
   user-select: none;
   cursor: pointer;
   transform: translateY(0);

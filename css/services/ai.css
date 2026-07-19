@@ -1,0 +1,434 @@
+/* ══════════════════════════════════════════════════════════════════
+   AI Front Office — terminal/chat shell. The whole page sits inside a
+   persistent sidebar + channel-list frame, like the product it sells;
+   the live demo thread is promoted to the hero itself.
+   ══════════════════════════════════════════════════════════════════ */
+
+.ai-svc {
+  background-color: var(--d);
+  color: var(--l);
+}
+
+.ai-shell {
+  display: grid;
+  grid-template-columns: 15rem 1fr;
+  min-height: 100vh;
+}
+
+/* — sidebar — */
+.ai-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding: 8rem 1.75rem 2rem;
+  border-right: 1px solid rgba(246, 241, 231, 0.1);
+  background: #100d0a;
+}
+
+.ai-sidebar-brand {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  opacity: 0.5;
+}
+
+.ai-sidebar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.ai-sidebar-item {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  opacity: 0.45;
+}
+
+.ai-sidebar-item.is-active {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.ai-sidebar-status {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  opacity: 0.45;
+}
+
+.ai-status-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #4caf6a;
+  flex-shrink: 0;
+}
+
+.ai-kicker {
+  margin-bottom: 2rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  opacity: 0.45;
+}
+
+/* — hero — */
+.ai-hero {
+  position: relative;
+  padding: clamp(6rem, 11vw, 9rem) clamp(1.75rem, 5vw, 5rem) clamp(3rem, 6vw, 5rem);
+  background-image: repeating-linear-gradient(180deg, rgba(242, 84, 45, 0.03) 0 1px, transparent 1px 3px);
+  overflow: hidden;
+}
+
+.ai-ascii-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: auto;
+}
+
+.ai-hero > *:not(.ai-ascii-bg) {
+  position: relative;
+  z-index: 1;
+}
+
+.ai-index {
+  margin-bottom: 1.25rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
+
+.ai-hero h1 {
+  max-width: 40rem;
+  font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+  margin-bottom: 1.5rem;
+}
+
+.ai-hero h1 .accent {
+  color: var(--accent);
+}
+
+.ai-hero-sub {
+  max-width: 36rem;
+  margin-bottom: 2.5rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* — live demo panel — */
+.ai-demo {
+  max-width: 26rem;
+  border-radius: 0.85rem;
+  overflow: hidden;
+  background: #100d0a;
+  border: 1px solid rgba(246, 241, 231, 0.12);
+}
+
+.ai-demo-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.1rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  opacity: 0.55;
+  border-bottom: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.ai-demo-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #4caf6a;
+}
+
+.ai-demo-thread {
+  min-height: 9rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.ai-demo-thread p {
+  max-width: 80%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.9rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  text-transform: none;
+  line-height: 1.35;
+}
+
+.ai-demo-thread .from-user {
+  align-self: flex-end;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-bottom-right-radius: 0.2rem;
+}
+
+.ai-demo-thread .from-bot {
+  align-self: flex-start;
+  background: rgba(246, 241, 231, 0.08);
+  border-bottom-left-radius: 0.2rem;
+}
+
+/* — agitation: message bubble — */
+.ai-agitation {
+  padding: 0 clamp(1.75rem, 5vw, 5rem) clamp(3rem, 6vw, 5rem);
+}
+
+.ai-bubble {
+  max-width: 40rem;
+  padding: 2rem;
+  border-radius: 1rem;
+  background: rgba(246, 241, 231, 0.04);
+  border: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.ai-bubble-from {
+  display: block;
+  margin-bottom: 1rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+}
+
+.ai-bubble blockquote {
+  margin-bottom: 1.25rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.1;
+  font-size: clamp(1.35rem, 2.6vw, 2rem);
+}
+
+.ai-bubble p {
+  margin-bottom: 1rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+.ai-turn {
+  opacity: 1 !important;
+  font-weight: 700;
+  color: var(--l);
+}
+
+.ai-turn-mark {
+  color: var(--accent);
+  font-family: var(--f-h);
+}
+
+/* — channels — */
+.ai-channels {
+  padding: clamp(2rem, 5vw, 3rem) clamp(1.75rem, 5vw, 5rem) clamp(3rem, 6vw, 5rem);
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.ai-channel-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(246, 241, 231, 0.1);
+}
+
+.ai-channel {
+  padding: 1.75rem;
+  background: var(--d);
+}
+
+.ai-channel-tag {
+  display: block;
+  margin-bottom: 1.25rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  color: var(--accent);
+}
+
+.ai-channel h6 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+}
+
+.ai-channel p {
+  text-transform: none;
+  opacity: 0.6;
+  font-size: 0.85rem;
+}
+
+/* — workflow — */
+.ai-workflow {
+  padding: clamp(2rem, 5vw, 3rem) clamp(1.75rem, 5vw, 5rem) clamp(3rem, 6vw, 5rem);
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.ai-wf-row {
+  display: flex;
+  gap: 1.25rem;
+  max-width: 34rem;
+  padding: 1.1rem 0;
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.ai-wf-num {
+  flex-shrink: 0;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+.ai-wf-row h6 {
+  margin-bottom: 0.3rem;
+  font-size: 1.15rem;
+}
+
+.ai-wf-row p {
+  text-transform: none;
+  opacity: 0.6;
+  font-size: 0.85rem;
+}
+
+/* — proof / pricing — */
+.ai-proof,
+.ai-pricing {
+  padding: clamp(2.5rem, 5vw, 4rem) clamp(1.75rem, 5vw, 5rem);
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.ai-proof-note,
+.ai-pricing-note {
+  max-width: 34rem;
+  text-transform: none;
+  opacity: 0.65;
+}
+
+.ai-proof-note {
+  margin-bottom: 2rem;
+}
+
+.ai-stack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1px;
+  max-width: 60rem;
+  background: rgba(246, 241, 231, 0.1);
+}
+
+.ai-stack-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.5rem;
+  background: #100d0a;
+}
+
+.ai-stack-status {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #4caf6a;
+  margin-bottom: 0.4rem;
+}
+
+.ai-stack-name {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  color: var(--l);
+}
+
+.ai-stack-desc {
+  font-family: var(--f-nm);
+  font-size: 0.78rem;
+  text-transform: none;
+  opacity: 0.55;
+  line-height: 1.35;
+}
+
+/* — hook — */
+.ai-hook {
+  padding: 5rem clamp(1.75rem, 5vw, 5rem);
+  text-align: center;
+}
+
+.ai-hook h3 {
+  max-width: 26rem;
+  margin: 0 auto 2rem;
+  font-size: clamp(2rem, 4.2vw, 3.25rem);
+}
+
+/* — next — */
+.ai-next {
+  display: block;
+  padding: 3.5rem clamp(1.75rem, 5vw, 5rem);
+  text-decoration: none;
+  color: var(--l);
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+  transition: background-color 0.4s ease;
+}
+
+.ai-next:hover {
+  background-color: rgba(246, 241, 231, 0.05);
+}
+
+.ai-next .container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0;
+}
+
+.ai-next-label {
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.ai-next h3 {
+  flex: 1;
+  font-size: clamp(1.6rem, 3.5vw, 2.75rem);
+}
+
+.ai-next-arrow {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .ai-shell {
+    grid-template-columns: 1fr;
+  }
+  .ai-sidebar {
+    position: relative;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 6.5rem 1.5rem 1.5rem;
+    gap: 1.5rem;
+  }
+  .ai-sidebar-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .ai-sidebar-status {
+    margin-top: 0;
+  }
+  .ai-channel-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .ai-channel-grid {
+    grid-template-columns: 1fr;
+  }
+}

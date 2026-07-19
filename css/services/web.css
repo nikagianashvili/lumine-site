@@ -1,0 +1,388 @@
+/* ══════════════════════════════════════════════════════════════════
+   Web Development & Digital Platforms — literal browser chrome. The
+   hero and proof section are both framed as real browser windows;
+   subservices read as tagged components in a grid, like markup.
+   ══════════════════════════════════════════════════════════════════ */
+
+.web {
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.web-kicker {
+  margin-bottom: 2rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.45;
+}
+
+/* — hero: browser chrome — */
+.web-hero {
+  padding: clamp(7rem, 13vw, 10rem) clamp(1.5rem, 5vw, 5rem) clamp(3rem, 6vw, 5rem);
+}
+
+.web-index {
+  margin-bottom: 1.5rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.web-browser,
+.web-proof-browser {
+  border-radius: 0.85rem;
+  overflow: hidden;
+  border: 1px solid rgba(23, 19, 15, 0.15);
+  box-shadow: 0 2rem 4rem -2rem rgba(23, 19, 15, 0.25);
+}
+
+.web-browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.1rem;
+  background: #e5ddcc;
+  border-bottom: 1px solid rgba(23, 19, 15, 0.1);
+}
+
+.web-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: rgba(23, 19, 15, 0.2);
+}
+
+.web-browser-url {
+  margin-left: 1rem;
+  padding: 0.25rem 0.9rem;
+  border-radius: 100px;
+  background: var(--l);
+  font-family: var(--f-nm);
+  font-size: 0.75rem;
+  text-transform: none;
+  opacity: 0.6;
+}
+
+.web-browser-body {
+  position: relative;
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3.5rem);
+  background: var(--white);
+  overflow: hidden;
+  min-height: 22rem;
+}
+
+.web-grid-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.web-browser-body > *:not(.web-grid-bg) {
+  position: relative;
+  z-index: 1;
+}
+
+.web-hero h1 {
+  max-width: 40rem;
+  font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+  margin-bottom: 1.5rem;
+}
+
+.web-hero h1 .accent {
+  color: var(--accent);
+}
+
+.web-hero-sub {
+  max-width: 34rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* — agitation — */
+.web-agitation {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 5vw, 5rem);
+  max-width: 46rem;
+}
+
+.web-agitation blockquote {
+  margin-bottom: 1.5rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.05;
+  font-size: clamp(1.65rem, 3.4vw, 2.75rem);
+}
+
+.web-agitation p {
+  max-width: 36rem;
+  margin-bottom: 1.25rem;
+  text-transform: none;
+  opacity: 0.65;
+}
+
+.web-turn {
+  opacity: 1 !important;
+  font-weight: 700;
+}
+
+.web-turn-mark {
+  color: var(--accent);
+  font-family: var(--f-h);
+}
+
+/* — block grid: markup-tagged component cards — */
+.web-grid-section {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 5vw, 5rem);
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.web-block-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(23, 19, 15, 0.12);
+}
+
+.web-block {
+  padding: 2rem;
+  background: var(--l);
+}
+
+.web-block-lg {
+  grid-column: span 2;
+}
+
+.web-block-tag {
+  display: block;
+  margin-bottom: 1.25rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+
+.web-block h6 {
+  margin-bottom: 0.6rem;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+}
+
+.web-block p {
+  text-transform: none;
+  opacity: 0.65;
+  font-size: 0.9rem;
+  max-width: 28rem;
+}
+
+/* — workflow — */
+.web-workflow {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 5vw, 5rem);
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.web-wf-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.5rem;
+}
+
+.web-wf-num {
+  display: block;
+  margin-bottom: 1rem;
+  font-family: var(--f-h);
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.web-wf-item h6 {
+  margin-bottom: 0.6rem;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+}
+
+.web-wf-item p {
+  text-transform: none;
+  opacity: 0.65;
+  font-size: 0.9rem;
+}
+
+/* — proof — */
+.web-proof {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 5vw, 5rem);
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.web-proof-note {
+  max-width: 30rem;
+  margin-bottom: 2rem;
+  text-transform: none;
+  opacity: 0.6;
+}
+
+.web-proof-browser {
+  max-width: 42rem;
+}
+
+.web-proof-browser-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  aspect-ratio: 16/10;
+  background:
+    repeating-linear-gradient(0deg, rgba(23, 19, 15, 0.06) 0 1px, transparent 1px 2.25rem),
+    repeating-linear-gradient(90deg, rgba(23, 19, 15, 0.06) 0 1px, transparent 1px 2.25rem),
+    var(--white);
+}
+
+.web-wire-nav {
+  width: 40%;
+  height: 0.85rem;
+  border-radius: 0.2rem;
+  background: rgba(23, 19, 15, 0.15);
+}
+
+.web-wire-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.web-wire-line {
+  width: 55%;
+  height: 0.65rem;
+  border-radius: 0.2rem;
+  background: var(--accent-pastel);
+}
+
+.web-wire-line-lg {
+  width: 75%;
+  height: 1.4rem;
+  background: var(--accent);
+}
+
+.web-wire-cards {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.web-wire-card {
+  flex: 1;
+  height: 3.5rem;
+  border-radius: 0.4rem;
+  background: rgba(23, 19, 15, 0.08);
+}
+
+/* — pricing — */
+.web-pricing {
+  padding: 4rem clamp(1.5rem, 5vw, 5rem);
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.web-pricing-note {
+  max-width: 30rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.15;
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+
+.web-pricing-includes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  list-style: none;
+}
+
+.web-pricing-includes li {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(23, 19, 15, 0.15);
+  border-radius: 100px;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* — hook — */
+.web-hook {
+  padding: 6rem clamp(1.5rem, 5vw, 5rem);
+  text-align: center;
+  background-color: var(--d);
+  color: var(--l);
+}
+
+.web-hook h3 {
+  max-width: 26rem;
+  margin: 0 auto 2rem;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+}
+
+/* — next — */
+.web-next {
+  display: block;
+  padding: 4rem clamp(1.5rem, 5vw, 5rem);
+  text-decoration: none;
+  color: var(--d);
+  background-color: var(--l);
+  transition: background-color 0.4s ease;
+}
+
+.web-next:hover {
+  background-color: var(--accent-pastel);
+}
+
+.web-next .container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0;
+}
+
+.web-next-label {
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.web-next h3 {
+  flex: 1;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+}
+
+.web-next-arrow {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .web-block-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .web-block-lg {
+    grid-column: span 2;
+  }
+  .web-wf-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .web-block-grid {
+    grid-template-columns: 1fr;
+  }
+  .web-block-lg {
+    grid-column: span 1;
+  }
+  .web-wf-grid {
+    grid-template-columns: 1fr;
+  }
+}
