@@ -1,11 +1,12 @@
 /* ══════════════════════════════════════════════════════════════════
-   Brand & Graphic Design — rebuilt around the actual Lumine mark
-   drawing itself (js/services/brand-mark.js, adapted from the
-   scroll-powered-svg-stroke technique in the assets reference folder),
-   a poster-style CENTERED hero instead of a left-text/right-empty
-   split, a build-up progress bar for the workflow (the system visibly
-   accumulating, not numbered circles on a line), and a real type +
-   color specimen sheet for proof (not gradient mockup tiles).
+   Brand & Graphic Design — the hero is an interactive stage: the real
+   Lumine mark, masked into four brand-colored depth layers that trail
+   the cursor with staggered delay (js/services/brand-mark.js, adapted
+   from the moblinks-interactive-logo depth-parallax technique in the
+   assets reference folder). Copy sits in opposing corners, not
+   centered and not a left-text/right-empty split. Workflow is a
+   build-up progress bar (the system visibly accumulating), and proof
+   is a real type + color specimen sheet, not gradient mockup tiles.
    ══════════════════════════════════════════════════════════════════ */
 
 .brnd {
@@ -24,16 +25,73 @@
   opacity: 0.45;
 }
 
-/* — hero: centered poster composition. Index line, headline half,
-   the mark drawing itself at full size as the visual anchor, second
-   headline half, then supporting copy — a vertical stack that reads
-   top-to-bottom instead of a text column beside dead space — */
+/* — hero: full-bleed interactive stage, copy pinned to opposing
+   corners so the mark's cursor-trail has the whole stage to move in — */
 .brnd-hero {
+  position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  min-height: max(82vh, 40rem);
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 7vw, 5rem);
+  overflow: hidden;
+}
+
+.brnd-hero-top {
+  margin-top: clamp(3.5rem, 7vw, 5.5rem);
+}
+
+.brnd-hero-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.brnd-depth-layer {
+  position: absolute;
+  width: 220%;
+  height: 220%;
+  top: -60%;
+  left: -60%;
+  will-change: transform;
+}
+
+.brnd-depth-mask {
+  width: 100%;
+  height: 100%;
+  background: var(--tone);
+  opacity: 0.6;
+  -webkit-mask:
+    linear-gradient(#fff, #fff),
+    url("/logo/lumine-mark-2.svg") center / var(--size) no-repeat;
+  -webkit-mask-composite: subtract;
+  mask:
+    linear-gradient(#fff, #fff),
+    url("/logo/lumine-mark-2.svg") center / var(--size) no-repeat;
+  mask-composite: subtract;
+}
+
+.brnd-depth-layer-mark {
+  display: flex;
   align-items: center;
-  text-align: center;
-  padding: clamp(5rem, 11vw, 8rem) clamp(1.5rem, 8vw, 9rem) clamp(3rem, 7vw, 5rem);
+  justify-content: center;
+}
+
+.brnd-hero-mark-img {
+  width: clamp(5rem, 9vw, 7.5rem);
+  height: auto;
+  filter: drop-shadow(0 0.75rem 1.5rem rgba(23, 19, 15, 0.25));
+}
+
+.brnd-hero-top,
+.brnd-hero-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.brnd-hero-bottom {
+  align-self: flex-end;
+  text-align: right;
 }
 
 .brnd-index {
@@ -46,36 +104,37 @@
 }
 
 .brnd-hero h1 {
-  font-size: clamp(2.25rem, 7vw, 5rem);
+  font-size: clamp(2.25rem, 6vw, 4.25rem);
   line-height: 0.98;
-}
-
-.brnd-hero-h1-accent {
-  margin-top: -0.15em;
 }
 
 .brnd-hero-h1-accent .accent {
   color: var(--accent);
 }
 
-.brnd-mark {
-  width: clamp(7rem, 16vw, 11rem);
-  height: clamp(7rem, 16vw, 11rem);
-  margin: clamp(1.25rem, 4vw, 2.5rem) 0;
-}
-
-.brnd-mark path {
-  fill: none;
-  stroke: var(--accent);
-}
-
 .brnd-hero-sub {
-  max-width: 34rem;
+  max-width: 26rem;
   margin-top: 1.5rem;
+  margin-left: auto;
   text-transform: none;
   opacity: 0.75;
   font-size: 1.02rem;
   line-height: 1.55;
+}
+
+@media (max-width: 700px) {
+  .brnd-hero {
+    min-height: 60vh;
+  }
+  .brnd-depth-layer:not(.brnd-depth-layer-mark) {
+    display: none;
+  }
+  .brnd-hero-bottom {
+    text-align: left;
+  }
+  .brnd-hero-sub {
+    margin-left: 0;
+  }
 }
 
 /* — agitation — */

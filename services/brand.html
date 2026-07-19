@@ -44,29 +44,42 @@
     <div id="custom-cursor"></div>
 
     <main class="page brnd">
-      <!-- 01 hero: centered, full-width. The actual Lumine mark draws
-           itself stroke-by-stroke then fills solid - a real brand-design
-           artifact in motion, headline set above and below it rather than
-           pinned to one side with the other half empty -->
+      <!-- 01 hero: an interactive stage, not a static stack. The Lumine mark
+           sits center as a set of masked depth-layers - move the cursor and
+           four brand-colored echoes of the mark trail behind it with
+           staggered delay (adapted from the moblinks-interactive-logo
+           depth-parallax technique in the assets reference folder, swapped
+           to our own mark shape and palette). Copy is pinned to opposite
+           corners - top-left / bottom-right - instead of centered or
+           left-stacked, so the interactive mark has the whole stage. -->
       <section class="brnd-hero">
-        <p class="brnd-index pd-reveal">04 / Brand &amp; Graphic Design</p>
-        <h1 data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.15">
-          A System.
-        </h1>
-        <svg id="brndMarkSvg" class="brnd-mark" viewBox="0 0 300 300" aria-hidden="true">
-          <path
-            id="brndMarkPath"
-            d="M229.91,145.323v-26.593c0-2.227-1.805-4.033-4.033-4.033h-20.288c-11.221,0-20.318-9.097-20.318-20.318V17.154c0-2.227-1.805-4.033-4.033-4.033h-27.483c-2.227,0-4.033,1.805-4.033,4.033v48.506c0,2.431-1.971,4.402-4.402,4.402h-26.592c-2.227,0-4.033,1.805-4.033,4.033v20.287c0,11.221-9.096,20.317-20.317,20.317H17.153c-2.227,0-4.033,1.805-4.033,4.033v27.512c0,2.227,1.805,4.033,4.033,4.033h48.506c2.431,0,4.402,1.971,4.402,4.402v26.564c0,2.227,1.805,4.033,4.033,4.033h20.288c11.221,0,20.318,9.097,20.318,20.318v77.256c0,2.227,1.805,4.033,4.033,4.033h27.512c2.227,0,4.033-1.805,4.033-4.033v-48.506c0-2.431,1.971-4.402,4.402-4.402h26.563c2.227,0,4.033-1.805,4.033-4.033v-20.287c0-11.237,9.109-20.346,20.346-20.346h77.228c2.227,0,4.033-1.805,4.033-4.033v-27.482c0-2.227-1.805-4.033-4.033-4.033h-48.535c-2.431,0-4.402-1.971-4.402-4.402ZM147.57,189.133c-5.598-17.367-19.343-31.114-36.694-36.69-2.398-.771-2.4-4.095-.002-4.868,17.352-5.59,31.098-19.34,36.696-36.709.773-2.397,4.098-2.395,4.867.004,5.57,17.367,19.31,31.115,36.66,36.705,2.398.773,2.396,4.097-.002,4.868-17.349,5.576-31.088,19.321-36.658,36.687-.769,2.398-4.095,2.401-4.867.004Z"
-          />
-        </svg>
-        <h1 class="brnd-hero-h1-accent" data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.35">
-          Not A <span class="accent">Logo.</span>
-        </h1>
-        <p class="brnd-hero-sub pd-reveal">
-          A brand that looks improvised gets treated like one. Type, color, and usage rules
-          written down once — logos and full brand books, posters, banners, business cards,
-          decks, packaging, and UI/UX, one visual language across all of it.
-        </p>
+        <div class="brnd-hero-stage" aria-hidden="true">
+          <div class="brnd-depth-layer" style="--size: 92%; --tone: var(--d);"><div class="brnd-depth-mask"></div></div>
+          <div class="brnd-depth-layer" style="--size: 68%; --tone: var(--accent-deep);"><div class="brnd-depth-mask"></div></div>
+          <div class="brnd-depth-layer" style="--size: 46%; --tone: var(--accent);"><div class="brnd-depth-mask"></div></div>
+          <div class="brnd-depth-layer" style="--size: 26%; --tone: var(--accent-pastel);"><div class="brnd-depth-mask"></div></div>
+          <div class="brnd-depth-layer brnd-depth-layer-mark">
+            <img src="/logo/lumine-mark-2.svg" alt="" class="brnd-hero-mark-img" />
+          </div>
+        </div>
+
+        <div class="brnd-hero-top">
+          <p class="brnd-index pd-reveal">04 / Brand &amp; Graphic Design</p>
+          <h1 data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.15">
+            A System.
+          </h1>
+        </div>
+
+        <div class="brnd-hero-bottom">
+          <h1 class="brnd-hero-h1-accent" data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.35">
+            Not A <span class="accent">Logo.</span>
+          </h1>
+          <p class="brnd-hero-sub pd-reveal">
+            A brand that looks improvised gets treated like one. Type, color, and usage rules
+            written down once — logos and full brand books, posters, banners, business cards,
+            decks, packaging, and UI/UX, one visual language across all of it.
+          </p>
+        </div>
       </section>
 
       <!-- 02 agitation -->

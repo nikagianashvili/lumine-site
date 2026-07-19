@@ -1,61 +1,66 @@
-// Brand page signature: the actual Lumine mark, drawn stroke-by-stroke like
-// a vector tool constructing it, then filled solid - a real brand-design
-// artifact in motion (this is literally what the service produces) rather
-// than an abstract effect standing in for the subject. Vanilla SVG
-// path-length stroke animation, no library.
+// Brand page signature: the real Lumine mark as an interactive depth stage.
+// Four masked copies of the mark, each a different brand color, trail the
+// cursor with staggered delay behind the crisp static mark on top - a real
+// brand-design artifact responding to touch, not an abstract effect standing
+// in for the subject. Adapted from the moblinks-interactive-logo
+// depth-parallax technique (assets reference folder), swapped to our own
+// mark shape and palette.
+import gsap from "gsap";
 
 function initBrandMark() {
-  const svg = document.getElementById("brndMarkSvg");
-  const path = document.getElementById("brndMarkPath");
-  if (!svg || !path) return;
+  const hero = document.querySelector(".brnd-hero");
+  const layers = gsap.utils.toArray(".brnd-depth-layer");
+  if (!hero || !layers.length) return;
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const length = path.getTotalLength();
+  if (reduced) return;
 
-  path.style.fill = "none";
-  path.style.stroke = "var(--accent)";
-  path.style.strokeWidth = "3";
-  path.style.strokeDasharray = String(length);
-  path.style.strokeDashoffset = reduced ? "0" : String(length);
+  const SENSITIVITY = 0.22;
+  const LERP = 0.05;
+  const STAGGER_DELAY = 7;
+  const total = layers.length;
 
-  if (reduced) {
-    path.style.fill = "var(--d)";
-    path.style.stroke = "none";
-    return;
-  }
+  const mouse = { x: 0, y: 0 };
 
-  let start = null;
-  const DRAW_MS = 2200;
-  const HOLD_MS = 300;
-  const FILL_MS = 700;
+  hero.addEventListener("mousemove", (e) => {
+    const rect = hero.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    mouse.y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+  });
 
-  function frame(ts) {
-    if (start == null) start = ts;
-    const elapsed = ts - start;
+  hero.addEventListener("mouseleave", () => {
+    mouse.x = 0;
+    mouse.y = 0;
+  });
 
-    if (elapsed < DRAW_MS) {
-      const t = elapsed / DRAW_MS;
-      const eased = 1 - Math.pow(1 - t, 3);
-      path.style.strokeDashoffset = String(length * (1 - eased));
-      requestAnimationFrame(frame);
-    } else if (elapsed < DRAW_MS + HOLD_MS) {
-      path.style.strokeDashoffset = "0";
-      requestAnimationFrame(frame);
-    } else if (elapsed < DRAW_MS + HOLD_MS + FILL_MS) {
-      const t = (elapsed - DRAW_MS - HOLD_MS) / FILL_MS;
-      path.style.stroke = "var(--accent)";
-      path.style.fill = "var(--d)";
-      path.style.fillOpacity = String(t);
-      path.style.strokeOpacity = String(1 - t * 0.7);
-      requestAnimationFrame(frame);
-    } else {
-      path.style.fillOpacity = "1";
-      path.style.strokeOpacity = "0.3";
-      svg.classList.add("is-drawn");
-    }
-  }
+  const bufferSize = total * STAGGER_DELAY + 1;
+  const trail = [];
 
-  requestAnimationFrame(frame);
+  const tracked = layers.map((el, i) => ({
+    el,
+    delay: (total - 1 - i) * STAGGER_DELAY,
+    current: { x: 0, y: 0 },
+  }));
+
+  gsap.ticker.add(() => {
+    const rect = hero.getBoundingClientRect();
+
+    trail.push({
+      x: mouse.x * rect.width * SENSITIVITY,
+      y: mouse.y * rect.height * SENSITIVITY,
+    });
+    if (trail.length > bufferSize) trail.shift();
+
+    tracked.forEach((layer) => {
+      const idx = Math.max(0, trail.length - 1 - layer.delay);
+      const target = trail[idx];
+
+      layer.current.x += (target.x - layer.current.x) * LERP;
+      layer.current.y += (target.y - layer.current.y) * LERP;
+
+      gsap.set(layer.el, { x: layer.current.x, y: layer.current.y });
+    });
+  });
 }
 
 // Workflow build-bar: each of the four segments scales in from the left as
