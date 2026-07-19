@@ -35,10 +35,19 @@ function initWorkflowSpine() {
   drawOnScroll(path, { trigger: list, start: "top 75%", end: "bottom 75%" });
 }
 
+function initMarginThreads() {
+  document.querySelectorAll(".strat-margin-thread path").forEach((path) => {
+    const section = path.closest("section");
+    if (!section) return;
+    drawOnScroll(path, { trigger: section, start: "top 85%", end: "bottom 60%" });
+  });
+}
+
 function init() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   initHeroThread();
   initWorkflowSpine();
+  if (!window.matchMedia("(max-width: 900px)").matches) initMarginThreads();
 }
 
 if (document.readyState === "loading") {
