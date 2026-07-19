@@ -1,0 +1,290 @@
+/* ══════════════════════════════════════════════════════════════════
+   Printing Services — tactile print shop. Warm paper throughout, grain
+   texture, letterpress "run" numbering instead of plain indices, and
+   tilted stock-sample cards that straighten on hover — the one page
+   built to feel physical.
+   ══════════════════════════════════════════════════════════════════ */
+
+.print-svc {
+  background-color: var(--l);
+  color: var(--d);
+  background-image: radial-gradient(rgba(23, 19, 15, 0.035) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+.print-kicker {
+  margin-bottom: 2.5rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.45;
+}
+
+/* — hero — */
+.print-hero {
+  padding: clamp(8rem, 15vw, 12rem) clamp(1.75rem, 6vw, 6rem) clamp(4rem, 8vw, 6rem);
+}
+
+.print-edition {
+  margin-bottom: 1.5rem;
+  font-family: var(--f-h);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+}
+
+.print-hero h1 {
+  max-width: 42rem;
+  font-size: clamp(2.75rem, 6.5vw, 5.5rem);
+  margin-bottom: 1.5rem;
+}
+
+.print-hero h1 .accent {
+  color: var(--accent);
+}
+
+.print-hero-sub {
+  max-width: 34rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* — agitation — */
+.print-agitation {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.75rem, 6vw, 6rem);
+  max-width: 46rem;
+}
+
+.print-agitation blockquote {
+  margin-bottom: 1.5rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.05;
+  font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+}
+
+.print-agitation p {
+  max-width: 34rem;
+  margin-bottom: 1.25rem;
+  text-transform: none;
+  opacity: 0.65;
+}
+
+.print-turn {
+  opacity: 1 !important;
+  font-weight: 700;
+}
+
+.print-turn-mark {
+  color: var(--accent);
+  font-family: var(--f-h);
+}
+
+/* — stock cards: letterpress run numbers, subtle tilt — */
+.print-stock-section {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.75rem, 6vw, 6rem);
+}
+
+.print-stock-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.print-stock {
+  padding: 1.75rem;
+  background: var(--white);
+  border-radius: 0.3rem;
+  box-shadow: 0 1.5rem 2.5rem -1.5rem rgba(23, 19, 15, 0.3);
+  transform: rotate(-1.2deg);
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.print-stock:nth-child(even) {
+  transform: rotate(1.2deg);
+}
+
+.print-stock:hover {
+  transform: rotate(0deg) translateY(-0.35rem);
+}
+
+.print-stock-edition {
+  display: block;
+  margin-bottom: 1.25rem;
+  font-family: var(--f-h);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+.print-stock h6 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.15rem, 1.9vw, 1.4rem);
+}
+
+.print-stock p {
+  text-transform: none;
+  opacity: 0.65;
+  font-size: 0.85rem;
+}
+
+/* — workflow — */
+.print-workflow {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.75rem, 6vw, 6rem);
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.print-wf-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.5rem;
+}
+
+.print-wf-num {
+  display: block;
+  margin-bottom: 1rem;
+  font-family: var(--f-h);
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.print-wf-item h6 {
+  margin-bottom: 0.6rem;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+}
+
+.print-wf-item p {
+  text-transform: none;
+  opacity: 0.65;
+  font-size: 0.9rem;
+}
+
+/* — proof: tilt grid — */
+.print-proof {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.75rem, 6vw, 6rem);
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.print-proof-note {
+  max-width: 36rem;
+  margin-bottom: 2.5rem;
+  text-transform: none;
+  opacity: 0.6;
+}
+
+.print-tilt-grid {
+  display: flex;
+  gap: 2.5rem;
+  perspective: 1200px;
+}
+
+.print-tilt {
+  width: 9rem;
+  height: 12rem;
+  border-radius: 0.4rem;
+  background: linear-gradient(160deg, var(--accent-pastel), var(--accent-deep));
+  box-shadow: 0 2rem 3rem -1.5rem rgba(23, 19, 15, 0.45);
+  transform: rotateY(-14deg) rotateX(4deg);
+  transition: transform 0.5s ease;
+}
+
+.print-tilt:nth-child(2) {
+  background: linear-gradient(160deg, var(--accent), var(--accent-deep));
+}
+
+.print-tilt:nth-child(3) {
+  background: linear-gradient(160deg, var(--l), var(--accent-pastel));
+  border: 1px solid rgba(23, 19, 15, 0.1);
+}
+
+.print-tilt:hover {
+  transform: rotateY(0deg) rotateX(0deg);
+}
+
+/* — pricing — */
+.print-pricing {
+  padding: 4rem clamp(1.75rem, 6vw, 6rem);
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.print-pricing-note {
+  max-width: 28rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.15;
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+
+/* — hook — */
+.print-hook {
+  padding: 6rem clamp(1.75rem, 6vw, 6rem);
+  text-align: center;
+  background-color: var(--d);
+  color: var(--l);
+}
+
+.print-hook h3 {
+  max-width: 26rem;
+  margin: 0 auto 2rem;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+}
+
+/* — next — */
+.print-next {
+  display: block;
+  padding: 4rem clamp(1.75rem, 6vw, 6rem);
+  text-decoration: none;
+  color: var(--d);
+  background-color: var(--l);
+  transition: background-color 0.4s ease;
+}
+
+.print-next:hover {
+  background-color: var(--accent-pastel);
+}
+
+.print-next .container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0;
+}
+
+.print-next-label {
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.print-next h3 {
+  flex: 1;
+  font-size: clamp(1.6rem, 3.5vw, 2.75rem);
+}
+
+.print-next-arrow {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .print-stock-grid,
+  .print-wf-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .print-stock-grid,
+  .print-wf-grid {
+    grid-template-columns: 1fr;
+  }
+  .print-tilt-grid {
+    flex-wrap: wrap;
+  }
+}

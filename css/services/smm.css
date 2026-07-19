@@ -1,0 +1,319 @@
+/* ══════════════════════════════════════════════════════════════════
+   Social Media Management — sticky phone feed. A left reading column
+   runs the normal page flow; a sticky phone mockup on the right plays
+   an ambient, endlessly scrolling feed for as long as that column is
+   in view — the one page built around a literal device frame.
+   ══════════════════════════════════════════════════════════════════ */
+
+.smm {
+  background-color: var(--d);
+  color: var(--l);
+}
+
+.smm-kicker {
+  margin-bottom: 2rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.smm-top {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+}
+
+.smm-col {
+  padding: clamp(8rem, 14vw, 11rem) clamp(1.75rem, 5vw, 5rem) 4rem clamp(1.75rem, 6vw, 6rem);
+}
+
+.smm-col > section {
+  padding-bottom: 4.5rem;
+  border-bottom: 1px solid rgba(246, 241, 231, 0.1);
+  margin-bottom: 4.5rem;
+}
+
+.smm-col > section:last-child {
+  border-bottom: none;
+}
+
+.smm-index {
+  margin-bottom: 1.25rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.smm-hero h1 {
+  font-size: clamp(2.75rem, 6vw, 5.25rem);
+  margin-bottom: 1.5rem;
+}
+
+.smm-hero h1 .accent {
+  color: var(--accent);
+}
+
+.smm-hero-sub {
+  max-width: 30rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+.smm-agitation blockquote {
+  max-width: 32rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.05;
+  font-size: clamp(1.6rem, 3.2vw, 2.5rem);
+}
+
+.smm-agitation p {
+  max-width: 30rem;
+  margin-bottom: 1rem;
+  text-transform: none;
+  opacity: 0.65;
+}
+
+.smm-turn {
+  opacity: 1 !important;
+  font-weight: 700;
+}
+
+.smm-turn-mark {
+  color: var(--accent);
+  font-family: var(--f-h);
+}
+
+.smm-detail-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.smm-detail-item h6 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+}
+
+.smm-detail-item p {
+  text-transform: none;
+  opacity: 0.65;
+  font-size: 0.88rem;
+}
+
+.smm-wf-row {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.1rem 0;
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.smm-wf-num {
+  flex-shrink: 0;
+  font-family: var(--f-h);
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+.smm-wf-row h6 {
+  margin-bottom: 0.3rem;
+  font-size: 1.15rem;
+}
+
+.smm-wf-row p {
+  text-transform: none;
+  opacity: 0.6;
+  font-size: 0.85rem;
+}
+
+/* — sticky phone — */
+.smm-phone-wrap {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.smm-phone {
+  position: relative;
+  width: 15.5rem;
+  height: 31rem;
+  padding: 0.6rem;
+  border-radius: 2.25rem;
+  background: #0b0906;
+  box-shadow: 0 3rem 5rem -2rem rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+}
+
+.smm-phone-notch {
+  position: absolute;
+  top: 0.6rem;
+  left: 50%;
+  width: 5rem;
+  height: 1.1rem;
+  transform: translateX(-50%);
+  background: #0b0906;
+  border-radius: 0 0 0.9rem 0.9rem;
+  z-index: 2;
+}
+
+.smm-phone-feed {
+  height: 100%;
+  border-radius: 1.7rem;
+  background: var(--l);
+  overflow: hidden;
+  animation: smm-feed-scroll 14s linear infinite;
+}
+
+@keyframes smm-feed-scroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+.smm-post {
+  padding: 1rem 1rem 0.5rem;
+}
+
+.smm-post-tag {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: var(--f-nm);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--d);
+  opacity: 0.5;
+}
+
+.smm-post-media {
+  aspect-ratio: 1;
+  border-radius: 0.6rem;
+  background: linear-gradient(150deg, var(--accent), var(--accent-deep));
+}
+
+.smm-post-media-b {
+  background: linear-gradient(150deg, var(--accent-pastel), var(--accent-bright));
+}
+
+/* — proof: masonry — */
+.smm-proof {
+  padding: clamp(4rem, 8vw, 6rem) clamp(1.75rem, 6vw, 6rem);
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.smm-proof-note {
+  max-width: 34rem;
+  margin-bottom: 2.5rem;
+  text-transform: none;
+  opacity: 0.6;
+}
+
+.smm-masonry {
+  columns: 4 9rem;
+  column-gap: 0.75rem;
+}
+
+.smm-m-tile {
+  break-inside: avoid;
+  margin-bottom: 0.75rem;
+  border-radius: 0.5rem;
+  transition: transform 0.35s ease;
+}
+
+.smm-m-tile:hover {
+  transform: scale(0.96);
+}
+
+.smm-m-tile-1 { height: 8rem; background: var(--accent); }
+.smm-m-tile-2 { height: 12rem; background: var(--accent-pastel); }
+.smm-m-tile-3 { height: 6.5rem; background: var(--accent-deep); }
+
+/* — pricing — */
+.smm-pricing {
+  padding: 4rem clamp(1.75rem, 6vw, 6rem);
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.smm-pricing-note {
+  max-width: 30rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.15;
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+
+/* — hook — */
+.smm-hook {
+  padding: 6rem clamp(1.75rem, 6vw, 6rem);
+  text-align: center;
+}
+
+.smm-hook h3 {
+  max-width: 26rem;
+  margin: 0 auto 2rem;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+}
+
+/* — next — */
+.smm-next {
+  display: block;
+  padding: 4rem clamp(1.75rem, 6vw, 6rem);
+  text-decoration: none;
+  color: var(--l);
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+  transition: background-color 0.4s ease;
+}
+
+.smm-next:hover {
+  background-color: rgba(246, 241, 231, 0.05);
+}
+
+.smm-next .container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0;
+}
+
+.smm-next-label {
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.smm-next h3 {
+  flex: 1;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+}
+
+.smm-next-arrow {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .smm-top {
+    grid-template-columns: 1fr;
+  }
+  .smm-phone-wrap {
+    position: relative;
+    height: auto;
+    padding: 3rem 0 4rem;
+  }
+  .smm-detail-list {
+    grid-template-columns: 1fr;
+  }
+}

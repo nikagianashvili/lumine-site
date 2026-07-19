@@ -1,0 +1,348 @@
+/* ══════════════════════════════════════════════════════════════════
+   Video Production — cinematic scrubber. A pinned timecode bar reads
+   the whole page as a single timeline; sections are labeled by
+   timecode instead of section number, letterboxed dark hero.
+   ══════════════════════════════════════════════════════════════════ */
+
+.vid {
+  background-color: var(--d);
+  color: var(--l);
+}
+
+.vid-scrubber {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 5.5rem 0.85rem 1.5rem;
+  background-color: rgba(23, 19, 15, 0.92);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid rgba(246, 241, 231, 0.15);
+}
+
+.vid-scrubber-time {
+  flex-shrink: 0;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--l);
+  opacity: 0.75;
+}
+
+.vid-scrubber-track {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  background-color: rgba(246, 241, 231, 0.2);
+  border-radius: 2px;
+}
+
+.vid-scrubber-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background-color: var(--accent);
+  border-radius: 2px;
+}
+
+.vid-scrubber-mark {
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 8px;
+  transform: translate(-50%, -50%);
+  background-color: rgba(246, 241, 231, 0.35);
+}
+
+/* — letterboxed hero — */
+.vid-hero {
+  position: relative;
+  padding: clamp(8rem, 16vw, 12rem) clamp(1.75rem, 6vw, 6rem) clamp(4rem, 8vw, 6rem);
+  background: radial-gradient(120% 90% at 50% 0%, #241d17 0%, var(--d) 65%);
+}
+
+.vid-hero::before,
+.vid-hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(1.5rem, 4vw, 2.75rem);
+  background: var(--d);
+  z-index: 1;
+}
+.vid-hero::before { top: 0; }
+.vid-hero::after { bottom: 0; }
+
+.vid-index {
+  margin-bottom: 1.5rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+}
+
+.vid-hero h1 {
+  max-width: 46rem;
+  font-size: clamp(2.75rem, 7vw, 6rem);
+  margin-bottom: 1.5rem;
+}
+
+.vid-hero h1 .accent {
+  color: var(--accent);
+}
+
+.vid-hero-sub {
+  max-width: 32rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+.vid-kicker {
+  margin-bottom: 2rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  opacity: 0.45;
+}
+
+/* — agitation — */
+.vid-agitation {
+  padding: clamp(3rem, 7vw, 6rem) clamp(1.75rem, 6vw, 6rem);
+  max-width: 46rem;
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.vid-agitation blockquote {
+  margin-bottom: 2rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+  font-size: clamp(1.9rem, 4.2vw, 3.25rem);
+}
+
+.vid-agitation p {
+  max-width: 36rem;
+  margin-bottom: 1.5rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+.vid-turn {
+  display: flex;
+  gap: 0.75rem;
+  font-weight: 700;
+  opacity: 1 !important;
+}
+
+.vid-turn-mark {
+  color: var(--accent);
+  font-family: var(--f-h);
+}
+
+/* — reel chapters — */
+.vid-reel {
+  padding: 2rem clamp(1.75rem, 6vw, 6rem) 5rem;
+}
+
+.vid-chapters {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(246, 241, 231, 0.12);
+}
+
+.vid-chapter {
+  padding: 2rem 1.5rem;
+  background: var(--d);
+}
+
+.vid-chapter-code {
+  display: block;
+  margin-bottom: 1.5rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+}
+
+.vid-chapter h6 {
+  margin-bottom: 0.6rem;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+}
+
+.vid-chapter p {
+  text-transform: none;
+  opacity: 0.65;
+  font-size: 0.88rem;
+}
+
+/* — workflow track — */
+.vid-workflow {
+  padding: 2rem clamp(1.75rem, 6vw, 6rem) 5rem;
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.vid-wf-track {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.5rem;
+}
+
+.vid-wf-num {
+  display: block;
+  margin-bottom: 1rem;
+  font-family: var(--f-h);
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.vid-wf-seg h6 {
+  margin-bottom: 0.6rem;
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+}
+
+.vid-wf-seg p {
+  text-transform: none;
+  opacity: 0.65;
+  font-size: 0.9rem;
+}
+
+/* — proof: duration tiles — */
+.vid-proof {
+  padding: clamp(4rem, 8vw, 6rem) clamp(1.75rem, 6vw, 6rem);
+}
+
+.vid-proof-note {
+  max-width: 34rem;
+  margin-bottom: 2.5rem;
+  text-transform: none;
+  opacity: 0.6;
+}
+
+.vid-proof-grid {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.vid-proof-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 9rem;
+  aspect-ratio: 9/16;
+  background: rgba(246, 241, 231, 0.05);
+  border: 1px solid rgba(246, 241, 231, 0.15);
+  border-radius: 0.75rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.vid-proof-play {
+  font-size: 1.2rem;
+  color: var(--accent);
+}
+
+/* — pricing — */
+.vid-pricing {
+  padding: 4rem clamp(1.75rem, 6vw, 6rem);
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.vid-pricing-note {
+  max-width: 30rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.15;
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+
+/* — hook — */
+.vid-hook {
+  padding: 6rem clamp(1.75rem, 6vw, 6rem) 8rem;
+  text-align: center;
+}
+
+.vid-hook-code {
+  margin-bottom: 1rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  opacity: 0.4;
+}
+
+.vid-hook h3 {
+  max-width: 28rem;
+  margin: 0 auto 2rem;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+}
+
+/* — next — */
+.vid-next {
+  display: block;
+  padding: 4rem clamp(1.75rem, 6vw, 6rem) 6rem;
+  text-decoration: none;
+  color: var(--l);
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+  transition: background-color 0.4s ease;
+}
+
+.vid-next:hover {
+  background-color: rgba(246, 241, 231, 0.05);
+}
+
+.vid-next .container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0;
+}
+
+.vid-next-label {
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.vid-next h3 {
+  flex: 1;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+}
+
+.vid-next-arrow {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .vid-chapters {
+    grid-template-columns: 1fr 1fr;
+  }
+  .vid-wf-track {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .vid-chapters,
+  .vid-wf-track {
+    grid-template-columns: 1fr;
+  }
+  .vid-scrubber-time {
+    font-size: 0.65rem;
+  }
+}
