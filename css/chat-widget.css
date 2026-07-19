@@ -1,0 +1,362 @@
+﻿/* chat-widget — floating "Ask Lumine AI" bubble + live chat panel, site-wide */
+
+.chat-widget {
+  position: fixed;
+  right: var(--sp-3);
+  bottom: var(--sp-3);
+  z-index: 15000;
+  font-family: var(--f-nm);
+}
+
+.chat-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--d);
+  color: var(--l);
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 1rem 2rem -0.75rem rgba(23, 19, 15, 0.5);
+  transition:
+    transform 0.3s cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 0.3s ease;
+}
+
+.chat-bubble svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.chat-bubble:hover {
+  transform: scale(1.06);
+}
+
+.chat-bubble:hover svg {
+  transform: rotate(90deg);
+}
+
+.chat-widget.is-open .chat-bubble {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chat-panel {
+  position: absolute;
+  right: 0;
+  bottom: 4.6rem;
+  width: min(23rem, calc(100vw - 2 * var(--sp-3)));
+  max-height: min(34rem, calc(100vh - 8rem));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--white);
+  border-radius: 1.25rem;
+  box-shadow: 0 1.5rem 3rem -1rem rgba(23, 19, 15, 0.45);
+  opacity: 0;
+  transform: translateY(1rem) scale(0.97);
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.chat-widget.is-open .chat-panel {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.chat-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-2) var(--sp-3);
+  background-color: var(--d);
+  color: var(--l);
+  flex-shrink: 0;
+}
+
+.chat-panel-head-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.chat-mark {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.chat-mark svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.chat-panel-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.chat-panel-close:hover {
+  opacity: 1;
+}
+
+/* — intake form (name + email upfront) — */
+.chat-intake {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+}
+
+.chat-intake p {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.chat-intake input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  font-family: var(--f-nm);
+  font-size: 0.95rem;
+  color: var(--d);
+  background: var(--l);
+  border: 1px solid rgba(23, 19, 15, 0.15);
+  border-radius: 0.7rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.chat-intake input:focus {
+  border-color: var(--d);
+}
+
+.chat-intake-error {
+  font-size: 0.8rem;
+  color: #b3261e;
+  min-height: 1.1em;
+}
+
+/* — message thread — */
+.chat-messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: var(--sp-2) var(--sp-3);
+  overflow-y: auto;
+}
+
+.chat-msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 85%;
+  gap: 0.25rem;
+}
+
+.chat-msg.role-assistant {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.chat-msg.role-user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.chat-msg-bubble {
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.9rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.chat-msg-bubble p {
+  text-transform: none;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+.chat-msg-bubble p + p {
+  margin-top: 0.5em;
+}
+
+.chat-msg-bubble ul,
+.chat-msg-bubble ol {
+  margin: 0.4em 0;
+  padding-left: 1.1em;
+}
+
+.chat-msg-bubble li {
+  margin: 0.2em 0;
+}
+
+.chat-msg-bubble li + li {
+  margin-top: 0.15em;
+}
+
+.chat-msg-bubble strong {
+  font-weight: 700;
+}
+
+.chat-msg-time {
+  font-size: 0.7rem;
+  opacity: 0.45;
+  padding: 0 0.3rem;
+}
+
+.chat-msg.role-assistant .chat-msg-bubble {
+  background: var(--l);
+  color: var(--d);
+  border-bottom-left-radius: 0.25rem;
+}
+
+.chat-msg.role-user .chat-msg-bubble {
+  background: var(--d);
+  color: var(--l);
+  border-bottom-right-radius: 0.25rem;
+}
+
+.chat-msg.is-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.9rem;
+  background: var(--l);
+  color: var(--d);
+  border-bottom-left-radius: 0.25rem;
+  align-self: flex-start;
+}
+
+.chat-msg.is-typing span {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+  animation: chatTypingPulse 1s ease-in-out infinite;
+}
+
+.chat-msg.is-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.chat-msg.is-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes chatTypingPulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+}
+
+/* — input row — */
+.chat-input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  padding: var(--sp-2) var(--sp-3);
+  border-top: 1px solid rgba(23, 19, 15, 0.1);
+  flex-shrink: 0;
+}
+
+.chat-input-row textarea {
+  flex: 1;
+  resize: none;
+  max-height: 7.5rem;
+  padding: 0.65rem 1rem;
+  font-family: var(--f-nm);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--d);
+  background: var(--l);
+  border: none;
+  border-radius: 1.25rem;
+  outline: none;
+  transition: border-radius 0.15s ease;
+}
+
+.chat-send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--d);
+  color: var(--l);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.chat-send-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* — mobile: a real phone-comfortable layout, not just non-broken margins —
+   .chat-panel is `position: absolute` inside .chat-widget on desktop, and
+   .chat-widget is only bubble-width (it's sized to its content, not the
+   viewport) - so a percentage-based centering trick here would resolve
+   against that tiny box, not the screen. Breaking .chat-panel out to
+   `position: fixed` with its own left/right insets is what actually
+   spans the viewport correctly. dvh accounts for the browser chrome/
+   keyboard shrinking the visual viewport, which 100vh does not - the
+   panel goes near-fullscreen so typing with the keyboard open never
+   squeezes the thread into a sliver. */
+@media (max-width: 640px) {
+  .chat-widget {
+    right: var(--sp-2);
+    bottom: var(--sp-2);
+  }
+
+  .chat-panel {
+    position: fixed;
+    left: var(--sp-2);
+    right: var(--sp-2);
+    bottom: calc(var(--sp-2) + 4.6rem);
+    width: auto;
+    max-height: min(80svh, calc(100dvh - 6rem));
+    transform: translateY(1rem) scale(0.97);
+  }
+
+  .chat-widget.is-open .chat-panel {
+    transform: translateY(0) scale(1);
+  }
+
+  .chat-input-row textarea {
+    font-size: 1rem; /* prevents iOS Safari auto-zoom on focus */
+  }
+}

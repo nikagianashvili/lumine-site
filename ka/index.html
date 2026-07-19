@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ka">
   <head>
     <meta charset="UTF-8" />
@@ -9,7 +9,7 @@
       name="description"
       content="Lumine შემოქმედებითი სააგენტოა თბილისში — ფოტო, ვიდეო, ბრენდინგი, სოციალური მედია, მარკეტინგი და ვები."
     />
-    <meta name="theme-color" content="#121212" />
+    <meta name="theme-color" content="#17130f" />
     <meta property="og:title" content="Lumine — შემოქმედებითი სააგენტო, თბილისი" />
     <meta
       property="og:description"
@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="/css/nav.css" />
     <link rel="stylesheet" href="/css/home.css" />
     <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/chat-widget.css" />
     <script src="/js/wrappedgl.js"></script>
     <script src="/js/simulator.js"></script>
   </head>
@@ -427,13 +428,14 @@
             class="section-head-copy"
             data-animate-variant="slide"
             data-animate-on-scroll="true"
+            id="testimonialNote"
           >
             სანიმუშო ციტატებია, დაწერილი Lumine-ის ხმით — შეიცვლება რეალურით,
             როგორც კი გამოჩნდება.
           </p>
         </div>
 
-        <div class="testimonial-track">
+        <div class="testimonial-track" id="testimonialTrack">
           <div class="testimonial-card card-base">
             <p class="testimonial-quote">„მართლა გვკითხეს, რა გვჭირდებოდა, სანამ რამე მაგარს გვაჩვენებდნენ."</p>
             <p class="testimonial-attr">— ადგილობრივი ბიზნესის მფლობელი, თბილისი</p>
@@ -489,66 +491,7 @@
           <a href="/ka/contact" class="btn btn-outline">სხვა კითხვის დასმა</a>
         </div>
 
-        <div class="faq-list">
-          <div class="faq-item">
-            <button class="faq-question">
-              <span class="faq-index">01</span>
-              <span class="faq-question-text">რას მოიცავს პაკეტი რეალურად?</span>
-              <span class="faq-plus"></span>
-            </button>
-            <div class="faq-answer">
-              <p>
-                პაკეტები აერთიანებს გარკვეულ რაოდენობის პოსტერსა და ვიდეოს
-                სოციალური მედიის მართვასთან და ფასიან რეკლამასთან ერთად.
-                საიტის მართვა ხელმისაწვდომია დამატებით. ცალკეული სერვისები —
-                ფოტო, ვიდეო, ბრენდბუქი ან ცალკე საიტი — ასევე შესაძლებელია
-                დამოუკიდებლად შეკვეთა.
-              </p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question">
-              <span class="faq-index">02</span>
-              <span class="faq-question-text">როგორ არის აწყობილი ფასები?</span>
-              <span class="faq-plus"></span>
-            </button>
-            <div class="faq-answer">
-              <p>
-                სამი პაკეტის დონე მოიცავს უმეტეს მუდმივ სამუშაოს, ფასდება
-                მოცულობის მიხედვით — რამდენი პოსტერი და ვიდეო თვეში, პლუს
-                სოციალური და რეკლამის მართვა. ცალკეული სერვისები ფასდება
-                ცალკე. ზუსტი ციფრები ფასების გვერდზეა.
-              </p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question">
-              <span class="faq-index">03</span>
-              <span class="faq-question-text">მუშაობთ სულ ახალდაწყებულ ბიზნესებთან?</span>
-              <span class="faq-plus"></span>
-            </button>
-            <div class="faq-answer">
-              <p>
-                დიახ — ჩვენი საქმის დიდი ნაწილი სწორედ დამფუძნებელს ეხმარება
-                ნულიდან სამუშაო ბრენდამდე მისვლაში: სახელი, სახე, პირველი
-                კონტენტი, პირველი საიტი.
-              </p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question">
-              <span class="faq-index">04</span>
-              <span class="faq-question-text">შეგიძლიათ მხოლოდ ერთი სერვისი, არა მთელი პაკეტი?</span>
-              <span class="faq-plus"></span>
-            </button>
-            <div class="faq-answer">
-              <p>
-                დიახ. ფოტო, ვიდეო, ბრენდბუქი ან საიტი შეიძლება შეკვეთოთ
-                ცალ-ცალკე, თუ ახლა მხოლოდ ეს გჭირდებათ.
-              </p>
-            </div>
-          </div>
-        </div>
+        <div class="faq-list"></div>
       </div>
     </section>
 
@@ -608,9 +551,12 @@
     <script type="module" src="/js/home-hero.js"></script>
     <script type="module" src="/js/trusted-by.js"></script>
     <script type="module" src="/js/featured.js"></script>
+    <script type="module" src="/js/testimonials.js"></script>
     <script type="module" src="/js/home-extras.js"></script>
+    <script type="module" src="/js/faq-render.js"></script>
     <script type="module" src="/js/faq.js"></script>
     <script type="module" src="/js/footer.js"></script>
+    <script type="module" src="/js/chat-widget.js"></script>
     <script type="module" src="/js/preloader.js"></script>
   </body>
 </html>

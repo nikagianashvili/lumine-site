@@ -3,66 +3,30 @@
 // price), classifies the lead, and writes both a `clients` row and an
 // `ai_conversations` row so it's reviewable from /admin's AI Inbox.
 import Anthropic from "@anthropic-ai/sdk";
+import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { getSupabaseServerClient } from "../_lib/supabase.js";
+import { SERVICES_CONTEXT, fetchPricing, pricingBlock, IntakeReplySchema, CLIENT_STATUSES } from "./_lib/grounding.js";
 
 const MODEL = "claude-haiku-4-5-20251001";
-const CLIENT_STATUSES = ["new", "hot", "warm", "cold"];
 
-const SERVICES_CONTEXT = `
-Lumine is a creative agency based in Tbilisi, Georgia, offering three service types:
-- Web: websites and web apps (design + development)
-- Photo & Video: brand photography and video production
-- Design: graphic design, branding, print/social design deliverables
-Clients span industries: Medical, Hotels, Restaurants, Real Estate, SaaS, E-Commerce, Startups.
-Ongoing monthly retainer packages combine social content + paid ads management (see PRICING PACKAGES).
-One-off single-service pricing is also available (see PRICING SINGLES).
-`.trim();
-
-function buildSystemPrompt({ packages, singles, pricingNote, language }) {
-  const pkgLines = packages
-    .map((p) => `- ${p.name} (${p.price}/mo): ${(p.includes || []).join(", ")}`)
-    .join("\n");
-  const singleLines = singles.map((s) => `- ${s.name}: ${s.price}`).join("\n");
-
+function buildSystemPrompt({ packages, singles, language }) {
   return `
 You are the front-desk assistant for Lumine, answering a message a visitor just submitted through the website's contact form. Answer ONLY using the information given below.
 
 ${SERVICES_CONTEXT}
 
-PRICING PACKAGES (monthly retainers):
-${pkgLines || "(none loaded)"}
-
-PRICING SINGLES (one-off services):
-${singleLines || "(none loaded)"}
-
-${pricingNote ? `Pricing note: ${pricingNote}` : ""}
+${pricingBlock({ packages, singles })}
 
 Rules:
 - If the visitor's question can be answered from the information above, answer it directly and specifically.
 - If it needs something not covered here (a custom quote, a firm timeline, contract terms, anything you're not certain of), do NOT guess or invent numbers — say a team member will follow up shortly, and set "escalate" to true.
 - Reply in the same language the visitor wrote in (their message language takes priority over any language code given).
 - Keep the reply short: 2-4 sentences, warm, specific, no filler.
+- Write the reply as plain prose - no markdown, no **bold**, no bullet lists. This shows to the visitor as plain text, so any markup would appear as literal asterisks and dashes instead of formatting.
 - Visitor's declared language preference: ${language || "unknown"}.
 
-Respond with ONLY a JSON object (no markdown, no other text) matching exactly this shape:
-{"reply": string, "intent": string, "urgency": "low"|"medium"|"high", "status": "new"|"hot"|"warm"|"cold", "escalate": boolean, "confidence": number between 0 and 1, "summary": string (one short sentence for an internal dashboard)}
+Fill in every field of the structured response: "intent" is a short label for what the visitor wants, "urgency" is your read on how time-sensitive it is, "confidence" reflects how well the information above actually covers this reply, and "summary" is one short sentence for an internal dashboard.
 `.trim();
-}
-
-function parseModelJson(text) {
-  try {
-    return JSON.parse(text.trim());
-  } catch {
-    const match = text.match(/\{[\s\S]*\}/);
-    if (match) {
-      try {
-        return JSON.parse(match[0]);
-      } catch {
-        // fall through
-      }
-    }
-    return null;
-  }
 }
 
 export default async function handler(req, res) {
@@ -90,13 +54,11 @@ export default async function handler(req, res) {
 
     const supabase = getSupabaseServerClient();
 
-    const [{ data: packages, error: pkgError }, { data: singles, error: singleError }] = await Promise.all([
-      supabase.from("pricing_packages").select("*").order("sort_order", { ascending: true }),
-      supabase.from("pricing_singles").select("*").order("sort_order", { ascending: true }),
-    ]);
-
-    if (pkgError || singleError) {
-      res.status(500).json({ error: (pkgError || singleError).message });
+    let packages, singles;
+    try {
+      ({ packages, singles } = await fetchPricing());
+    } catch (err) {
+      res.status(500).json({ error: err.message });
       return;
     }
 
@@ -111,14 +73,17 @@ export default async function handler(req, res) {
     let classification;
     try {
       const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-      const response = await anthropic.messages.create({
+      // Structured output (output_config.format), same fix as chat/message.js:
+      // guarantees the schema shape at the API level instead of hoping the
+      // model wraps its answer in JSON on request alone.
+      const response = await anthropic.messages.parse({
         model: MODEL,
         max_tokens: 500,
         system: buildSystemPrompt({ packages, singles, language }),
         messages: [{ role: "user", content: visitorLines.join("\n") }],
+        output_config: { format: zodOutputFormat(IntakeReplySchema) },
       });
-      const rawText = response.content?.[0]?.type === "text" ? response.content[0].text : "";
-      classification = parseModelJson(rawText);
+      classification = response.parsed_output;
     } catch (err) {
       res.status(500).json({ error: `AI request failed: ${err.message}` });
       return;

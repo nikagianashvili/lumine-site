@@ -1,4 +1,4 @@
-/* contact — direct lines + booking form + cube */
+﻿/* contact — direct lines + booking form + cube */
 
 .contact {
   position: relative;
@@ -49,13 +49,13 @@
   flex-direction: column;
   gap: 0.4rem;
   padding: var(--sp-3) 0;
-  border-top: 1px solid rgba(18, 18, 18, 0.25);
+  border-top: 1px solid rgba(23, 19, 15, 0.25);
   text-decoration: none;
   color: inherit;
 }
 
 .contact-lines .contact-line:last-child {
-  border-bottom: 1px solid rgba(18, 18, 18, 0.25);
+  border-bottom: 1px solid rgba(23, 19, 15, 0.25);
 }
 
 .contact-line-label {
@@ -91,7 +91,7 @@ a.contact-line:hover .contact-line-value {
   padding: var(--sp-4);
   background-color: var(--white);
   border-radius: 1.5rem;
-  box-shadow: 0 1.5rem 3rem -2rem rgba(18, 18, 18, 0.4);
+  box-shadow: 0 1.5rem 3rem -2rem rgba(23, 19, 15, 0.4);
 }
 
 .form-row {
@@ -133,7 +133,7 @@ a.contact-line:hover .contact-line-value {
   color: inherit;
   background: none;
   border: none;
-  border-bottom: 1px solid rgba(18, 18, 18, 0.3);
+  border-bottom: 1px solid rgba(23, 19, 15, 0.3);
   border-radius: 0;
   outline: none;
   transition: border-color 0.3s ease;
@@ -142,7 +142,7 @@ a.contact-line:hover .contact-line-value {
 
 .contact-form input:focus,
 .contact-form textarea:focus {
-  border-bottom-color: var(--d);
+  border-bottom-color: var(--accent);
 }
 
 .form-chips {
@@ -159,7 +159,7 @@ a.contact-line:hover .contact-line-value {
   text-transform: uppercase;
   color: inherit;
   background: none;
-  border: 1px solid rgba(18, 18, 18, 0.35);
+  border: 1px solid rgba(23, 19, 15, 0.35);
   border-radius: 100px;
   cursor: pointer;
   transition:
@@ -219,7 +219,7 @@ a.contact-line:hover .contact-line-value {
 .ai-reply-card {
   margin-top: 1rem;
   padding: 1.1rem 1.3rem;
-  border: 1px solid rgba(18, 18, 18, 0.15);
+  border: 1px solid rgba(23, 19, 15, 0.15);
   border-radius: 12px;
   background: var(--white);
   font-family: var(--f-nm);

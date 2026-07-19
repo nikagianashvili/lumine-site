@@ -1,4 +1,4 @@
-.hero {
+﻿.hero {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -59,7 +59,7 @@
   z-index: 1;
   width: 3.5rem;
   height: 3.5rem;
-  color: var(--d);
+  color: var(--accent);
   pointer-events: none;
   animation: sparkle-spin 14s linear infinite;
 }
@@ -193,7 +193,7 @@ html[lang="ka"] .strip-track span {
   overflow: hidden;
   border-radius: 1rem;
   transform: rotate(4deg);
-  box-shadow: 0 2rem 4rem -2rem rgba(18, 18, 18, 0.5);
+  box-shadow: 0 2rem 4rem -2rem rgba(23, 19, 15, 0.5);
 }
 
 .manifesto-img img {
@@ -391,8 +391,8 @@ html[lang="ka"] .section-head h3 {
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(18, 18, 18, 0.75),
-    rgba(18, 18, 18, 0) 55%
+    rgba(23, 19, 15, 0.75),
+    rgba(23, 19, 15, 0) 55%
   );
 }
 
@@ -547,7 +547,7 @@ html[lang="ka"] .service-name {
   overflow: hidden;
   background-color: var(--white);
   border-radius: 1.25rem;
-  box-shadow: 0 1rem 2.5rem -1.75rem rgba(18, 18, 18, 0.4);
+  box-shadow: 0 1rem 2.5rem -1.75rem rgba(23, 19, 15, 0.4);
   transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
@@ -654,11 +654,11 @@ html[lang="ka"] .service-name {
   align-items: center;
   gap: var(--sp-3);
   padding: var(--sp-3) 0;
-  border-top: 1px solid rgba(245, 241, 230, 0.2);
+  border-top: 1px solid rgba(246, 241, 231, 0.2);
 }
 
 .process-list .process-step:last-child {
-  border-bottom: 1px solid rgba(245, 241, 230, 0.2);
+  border-bottom: 1px solid rgba(246, 241, 231, 0.2);
 }
 
 .process-step-index {
@@ -739,6 +739,7 @@ html[lang="ka"] .testimonial-quote {
 
 .stat-item h2 {
   font-size: clamp(3rem, 6vw, 6rem);
+  color: var(--accent);
 }
 
 .stat-item p {
@@ -830,6 +831,8 @@ html[lang="ka"] .testimonial-quote {
 .faq-item.is-open .faq-plus,
 .faq-question:hover .faq-plus {
   opacity: 1;
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .faq-plus::before,

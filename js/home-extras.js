@@ -135,7 +135,10 @@ function initManifestoParallax() {
 
 // ── magnetic buttons ─────────────────────────────────────────────────────────
 
-function initMagneticButtons() {
+// Exported so pages that inject buttons dynamically after this module's own
+// DOMContentLoaded pass (e.g. service.js building service.html from data)
+// can re-run it once their content actually exists in the DOM.
+export function initMagneticButtons() {
   if (window.matchMedia("(pointer: coarse)").matches) return;
 
   document.querySelectorAll(".btn[data-magnetic]").forEach((btn) => {

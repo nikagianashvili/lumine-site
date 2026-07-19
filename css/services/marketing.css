@@ -1,0 +1,362 @@
+/* ══════════════════════════════════════════════════════════════════
+   Digital Marketing & Ads Management — brutalist data dashboard.
+   Sharp corners everywhere, tabular numerics, a literal data table for
+   the subservices, dashboard cards for proof — the one page that reads
+   like software instead of an editorial page.
+   ══════════════════════════════════════════════════════════════════ */
+
+.mktg {
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.mktg-kicker {
+  margin-bottom: 2rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  opacity: 0.55;
+}
+
+/* — hero — */
+.mktg-hero {
+  padding: clamp(8rem, 15vw, 12rem) clamp(1.75rem, 6vw, 6rem) clamp(4rem, 8vw, 6rem);
+  border-bottom: 2px solid var(--d);
+}
+
+.mktg-index {
+  margin-bottom: 1.5rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  opacity: 0.55;
+}
+
+.mktg-hero h1 {
+  max-width: 46rem;
+  font-size: clamp(2.75rem, 6.5vw, 5.5rem);
+  margin-bottom: 1.5rem;
+}
+
+.mktg-hero h1 .accent {
+  color: var(--accent);
+}
+
+.mktg-hero-sub {
+  max-width: 34rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* — ticker: speed reacts to scroll velocity — */
+.mktg-ticker {
+  overflow: hidden;
+  padding: 0.85rem 0;
+  background-color: var(--d);
+  border-top: 2px solid var(--d);
+  border-bottom: 2px solid var(--d);
+}
+
+.mktg-ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: max-content;
+  white-space: nowrap;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--l);
+  opacity: 0.75;
+}
+
+.mktg-ticker-dot {
+  color: var(--accent);
+  font-size: 0.6rem;
+}
+
+/* — agitation: text + a live stat readout — */
+.mktg-agitation {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  border-bottom: 2px solid var(--d);
+}
+
+.mktg-agitation-text {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.75rem, 6vw, 6rem);
+  border-right: 1px solid rgba(23, 19, 15, 0.15);
+}
+
+.mktg-agitation blockquote {
+  max-width: 34rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.05;
+  font-size: clamp(1.65rem, 3.4vw, 2.5rem);
+}
+
+.mktg-agitation-text p {
+  max-width: 30rem;
+  text-transform: none;
+  opacity: 0.65;
+}
+
+.mktg-stat-row {
+  display: flex;
+  align-items: center;
+  padding: 2rem;
+}
+
+.mktg-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mktg-stat-eq {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-weight: 700;
+  font-size: clamp(1.15rem, 2.4vw, 1.65rem);
+  line-height: 1.25;
+  opacity: 0.55;
+}
+
+.mktg-stat-eq-accent {
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* — subservices: data table — */
+.mktg-table-section {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.75rem, 6vw, 6rem);
+  border-bottom: 2px solid var(--d);
+}
+
+.mktg-table {
+  border-top: 1px solid var(--d);
+}
+
+.mktg-row {
+  display: grid;
+  grid-template-columns: 12rem 1fr 10rem;
+  gap: 1.5rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid rgba(23, 19, 15, 0.15);
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+}
+
+.mktg-row-head {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.mktg-row-name {
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+.mktg-row span:not(.mktg-row-name) {
+  opacity: 0.65;
+}
+
+/* — workflow — */
+.mktg-workflow {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.75rem, 6vw, 6rem);
+  border-bottom: 2px solid var(--d);
+}
+
+.mktg-wf-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.mktg-wf-item {
+  padding: 0 1.5rem;
+  border-left: 1px solid rgba(23, 19, 15, 0.15);
+}
+
+.mktg-wf-item:first-child {
+  padding-left: 0;
+  border-left: none;
+}
+
+.mktg-wf-num {
+  display: block;
+  margin-bottom: 1rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.mktg-wf-item h6 {
+  margin-bottom: 0.6rem;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+}
+
+.mktg-wf-item p {
+  text-transform: none;
+  opacity: 0.6;
+  font-size: 0.85rem;
+}
+
+/* — proof: dashboard cards — */
+.mktg-proof {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.75rem, 6vw, 6rem);
+  border-bottom: 2px solid var(--d);
+}
+
+.mktg-proof-note {
+  max-width: 36rem;
+  margin-bottom: 2.5rem;
+  text-transform: none;
+  opacity: 0.6;
+}
+
+.mktg-dash-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.mktg-dash-card {
+  padding: 1.75rem;
+  border: 2px solid var(--d);
+}
+
+.mktg-dash-card-kill {
+  border-color: rgba(23, 19, 15, 0.2);
+  opacity: 0.6;
+}
+
+.mktg-dash-label {
+  display: block;
+  margin-bottom: 1rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.mktg-dash-num {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  color: var(--accent);
+}
+
+.mktg-dash-num small {
+  font-size: 0.5em;
+}
+
+/* — pricing — */
+.mktg-pricing {
+  padding: 4rem clamp(1.75rem, 6vw, 6rem);
+  border-bottom: 2px solid var(--d);
+}
+
+.mktg-pricing-note {
+  max-width: 30rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.15;
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+
+/* — hook — */
+.mktg-hook {
+  padding: 6rem clamp(1.75rem, 6vw, 6rem);
+  text-align: center;
+  background-color: var(--d);
+  color: var(--l);
+}
+
+.mktg-hook h3 {
+  max-width: 26rem;
+  margin: 0 auto 2rem;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+}
+
+/* — next — */
+.mktg-next {
+  display: block;
+  padding: 4rem clamp(1.75rem, 6vw, 6rem);
+  text-decoration: none;
+  color: var(--d);
+  background-color: var(--l);
+  transition: background-color 0.4s ease;
+}
+
+.mktg-next:hover {
+  background-color: var(--accent-pastel);
+}
+
+.mktg-next .container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0;
+}
+
+.mktg-next-label {
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.mktg-next h3 {
+  flex: 1;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+}
+
+.mktg-next-arrow {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .mktg-agitation {
+    grid-template-columns: 1fr;
+  }
+  .mktg-agitation-text {
+    border-right: none;
+    border-bottom: 1px solid rgba(23, 19, 15, 0.15);
+  }
+  .mktg-row {
+    grid-template-columns: 8rem 1fr;
+  }
+  .mktg-row-head span:last-child,
+  .mktg-row span:last-child {
+    display: none;
+  }
+  .mktg-wf-grid,
+  .mktg-dash-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .mktg-wf-grid,
+  .mktg-dash-grid {
+    grid-template-columns: 1fr;
+  }
+  .mktg-wf-item {
+    padding-left: 0;
+    border-left: none;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(23, 19, 15, 0.15);
+  }
+}

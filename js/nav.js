@@ -17,6 +17,17 @@ gsap.registerPlugin(SplitText);
 // correctly. No language state to read/write anywhere.
 const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
 
+// Gate the cursor-scrub menu interaction on more than just viewport width.
+// A touch-primary device can still be >=1000px wide (a tablet in landscape,
+// a touchscreen desktop) - it has no mouse to drive the scrub with, and
+// with only the width check the links wrapper would sit in "desktop" mode
+// with links running off-screen and no way to reach them, since the
+// vertical-stack fallback only kicked in below 1000px. `pointer: fine`
+// is what a mouse/trackpad reports; touch reports `coarse`.
+function isDesktopPointer() {
+  return window.innerWidth >= 1000 && window.matchMedia("(pointer: fine)").matches;
+}
+
 const menuItems = isKa
   ? [
       { label: "მთავარი", route: "/ka" },
@@ -74,9 +85,9 @@ function buildNav() {
         </div>
         <div class="menu-content-group">
           <p>რას ვაკეთებთ</p>
-          <p>ფოტო და ვიდეო</p>
-          <p>დიზაინი და ბრენდინგი</p>
-          <p>მარკეტინგი და ვები</p>
+          <p>სტრატეგია და ბრენდი</p>
+          <p>ფოტო, ვიდეო და AI</p>
+          <p>ვები და მარკეტინგი</p>
         </div>
         <div class="menu-content-group">
           <p>მოგვწერეთ</p>
@@ -110,8 +121,9 @@ function buildNav() {
     <div class="menu-links-wrapper">
       ${menuItems
         .map(
-          (item) => `
+          (item, i) => `
         <div class="menu-link" data-route="${item.route}">
+          <span class="menu-link-index">${String(i + 1).padStart(2, "0")}</span>
           <a href="${item.route}">
             <span>${item.label}</span>
             <span>${item.label}</span>
@@ -132,9 +144,9 @@ function buildNav() {
         </div>
         <div class="menu-content-group">
           <p>What We Do</p>
-          <p>Photo &amp; Video</p>
-          <p>Design &amp; Branding</p>
-          <p>Marketing &amp; Web</p>
+          <p>Strategy &amp; Brand</p>
+          <p>Photo, Video &amp; AI</p>
+          <p>Web &amp; Marketing</p>
         </div>
         <div class="menu-content-group">
           <p>Say Hello</p>
@@ -168,8 +180,9 @@ function buildNav() {
     <div class="menu-links-wrapper">
       ${menuItems
         .map(
-          (item) => `
+          (item, i) => `
         <div class="menu-link" data-route="${item.route}">
+          <span class="menu-link-index">${String(i + 1).padStart(2, "0")}</span>
           <a href="${item.route}">
             <span>${item.label}</span>
             <span>${item.label}</span>
@@ -296,7 +309,7 @@ function initMenu() {
   }
 
   function startDesktopTracking() {
-    if (window.innerWidth < 1000) return;
+    if (!isDesktopPointer()) return;
     if (rafId) return;
     menuOverlay.addEventListener("mousemove", onMouseMove);
     menuLinksWrapper.addEventListener("mouseleave", onLinksWrapperLeave);
@@ -311,7 +324,7 @@ function initMenu() {
   }
 
   function onMouseMove(e) {
-    if (window.innerWidth < 1000) return;
+    if (!isDesktopPointer()) return;
 
     const mouseX = e.clientX;
     const viewportWidth = window.innerWidth;
@@ -333,7 +346,7 @@ function initMenu() {
   }
 
   function onLinkEnter(container) {
-    if (window.innerWidth < 1000) return;
+    if (!isDesktopPointer()) return;
 
     const spans = container.querySelectorAll("a span");
     if (!spans || spans.length < 2) return;
@@ -365,7 +378,7 @@ function initMenu() {
   }
 
   function onLinkLeave(container) {
-    if (window.innerWidth < 1000) return;
+    if (!isDesktopPointer()) return;
 
     const spans = container.querySelectorAll("a span");
     if (!spans || spans.length < 2) return;
@@ -399,6 +412,22 @@ function initMenu() {
     targetHighlighterWidth = firstSpan.offsetWidth;
   }
 
+  // The cursor-scrub is the whole point of this menu, but nothing about it
+  // is discoverable - a first-time visitor has no reason to think moving
+  // their mouse reveals more links. Rather than add a label or icon,
+  // borrow the same targetX the mouse itself drives and nudge it once on
+  // open: the links visibly shift left and settle back, teaching the
+  // mechanic through motion instead of asking the visitor to read anything.
+  function playIntroPeek() {
+    if (!isDesktopPointer()) return;
+    const maxMoveRight = window.innerWidth - menuLinksWrapper.offsetWidth;
+    if (maxMoveRight >= 0) return; // links already fit - nothing to reveal
+    targetX = Math.max(maxMoveRight, -240);
+    setTimeout(() => {
+      targetX = 0;
+    }, 850);
+  }
+
   menuLinkContainers.forEach((container) => {
     container.addEventListener("mouseenter", () => onLinkEnter(container));
     container.addEventListener("mouseleave", () => onLinkLeave(container));
@@ -422,6 +451,7 @@ function initMenu() {
     if (!isMenuOpen) {
       if (lenis) lenis.stop();
       startDesktopTracking();
+      setTimeout(playIntroPeek, 1700);
 
       gsap.to(openLabel, { y: "-100%", duration: 1, ease: "power3.out" });
       gsap.to(closeLabel, { y: "-100%", duration: 1, ease: "power3.out" });
@@ -532,40 +562,8 @@ function initMenu() {
   // Desktop tracking loop starts only when menu is open.
 }
 
-// Nav uses mix-blend-mode:difference to auto-invert against whatever's
-// behind it — clean against a flat section background, but garbled when a
-// big bold heading scrolls directly underneath (two "busy" patterns
-// difference-blending together instead of one clean color inversion).
-// Past a small scroll threshold, give it a solid backdrop in the same
-// paper tone as the logo itself: difference-blending white-on-white still
-// resolves to a clean dark silhouette, so the look doesn't change, it just
-// stops depending on what happens to be scrolling past.
-function initNavSolidOnScroll() {
-  const nav = document.querySelector("nav");
-  if (!nav) return;
-
-  const THRESHOLD = 40;
-  let ticking = false;
-
-  function update() {
-    nav.classList.toggle("nav-solid", window.scrollY > THRESHOLD);
-    ticking = false;
-  }
-
-  function onScroll() {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(update);
-  }
-
-  update();
-  window.addEventListener("scroll", onScroll, { passive: true });
-}
-
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initMenu);
-  document.addEventListener("DOMContentLoaded", initNavSolidOnScroll);
 } else {
   initMenu();
-  initNavSolidOnScroll();
 }

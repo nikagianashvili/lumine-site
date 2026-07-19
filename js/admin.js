@@ -134,8 +134,90 @@ function wirePopover(btnId, popover, onOpen) {
 wirePopover("userMenuBtn", userDropdown);
 wirePopover("bellBtn", bellDropdown, renderNotifications);
 wirePopover("searchBtn", searchPopover, () => document.getElementById("searchInput").focus());
-wirePopover("askAiBtn", aiPopover);
+wirePopover("askAiBtn", aiPopover, initAiAssistant);
 document.addEventListener("click", () => closeAllPopovers());
+
+// ── AI assistant ("Ask Lumine AI" popover) — read-only Q&A over live tasks/clients
+
+let aiAssistantHistory = [];
+let aiAssistantInitialized = false;
+
+function aiChatMessageEl(role, content) {
+  const el = document.createElement("div");
+  el.className = `ai-chat-msg role-${role}`;
+  el.textContent = content;
+  return el;
+}
+
+function aiChatTypingEl() {
+  const el = document.createElement("div");
+  el.className = "ai-chat-msg role-assistant is-typing";
+  el.innerHTML = "<span></span><span></span><span></span>";
+  return el;
+}
+
+function initAiAssistant() {
+  const input = document.getElementById("aiChatInput");
+  if (aiAssistantInitialized) {
+    input.focus();
+    return;
+  }
+  aiAssistantInitialized = true;
+
+  const messages = document.getElementById("aiChatMessages");
+  const sendBtn = document.getElementById("aiChatSend");
+
+  messages.appendChild(
+    aiChatMessageEl(
+      "assistant",
+      "Hi — ask me about current tasks or clients. I can't create or edit anything yet, just answer questions.",
+    ),
+  );
+
+  function scrollToBottom() {
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  async function send() {
+    const text = input.value.trim();
+    if (!text || sendBtn.disabled) return;
+    input.value = "";
+    sendBtn.disabled = true;
+
+    messages.appendChild(aiChatMessageEl("user", text));
+    scrollToBottom();
+
+    const typing = aiChatTypingEl();
+    messages.appendChild(typing);
+    scrollToBottom();
+
+    try {
+      const res = await adminFetch("/api/admin/ai-assistant", {
+        method: "POST",
+        body: JSON.stringify({ message: text, history: aiAssistantHistory }),
+      });
+      const data = await res.json();
+      typing.remove();
+      if (!res.ok) throw new Error(data.error || "Request failed");
+      messages.appendChild(aiChatMessageEl("assistant", data.reply));
+      aiAssistantHistory.push({ role: "user", content: text }, { role: "assistant", content: data.reply });
+    } catch {
+      typing.remove();
+      messages.appendChild(aiChatMessageEl("assistant", "Something went wrong — try again in a moment."));
+    } finally {
+      sendBtn.disabled = false;
+      scrollToBottom();
+      input.focus();
+    }
+  }
+
+  sendBtn.addEventListener("click", send);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") send();
+  });
+
+  input.focus();
+}
 
 // ── notifications (placeholder items, real read/unread state) ───────────
 

@@ -7,12 +7,23 @@
     { "source": "/project", "destination": "/project.html" },
     { "source": "/studio", "destination": "/studio.html" },
     { "source": "/services", "destination": "/services.html" },
+    { "source": "/services/strategy", "destination": "/services/strategy.html" },
+    { "source": "/services/photography", "destination": "/services/photography.html" },
+    { "source": "/services/video", "destination": "/services/video.html" },
+    { "source": "/services/brand", "destination": "/services/brand.html" },
+    { "source": "/services/smm", "destination": "/services/smm.html" },
+    { "source": "/services/marketing", "destination": "/services/marketing.html" },
+    { "source": "/services/web", "destination": "/services/web.html" },
+    { "source": "/services/ai", "destination": "/services/ai.html" },
+    { "source": "/services/printing", "destination": "/services/printing.html" },
     { "source": "/pricing", "destination": "/pricing.html" },
     { "source": "/journal", "destination": "/journal.html" },
     { "source": "/legal", "destination": "/legal.html" },
     { "source": "/contact", "destination": "/contact.html" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/admin-login", "destination": "/admin-login.html" },
+    { "source": "/portal", "destination": "/portal.html" },
+    { "source": "/portal-login", "destination": "/portal-login.html" },
     { "source": "/ka", "destination": "/ka/index.html" },
     { "source": "/ka/work", "destination": "/ka/work.html" },
     { "source": "/ka/sample-project", "destination": "/ka/sample-project.html" },
@@ -23,5 +34,6 @@
     { "source": "/ka/journal", "destination": "/ka/journal.html" },
     { "source": "/ka/legal", "destination": "/ka/legal.html" },
     { "source": "/ka/contact", "destination": "/ka/contact.html" }
-  ]
+  ],
+  "crons": [{ "path": "/api/cron/offboarding-upsell", "schedule": "0 9 * * *" }]
 }

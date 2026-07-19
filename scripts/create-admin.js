@@ -1,6 +1,9 @@
-// One-time script: creates the first admin login (Supabase Auth user +
-// matching team_members row). Run locally:
-//   node scripts/create-admin.js <email> <password>
+// One-time script: creates a team login (Supabase Auth user + matching
+// team_members row). Run locally:
+//   node scripts/create-admin.js <email> <password> [name] [role]
+// role drives which Overview variant a person sees (src/admin/pages/Overview.tsx
+// variantFor()): "orchestrator" | "media" | "design" | anything else -> full view.
+// Defaults to "admin" (falls through to the full view) for backward compat.
 // There is no public signup form by design — team accounts are created
 // this way (or later, by an existing admin inside the dashboard).
 import { readFileSync } from "fs";
@@ -26,9 +29,9 @@ function loadEnvFile() {
 
 loadEnvFile();
 
-const [, , email, password, name = "Admin"] = process.argv;
+const [, , email, password, name = "Admin", role = "admin"] = process.argv;
 if (!email || !password) {
-  console.error("Usage: node scripts/create-admin.js <email> <password> [name]");
+  console.error("Usage: node scripts/create-admin.js <email> <password> [name] [role]");
   process.exit(1);
 }
 
@@ -48,11 +51,11 @@ async function main() {
   const { error: memberError } = await supabase.from("team_members").insert({
     id: data.user.id,
     name,
-    role: "admin",
+    role,
   });
   if (memberError) throw new Error(`team_members insert: ${memberError.message}`);
 
-  console.log(`Created admin user ${email} (${data.user.id})`);
+  console.log(`Created user ${email} (${data.user.id}) as role "${role}"`);
 }
 
 main().catch((err) => {

@@ -1,4 +1,4 @@
-// Booking form. Submits to /api/ai/intake, which answers the message
+﻿// Booking form. Submits to /api/ai/intake, which answers the message
 // instantly (grounded in real pricing/service data) and logs the lead.
 // If that request fails outright (offline, endpoint down), falls back to
 // the original mailto compose so a submission is never silently lost.
@@ -8,18 +8,18 @@ const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
 
 const MSG = isKa
   ? {
-      missing: "მიუთითეთ სახელი და საკონტაქტო ინფორმაცია.",
-      thinking: "ვამზადებთ პასუხს",
-      aiLabel: "მყისიერი პასუხი",
-      sent: "მადლობა — გუნდი მალე დაგიკავშირდებათ.",
-      fallback: "რაღაც არ გამოვიდა — დრაფტი გაიხსნა თქვენს მეილ აპლიკაციაში, გააგზავნეთ იქიდან.",
+      missing: "áƒ›áƒ˜áƒ£áƒ—áƒ˜áƒ—áƒ”áƒ— áƒ¡áƒáƒ®áƒ”áƒšáƒ˜ áƒ“áƒ áƒ¡áƒáƒ™áƒáƒœáƒ¢áƒáƒ¥áƒ¢áƒ áƒ˜áƒœáƒ¤áƒáƒ áƒ›áƒáƒªáƒ˜áƒ.",
+      thinking: "áƒ•áƒáƒ›áƒ–áƒáƒ“áƒ”áƒ‘áƒ— áƒžáƒáƒ¡áƒ£áƒ®áƒ¡",
+      aiLabel: "áƒ›áƒ§áƒ˜áƒ¡áƒ˜áƒ”áƒ áƒ˜ áƒžáƒáƒ¡áƒ£áƒ®áƒ˜",
+      sent: "áƒ›áƒáƒ“áƒšáƒáƒ‘áƒ â€” áƒ’áƒ£áƒœáƒ“áƒ˜ áƒ›áƒáƒšáƒ” áƒ“áƒáƒ’áƒ˜áƒ™áƒáƒ•áƒ¨áƒ˜áƒ áƒ“áƒ”áƒ‘áƒáƒ—.",
+      fallback: "áƒ áƒáƒ¦áƒáƒª áƒáƒ  áƒ’áƒáƒ›áƒáƒ•áƒ˜áƒ“áƒ â€” áƒ“áƒ áƒáƒ¤áƒ¢áƒ˜ áƒ’áƒáƒ˜áƒ®áƒ¡áƒœáƒ áƒ—áƒ¥áƒ•áƒ”áƒœáƒ¡ áƒ›áƒ”áƒ˜áƒš áƒáƒžáƒšáƒ˜áƒ™áƒáƒªáƒ˜áƒáƒ¨áƒ˜, áƒ’áƒáƒáƒ’áƒ–áƒáƒ•áƒœáƒ”áƒ— áƒ˜áƒ¥áƒ˜áƒ“áƒáƒœ.",
     }
   : {
       missing: "Add your name and a way to reach you.",
       thinking: "Thinking",
       aiLabel: "Instant reply",
-      sent: "Thanks — a team member will follow up shortly.",
-      fallback: "Something went wrong on our end — a draft opened in your mail app instead, send it from there.",
+      sent: "Thanks â€” a team member will follow up shortly.",
+      fallback: "Something went wrong on our end â€” a draft opened in your mail app instead, send it from there.",
     };
 
 function initChips(container) {
@@ -54,8 +54,18 @@ function init() {
   initChips(serviceChips);
   initChips(budgetChips);
 
+  // Deep link from a service detail page (service.html's Get In Touch
+  // button links here with ?service=<slug>) - pre-select the matching
+  // chip so a visitor never lands on a blank form after already telling
+  // us what they're interested in.
+  const wantedSlug = new URLSearchParams(window.location.search).get("service");
+  if (wantedSlug && serviceChips) {
+    const match = serviceChips.querySelector(`.form-chip[data-slug="${wantedSlug}"]`);
+    if (match) match.classList.add("is-active");
+  }
+
   function sendMailtoFallback({ name, brand, reach, message, services, budget }) {
-    const subject = `Project inquiry — ${name}${brand ? ` (${brand})` : ""}`;
+    const subject = `Project inquiry â€” ${name}${brand ? ` (${brand})` : ""}`;
     const bodyLines = [
       `Name: ${name}`,
       brand && `Brand: ${brand}`,

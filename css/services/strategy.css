@@ -1,0 +1,395 @@
+/* ══════════════════════════════════════════════════════════════════
+   Strategy & Creative Management — editorial magazine.
+   A fixed masthead rail running the page height + a single wide reading
+   column. No cards, no chips, no grid-of-tiles — just type, a drop cap,
+   a pull-quote, and a footnoted list, the way a magazine feature reads.
+   ══════════════════════════════════════════════════════════════════ */
+
+.strat {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.strat-rail {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6.5rem 0 2.5rem;
+  border-right: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.strat-rail-mast {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--f-nm);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.strat-rail-count {
+  font-family: var(--f-h);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.strat-rail-count em {
+  display: block;
+  font-style: normal;
+  font-size: 1.1rem;
+  color: var(--accent);
+  transition: color 0.3s ease;
+}
+
+.strat-block {
+  grid-column: 2;
+  padding: clamp(4rem, 8vw, 7rem) clamp(1.75rem, 6vw, 6rem);
+  max-width: 54rem;
+  border-bottom: 1px solid rgba(23, 19, 15, 0.1);
+}
+
+.strat-eyebrow {
+  margin-bottom: 1.5rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+/* — hero: asymmetric two-zone. Text left, a live GPU particle-fluid
+   panel right — the page's one real animated centerpiece, not another
+   flat text column. */
+.strat-hero {
+  display: flex;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  max-width: none;
+  min-height: 34rem;
+}
+
+.strat-hero-text {
+  flex: 1 1 52%;
+  min-width: 0;
+}
+
+.strat-hero-fluid {
+  position: relative;
+  flex: 1 1 48%;
+  align-self: stretch;
+  min-height: 26rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: linear-gradient(155deg, rgba(242, 84, 45, 0.06), rgba(23, 19, 15, 0.03));
+  border: 1px solid rgba(23, 19, 15, 0.08);
+}
+
+.strat-hero-fluid canvas {
+  display: block;
+  cursor: none;
+}
+
+.strat-hero h1 {
+  margin-bottom: 2.5rem;
+  font-size: clamp(2.75rem, 6vw, 5.25rem);
+}
+
+.strat-hero h1 .accent {
+  color: var(--accent);
+}
+
+.strat-dropcap-para {
+  max-width: 38rem;
+  font-family: var(--f-nm);
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-transform: none;
+  opacity: 0.85;
+}
+
+.strat-dropcap {
+  float: left;
+  margin-right: 0.5rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: 5.5rem;
+  line-height: 0.8;
+  color: var(--accent);
+}
+
+.strat-kicker {
+  margin-bottom: 2rem;
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+/* — agitation — */
+.strat-agitation blockquote {
+  max-width: 40rem;
+  margin-bottom: 2.5rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+  font-size: clamp(1.9rem, 4.2vw, 3.25rem);
+}
+
+.strat-agitation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  max-width: 44rem;
+}
+
+.strat-agitation-grid p {
+  text-transform: none;
+  font-size: 1rem;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+.strat-turn {
+  display: flex;
+  gap: 0.75rem;
+  font-weight: 700;
+  opacity: 1 !important;
+}
+
+.strat-turn-mark {
+  flex-shrink: 0;
+  color: var(--accent);
+  font-family: var(--f-h);
+}
+
+/* — footnoted subservice list — */
+.strat-footnotes {
+  list-style: none;
+  max-width: 42rem;
+}
+
+.strat-footnotes li {
+  position: relative;
+  padding: 1.75rem 0 1.75rem 3.25rem;
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.strat-fn-num {
+  position: absolute;
+  left: 0;
+  top: 1.85rem;
+  font-family: var(--f-h);
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+.strat-footnotes h6 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+}
+
+.strat-footnotes p {
+  max-width: 34rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* — workflow: marginal-note rows — */
+.strat-wf-row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: 0 1.5rem;
+  max-width: 42rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.strat-wf-num {
+  font-family: var(--f-h);
+  font-size: 0.85rem;
+  opacity: 0.4;
+}
+
+.strat-wf-row h6 {
+  grid-column: 2;
+  margin-bottom: 0.4rem;
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+}
+
+.strat-wf-row p {
+  grid-column: 2;
+  max-width: 32rem;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* — proof: audit spread, dark tonal shift for contrast — */
+.strat-proof {
+  background-color: var(--d);
+  color: var(--l);
+  max-width: none;
+  border-bottom: none;
+}
+
+.strat-proof .strat-kicker {
+  opacity: 0.5;
+}
+
+.strat-proof-note {
+  max-width: 36rem;
+  margin-bottom: 2.5rem;
+  text-transform: none;
+  opacity: 0.65;
+}
+
+.strat-proof-spread {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  max-width: 58rem;
+  background: rgba(246, 241, 231, 0.15);
+}
+
+.strat-proof-col {
+  padding: 2rem;
+  background: var(--d);
+}
+
+.strat-proof-col-mid {
+  background: #241d17;
+}
+
+.strat-proof-col-after {
+  background: var(--accent-deep);
+}
+
+.strat-proof-tag {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-family: var(--f-nm);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.strat-proof-line {
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.1;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+}
+
+/* — pricing — */
+.strat-pricing-note {
+  max-width: 32rem;
+  font-family: var(--f-h);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.15;
+  font-size: clamp(1.15rem, 2.2vw, 1.65rem);
+}
+
+/* — closing hook — */
+.strat-hook {
+  grid-column: 2;
+  padding: 6rem clamp(1.75rem, 6vw, 6rem);
+  text-align: left;
+  border-bottom: 1px solid rgba(23, 19, 15, 0.1);
+}
+
+.strat-hook h3 {
+  max-width: 30rem;
+  margin-bottom: 2rem;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+}
+
+/* — next-service banner — */
+.strat-next {
+  grid-column: 2;
+  display: block;
+  padding: 4rem clamp(1.75rem, 6vw, 6rem);
+  text-decoration: none;
+  color: var(--d);
+  background-color: var(--l);
+  transition: background-color 0.4s ease;
+}
+
+.strat-next:hover {
+  background-color: var(--accent-pastel);
+}
+
+.strat-next .container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0;
+}
+
+.strat-next-label {
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.strat-next h3 {
+  flex: 1;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+}
+
+.strat-next-arrow {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .strat {
+    grid-template-columns: 2.75rem 1fr;
+  }
+
+  .strat-hero {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+  }
+
+  .strat-hero-fluid {
+    display: none;
+  }
+
+  .strat-rail {
+    padding: 5.5rem 0 1.5rem;
+  }
+
+  .strat-rail-mast {
+    font-size: 0.6rem;
+  }
+
+  .strat-agitation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .strat-proof-spread {
+    grid-template-columns: 1fr;
+  }
+}

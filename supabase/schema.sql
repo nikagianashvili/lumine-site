@@ -1,12 +1,14 @@
--- Draft schema for Lumine's backend. Run this in Supabase's SQL Editor
--- (Dashboard → SQL Editor → New query) once the project exists.
--- Review field names/types against js/projects-data.js and
--- js/pricing-data.js before running — this mirrors those shapes but nothing
--- is final until you say so.
+-- Lumine's backend schema. Run in Supabase's SQL Editor
+-- (Dashboard → SQL Editor → New query). Base tables use "create table if
+-- not exists" (a no-op if they already exist — it does NOT add missing
+-- columns to an existing table, that's what the ALTER statements below
+-- each table are for). New columns use "add column if not exists". Safe
+-- to run top-to-bottom at any point, including against a database that
+-- already has some or all of it.
 
 -- ── Content tables (currently hardcoded in js/*-data.js) ────────────────
 
-create table projects (
+create table if not exists projects (
   id uuid primary key default gen_random_uuid(),
   slug text unique not null,
   title text not null,
@@ -25,7 +27,7 @@ create table projects (
   created_at timestamptz default now()
 );
 
-create table pricing_packages (
+create table if not exists pricing_packages (
   id uuid primary key default gen_random_uuid(),
   numeral text,
   name text not null,
@@ -40,7 +42,7 @@ create table pricing_packages (
   sort_order int default 0
 );
 
-create table pricing_singles (
+create table if not exists pricing_singles (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   name_ka text,
@@ -48,7 +50,7 @@ create table pricing_singles (
   sort_order int default 0
 );
 
-create table journal_posts (
+create table if not exists journal_posts (
   id uuid primary key default gen_random_uuid(),
   slug text unique not null,
   title text not null,
@@ -65,18 +67,26 @@ create table journal_posts (
 -- Rides on Supabase's built-in auth.users; this table just adds the fields
 -- auth.users doesn't have (role, display name).
 
-create table team_members (
+create table if not exists team_members (
   id uuid primary key references auth.users (id) on delete cascade,
   name text,
-  role text not null default 'member', -- admin | member
+  role text not null default 'member', -- a specialty label (Founder/Orchestrator/Media/Design/…), not an access tier
   created_at timestamptz default now()
 );
+
+-- Skills/status/permissions substrate (admin rebuild Phase 7) - role
+-- above stays a free-text specialty label on purpose; access_level is
+-- the actual (currently unenforced) permission tier.
+alter table team_members add column if not exists access_level text default 'admin'; -- "admin" (full access) | "member" (scoped) - not yet enforced anywhere in the API
+alter table team_members add column if not exists skills_tags text[] default '{}'; -- @ai-ops / @web-dev / @photo / @brand-design / @smm / @strategy
+alter table team_members add column if not exists status text default 'Available'; -- Available / Focused / On Set / Away - manual, self-set, never inferred
+alter table team_members add column if not exists focus_mode boolean default false;
 
 -- ── Clients (pillar 4) ───────────────────────────────────────────────────
 -- One record per contact, from first inquiry through becoming a real
 -- client — status is the pipeline stage, not a separate "won" table.
 
-create table clients (
+create table if not exists clients (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz default now(),
   name text,
@@ -95,10 +105,10 @@ create table clients (
 -- ── Workflow / management (pillar 3) ─────────────────────────────────────
 -- An "engagement" is actual paid work for a client — separate from the
 -- public portfolio `projects` table above, which is marketing content
--- (case studies), not operational tracking. A portfolio project MAY
--- reference the engagement it came from once real work starts.
+-- (case studies), not operational tracking. "Publish to Portfolio" (admin
+-- rebuild Phase 4) writes a completed engagement into `projects`.
 
-create table engagements (
+create table if not exists engagements (
   id uuid primary key default gen_random_uuid(),
   client_id uuid references clients (id) on delete set null,
   title text not null,
@@ -110,7 +120,23 @@ create table engagements (
   created_at timestamptz default now()
 );
 
-create table tasks (
+-- Admin rebuild Phase 2/4 - real Client/Project/Task linking + Archive
+alter table engagements add column if not exists service_type text; -- web | photo-video | design | smm - drives the Phase 3 pipeline template
+alter table engagements add column if not exists cover_image_url text;
+alter table engagements add column if not exists industry text; -- matches the public projects.industry taxonomy - pre-fills Publish to Portfolio
+-- Phase 5 - retainer quota tracker + offboarding-upsell automation
+alter table engagements add column if not exists is_retainer boolean default false; -- false = "Solo Service" (one-off), eligible for the upsell cron
+alter table engagements add column if not exists retainer_tier text; -- Starter | Growth | Full Beam - matches js/pricing-data.js's real packages
+alter table engagements add column if not exists posters_limit int;
+alter table engagements add column if not exists posters_delivered int default 0;
+alter table engagements add column if not exists videos_limit int;
+alter table engagements add column if not exists videos_delivered int default 0;
+alter table engagements add column if not exists completed_at timestamptz; -- stamped server-side whenever status transitions to "completed" - never client-set
+alter table engagements add column if not exists upsell_task_created boolean default false; -- guards api/cron/offboarding-upsell.js from firing twice on one completion
+-- Phase 6 - War Room / MRR dashboard
+alter table engagements add column if not exists monthly_rate numeric; -- structured, not parsed out of the free-text `budget` column above
+
+create table if not exists tasks (
   id uuid primary key default gen_random_uuid(),
   engagement_id uuid references engagements (id) on delete cascade,
   title text not null,
@@ -122,13 +148,21 @@ create table tasks (
   created_at timestamptz default now()
 );
 
+-- Phase 2/3 - denormalized from the task's engagement so Board/Spreadsheet
+-- can filter without a join; only ever set from the project's own
+-- service_type, never edited independently
+alter table tasks add column if not exists service_type text;
+alter table tasks add column if not exists stage text; -- fine-grained per-service pipeline stage (e.g. "Shoot Day", "QA") - status above is derived from this
+-- Phase 7 - hat-tags, independent of the single `assignee`
+alter table tasks add column if not exists hat_tags text[] default '{}';
+
 -- ── Marketing office (pillar 2) ──────────────────────────────────────────
 -- Planning/scheduling for content across channels — distinct from
 -- journal_posts above, which is the live published table the public
 -- journal page actually reads. A content_calendar row becomes a
 -- journal_posts row (or a real Instagram post, etc.) once it ships.
 
-create table content_calendar (
+create table if not exists content_calendar (
   id uuid primary key default gen_random_uuid(),
   type text not null default 'journal', -- journal | social | email | ad | other
   title text not null,
@@ -146,7 +180,7 @@ create table content_calendar (
 -- Every AI chat/consultant session, so conversations are reviewable and a
 -- qualified visitor can be linked to a real client record.
 
-create table ai_conversations (
+create table if not exists ai_conversations (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz default now(),
   channel text not null default 'chat', -- chat | consultant
@@ -155,6 +189,164 @@ create table ai_conversations (
   transcript jsonb not null default '[]', -- array of {role, content, ts}
   status text not null default 'open', -- open | qualified | closed
   summary text
+);
+
+-- ── Water Cooler / social feed (admin rebuild Phase 8) ───────────────────
+-- Lightweight team feed, distinct from Activity (a read-only unified
+-- timeline built client-side from the tables above, no table of its own).
+-- Brand new table - CREATE TABLE IF NOT EXISTS is correct here.
+
+create table if not exists water_cooler_posts (
+  id uuid primary key default gen_random_uuid(),
+  author_id uuid references team_members (id), -- null for automated celebrations
+  type text not null default 'manual', -- manual | celebration
+  body text not null,
+  file_url text, -- a pasted link, not a real upload - this table predates real file storage (Phase 9)
+  reactions jsonb not null default '{}', -- {emoji: [team_member_id, ...]} - a toggle set per emoji, not a count
+  engagement_id uuid references engagements (id) on delete set null,
+  created_at timestamptz default now()
+);
+-- Real shared attachment (post-Phase-9 real file storage) - distinct from
+-- the legacy file_url paste-a-link field above, which stays for backward
+-- compatibility with old posts.
+alter table water_cooler_posts add column if not exists file_id uuid references files (id) on delete set null;
+-- Threaded replies on a post - flat (no nested replies), newest last.
+create table if not exists water_cooler_comments (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references water_cooler_posts (id) on delete cascade,
+  author_id uuid not null references team_members (id) on delete cascade,
+  body text not null,
+  created_at timestamptz default now()
+);
+
+-- ── Agency Brain: Folders, real files, Playbook (admin rebuild Phase 9) ──
+-- Real file storage lives in a private Supabase Storage bucket
+-- (agency-files) — created directly via the Storage API, not SQL, so
+-- there's nothing to run for the bucket itself. `files` rows point into
+-- it by `path`; signed URLs are generated fresh per request, never stored.
+--
+-- Documents (invoices/contracts, tied to a client) and Folders (creative
+-- project work, tied to a project or an account-level folder) are
+-- deliberately separate concepts in the admin UI, but share this one
+-- table — `category` distinguishes them rather than two upload pipelines.
+-- All three tables below are brand new - CREATE TABLE IF NOT EXISTS is
+-- correct for them.
+
+create table if not exists folders (
+  id uuid primary key default gen_random_uuid(), -- account-level folders only; project files use files.engagement_id directly, no folder row needed
+  name text not null,
+  created_at timestamptz default now()
+);
+
+create table if not exists files (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  path text not null, -- storage object key in the "agency-files" bucket
+  content_type text,
+  size_bytes int,
+  category text not null default 'creative', -- creative (Folders/Creative Library) | document (Documents, tied to a client)
+  folder_id uuid references folders (id) on delete set null,
+  engagement_id uuid references engagements (id) on delete set null,
+  client_id uuid references clients (id) on delete set null,
+  skills_tags text[] default '{}', -- powers the Creative Library's hat filter
+  uploaded_by uuid references team_members (id),
+  created_at timestamptz default now()
+);
+
+create table if not exists playbook_entries (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  body text not null, -- real structured docs written directly in the admin, not uploaded files
+  tags text[] default '{}',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- ── Team direct messages ─────────────────────────────────────────────────
+-- 1:1 chat between team members - distinct from Water Cooler above (a
+-- public team-wide feed with reactions) and from ai_conversations (visitor
+-- <-> AI, not teammate <-> teammate). recipient_id is always set (no
+-- broadcast/group messages in this table) so a thread is fully identified
+-- by the unordered pair {sender_id, recipient_id}.
+
+create table if not exists team_messages (
+  id uuid primary key default gen_random_uuid(),
+  sender_id uuid not null references team_members (id) on delete cascade,
+  recipient_id uuid not null references team_members (id) on delete cascade,
+  body text not null,
+  created_at timestamptz default now(),
+  read_at timestamptz, -- null until the recipient's client marks it read
+  delivered_at timestamptz -- stamped server-side the first time the recipient's client fetches it
+);
+-- {kind: "file"|"project", name, url?, fileId?, engagementId?} - a message
+-- can carry a shared file/project alongside or instead of body text. Not a
+-- separate table since a thread only ever needs the latest state, no
+-- history of the attachment itself.
+alter table team_messages add column if not exists attachment jsonb;
+
+-- ── Client Portal (admin rebuild Track 4) ────────────────────────────────
+-- Client-facing login, riding on auth.users exactly like team_members does
+-- (see that table's comment) - one row per contact person, linked to the
+-- CRM record they belong to. A client company can have more than one
+-- logged-in contact.
+
+create table if not exists client_users (
+  id uuid primary key references auth.users (id) on delete cascade,
+  client_id uuid not null references clients (id) on delete cascade,
+  name text,
+  created_at timestamptz default now()
+);
+
+-- Client-portal review state on a deliverable - null for files never sent
+-- for approval (documents, internal creative work-in-progress).
+alter table files add column if not exists approval_status text; -- null | pending | approved | changes_requested
+
+-- Visual proofing comments (Track 4) - one table for both plain comments
+-- and pinned annotations: x_pct/y_pct place a pin on an image (0-100,
+-- percent of rendered width/height so it survives responsive resizing),
+-- timecode_seconds places a marker on a video's scrubber. All three null
+-- means a plain threaded comment with no spatial/temporal anchor.
+create table if not exists deliverable_comments (
+  id uuid primary key default gen_random_uuid(),
+  file_id uuid not null references files (id) on delete cascade,
+  body text not null,
+  author_client_user_id uuid references client_users (id) on delete set null,
+  author_team_member_id uuid references team_members (id) on delete set null,
+  x_pct numeric,
+  y_pct numeric,
+  timecode_seconds numeric,
+  resolved boolean not null default false,
+  created_at timestamptz default now()
+);
+
+-- ── Assistant ─────────────────────────────────────────────────────────────
+-- One continuous private thread per team member with the in-admin AI
+-- assistant - not shared across the team, not connected to live
+-- clients/tasks/projects data (scoped deliberately: a general-purpose
+-- helper, not an agent with write/read access to the business).
+create table if not exists assistant_messages (
+  id uuid primary key default gen_random_uuid(),
+  team_member_id uuid not null references team_members (id) on delete cascade,
+  role text not null, -- user | assistant
+  content text not null,
+  created_at timestamptz default now()
+);
+
+-- ── Notifications ─────────────────────────────────────────────────────────
+-- One row per recipient per event (a broadcast like "new lead" inserts one
+-- row per team member, not a shared row + join table) so read state is a
+-- plain per-row timestamp. `target` mirrors the admin app's DeepLinkTarget
+-- shape (src/admin/lib/deepLink.ts) so clicking a notification can jump
+-- straight to the record via the same navigation the command palette uses.
+create table if not exists notifications (
+  id uuid primary key default gen_random_uuid(),
+  recipient_id uuid not null references team_members (id) on delete cascade,
+  type text not null, -- task_assigned | new_lead | new_comment
+  title text not null,
+  body text,
+  target jsonb,
+  created_at timestamptz default now(),
+  read_at timestamptz
 );
 
 -- ── Row-level security ───────────────────────────────────────────────────
@@ -172,14 +364,30 @@ alter table engagements enable row level security;
 alter table tasks enable row level security;
 alter table content_calendar enable row level security;
 alter table ai_conversations enable row level security;
+alter table water_cooler_posts enable row level security;
+alter table team_messages enable row level security;
+alter table folders enable row level security;
+alter table files enable row level security;
+alter table playbook_entries enable row level security;
+alter table client_users enable row level security;
+alter table deliverable_comments enable row level security;
+alter table notifications enable row level security;
+alter table assistant_messages enable row level security;
+alter table water_cooler_comments enable row level security;
 
 -- Public site can read content tables directly with the anon key...
+drop policy if exists "public read projects" on projects;
 create policy "public read projects" on projects for select using (true);
+drop policy if exists "public read pricing_packages" on pricing_packages;
 create policy "public read pricing_packages" on pricing_packages for select using (true);
+drop policy if exists "public read pricing_singles" on pricing_singles;
 create policy "public read pricing_singles" on pricing_singles for select using (true);
+drop policy if exists "public read journal_posts" on journal_posts;
 create policy "public read journal_posts" on journal_posts for select using (true);
 
 -- ...but nothing else is anon-readable: clients, engagements, tasks,
--- content_calendar, ai_conversations, and team_members are all
--- service_role (server-side /api) only, and later authenticated-admin-only,
--- once team login is wired up. No policies means no anon access at all.
+-- content_calendar, ai_conversations, team_members, water_cooler_posts,
+-- folders, files, playbook_entries, client_users, deliverable_comments, and
+-- notifications are all service_role (server-side /api) only. No policies
+-- means no anon access at all - api/portal/* scopes every query to the
+-- caller's client_id itself, the same trust model as api/admin/*.

@@ -1,0 +1,149 @@
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { motion, useReducedMotion } from "framer-motion";
+import { UserPlus, ListTodo, Briefcase, MessageSquare, PartyPopper, Activity as ActivityIcon } from "lucide-react";
+import { api } from "@/lib/api";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { timeAgo } from "@/lib/format";
+import { cn } from "@/lib/utils";
+
+interface Entry {
+  id: string;
+  icon: typeof UserPlus;
+  text: string;
+  time: string;
+  accent?: boolean;
+}
+
+// A real unified feed (Phase 9) - client/project/task/conversation events
+// merged and sorted by recency, reusing Overview's ActivityFeed item
+// pattern but page-scoped and covering everything, not just clients+tasks.
+export function ActivityPage() {
+  const reduceMotion = useReducedMotion();
+  const clientsQuery = useQuery({ queryKey: ["clients"], queryFn: api.clients.list });
+  const tasksQuery = useQuery({ queryKey: ["tasks"], queryFn: api.tasks.list });
+  const engagementsQuery = useQuery({ queryKey: ["engagements"], queryFn: api.engagements.list });
+  const convosQuery = useQuery({ queryKey: ["conversations"], queryFn: api.conversations.list });
+  const waterCoolerQuery = useQuery({ queryKey: ["water-cooler"], queryFn: api.waterCooler.list });
+
+  const loading =
+    clientsQuery.isLoading || tasksQuery.isLoading || engagementsQuery.isLoading || convosQuery.isLoading;
+
+  const entries = useMemo<Entry[]>(() => {
+    const list: Entry[] = [];
+
+    for (const c of clientsQuery.data ?? []) {
+      list.push({
+        id: `client-${c.id}`,
+        icon: UserPlus,
+        text: `New lead: ${c.name || c.email || "Unnamed"}`,
+        time: c.created_at,
+        accent: c.source === "ai_chat" || c.source === "ai_consultant",
+      });
+    }
+    for (const t of tasksQuery.data ?? []) {
+      list.push({ id: `task-${t.id}`, icon: ListTodo, text: `Task created: ${t.title}`, time: t.created_at });
+    }
+    for (const p of engagementsQuery.data ?? []) {
+      list.push({ id: `project-${p.id}`, icon: Briefcase, text: `Project started: ${p.title}`, time: p.created_at });
+      if (p.completed_at) {
+        list.push({
+          id: `project-done-${p.id}`,
+          icon: PartyPopper,
+          text: `Project shipped: ${p.title}`,
+          time: p.completed_at,
+          accent: true,
+        });
+      }
+    }
+    for (const c of convosQuery.data ?? []) {
+      list.push({
+        id: `convo-${c.id}`,
+        icon: MessageSquare,
+        text: `AI conversation with ${c.clients?.name || c.clients?.email || "a visitor"}`,
+        time: c.created_at,
+        accent: true,
+      });
+    }
+    for (const post of waterCoolerQuery.data ?? []) {
+      list.push({
+        id: `wc-${post.id}`,
+        icon: PartyPopper,
+        text: post.type === "celebration" ? post.body : `${post.team_members?.name || "Someone"}: ${post.body}`,
+        time: post.created_at,
+      });
+    }
+
+    return list.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 60);
+  }, [clientsQuery.data, tasksQuery.data, engagementsQuery.data, convosQuery.data, waterCoolerQuery.data]);
+
+  return (
+    <div className="flex max-w-2xl flex-col gap-4 pt-6">
+      <div>
+        <h1 className="font-display text-2xl font-bold">Activity</h1>
+        <p className="text-sm text-muted-foreground">Everything that's happened, in one feed.</p>
+      </div>
+
+      {loading && (
+        // list-shaped skeleton instead of one gray slab
+        <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
+          <Skeleton className="h-5 w-24" />
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton className="h-8 w-8 flex-shrink-0 rounded-full" />
+              <Skeleton className="h-4 flex-1" />
+              <Skeleton className="h-3 w-12" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!loading && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent</CardTitle>
+          </CardHeader>
+          <div className="flex flex-col gap-1 px-5 pb-5">
+            {entries.length === 0 ? (
+              <EmptyState
+                icon={ActivityIcon}
+                title="Nothing yet"
+                description="New leads, tasks, projects, and AI conversations all land in this feed."
+                className="border-0 py-6"
+              />
+            ) : (
+              <motion.div
+                className="flex flex-col gap-1"
+                initial={reduceMotion ? false : "hidden"}
+                animate="show"
+                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.025 } } }}
+              >
+                {entries.map((e) => (
+                  <motion.div
+                    key={e.id}
+                    variants={{ hidden: { opacity: 0, x: -6 }, show: { opacity: 1, x: 0 } }}
+                    transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm"
+                  >
+                    <span
+                      className={cn(
+                        "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
+                        e.accent ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      <e.icon className="size-4" />
+                    </span>
+                    <span className="flex-1 truncate">{e.text}</span>
+                    <span className="flex-shrink-0 text-xs text-muted-foreground">{timeAgo(e.time)}</span>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+}

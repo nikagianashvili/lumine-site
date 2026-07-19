@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -9,7 +9,7 @@
       name="description"
       content="Lumine is a creative agency in Tbilisi working across photo, video, branding, social, marketing, and web."
     />
-    <meta name="theme-color" content="#121212" />
+    <meta name="theme-color" content="#17130f" />
     <meta property="og:title" content="Lumine — Creative Agency, Tbilisi" />
     <meta
       property="og:description"
@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="/css/nav.css" />
     <link rel="stylesheet" href="/css/home.css" />
     <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/chat-widget.css" />
     <script src="/js/wrappedgl.js"></script>
     <script src="/js/simulator.js"></script>
   </head>
@@ -422,13 +423,14 @@
             class="section-head-copy"
             data-animate-variant="slide"
             data-animate-on-scroll="true"
+            id="testimonialNote"
           >
             Placeholder quotes, written in Lumine's voice — swapped for real
             ones as they come in.
           </p>
         </div>
 
-        <div class="testimonial-track">
+        <div class="testimonial-track" id="testimonialTrack">
           <div class="testimonial-card card-base">
             <p class="testimonial-quote">"They actually asked what we needed before showing us what looked cool."</p>
             <p class="testimonial-attr">— A Local Business Owner, Tbilisi</p>
@@ -484,66 +486,7 @@
           <a href="/contact" class="btn btn-outline">Ask Something Else</a>
         </div>
 
-        <div class="faq-list">
-          <div class="faq-item">
-            <button class="faq-question">
-              <span class="faq-index">01</span>
-              <span class="faq-question-text">What does a package actually include?</span>
-              <span class="faq-plus"></span>
-            </button>
-            <div class="faq-answer">
-              <p>
-                Packages bundle a set number of posters and videos with social
-                media management and paid advertising. Site management is
-                available as an add-on. Individual services — photo, video,
-                a brand book, or a standalone site — are also booked on their
-                own.
-              </p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question">
-              <span class="faq-index">02</span>
-              <span class="faq-question-text">How is pricing structured?</span>
-              <span class="faq-plus"></span>
-            </button>
-            <div class="faq-answer">
-              <p>
-                Three package tiers cover most ongoing work, priced by scope —
-                how many posters and videos per month, plus social and ad
-                management. Single services are quoted separately. Exact
-                numbers live on the Pricing page.
-              </p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question">
-              <span class="faq-index">03</span>
-              <span class="faq-question-text">Do you work with brand-new businesses?</span>
-              <span class="faq-plus"></span>
-            </button>
-            <div class="faq-answer">
-              <p>
-                Yes — a good share of what we do is helping a founder go from
-                nothing to a working brand: name, look, first content, first
-                site.
-              </p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question">
-              <span class="faq-index">04</span>
-              <span class="faq-question-text">Can you handle just one service, not a full package?</span>
-              <span class="faq-plus"></span>
-            </button>
-            <div class="faq-answer">
-              <p>
-                Yes. Photo, video, a brand book, or a website can each be
-                booked individually if that's all you need right now.
-              </p>
-            </div>
-          </div>
-        </div>
+        <div class="faq-list"></div>
       </div>
     </section>
 
@@ -602,9 +545,12 @@
     <script type="module" src="/js/home-hero.js"></script>
     <script type="module" src="/js/trusted-by.js"></script>
     <script type="module" src="/js/featured.js"></script>
+    <script type="module" src="/js/testimonials.js"></script>
     <script type="module" src="/js/home-extras.js"></script>
+    <script type="module" src="/js/faq-render.js"></script>
     <script type="module" src="/js/faq.js"></script>
     <script type="module" src="/js/footer.js"></script>
+    <script type="module" src="/js/chat-widget.js"></script>
     <script type="module" src="/js/preloader.js"></script>
   </body>
 </html>

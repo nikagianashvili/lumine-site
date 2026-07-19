@@ -1,4 +1,4 @@
-/* legal — privacy & terms, plain language */
+﻿/* legal — privacy & terms, plain language */
 
 body {
   background-color: var(--l);
@@ -33,7 +33,7 @@ body {
   grid-template-columns: 1fr 1.6fr;
   gap: var(--sp-4);
   padding: var(--sp-5) 0;
-  border-top: 1px solid rgba(18, 18, 18, 0.25);
+  border-top: 1px solid rgba(23, 19, 15, 0.25);
   scroll-margin-top: 7rem;
 }
 

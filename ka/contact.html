@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ka">
   <head>
     <meta charset="UTF-8" />
@@ -9,7 +9,7 @@
       name="description"
       content="დაუკავშირდი Lumine-ს — შემოქმედებით სააგენტოს თბილისში."
     />
-    <meta name="theme-color" content="#121212" />
+    <meta name="theme-color" content="#17130f" />
     <meta property="og:title" content="კონტაქტი — Lumine" />
     <meta
       property="og:description"
@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="/css/nav.css" />
     <link rel="stylesheet" href="/css/contact.css" />
     <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/chat-widget.css" />
     <script src="/js/wrappedgl.js"></script>
     <script src="/js/simulator.js"></script>
   </head>
@@ -125,12 +126,15 @@
             <div class="form-row">
               <span class="form-label">რა გჭირდებათ?</span>
               <div class="form-chips" id="serviceChips">
-                <button type="button" class="form-chip">ფოტოგრაფია</button>
-                <button type="button" class="form-chip">ვიდეო</button>
-                <button type="button" class="form-chip">დიზაინი</button>
-                <button type="button" class="form-chip">სოციალური</button>
-                <button type="button" class="form-chip">მარკეტინგი</button>
-                <button type="button" class="form-chip">ვები</button>
+                <button type="button" class="form-chip" data-slug="strategy">სტრატეგია</button>
+                <button type="button" class="form-chip" data-slug="photography">ფოტოგრაფია</button>
+                <button type="button" class="form-chip" data-slug="video">ვიდეო</button>
+                <button type="button" class="form-chip" data-slug="brand">ბრენდი და დიზაინი</button>
+                <button type="button" class="form-chip" data-slug="smm">სოციალური მედია</button>
+                <button type="button" class="form-chip" data-slug="marketing">მარკეტინგი და რეკლამა</button>
+                <button type="button" class="form-chip" data-slug="web">ვები დეველოპმენტი</button>
+                <button type="button" class="form-chip" data-slug="ai">AI Front Office</button>
+                <button type="button" class="form-chip" data-slug="printing">ბეჭდვა</button>
               </div>
             </div>
 
@@ -202,5 +206,6 @@
     <script type="module" src="/js/contact-form.js"></script>
     <script type="module" src="/js/home-extras.js"></script>
     <script type="module" src="/js/footer.js"></script>
+    <script type="module" src="/js/chat-widget.js"></script>
   </body>
 </html>

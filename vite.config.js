@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
 import fs from "fs";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 // Mirrors vercel.json / public/.htaccess clean-URL rewrites for the dev
 // server. Without this, most /ka/* routes happen to resolve anyway because
@@ -13,12 +15,23 @@ const CLEAN_ROUTES = {
   "/project": "/project.html",
   "/studio": "/studio.html",
   "/services": "/services.html",
+  "/services/strategy": "/services/strategy.html",
+  "/services/photography": "/services/photography.html",
+  "/services/video": "/services/video.html",
+  "/services/brand": "/services/brand.html",
+  "/services/smm": "/services/smm.html",
+  "/services/marketing": "/services/marketing.html",
+  "/services/web": "/services/web.html",
+  "/services/ai": "/services/ai.html",
+  "/services/printing": "/services/printing.html",
   "/pricing": "/pricing.html",
   "/journal": "/journal.html",
   "/legal": "/legal.html",
   "/contact": "/contact.html",
   "/admin": "/admin.html",
   "/admin-login": "/admin-login.html",
+  "/portal": "/portal.html",
+  "/portal-login": "/portal-login.html",
   "/ka": "/ka/index.html",
   "/ka/work": "/ka/work.html",
   "/ka/sample-project": "/ka/sample-project.html",
@@ -77,7 +90,17 @@ function copyToDist() {
 }
 
 export default defineConfig({
-  plugins: [copyToDist(), devCleanUrls()],
+  // react() + tailwindcss() only activate for files that opt in (.tsx
+  // imports, `@import "tailwindcss"` in a stylesheet) — the vanilla public
+  // pages and the old admin.css never reference either, so they're
+  // unaffected. Scoped to /admin's rebuild only.
+  plugins: [copyToDist(), devCleanUrls(), react(), tailwindcss()],
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "src/admin"),
+      "@portal": resolve(__dirname, "src/portal"),
+    },
+  },
   build: {
     rollupOptions: {
       input: {
@@ -87,12 +110,23 @@ export default defineConfig({
         project: resolve(__dirname, "project.html"),
         studio: resolve(__dirname, "studio.html"),
         services: resolve(__dirname, "services.html"),
+        "services-strategy": resolve(__dirname, "services/strategy.html"),
+        "services-photography": resolve(__dirname, "services/photography.html"),
+        "services-video": resolve(__dirname, "services/video.html"),
+        "services-brand": resolve(__dirname, "services/brand.html"),
+        "services-smm": resolve(__dirname, "services/smm.html"),
+        "services-marketing": resolve(__dirname, "services/marketing.html"),
+        "services-web": resolve(__dirname, "services/web.html"),
+        "services-ai": resolve(__dirname, "services/ai.html"),
+        "services-printing": resolve(__dirname, "services/printing.html"),
         pricing: resolve(__dirname, "pricing.html"),
         journal: resolve(__dirname, "journal.html"),
         legal: resolve(__dirname, "legal.html"),
         contact: resolve(__dirname, "contact.html"),
         admin: resolve(__dirname, "admin.html"),
         "admin-login": resolve(__dirname, "admin-login.html"),
+        portal: resolve(__dirname, "portal.html"),
+        "portal-login": resolve(__dirname, "portal-login.html"),
         "ka-main": resolve(__dirname, "ka/index.html"),
         "ka-work": resolve(__dirname, "ka/work.html"),
         "ka-sample-project": resolve(__dirname, "ka/sample-project.html"),

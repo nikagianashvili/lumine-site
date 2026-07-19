@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "../../css/design-tokens.css";
+
+/*
+  Design system for the rebuilt /admin. Token values ("Final Cut" palette)
+  live in css/design-tokens.css, shared with /portal so both React apps
+  draw from one definition instead of two copies that can drift apart —
+  see that file for the full token story. Deliberately NOT importing
+  css/globals.css — that carries the public marketing site's own button/nav
+  styles (.btn-solid, .btn-outline, etc.) which would leak into shadcn's
+  component styles.
+*/

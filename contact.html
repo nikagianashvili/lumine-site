@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -9,7 +9,7 @@
       name="description"
       content="Get in touch with Lumine — a creative agency in Tbilisi."
     />
-    <meta name="theme-color" content="#121212" />
+    <meta name="theme-color" content="#17130f" />
     <meta property="og:title" content="Contact — Lumine" />
     <meta
       property="og:description"
@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="/css/nav.css" />
     <link rel="stylesheet" href="/css/contact.css" />
     <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/chat-widget.css" />
     <script src="/js/wrappedgl.js"></script>
     <script src="/js/simulator.js"></script>
   </head>
@@ -121,12 +122,15 @@
             <div class="form-row">
               <span class="form-label">What Do You Need?</span>
               <div class="form-chips" id="serviceChips">
-                <button type="button" class="form-chip">Photography</button>
-                <button type="button" class="form-chip">Video</button>
-                <button type="button" class="form-chip">Design</button>
-                <button type="button" class="form-chip">Social</button>
-                <button type="button" class="form-chip">Marketing</button>
-                <button type="button" class="form-chip">Web</button>
+                <button type="button" class="form-chip" data-slug="strategy">Strategy</button>
+                <button type="button" class="form-chip" data-slug="photography">Photography</button>
+                <button type="button" class="form-chip" data-slug="video">Video</button>
+                <button type="button" class="form-chip" data-slug="brand">Brand &amp; Design</button>
+                <button type="button" class="form-chip" data-slug="smm">Social Media</button>
+                <button type="button" class="form-chip" data-slug="marketing">Marketing &amp; Ads</button>
+                <button type="button" class="form-chip" data-slug="web">Web Development</button>
+                <button type="button" class="form-chip" data-slug="ai">AI Front Office</button>
+                <button type="button" class="form-chip" data-slug="printing">Printing</button>
               </div>
             </div>
 
@@ -197,5 +201,6 @@
     <script type="module" src="/js/contact-form.js"></script>
     <script type="module" src="/js/home-extras.js"></script>
     <script type="module" src="/js/footer.js"></script>
+    <script type="module" src="/js/chat-widget.js"></script>
   </body>
 </html>
