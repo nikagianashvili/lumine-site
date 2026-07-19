@@ -82,6 +82,12 @@
         </div>
       </section>
 
+      <!-- everything below the hero shares one continuous ambient
+           background (agitation through the hook) instead of each
+           section being its own flat rectangle of solid paper -->
+      <div class="brnd-below-hero">
+        <div class="brnd-ambient" aria-hidden="true"></div>
+
       <!-- 02 agitation -->
       <section class="brnd-agitation">
         <blockquote data-animate-variant="slide" data-animate-on-scroll="true">
@@ -99,31 +105,89 @@
         </div>
       </section>
 
-      <!-- 03 subservices: swatch wall (kept - this one was never flagged as
-           repeated, it's an interactive hover-reveal, not a static tile) -->
-      <section class="brnd-swatches">
-        <p class="brnd-kicker pd-reveal">In Detail — Pick A Swatch</p>
-        <div class="brnd-swatch-grid">
-          <button type="button" class="brnd-swatch pd-reveal" data-swatch style="--sw: var(--d);">
-            <span class="brnd-swatch-name">Visual Identity</span>
-            <span class="brnd-swatch-desc">Logo systems, color, type, and usage rules in one document.</span>
-          </button>
-          <button type="button" class="brnd-swatch pd-reveal" data-swatch style="--sw: var(--accent);">
-            <span class="brnd-swatch-name">Digital Assets</span>
-            <span class="brnd-swatch-desc">Social templates, decks, and email — on-system by default.</span>
-          </button>
-          <button type="button" class="brnd-swatch pd-reveal" data-swatch style="--sw: var(--accent-deep);">
-            <span class="brnd-swatch-name">Print</span>
-            <span class="brnd-swatch-desc">Business cards, posters, and banners built for the press, not the screen.</span>
-          </button>
-          <button type="button" class="brnd-swatch pd-reveal" data-swatch style="--sw: var(--accent-pastel); color: var(--d);">
-            <span class="brnd-swatch-name">Packaging</span>
-            <span class="brnd-swatch-desc">Structural and print-ready packaging design, dieline to final art.</span>
-          </button>
-          <button type="button" class="brnd-swatch pd-reveal" data-swatch style="--sw: var(--d-soft);">
-            <span class="brnd-swatch-name">UI/UX</span>
-            <span class="brnd-swatch-desc">Product and web interfaces that read as the same brand, not a spin-off.</span>
-          </button>
+      <!-- 03 subservices: a pinned horizontal filmstrip, not a static
+           grid - scrolling down moves you sideways through five reels,
+           each a full card with a number, focus line, and deliverables
+           list, so the five subservices read as a guided tour rather
+           than a wall of scroll. Adapted from the pinned scroll-scrub
+           pattern (Codegrid assets reference: maximatherapy-sticky-cards
+           and the wider template collection's pinned/scrubbed sections). -->
+      <section class="brnd-subs" id="brndSubs">
+        <div class="brnd-subs-pin">
+          <div class="brnd-subs-head">
+            <p class="brnd-kicker pd-reveal">The Subservices</p>
+            <h2 class="pd-reveal">Five disciplines. One system.</h2>
+            <div class="brnd-subs-rail" aria-hidden="true">
+              <span class="brnd-subs-rail-fill" id="brndSubsRailFill"></span>
+            </div>
+          </div>
+
+          <div class="brnd-subs-track" id="brndSubsTrack">
+            <article class="brnd-subs-card" style="--card-tone: var(--d); --card-ink: var(--l);">
+              <span class="brnd-subs-num">01</span>
+              <h3>Visual Identity</h3>
+              <p class="brnd-subs-focus"><strong>The Focus —</strong> The core DNA of the business.</p>
+              <p class="brnd-subs-deliv-label">The Deliverables</p>
+              <ul class="brnd-subs-deliv">
+                <li>Custom logo systems</li>
+                <li>Scalable color palettes</li>
+                <li>Strict typography rules</li>
+                <li>Comprehensive brand books</li>
+              </ul>
+            </article>
+
+            <article class="brnd-subs-card" style="--card-tone: var(--accent); --card-ink: var(--accent-ink);">
+              <span class="brnd-subs-num">02</span>
+              <h3>Digital Assets</h3>
+              <p class="brnd-subs-focus"><strong>The Focus —</strong> High-performance visuals for digital spaces.</p>
+              <p class="brnd-subs-deliv-label">The Deliverables</p>
+              <ul class="brnd-subs-deliv">
+                <li>Social media template kits</li>
+                <li>Dynamic ad creatives</li>
+                <li>Email newsletter graphics</li>
+                <li>High-stakes presentation decks</li>
+              </ul>
+            </article>
+
+            <article class="brnd-subs-card" style="--card-tone: var(--accent-deep); --card-ink: var(--l);">
+              <span class="brnd-subs-num">03</span>
+              <h3>Print</h3>
+              <p class="brnd-subs-focus"><strong>The Focus —</strong> Tactile extensions of the digital brand.</p>
+              <p class="brnd-subs-deliv-label">The Deliverables</p>
+              <ul class="brnd-subs-deliv">
+                <li>Premium business cards</li>
+                <li>Editorial-style brochures</li>
+                <li>Event posters</li>
+                <li>Corporate collateral</li>
+              </ul>
+            </article>
+
+            <article class="brnd-subs-card" style="--card-tone: var(--accent-pastel); --card-ink: var(--d);">
+              <span class="brnd-subs-num">04</span>
+              <h3>Packaging</h3>
+              <p class="brnd-subs-focus"><strong>The Focus —</strong> The unboxing experience as a marketing event.</p>
+              <p class="brnd-subs-deliv-label">The Deliverables</p>
+              <ul class="brnd-subs-deliv">
+                <li>Custom box design</li>
+                <li>Product labels</li>
+                <li>Material sourcing consultation</li>
+                <li>High-fidelity 3D mockups</li>
+              </ul>
+            </article>
+
+            <article class="brnd-subs-card" style="--card-tone: var(--d-soft); --card-ink: var(--l);">
+              <span class="brnd-subs-num">05</span>
+              <h3>UI/UX</h3>
+              <p class="brnd-subs-focus"><strong>The Focus —</strong> Frictionless digital interaction design.</p>
+              <p class="brnd-subs-deliv-label">The Deliverables</p>
+              <ul class="brnd-subs-deliv">
+                <li>Wireframing</li>
+                <li>Intuitive user-flow mapping</li>
+                <li>High-fidelity prototyping</li>
+                <li>Clean design-system handoffs for development</li>
+              </ul>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -205,6 +269,7 @@
         <h3 data-animate-variant="slide" data-animate-on-scroll="true">Give the next asset a rule to follow.</h3>
         <a href="/contact?service=brand" class="btn btn-solid" data-magnetic>Build The System</a>
       </section>
+      </div>
 
       <a href="/services/smm" class="brnd-next">
         <div class="container">
@@ -237,6 +302,7 @@
     <script type="module" src="/js/home-extras.js"></script>
     <script type="module" src="/js/scroll-reveal.js"></script>
     <script type="module" src="/js/services/brand-mark.js"></script>
+    <script type="module" src="/js/services/brand-subs.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>
   </body>

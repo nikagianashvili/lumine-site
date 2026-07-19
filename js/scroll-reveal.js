@@ -14,6 +14,7 @@ function init() {
   gsap.set(els, { opacity: 0, y: 30 });
   ScrollTrigger.batch(els, {
     start: "top 85%",
+    once: true,
     onEnter: (batch) =>
       gsap.fromTo(
         batch,

@@ -11,8 +11,63 @@
 
 .brnd {
   background-color: var(--l);
-  background-image: radial-gradient(60% 50% at 50% 0%, rgba(242, 84, 45, 0.07), transparent 62%);
   color: var(--d);
+}
+
+/* — ambient background: slow-drifting soft blur of the brand's own
+   accent colors behind the paper tone, plus a whisper of grain, running
+   behind every section from the agitation block down to the hook so
+   nothing below the hero reads as a flat rectangle of solid cream.
+   Scoped to .brnd-below-hero (not the whole page) so it never shows
+   through the hero's own interactive stage above it. — */
+.brnd-below-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.brnd-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.brnd-ambient::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  background-image:
+    radial-gradient(38rem 30rem at 12% 8%, rgba(242, 84, 45, 0.1), transparent 60%),
+    radial-gradient(34rem 28rem at 88% 28%, rgba(126, 40, 16, 0.09), transparent 60%),
+    radial-gradient(30rem 26rem at 20% 78%, rgba(250, 212, 200, 0.35), transparent 60%),
+    radial-gradient(26rem 24rem at 82% 92%, rgba(242, 84, 45, 0.07), transparent 60%);
+  filter: blur(2px);
+  animation: brnd-ambient-drift 34s ease-in-out infinite alternate;
+}
+
+.brnd-ambient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes brnd-ambient-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(-3%, 2.5%) scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brnd-ambient::before {
+    animation: none;
+  }
 }
 
 .brnd-kicker {
@@ -140,7 +195,6 @@
 /* — agitation — */
 .brnd-agitation {
   padding: clamp(3rem, 7vw, 6rem) clamp(1.75rem, 8vw, 9rem);
-  border-top: 1px solid rgba(23, 19, 15, 0.1);
 }
 
 .brnd-agitation blockquote {
@@ -175,64 +229,178 @@
   font-family: var(--f-h);
 }
 
-/* — swatch wall — */
-.brnd-swatches {
-  padding: clamp(3rem, 7vw, 6rem) clamp(1.75rem, 8vw, 9rem);
-}
-
-.brnd-swatch-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.85rem;
-}
-
-.brnd-swatch {
+/* — subservices filmstrip: pinned section, horizontal scroll driven by
+   vertical scroll progress (js/services/brand-subs.js). Each card is a
+   full panel in the brand's own palette, rotated per card, so reading
+   through the five disciplines feels like a guided tour rather than
+   scanning a grid. — */
+.brnd-subs {
   position: relative;
+}
+
+.brnd-subs-pin {
+  position: relative;
+  height: 100vh;
+  min-height: 34rem;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  aspect-ratio: 3/4;
-  padding: 1.5rem;
-  border: none;
-  border-radius: 1rem;
-  background: var(--sw);
-  color: var(--l);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
+  justify-content: center;
+}
+
+.brnd-subs-head {
+  position: relative;
+  z-index: 2;
+  padding: 0 clamp(1.75rem, 8vw, 9rem);
+  margin-bottom: clamp(1.75rem, 4vw, 3rem);
+}
+
+.brnd-subs-head h2 {
+  max-width: 30rem;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  margin-bottom: 1.5rem;
+}
+
+.brnd-subs-rail {
+  position: relative;
+  width: 12rem;
+  max-width: 60%;
+  height: 2px;
+  background: rgba(23, 19, 15, 0.12);
+  border-radius: 100px;
   overflow: hidden;
-  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-.brnd-swatch:hover,
-.brnd-swatch:focus-visible {
-  transform: translateY(-0.5rem);
+.brnd-subs-rail-fill {
+  position: absolute;
+  inset: 0;
+  width: 20%;
+  background: var(--accent);
+  border-radius: 100px;
+  transition: width 0.1s linear;
 }
 
-.brnd-swatch-name {
+.brnd-subs-track {
+  display: flex;
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+  padding: 0 clamp(1.75rem, 8vw, 9rem);
+  will-change: transform;
+  /* safe default: a native horizontally-scrollable strip. Once JS
+     confirms the pinned scroll-scrub is running, .brnd-subs.is-pinned
+     hands positioning to GSAP transforms instead. */
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.brnd-subs-track::-webkit-scrollbar {
+  display: none;
+}
+
+.brnd-subs-card {
+  scroll-snap-align: start;
+}
+
+.brnd-subs.is-pinned .brnd-subs-track {
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.brnd-subs-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: min(78vw, 26rem);
+  min-height: 22rem;
+  padding: clamp(1.75rem, 3vw, 2.5rem);
+  border-radius: 1.5rem;
+  background: var(--card-tone);
+  color: var(--card-ink);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2rem 3rem -1.5rem rgba(23, 19, 15, 0.3);
+}
+
+.brnd-subs-num {
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+  margin-bottom: 1.5rem;
+}
+
+.brnd-subs-card h3 {
   font-family: var(--f-h);
   font-weight: 700;
   text-transform: uppercase;
-  font-size: 1.1rem;
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
   line-height: 1.05;
+  margin-bottom: 1rem;
 }
 
-.brnd-swatch-desc {
-  display: block;
-  max-height: 0;
-  margin-top: 0;
-  opacity: 0;
-  font-size: 0.8rem;
-  text-transform: none;
-  line-height: 1.4;
-  transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.4s ease;
-}
-
-.brnd-swatch:hover .brnd-swatch-desc,
-.brnd-swatch:focus-visible .brnd-swatch-desc {
-  max-height: 8rem;
-  margin-top: 0.6rem;
+.brnd-subs-focus {
+  font-size: 0.95rem;
+  line-height: 1.5;
   opacity: 0.9;
+  margin-bottom: auto;
+  padding-bottom: 1.5rem;
+}
+
+.brnd-subs-focus strong {
+  font-family: var(--f-nm);
+  font-weight: 700;
+}
+
+.brnd-subs-deliv-label {
+  font-family: var(--f-nm);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid color-mix(in srgb, var(--card-ink) 25%, transparent);
+}
+
+.brnd-subs-deliv {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+}
+
+.brnd-subs-deliv li {
+  padding-left: 1.1rem;
+  position: relative;
+}
+
+.brnd-subs-deliv li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+@media (max-width: 700px) {
+  .brnd-subs-pin {
+    height: auto;
+    min-height: 0;
+    padding: clamp(3rem, 8vw, 5rem) 0;
+  }
+  .brnd-subs-track {
+    padding-bottom: 1rem;
+  }
+  .brnd-subs-card {
+    width: 82vw;
+  }
+  .brnd-subs-rail {
+    display: none;
+  }
 }
 
 /* — workflow: one continuous bar that builds up in four color
@@ -241,7 +409,6 @@
    layered over them — */
 .brnd-workflow {
   padding: clamp(3rem, 7vw, 6rem) clamp(1.75rem, 8vw, 9rem);
-  border-top: 1px solid rgba(23, 19, 15, 0.1);
 }
 
 .brnd-buildbar {
@@ -302,7 +469,6 @@
 /* — proof: real type + color specimen sheet — */
 .brnd-proof {
   padding: clamp(3rem, 7vw, 6rem) clamp(1.75rem, 8vw, 9rem);
-  border-top: 1px solid rgba(23, 19, 15, 0.1);
 }
 
 .brnd-proof-note {
@@ -389,7 +555,6 @@
 /* — pricing — */
 .brnd-pricing {
   padding: 4rem clamp(1.75rem, 8vw, 9rem);
-  border-top: 1px solid rgba(23, 19, 15, 0.1);
 }
 
 .brnd-pricing-note {
