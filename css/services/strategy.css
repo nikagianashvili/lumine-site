@@ -59,10 +59,41 @@
 }
 
 .strat-block {
+  position: relative;
   grid-column: 2;
   padding: clamp(4rem, 8vw, 7rem) clamp(1.75rem, 6vw, 6rem);
-  max-width: 54rem;
+  max-width: 82rem;
+  margin: 0 auto;
   border-bottom: 1px solid rgba(23, 19, 15, 0.1);
+  overflow: hidden;
+}
+
+/* A running folio number fills the margin that a narrow reading column
+   would otherwise leave empty on wide screens — a real magazine-spread
+   device (giant page numbers in the gutter), not decoration for its own
+   sake. Each .strat-block carries its own number via data-num. */
+.strat-block[data-num]::after {
+  content: attr(data-num);
+  position: absolute;
+  right: clamp(1rem, 5vw, 3.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(7rem, 16vw, 13rem);
+  line-height: 1;
+  color: rgba(23, 19, 15, 0.05);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.strat-proof[data-num]::after {
+  color: rgba(246, 241, 231, 0.07);
+}
+
+.strat-block > * {
+  position: relative;
+  z-index: 1;
 }
 
 .strat-eyebrow {
@@ -179,7 +210,7 @@
 
 .strat-diag-list {
   list-style: none;
-  max-width: 38rem;
+  max-width: 44rem;
   margin-bottom: 2.5rem;
 }
 
@@ -364,7 +395,7 @@
 }
 
 .strat-compare-table {
-  max-width: 48rem;
+  max-width: 62rem;
   border-top: 1px solid rgba(23, 19, 15, 0.15);
 }
 
@@ -412,7 +443,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1px;
-  max-width: 48rem;
+  max-width: 62rem;
   background-color: rgba(23, 19, 15, 0.12);
 }
 
@@ -456,7 +487,7 @@
 /* ── 07 — how it runs: marginal-note rows with a drawn connector spine ── */
 .strat-workflow-list {
   position: relative;
-  max-width: 42rem;
+  max-width: 48rem;
 }
 
 .strat-wf-spine {
@@ -607,9 +638,9 @@
 
 /* ── 09 — where it sits: radial ecosystem map, unique to Lumine's own
    nine-service structure — a diagram no template could ship generically ── */
-.strat-ecosystem {
-  grid-column: 2;
-  max-width: none;
+.strat-ecosystem[data-num]::after {
+  top: 6rem;
+  transform: none;
 }
 
 .strat-eco-head {
@@ -676,7 +707,7 @@
 
 /* ── 10 — questions: accordion ── */
 .strat-faq-list {
-  max-width: 44rem;
+  max-width: 50rem;
   border-top: 1px solid rgba(23, 19, 15, 0.12);
 }
 
@@ -742,10 +773,34 @@
 
 /* ── 12 — closing hook ── */
 .strat-hook {
+  position: relative;
   grid-column: 2;
   padding: 6rem clamp(1.75rem, 6vw, 6rem);
+  max-width: 82rem;
+  margin: 0 auto;
   text-align: left;
   border-bottom: 1px solid rgba(23, 19, 15, 0.1);
+  overflow: hidden;
+}
+
+.strat-hook[data-num]::after {
+  content: attr(data-num);
+  position: absolute;
+  right: clamp(1rem, 5vw, 3.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(7rem, 16vw, 13rem);
+  line-height: 1;
+  color: rgba(23, 19, 15, 0.05);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.strat-hook > * {
+  position: relative;
+  z-index: 1;
 }
 
 .strat-hook h3 {
@@ -797,6 +852,11 @@
 @media (max-width: 900px) {
   .strat {
     grid-template-columns: 2.75rem 1fr;
+  }
+
+  .strat-block[data-num]::after,
+  .strat-hook[data-num]::after {
+    display: none;
   }
 
   .strat-hero {
