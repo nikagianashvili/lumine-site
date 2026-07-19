@@ -129,10 +129,13 @@
           The format every material choice gets approved in: a physical stock sample, tilted and
           photographed. Once real client work exists, this is where it's shown.
         </p>
-        <div class="print-tilt-grid">
-          <div class="print-tilt pd-reveal"><span class="print-tilt-label">350gsm Matte</span></div>
-          <div class="print-tilt pd-reveal"><span class="print-tilt-label">Uncoated Cotton</span></div>
-          <div class="print-tilt pd-reveal"><span class="print-tilt-label">Soft-Touch Laminate</span></div>
+        <div class="print-tilt-wrap">
+          <div class="print-tilt-grid">
+            <div class="print-tilt pd-reveal"><span class="print-tilt-label">350gsm Matte</span></div>
+            <div class="print-tilt pd-reveal"><span class="print-tilt-label">Uncoated Cotton</span></div>
+            <div class="print-tilt pd-reveal"><span class="print-tilt-label">Soft-Touch Laminate</span></div>
+          </div>
+          <canvas id="printSpotlight" class="print-spotlight" aria-hidden="true"></canvas>
         </div>
       </section>
 
@@ -177,6 +180,7 @@
     <script type="module" src="/js/nav.js"></script>
     <script type="module" src="/js/home-extras.js"></script>
     <script type="module" src="/js/scroll-reveal.js"></script>
+    <script type="module" src="/js/services/printing-spotlight.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>
   </body>

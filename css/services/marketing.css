@@ -47,6 +47,33 @@
   opacity: 0.7;
 }
 
+/* — ticker: speed reacts to scroll velocity — */
+.mktg-ticker {
+  overflow: hidden;
+  padding: 0.85rem 0;
+  background-color: var(--d);
+  border-top: 2px solid var(--d);
+  border-bottom: 2px solid var(--d);
+}
+
+.mktg-ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: max-content;
+  white-space: nowrap;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--l);
+  opacity: 0.75;
+}
+
+.mktg-ticker-dot {
+  color: var(--accent);
+  font-size: 0.6rem;
+}
+
 /* — agitation: text + a live stat readout — */
 .mktg-agitation {
   display: grid;

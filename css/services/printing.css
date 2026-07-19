@@ -175,10 +175,22 @@
   opacity: 0.6;
 }
 
+.print-tilt-wrap {
+  position: relative;
+}
+
 .print-tilt-grid {
   display: flex;
   gap: 2.5rem;
   perspective: 1200px;
+}
+
+.print-spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: overlay;
 }
 
 .print-tilt {

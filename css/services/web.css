@@ -69,8 +69,22 @@
 }
 
 .web-browser-body {
+  position: relative;
   padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3.5rem);
   background: var(--white);
+  overflow: hidden;
+  min-height: 22rem;
+}
+
+.web-grid-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.web-browser-body > *:not(.web-grid-bg) {
+  position: relative;
+  z-index: 1;
 }
 
 .web-hero h1 {
