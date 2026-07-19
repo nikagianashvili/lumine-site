@@ -182,13 +182,32 @@
 }
 
 .print-tilt {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
   width: 9rem;
   height: 12rem;
+  padding: 0.85rem;
   border-radius: 0.4rem;
   background: linear-gradient(160deg, var(--accent-pastel), var(--accent-deep));
   box-shadow: 0 2rem 3rem -1.5rem rgba(23, 19, 15, 0.45);
   transform: rotateY(-14deg) rotateX(4deg);
   transition: transform 0.5s ease;
+}
+
+.print-tilt-label {
+  font-family: var(--f-nm);
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--d);
+  opacity: 0.7;
+}
+
+.print-tilt:nth-child(2) .print-tilt-label,
+.print-tilt:hover .print-tilt-label {
+  color: var(--l);
+  opacity: 0.85;
 }
 
 .print-tilt:nth-child(2) {

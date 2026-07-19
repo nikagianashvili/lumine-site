@@ -107,6 +107,34 @@
   font-size: 0.88rem;
 }
 
+.smm-platforms {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.smm-platforms-label {
+  margin-right: 0.25rem;
+  font-family: var(--f-nm);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.45;
+}
+
+.smm-platform-chip {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid rgba(246, 241, 231, 0.2);
+  border-radius: 100px;
+  font-family: var(--f-nm);
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
 .smm-wf-row {
   display: flex;
   gap: 1.25rem;

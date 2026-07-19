@@ -224,15 +224,19 @@
 
 .strat-proof-spread {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 1px;
-  max-width: 44rem;
+  max-width: 58rem;
   background: rgba(246, 241, 231, 0.15);
 }
 
 .strat-proof-col {
   padding: 2rem;
   background: var(--d);
+}
+
+.strat-proof-col-mid {
+  background: #241d17;
 }
 
 .strat-proof-col-after {

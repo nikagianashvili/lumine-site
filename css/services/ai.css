@@ -290,9 +290,51 @@
 
 .ai-proof-note,
 .ai-pricing-note {
-  max-width: 30rem;
+  max-width: 34rem;
   text-transform: none;
   opacity: 0.65;
+}
+
+.ai-proof-note {
+  margin-bottom: 2rem;
+}
+
+.ai-stack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1px;
+  max-width: 60rem;
+  background: rgba(246, 241, 231, 0.1);
+}
+
+.ai-stack-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.5rem;
+  background: #100d0a;
+}
+
+.ai-stack-status {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #4caf6a;
+  margin-bottom: 0.4rem;
+}
+
+.ai-stack-name {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  color: var(--l);
+}
+
+.ai-stack-desc {
+  font-family: var(--f-nm);
+  font-size: 0.78rem;
+  text-transform: none;
+  opacity: 0.55;
+  line-height: 1.35;
 }
 
 /* — hook — */

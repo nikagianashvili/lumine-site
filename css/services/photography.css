@@ -213,11 +213,24 @@
 }
 
 .photo-proof-frame {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
   aspect-ratio: 1;
+  padding: 0.75rem;
   border-radius: 0.3rem;
   background: linear-gradient(160deg, #8a8a8a, #2a2a2a 60%);
   filter: grayscale(1);
   transition: filter 1.2s ease;
+}
+
+.photo-proof-tag {
+  font-family: var(--f-nm);
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--l);
+  opacity: 0.85;
 }
 
 .photo-proof-frame.is-color {

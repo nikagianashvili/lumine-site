@@ -254,6 +254,13 @@
   color: var(--accent);
 }
 
+.vid-proof-ratio {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  text-transform: none;
+  opacity: 0.5;
+}
+
 /* — pricing — */
 .vid-pricing {
   padding: 4rem clamp(1.75rem, 6vw, 6rem);
