@@ -196,11 +196,13 @@
 }
 
 .strat-wf-row h6 {
+  grid-column: 2;
   margin-bottom: 0.4rem;
   font-size: clamp(1.25rem, 2.2vw, 1.6rem);
 }
 
 .strat-wf-row p {
+  grid-column: 2;
   max-width: 32rem;
   text-transform: none;
   opacity: 0.7;
