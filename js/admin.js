@@ -12,6 +12,18 @@ function logout() {
 document.getElementById("logoutBtn").addEventListener("click", logout);
 document.getElementById("dropdownLogout").addEventListener("click", logout);
 
+// clients/ai_conversations can contain visitor-submitted text (from the
+// public contact form) — escape before it ever hits innerHTML.
+function escapeHtml(str) {
+  if (str == null) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function initials(name) {
   if (!name) return "?";
   return name
@@ -171,9 +183,7 @@ document.getElementById("aiBannerDismiss").addEventListener("click", () => {
   aiBanner.hidden = true;
   localStorage.setItem(BANNER_KEY, "1");
 });
-document.getElementById("aiBannerDetails").addEventListener("click", () => {
-  toast("Lumine AI arrives with the AI front office — it will chat with visitors and qualify leads.");
-});
+// aiBannerDetails click → navigates to the AI Inbox page (wired near loadInbox(), below)
 
 // ── greeting ─────────────────────────────────────────────────────────────
 
@@ -366,11 +376,11 @@ function clientRow(client) {
   ).join("");
 
   tr.innerHTML = `
-    <td>${client.name || "—"}</td>
-    <td>${client.email || "—"}</td>
-    <td>${client.company || "—"}</td>
-    <td>${client.source}</td>
-    <td><select data-id="${client.id}" class="client-status">${statusOptions}</select></td>
+    <td>${escapeHtml(client.name) || "—"}</td>
+    <td>${escapeHtml(client.email) || "—"}</td>
+    <td>${escapeHtml(client.company) || "—"}</td>
+    <td>${escapeHtml(client.source)}</td>
+    <td><select data-id="${client.id}" class="client-status status-${client.status}">${statusOptions}</select></td>
     <td>${formatDate(client.created_at)}</td>
     <td><button class="icon-btn client-delete" data-id="${client.id}" title="Delete client" aria-label="Delete client">✕</button></td>
   `;
@@ -389,6 +399,7 @@ async function loadClients() {
 
   body.querySelectorAll(".client-status").forEach((select) => {
     select.addEventListener("change", async () => {
+      select.className = `client-status status-${select.value}`;
       await adminFetch("/api/admin/clients", {
         method: "PATCH",
         body: JSON.stringify({ id: select.dataset.id, status: select.value }),
@@ -910,8 +921,103 @@ document.querySelectorAll(".pref-toggle").forEach((input) => {
   });
 });
 
+// ── AI Inbox (conversations from the contact-form intake endpoint) ──────
+
+function leadStatusPill(status) {
+  const label = status ? status.charAt(0).toUpperCase() + status.slice(1) : "New";
+  return `<span class="lead-status status-${status || "new"}">${label}</span>`;
+}
+
+function timeAgo(iso) {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const mins = Math.round(diffMs / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return formatDate(iso);
+}
+
+function conversationCard(convo, index) {
+  const client = convo.clients || {};
+  const escalated = convo.status === "qualified";
+  const handled = convo.status === "closed";
+  const userMsg = convo.transcript?.find((m) => m.role === "user");
+  const aiMsg = convo.transcript?.find((m) => m.role === "assistant");
+
+  const card = document.createElement("div");
+  card.className = "inbox-card rv";
+  card.style.setProperty("--rv", index);
+  card.innerHTML = `
+    <div class="inbox-card-head">
+      <div>
+        <div class="inbox-card-name">${escapeHtml(client.name) || "Unknown visitor"}</div>
+        <div class="inbox-card-meta">${[client.email, client.company].filter(Boolean).map(escapeHtml).join(" · ") || "—"} · ${timeAgo(convo.created_at)}</div>
+      </div>
+      <div class="inbox-card-flags">
+        ${escalated ? '<span class="inbox-escalated-tag">Needs you</span>' : ""}
+        ${leadStatusPill(client.status)}
+      </div>
+    </div>
+    <p class="inbox-card-summary">${escapeHtml(convo.summary) || "No summary available."}</p>
+    <button class="inbox-card-toggle" data-id="${convo.id}" type="button">View conversation ▾</button>
+    <div class="inbox-transcript" id="transcript-${convo.id}" hidden>
+      ${userMsg ? `<div class="transcript-msg role-user">${escapeHtml(userMsg.content)}</div>` : ""}
+      ${aiMsg ? `<div class="transcript-msg role-assistant">${escapeHtml(aiMsg.content)}</div>` : ""}
+    </div>
+    <div class="inbox-card-actions">
+      <button class="btn btn-outline btn-sm inbox-handle-btn" data-id="${convo.id}" type="button" ${handled ? "disabled" : ""}>
+        ${handled ? "Handled" : "Mark handled"}
+      </button>
+    </div>
+  `;
+
+  card.querySelector(".inbox-card-toggle").addEventListener("click", () => {
+    const transcript = card.querySelector(".inbox-transcript");
+    transcript.hidden = !transcript.hidden;
+  });
+
+  const handleBtn = card.querySelector(".inbox-handle-btn");
+  if (!handled) {
+    handleBtn.addEventListener("click", async () => {
+      await adminFetch("/api/admin/ai-conversations", {
+        method: "PATCH",
+        body: JSON.stringify({ id: convo.id, status: "closed" }),
+      });
+      toast("Conversation marked handled");
+      loadInbox();
+    });
+  }
+
+  return card;
+}
+
+async function loadInbox() {
+  const res = await adminFetch("/api/admin/ai-conversations");
+  const { conversations } = await res.json();
+
+  const list = document.getElementById("inboxList");
+  const empty = document.getElementById("inboxEmpty");
+  list.innerHTML = "";
+  empty.hidden = conversations.length !== 0;
+  conversations.forEach((c, i) => list.appendChild(conversationCard(c, i)));
+
+  const bannerText = document.getElementById("aiBannerText");
+  if (conversations.length === 0) {
+    bannerText.innerHTML = `<strong>Lumine AI</strong> is live — no conversations yet. It'll answer and qualify the moment someone messages through the contact form.`;
+    return;
+  }
+  const escalatedCount = conversations.filter((c) => c.status === "qualified").length;
+  bannerText.innerHTML = escalatedCount > 0
+    ? `<strong>Lumine AI</strong> has handled ${conversations.length} conversation${conversations.length === 1 ? "" : "s"} — ${escalatedCount} waiting on you.`
+    : `<strong>Lumine AI</strong> has handled ${conversations.length} conversation${conversations.length === 1 ? "" : "s"}, no escalations right now.`;
+}
+
+document.getElementById("aiBannerDetails").addEventListener("click", () => goToPage("inbox"));
+
 // ── init ─────────────────────────────────────────────────────────────────
 
 renderFolderGrids();
 loadClients();
+loadInbox();
 loadTeamMembers().then(loadTasks);

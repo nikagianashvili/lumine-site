@@ -1,7 +1,7 @@
-// Booking form — no backend yet.
-// Submits by composing a prefilled email draft to the studio inbox.
-// To switch to a real endpoint later (Formspree, own API, etc.):
-// replace the mailto block inside onSubmit with a fetch() POST.
+// Booking form. Submits to /api/ai/intake, which answers the message
+// instantly (grounded in real pricing/service data) and logs the lead.
+// If that request fails outright (offline, endpoint down), falls back to
+// the original mailto compose so a submission is never silently lost.
 
 const INBOX = "hello@lumine.ge";
 const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
@@ -9,11 +9,17 @@ const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
 const MSG = isKa
   ? {
       missing: "მიუთითეთ სახელი და საკონტაქტო ინფორმაცია.",
-      sent: "დრაფტი გაიხსნა თქვენს მეილ აპლიკაციაში — გააგზავნეთ იქიდან და პასუხს 48 საათში მიიღებთ.",
+      thinking: "ვამზადებთ პასუხს",
+      aiLabel: "მყისიერი პასუხი",
+      sent: "მადლობა — გუნდი მალე დაგიკავშირდებათ.",
+      fallback: "რაღაც არ გამოვიდა — დრაფტი გაიხსნა თქვენს მეილ აპლიკაციაში, გააგზავნეთ იქიდან.",
     }
   : {
       missing: "Add your name and a way to reach you.",
-      sent: "A draft opened in your mail app — hit send there and we'll reply within 48h.",
+      thinking: "Thinking",
+      aiLabel: "Instant reply",
+      sent: "Thanks — a team member will follow up shortly.",
+      fallback: "Something went wrong on our end — a draft opened in your mail app instead, send it from there.",
     };
 
 function initChips(container) {
@@ -48,23 +54,7 @@ function init() {
   initChips(serviceChips);
   initChips(budgetChips);
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const data = new FormData(form);
-    const name = (data.get("name") || "").toString().trim();
-    const reach = (data.get("reach") || "").toString().trim();
-
-    if (!name || !reach) {
-      status.textContent = MSG.missing;
-      return;
-    }
-
-    const brand = (data.get("brand") || "").toString().trim();
-    const message = (data.get("message") || "").toString().trim();
-    const services = activeChips(serviceChips);
-    const budget = activeChips(budgetChips);
-
+  function sendMailtoFallback({ name, brand, reach, message, services, budget }) {
     const subject = `Project inquiry — ${name}${brand ? ` (${brand})` : ""}`;
     const bodyLines = [
       `Name: ${name}`,
@@ -78,8 +68,76 @@ function init() {
     window.location.href = `mailto:${INBOX}?subject=${encodeURIComponent(
       subject,
     )}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+  }
 
-    status.textContent = MSG.sent;
+  function showReply(text) {
+    status.classList.remove("is-typing");
+    status.innerHTML = "";
+
+    const label = document.createElement("span");
+    label.className = "ai-reply-label";
+    label.textContent = MSG.aiLabel;
+
+    const card = document.createElement("span");
+    card.className = "ai-reply-card";
+    card.append(label, document.createTextNode(text));
+
+    const note = document.createElement("span");
+    note.className = "form-status-note";
+    note.textContent = MSG.sent;
+
+    status.append(card, note);
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = new FormData(form);
+    const name = (data.get("name") || "").toString().trim();
+    const reach = (data.get("reach") || "").toString().trim();
+    const brand = (data.get("brand") || "").toString().trim();
+    const message = (data.get("message") || "").toString().trim();
+    const services = activeChips(serviceChips);
+    const budget = activeChips(budgetChips);
+
+    if (!name || !reach || !message) {
+      status.classList.remove("is-typing");
+      status.textContent = MSG.missing;
+      return;
+    }
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    status.classList.add("is-typing");
+    status.textContent = MSG.thinking;
+
+    try {
+      const res = await fetch("/api/ai/intake", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          company: brand || undefined,
+          email: reach.includes("@") ? reach : undefined,
+          phone: reach.includes("@") ? undefined : reach,
+          message,
+          services,
+          budget,
+          language: isKa ? "ka" : "en",
+        }),
+      });
+
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+      const { reply } = await res.json();
+      showReply(reply);
+      form.reset();
+    } catch {
+      sendMailtoFallback({ name, brand, reach, message, services, budget });
+      status.classList.remove("is-typing");
+      status.textContent = MSG.fallback;
+    } finally {
+      submitBtn.disabled = false;
+    }
   });
 }
 

@@ -16,18 +16,22 @@ export default async function handler(req, res) {
     return;
   }
 
-  const supabase = getSupabaseAnonClient();
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  try {
+    const supabase = getSupabaseAnonClient();
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-  if (error || !data.session) {
-    res.status(401).json({ error: error?.message || "Invalid credentials" });
-    return;
+    if (error || !data.session) {
+      res.status(401).json({ error: error?.message || "Invalid credentials" });
+      return;
+    }
+
+    res.status(200).json({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+      expires_at: data.session.expires_at,
+      user: { id: data.user.id, email: data.user.email },
+    });
+  } catch (err) {
+    res.status(500).json({ error: `Login failed: ${err.message}` });
   }
-
-  res.status(200).json({
-    access_token: data.session.access_token,
-    refresh_token: data.session.refresh_token,
-    expires_at: data.session.expires_at,
-    user: { id: data.user.id, email: data.user.email },
-  });
 }
