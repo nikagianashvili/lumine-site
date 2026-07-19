@@ -8,13 +8,17 @@ nav {
   padding: 2rem;
   background-color: transparent;
   mix-blend-mode: difference;
-  /* No transition on background-color: mix-blend-mode can't be animated at
-     all, so it snaps to normal/difference the instant nav-solid toggles.
-     A mid-fade background-color would spend ~300ms half-transparent while
-     already paired with the new blend mode, and difference-blending a
-     translucent color against the page is what produced the black/grey
-     flash - both properties have to change in the same frame, or not
-     at all. */
+  /* Leaving nav-solid (scrolling back up): background-color fades out over
+     the full duration while mix-blend-mode stays "normal" the entire time
+     - a plain fading solid color, which is safe. mix-blend-mode only flips
+     to "difference" once background-color has fully reached transparent
+     (delay = the fade's own duration), so there's never a frame where a
+     non-zero-alpha color is difference-blended against the page. That
+     combination is what read as a black/grey flash: two similar light
+     colors differenced come out near-zero. The transition actually used
+     for a given change is read from the DESTINATION rule, which is why
+     this is defined here and mirrored (with delay 0 instead) below. */
+  transition: background-color 0.3s ease, mix-blend-mode 0s linear 0.3s;
 }
 
 /*
@@ -30,6 +34,11 @@ nav {
 nav.nav-solid {
   background-color: var(--l);
   mix-blend-mode: normal;
+  /* Entering nav-solid (scrolling down): flip to "normal" immediately -
+     background-color is starting from fully transparent, so blend mode
+     doesn't matter yet, and normal is already correct for every frame
+     after that as the color fades in. */
+  transition: background-color 0.3s ease, mix-blend-mode 0s linear 0s;
 }
 
 nav.nav-solid .open-label,
