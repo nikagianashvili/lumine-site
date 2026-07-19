@@ -50,18 +50,22 @@
         <span class="strat-rail-count"><em data-rail-current>01</em>/06</span>
       </aside>
 
-      <!-- 01 hero -->
+      <!-- 01 hero: text left, real GPU particle-fluid sim right (same
+           engine that drives the site-wide footer, retuned + remounted) -->
       <section class="strat-block strat-hero" data-rail="01 — Cover">
-        <p class="strat-eyebrow pd-reveal">Issue №01 — Strategy &amp; Creative Management</p>
-        <h1 data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.15">
-          Strategy &amp; <span class="accent">Creative</span> Management
-        </h1>
-        <p class="strat-dropcap-para pd-reveal">
-          <span class="strat-dropcap">G</span>ood creative built on the wrong brief is just expensive
-          guessing. Account management, brand positioning, and campaign management run as one thread
-          from pitch to delivery — the audience gets named and the brief gets right before anything
-          is made.
-        </p>
+        <div class="strat-hero-text">
+          <p class="strat-eyebrow pd-reveal">Issue №01 — Strategy &amp; Creative Management</p>
+          <h1 data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.15">
+            Strategy &amp; <span class="accent">Creative</span> Management
+          </h1>
+          <p class="strat-dropcap-para pd-reveal">
+            <span class="strat-dropcap">G</span>ood creative built on the wrong brief is just expensive
+            guessing. Account management, brand positioning, and campaign management run as one thread
+            from pitch to delivery — the audience gets named and the brief gets right before anything
+            is made.
+          </p>
+        </div>
+        <div class="strat-hero-fluid" id="stratHeroFluid" aria-hidden="true"></div>
       </section>
 
       <!-- 02 agitation: pull-quote spread -->
@@ -214,6 +218,7 @@
     <script type="module" src="/js/home-extras.js"></script>
     <script type="module" src="/js/scroll-reveal.js"></script>
     <script type="module" src="/js/services/strategy.js"></script>
+    <script type="module" src="/js/services/strategy-fluid.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>
   </body>
