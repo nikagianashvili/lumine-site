@@ -8,7 +8,13 @@ nav {
   padding: 2rem;
   background-color: transparent;
   mix-blend-mode: difference;
-  transition: background-color 0.3s ease;
+  /* No transition on background-color: mix-blend-mode can't be animated at
+     all, so it snaps to normal/difference the instant nav-solid toggles.
+     A mid-fade background-color would spend ~300ms half-transparent while
+     already paired with the new blend mode, and difference-blending a
+     translucent color against the page is what produced the black/grey
+     flash - both properties have to change in the same frame, or not
+     at all. */
 }
 
 /*
