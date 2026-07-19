@@ -574,11 +574,26 @@ function initNavSolidOnScroll() {
   const nav = document.querySelector("nav");
   if (!nav) return;
 
-  const THRESHOLD = 40;
+  // A single threshold flickers: Lenis' eased scroll-to-top doesn't stop
+  // cleanly, so scrollY can hover right on the line for a few frames while
+  // settling, toggling the class back and forth. mix-blend-mode can't be
+  // transitioned - it snaps instantly between "difference" and "normal" -
+  // so a few rapid toggles read as a flicker even though background-color
+  // is still easing. Two thresholds with a dead zone between them means a
+  // wobble near the line can't retrigger the switch either way.
+  const ON_THRESHOLD = 48;
+  const OFF_THRESHOLD = 24;
   let ticking = false;
+  let isSolid = false;
 
   function update() {
-    nav.classList.toggle("nav-solid", window.scrollY > THRESHOLD);
+    const y = window.scrollY;
+    if (!isSolid && y > ON_THRESHOLD) {
+      isSolid = true;
+    } else if (isSolid && y < OFF_THRESHOLD) {
+      isSolid = false;
+    }
+    nav.classList.toggle("nav-solid", isSolid);
     ticking = false;
   }
 
