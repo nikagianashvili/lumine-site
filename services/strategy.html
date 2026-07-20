@@ -42,15 +42,33 @@
     <div id="custom-cursor"></div>
 
     <main class="page strat">
-      <!-- masthead rail: sticky full-height, ticks a running section counter
-           as the reader passes each numbered block -->
-      <aside class="strat-rail" aria-hidden="true">
-        <span class="strat-rail-mast">LUMINE JOURNAL — STRATEGY</span>
-        <span class="strat-rail-count"><em data-rail-current>01</em>/12</span>
+      <!-- document-tab navigator: sticky full-height, reads like the tab
+           index of a working case file rather than a decorative rail —
+           highlights the section currently in view and links to each -->
+      <aside class="strat-rail">
+        <div class="strat-rail-head">
+          <span class="strat-rail-doc">Brief №014</span>
+          <span class="strat-rail-title">Strategy &amp; Creative Mgmt</span>
+        </div>
+        <div class="strat-rail-nav" role="navigation" aria-label="Section navigator">
+          <a href="#stratHero" class="strat-rail-tab" data-tab="01">01 — Cover</a>
+          <a href="#stratDiagnosis" class="strat-rail-tab" data-tab="02">02 — Diagnosis</a>
+          <a href="#stratManifesto" class="strat-rail-tab" data-tab="03">03 — Argument</a>
+          <a href="#stratDisciplines" class="strat-rail-tab" data-tab="04">04 — In Depth</a>
+          <a href="#stratCompare" class="strat-rail-tab" data-tab="05">05 — Difference</a>
+          <a href="#stratFrameworks" class="strat-rail-tab" data-tab="06">06 — Tools</a>
+          <a href="#stratWorkflow" class="strat-rail-tab" data-tab="07">07 — Workflow</a>
+          <a href="#stratProof" class="strat-rail-tab" data-tab="08">08 — Audit</a>
+          <a href="#stratEcosystem" class="strat-rail-tab" data-tab="09">09 — Ecosystem</a>
+          <a href="#stratFaq" class="strat-rail-tab" data-tab="10">10 — Questions</a>
+          <a href="#stratPricing" class="strat-rail-tab" data-tab="11">11 — Investment</a>
+          <a href="#stratHook" class="strat-rail-tab" data-tab="12">12 — Start Here</a>
+        </div>
+        <div class="strat-rail-status"><span class="strat-rail-dot"></span> Owned by Tamuna — reviewed weekly</div>
       </aside>
 
       <!-- 01 — cover -->
-      <section class="strat-block strat-hero" data-rail="01 — Cover">
+      <section class="strat-block strat-hero" data-rail="01 — Cover" id="stratHero">
         <div class="strat-hero-text">
           <p class="strat-eyebrow" data-animate-variant="slide" data-animate-on-scroll="false">
             Issue №01 — Strategy &amp; Creative Management
@@ -66,6 +84,7 @@
           </p>
           <p class="strat-meta-line">Twelve sections — the long version, for when "trust us" isn't enough.</p>
         </div>
+        <span class="strat-cover-stamp" aria-hidden="true">Brief №014<br />Approved For Read</span>
         <div class="strat-hero-thread" aria-hidden="true">
           <svg viewBox="0 0 400 520" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
             <path
@@ -80,7 +99,7 @@
       </section>
 
       <!-- 02 — the diagnosis -->
-      <section class="strat-block strat-diagnosis" data-rail="02 — The Diagnosis">
+      <section class="strat-block strat-diagnosis" data-rail="02 — The Diagnosis" id="stratDiagnosis">
         <div class="strat-margin-thread" aria-hidden="true">
           <svg viewBox="0 0 100 400" fill="none" preserveAspectRatio="xMidYMid meet">
             <path d="M50 10C20 60 80 100 50 150S20 220 60 260S30 340 50 390" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
@@ -101,8 +120,9 @@
           <li data-animate-variant="slide" data-animate-on-scroll="true">The account gets discussed in three separate group chats.</li>
         </ul>
         <p class="strat-turn" data-animate-variant="slide" data-animate-on-scroll="true">
-          <span class="strat-turn-mark">→</span> So the account lead is the first hire on every
-          project, not the last review before it ships.
+          <span class="strat-turn-line"><span class="strat-turn-mark">→</span> So the account lead is
+          the first hire on every project, not the last review before it ships.</span>
+          <span class="strat-turn-tag">— Tamuna, Account Lead</span>
         </p>
       </section>
 
@@ -182,7 +202,7 @@
       </section>
 
       <!-- 05 — how we're different -->
-      <section class="strat-block strat-compare" data-rail="05 — The Difference">
+      <section class="strat-block strat-compare" data-rail="05 — The Difference" id="stratCompare">
         <div class="strat-margin-thread" aria-hidden="true">
           <svg viewBox="0 0 100 400" fill="none" preserveAspectRatio="xMidYMid meet">
             <path d="M50 10C90 50 10 90 60 140S90 210 40 260S70 330 50 390" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
@@ -229,21 +249,25 @@
         <h2 class="strat-fw-head" data-animate-variant="slide" data-animate-on-scroll="true">Named frameworks, not vibes.</h2>
         <div class="strat-fw-grid">
           <div class="strat-fw-card">
+            <div class="strat-fw-file"><span class="strat-fw-file-dot"></span>positioning-canvas.pdf</div>
             <span class="strat-fw-num">01</span>
             <h5>Positioning Canvas</h5>
             <p>A one-page map of where you sit against direct competitors, filled out before any design starts.</p>
           </div>
           <div class="strat-fw-card">
+            <div class="strat-fw-file"><span class="strat-fw-file-dot"></span>campaign-brief-template.docx</div>
             <span class="strat-fw-num">02</span>
             <h5>Campaign Brief Template</h5>
             <p>The single document every discipline — photo, video, social, paid — is required to work from.</p>
           </div>
           <div class="strat-fw-card">
+            <div class="strat-fw-file"><span class="strat-fw-file-dot"></span>content-pillar-map.pdf</div>
             <span class="strat-fw-num">03</span>
             <h5>Content Pillar Map</h5>
             <p>The 3–5 themes every post, ad, and shoot has to trace back to, so a calendar never turns into forty unrelated ideas.</p>
           </div>
           <div class="strat-fw-card">
+            <div class="strat-fw-file"><span class="strat-fw-file-dot"></span>voice-tone-matrix.xlsx</div>
             <span class="strat-fw-num">04</span>
             <h5>Voice &amp; Tone Matrix</h5>
             <p>Specific enough that two different copywriters produce work that reads like one brand.</p>
@@ -252,7 +276,7 @@
       </section>
 
       <!-- 07 — how it runs: workflow with a drawn connector spine -->
-      <section class="strat-block strat-workflow" data-rail="07 — How It Runs">
+      <section class="strat-block strat-workflow" data-rail="07 — How It Runs" id="stratWorkflow">
         <div class="strat-margin-thread" aria-hidden="true">
           <svg viewBox="0 0 100 400" fill="none" preserveAspectRatio="xMidYMid meet">
             <path d="M50 10C70 60 30 100 60 150S90 220 30 260S60 340 50 390" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
@@ -292,7 +316,7 @@
       </section>
 
       <!-- 08 — the audit in practice: scroll-snap slider -->
-      <section class="strat-block strat-proof grain" data-rail="08 — The Audit">
+      <section class="strat-block strat-proof grain" data-rail="08 — The Audit" id="stratProof">
         <div class="strat-margin-thread" aria-hidden="true">
           <svg viewBox="0 0 100 400" fill="none" preserveAspectRatio="xMidYMid meet">
             <path d="M50 10C30 50 70 90 40 140S70 210 30 260S50 330 50 390" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
@@ -350,7 +374,7 @@
       </section>
 
       <!-- 10 — faq -->
-      <section class="strat-block strat-faq" data-rail="10 — Questions">
+      <section class="strat-block strat-faq" data-rail="10 — Questions" id="stratFaq">
         <div class="strat-margin-thread" aria-hidden="true">
           <svg viewBox="0 0 100 400" fill="none" preserveAspectRatio="xMidYMid meet">
             <path d="M50 10C80 60 20 100 50 150S80 220 20 260S60 340 50 390" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
@@ -382,7 +406,7 @@
       </section>
 
       <!-- 11 — pricing -->
-      <section class="strat-block strat-pricing" data-rail="11 — Investment">
+      <section class="strat-block strat-pricing" data-rail="11 — Investment" id="stratPricing">
         <div class="strat-margin-thread" aria-hidden="true">
           <svg viewBox="0 0 100 400" fill="none" preserveAspectRatio="xMidYMid meet">
             <path d="M50 10C20 60 80 100 50 150S30 220 60 260S40 330 50 390" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
@@ -397,7 +421,7 @@
       </section>
 
       <!-- 12 — hook -->
-      <section class="strat-hook" data-rail="12 — Start Here">
+      <section class="strat-hook" data-rail="12 — Start Here" id="stratHook">
         <div class="strat-margin-thread" aria-hidden="true">
           <svg viewBox="0 0 100 400" fill="none" preserveAspectRatio="xMidYMid meet">
             <path d="M50 10C70 50 30 90 60 140S20 210 70 260S30 330 50 390" stroke="currentColor" stroke-width="3" stroke-linecap="round" />

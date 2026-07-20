@@ -1,13 +1,16 @@
 // Strategy page: small, self-contained interactions that don't need their
-// own module — the masthead rail counter, the audit slider controls, the
-// FAQ accordion, and the framework cards' cursor-lit spotlight.
+// own module — the document-tab navigator's active state, the audit slider
+// controls, the FAQ accordion, and the framework cards' cursor-lit spotlight.
 
-// Rail counter: ticks to match whichever numbered block is in view, like a
-// running page number.
-function initRailCounter() {
-  const counter = document.querySelector("[data-rail-current]");
+// Tab navigator: highlights whichever numbered block is in view, like the
+// active tab in a real document/folder index.
+function initRailNav() {
+  const tabs = document.querySelectorAll(".strat-rail-tab");
   const blocks = document.querySelectorAll("[data-rail]");
-  if (!counter || !blocks.length) return;
+  if (!tabs.length || !blocks.length) return;
+
+  const tabsByNum = new Map();
+  tabs.forEach((tab) => tabsByNum.set(tab.getAttribute("data-tab"), tab));
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -15,7 +18,9 @@ function initRailCounter() {
         if (!entry.isIntersecting) return;
         const label = entry.target.getAttribute("data-rail") || "";
         const num = label.split(" ")[0];
-        if (num) counter.textContent = num;
+        const activeTab = tabsByNum.get(num);
+        if (!activeTab) return;
+        tabs.forEach((tab) => tab.classList.toggle("is-active", tab === activeTab));
       });
     },
     { rootMargin: "-45% 0px -45% 0px" },
@@ -95,7 +100,7 @@ function initFrameworkSpotlight() {
 }
 
 function init() {
-  initRailCounter();
+  initRailNav();
   initAuditSlider();
   initFaqAccordion();
   initFrameworkSpotlight();

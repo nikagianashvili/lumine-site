@@ -12,11 +12,16 @@
 .strat {
   position: relative;
   display: grid;
-  grid-template-columns: 4.5rem 1fr;
+  grid-template-columns: 14.5rem 1fr;
   background-color: var(--l);
   color: var(--d);
 }
 
+/* The page's own chrome is a working brief: a document-tab navigator down
+   the side, the same "the page IS the product" move as the AI Front Office
+   shell (persistent sidebar, monospace metadata) — reskinned here as case
+   file tabs instead of chat channels, since what this service produces is
+   briefs and routing, not conversation threads. */
 .strat-rail {
   grid-column: 1;
   grid-row: 1 / -1;
@@ -25,37 +30,84 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6.5rem 0 2.5rem;
+  gap: 2rem;
+  padding: 7rem 1.5rem 2rem;
   border-right: 1px solid rgba(23, 19, 15, 0.12);
+  background-color: var(--white);
   z-index: 4;
 }
 
-.strat-rail-mast {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  font-family: var(--f-nm);
+.strat-rail-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.strat-rail-doc {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
   font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  opacity: 0.55;
-}
-
-.strat-rail-count {
-  font-family: var(--f-h);
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  opacity: 0.6;
-}
-
-.strat-rail-count em {
-  display: block;
-  font-style: normal;
-  font-size: 1.1rem;
   color: var(--accent);
-  transition: color 0.3s ease;
+  letter-spacing: 0.02em;
+}
+
+.strat-rail-title {
+  font-family: var(--f-nm);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.strat-rail-nav {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 0.05rem;
+  overflow-y: auto;
+}
+
+.strat-rail-tab {
+  padding: 0.45rem 0.1rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  color: var(--d);
+  opacity: 0.4;
+  border-left: 2px solid transparent;
+  padding-left: 0.6rem;
+  transition: opacity 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.strat-rail-tab:hover {
+  opacity: 0.75;
+}
+
+.strat-rail-tab.is-active {
+  opacity: 1;
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+.strat-rail-status {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.62rem;
+  opacity: 0.5;
+  line-height: 1.4;
+}
+
+.strat-rail-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #4caf6a;
 }
 
 .strat-block {
@@ -155,6 +207,26 @@
   max-height: 30rem;
 }
 
+.strat-cover-stamp {
+  position: absolute;
+  top: clamp(4.5rem, 9vw, 6.5rem);
+  right: clamp(1rem, 4vw, 3rem);
+  padding: 0.55rem 0.9rem;
+  border: 2px solid var(--accent);
+  border-radius: 0.4rem;
+  transform: rotate(-6deg);
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-align: center;
+  line-height: 1.6;
+  pointer-events: none;
+  opacity: 0.85;
+  z-index: 2;
+}
+
 .strat-hero h1 {
   margin-bottom: 2.5rem;
   font-size: clamp(2.75rem, 6vw, 5.25rem);
@@ -236,15 +308,37 @@
 
 .strat-turn {
   display: flex;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 30rem;
+  padding: 1.1rem 1.25rem;
+  margin-top: 0.5rem;
+  border: 1px solid rgba(242, 84, 45, 0.3);
+  border-radius: 0.6rem;
+  background: var(--accent-pastel);
   font-weight: 700;
   opacity: 1 !important;
+}
+
+.strat-turn-line {
+  display: flex;
+  gap: 0.75rem;
 }
 
 .strat-turn-mark {
   flex-shrink: 0;
   color: var(--accent);
   font-family: var(--f-h);
+}
+
+.strat-turn-tag {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.85;
 }
 
 /* ── 03 — the argument: full-bleed pinned scroll-scrubbed word morph ── */
@@ -468,6 +562,24 @@
 
 .strat-fw-card:hover::before {
   opacity: 1;
+}
+
+.strat-fw-file {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.1rem;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  opacity: 0.5;
+}
+
+.strat-fw-file-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #4caf6a;
 }
 
 .strat-fw-num {
@@ -833,7 +945,7 @@
 
 @media (max-width: 900px) {
   .strat {
-    grid-template-columns: 2.75rem 1fr;
+    grid-template-columns: 1fr;
   }
 
   .strat-block[data-num]::after,
@@ -852,11 +964,42 @@
   }
 
   .strat-rail {
-    padding: 5.5rem 0 1.5rem;
+    position: relative;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 6.5rem 1.25rem 1.25rem;
+    gap: 1.25rem;
   }
 
-  .strat-rail-mast {
-    font-size: 0.6rem;
+  .strat-rail-head {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+
+  .strat-rail-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0 0.9rem;
+    overflow: visible;
+  }
+
+  .strat-rail-tab {
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    padding-left: 0;
+    padding-bottom: 0.3rem;
+  }
+
+  .strat-rail-tab.is-active {
+    border-bottom-color: var(--accent);
+  }
+
+  .strat-rail-status {
+    margin-top: 0;
+    width: 100%;
   }
 
   .strat-manifesto,
