@@ -15,6 +15,7 @@
     { "source": "/services/marketing", "destination": "/services/marketing.html" },
     { "source": "/services/web", "destination": "/services/web.html" },
     { "source": "/services/ai", "destination": "/services/ai.html" },
+    { "source": "/services/printing", "destination": "/services/printing.html" },
     { "source": "/pricing", "destination": "/pricing.html" },
     { "source": "/journal", "destination": "/journal.html" },
     { "source": "/legal", "destination": "/legal.html" },
