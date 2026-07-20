@@ -529,63 +529,68 @@
 
 .strat-compare-table {
   position: relative;
-  max-width: 62rem;
+  max-width: 46rem;
   border-top: 1px solid rgba(23, 19, 15, 0.15);
 }
 
-/* A courtroom "vs" instead of a demure two-column table — this is an
-   argument, not a spec sheet. */
-.strat-compare-vs {
-  position: absolute;
-  left: 50%;
-  top: 4.5rem;
-  transform: translate(-50%, 0) rotate(-8deg);
-  font-family: var(--f-h);
-  font-weight: 700;
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  color: var(--accent);
-  opacity: 0.16;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.strat-compare-row {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  padding: 1.35rem 0;
+.strat-compare-row-head {
+  display: flex;
+  gap: 1rem;
+  padding: 0.85rem 0;
   border-bottom: 1px solid rgba(23, 19, 15, 0.12);
 }
 
-.strat-compare-row-head {
-  padding-top: 0;
-  padding-bottom: 0.75rem;
-  font-family: var(--f-nm);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+.strat-redline-tag {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.strat-redline-tag-del {
+  text-decoration: line-through;
+  opacity: 0.4;
+}
+
+.strat-redline-tag-ins {
+  color: var(--accent);
+  opacity: 0.85;
+}
+
+.strat-redline-tag-ins::before {
+  content: "→ ";
+}
+
+/* Each row reads like an actual tracked-change edit on the brief itself —
+   the old line struck through, the real one inserted right beneath it —
+   instead of a side-by-side spec comparison. */
+.strat-redline {
+  padding: 1.5rem 0;
+  border-bottom: 1px dashed rgba(23, 19, 15, 0.18);
+}
+
+.strat-redline-del {
+  margin-bottom: 0.6rem;
+  text-decoration: line-through;
+  text-decoration-color: rgba(200, 60, 40, 0.55);
+  text-decoration-thickness: 1.5px;
+  text-transform: none;
+  font-size: 0.95rem;
   opacity: 0.5;
 }
 
-.strat-compare-no {
-  text-decoration: line-through;
-  text-decoration-color: rgba(23, 19, 15, 0.35);
-  opacity: 0.55;
+.strat-redline-ins {
+  display: flex;
+  gap: 0.65rem;
+  text-transform: none;
+  font-weight: 700;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
 }
 
-.strat-compare-yes {
-  position: relative;
-  padding-left: 0.9rem;
-  font-weight: 600;
-  border-left: 2px solid var(--accent);
-}
-
-.strat-compare-yes::before {
-  content: "✓ ";
+.strat-redline-mark {
+  flex-shrink: 0;
   color: var(--accent);
+  font-family: var(--f-h);
 }
 
 /* ── 06 — the tools: cursor-lit framework grid ── */
@@ -1182,15 +1187,6 @@
 
   .strat-fw-grid {
     grid-template-columns: 1fr;
-  }
-
-  .strat-compare-row {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-  }
-
-  .strat-compare-row-head span:last-child {
-    display: none;
   }
 
   .strat-eco-node {

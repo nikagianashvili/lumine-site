@@ -35,7 +35,12 @@ function init() {
 
         const entryRamp = clamp(gsap.utils.mapRange(0, 0.12, 0, 1, local));
         const isLast = i === count - 1;
-        const exitRamp = isLast ? 1 : clamp(gsap.utils.mapRange(0.88, 1, 1, 0, local));
+        // The last card has no next card to hand off to, so it gets a
+        // later, shorter exit window instead of staying fully opaque and
+        // cutting off abruptly when the pinned section ends.
+        const exitRamp = isLast
+          ? clamp(gsap.utils.mapRange(0.96, 1, 1, 0, local))
+          : clamp(gsap.utils.mapRange(0.88, 1, 1, 0, local));
         const opacity = Math.min(entryRamp, exitRamp);
         const scale = gsap.utils.mapRange(0, 0.12, 0.92, 1, clamp(local));
         const rotateY = gsap.utils.mapRange(0.18, 0.78, 0, 180, clamp(local));
