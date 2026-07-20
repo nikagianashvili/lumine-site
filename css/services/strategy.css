@@ -17,6 +17,13 @@
   color: var(--d);
 }
 
+/* Scoped to this page only — a thinner top bar suits the document-tab
+   shell better than the sitewide nav's default height. */
+.strategy-page nav {
+  padding-top: 1.1rem;
+  padding-bottom: 1.1rem;
+}
+
 /* The page's own chrome is a working brief: a document-tab navigator down
    the side, the same "the page IS the product" move as the AI Front Office
    shell (persistent sidebar, monospace metadata) — reskinned here as case
@@ -207,7 +214,7 @@
   max-height: 30rem;
 }
 
-.strat-cover-stamp {
+.strat-hero > .strat-cover-stamp {
   position: absolute;
   top: clamp(4.5rem, 9vw, 6.5rem);
   right: clamp(1rem, 4vw, 3rem);
@@ -948,8 +955,19 @@
     grid-template-columns: 1fr;
   }
 
+  /* Every section (and the rail itself) is explicitly placed in column 2 /
+     row 1-through-last for the desktop two-column layout above — with a
+     single 1fr track that leaves an implicit second column that grid
+     auto-generates to satisfy those placements, so it has to be reset
+     here or the mobile "single column" collapses only in appearance. */
+  .strat > * {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
   .strat-block[data-num]::after,
-  .strat-margin-thread {
+  .strat-margin-thread,
+  .strat-cover-stamp {
     display: none;
   }
 
@@ -1013,6 +1031,15 @@
     position: relative;
     height: auto;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    padding: 2rem 0;
+  }
+
+  .strat-disc-kicker {
+    position: static;
+    margin-bottom: 1rem;
   }
 
   .strat-manifesto-stage {
