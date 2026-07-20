@@ -43,32 +43,16 @@
 
     <div id="custom-cursor"></div>
 
-    <!-- fixed crop marks — a "sheet ready for trim" frame around the whole page -->
-    <div class="press-crop press-crop-tl" aria-hidden="true"></div>
-    <div class="press-crop press-crop-tr" aria-hidden="true"></div>
-    <div class="press-crop press-crop-bl" aria-hidden="true"></div>
-    <div class="press-crop press-crop-br" aria-hidden="true"></div>
-
-    <!-- CMYK registration bar — doubles as a scroll-progress indicator -->
-    <div class="press-reg" id="pressReg" aria-hidden="true">
-      <span class="press-reg-dot press-reg-c" data-plate="C"></span>
-      <span class="press-reg-dot press-reg-m" data-plate="M"></span>
-      <span class="press-reg-dot press-reg-y" data-plate="Y"></span>
-      <span class="press-reg-dot press-reg-k" data-plate="K"></span>
-    </div>
-
     <main class="page print-svc">
-      <!-- 01 hero: the headline gets printed on load -->
-      <section class="press-hero">
-        <p class="press-edition pd-reveal">No. 09 — Printing Services</p>
-        <h1 class="press-h1" id="pressHeadline">
-          <span class="press-roller" aria-hidden="true"></span>
-          <span class="press-h1-line">Something You Can</span>
-          <span class="press-h1-line">
-            <span class="accent">Hold.</span>
-          </span>
-        </h1>
-        <p class="press-hero-sub pd-reveal">
+      <!-- 01 hero: headline rendered as a canvas texture, distorted by a
+           cursor-driven ink-misregistration shader (Three.js) -->
+      <section class="ink-hero">
+        <p class="ink-edition" data-scramble>No. 09 — Printing Services</p>
+        <div class="ink-hero-stage" id="inkHeroStage">
+          <h1 class="ink-hero-text" id="inkHeroText">Something You Can <span class="accent">Hold.</span></h1>
+          <canvas id="inkHeroCanvas" class="ink-hero-canvas" aria-hidden="true"></canvas>
+        </div>
+        <p class="ink-hero-sub pd-reveal">
           Digital work that never becomes something you can hold isn't finished. Promotional
           print, large-format, packaging, branded merchandise, and full print management — the
           physical half of a brand, handled with the same eye as the digital half.
@@ -76,7 +60,7 @@
       </section>
 
       <!-- 02 agitation -->
-      <section class="press-agitation">
+      <section class="ink-agitation">
         <blockquote data-animate-variant="slide" data-animate-on-scroll="true">
           A brand that only exists on screens hasn't finished becoming real.
         </blockquote>
@@ -84,71 +68,79 @@
           A card, a box, a banner — the moment someone holds it, the brand is judged by weight,
           texture, and finish, not pixels.
         </p>
-        <p class="press-turn pd-reveal">
-          <span class="press-turn-mark">→</span> So print jobs run through the same design system
+        <p class="ink-turn pd-reveal">
+          <span class="ink-turn-mark">→</span> So print jobs run through the same design system
           as everything else, not a separate afterthought.
         </p>
       </section>
 
-      <!-- 03 sub-services, laid out as a press-sheet imposition -->
-      <section class="press-impo-section">
-        <p class="press-kicker pd-reveal">In Detail — One Sheet, Four Panels</p>
-        <div class="press-impo" id="pressImpo">
-          <div class="press-impo-panel pd-reveal" data-panel="1">
-            <span class="press-impo-crop press-impo-crop-tl" aria-hidden="true"></span>
-            <span class="press-impo-num">01</span>
+      <!-- 03 ink-blot wipe divider -->
+      <div class="ink-wipe-divider" id="inkWipeDivider" aria-hidden="true">
+        <svg id="inkWipeSvg" class="ink-wipe-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <mask id="inkWipeMask">
+            <rect width="100" height="100" fill="black" />
+            <g id="inkWipeDots"></g>
+            <path id="inkWipePie" d="" fill="white" />
+          </mask>
+          <rect width="100" height="100" fill="var(--d)" mask="url(#inkWipeMask)" />
+        </svg>
+      </div>
+
+      <!-- 04 sub-services: a fanned deck of proof cards, cursor-repelled -->
+      <section class="ink-cards-section">
+        <p class="ink-kicker" data-scramble>In Detail</p>
+        <div class="ink-card-deck" id="inkCardDeck">
+          <div class="ink-card" data-index="0">
+            <span class="ink-card-edition">Run 01/04</span>
             <h6>Promo Print</h6>
             <p>Flyers, brochures, and stationery — the everyday print run done right.</p>
           </div>
-          <div class="press-impo-panel pd-reveal" data-panel="2">
-            <span class="press-impo-crop press-impo-crop-tr" aria-hidden="true"></span>
-            <span class="press-impo-num">02</span>
+          <div class="ink-card" data-index="1">
+            <span class="ink-card-edition">Run 02/04</span>
             <h6>Large Format</h6>
             <p>Banners, signage, and event backdrops built to survive being seen from a distance.</p>
           </div>
-          <div class="press-impo-panel pd-reveal" data-panel="3">
-            <span class="press-impo-crop press-impo-crop-bl" aria-hidden="true"></span>
-            <span class="press-impo-num">03</span>
+          <div class="ink-card" data-index="2">
+            <span class="ink-card-edition">Run 03/04</span>
             <h6>Packaging</h6>
             <p>Structural and print-ready packaging, from dieline to final production art.</p>
           </div>
-          <div class="press-impo-panel pd-reveal" data-panel="4">
-            <span class="press-impo-crop press-impo-crop-br" aria-hidden="true"></span>
-            <span class="press-impo-num">04</span>
+          <div class="ink-card" data-index="3">
+            <span class="ink-card-edition">Run 04/04</span>
             <h6>Merchandise</h6>
             <p>Branded apparel and goods — the brand system applied to something wearable.</p>
           </div>
-          <div class="press-impo-fold press-impo-fold-v" aria-hidden="true"></div>
-          <div class="press-impo-fold press-impo-fold-h" aria-hidden="true"></div>
         </div>
       </section>
 
-      <!-- 04 workflow — a press line scrubbed by scroll -->
-      <section class="press-line-section" id="pressLineSection">
-        <p class="press-kicker pd-reveal">How It Runs</p>
-        <div class="press-line-track">
-          <div class="press-line-rail" aria-hidden="true">
-            <span class="press-line-fill" id="pressLineFill"></span>
-            <span class="press-line-sheet" id="pressLineSheet"></span>
-          </div>
-          <div class="press-line-stations">
-            <div class="press-line-station" data-station="1">
-              <span class="press-line-num">01</span>
+      <!-- 05 workflow: stacked job tickets that lock into place on pin -->
+      <section class="ink-tickets-section" id="inkTicketsSection">
+        <p class="ink-kicker" data-scramble>How It Runs</p>
+        <div class="ink-tickets" id="inkTickets">
+          <div class="ink-ticket" data-ticket="0">
+            <div class="ink-ticket-inner">
+              <span class="ink-ticket-num">01</span>
               <h6>Spec</h6>
               <p>Material, finish, and quantity decided against the budget up front, no surprises.</p>
             </div>
-            <div class="press-line-station" data-station="2">
-              <span class="press-line-num">02</span>
+          </div>
+          <div class="ink-ticket" data-ticket="1">
+            <div class="ink-ticket-inner">
+              <span class="ink-ticket-num">02</span>
               <h6>Proof</h6>
               <p>A physical proof before the full run — color and material checked by hand.</p>
             </div>
-            <div class="press-line-station" data-station="3">
-              <span class="press-line-num">03</span>
+          </div>
+          <div class="ink-ticket" data-ticket="2">
+            <div class="ink-ticket-inner">
+              <span class="ink-ticket-num">03</span>
               <h6>Production</h6>
               <p>Managed through the press run, so quality doesn't drift between the proof and delivery.</p>
             </div>
-            <div class="press-line-station" data-station="4">
-              <span class="press-line-num">04</span>
+          </div>
+          <div class="ink-ticket" data-ticket="3">
+            <div class="ink-ticket-inner">
+              <span class="ink-ticket-num">04</span>
               <h6>Delivery</h6>
               <p>Delivered on schedule, packed for whatever happens to it next — storage, shipping, or an event.</p>
             </div>
@@ -156,44 +148,50 @@
         </div>
       </section>
 
-      <!-- 05 proof: tilt grid with real halftone stock samples -->
-      <section class="press-proof">
-        <p class="press-kicker pd-reveal">Proof Of Concept — The Stock Sample</p>
-        <p class="press-proof-note pd-reveal">
+      <!-- 06 proof of concept: stacked stock sheets that fan apart on scroll -->
+      <section class="ink-sheets-section">
+        <p class="ink-kicker" data-scramble>Proof Of Concept — The Stock Sample</p>
+        <p class="ink-sheets-note pd-reveal">
           The format every material choice gets approved in: a physical stock sample, tilted and
           photographed. Once real client work exists, this is where it's shown.
         </p>
-        <div class="press-tilt-wrap">
-          <div class="press-tilt-grid">
-            <div class="press-tilt press-tilt-matte pd-reveal"><span class="press-tilt-label">350gsm Matte</span></div>
-            <div class="press-tilt press-tilt-cotton pd-reveal"><span class="press-tilt-label">Uncoated Cotton</span></div>
-            <div class="press-tilt press-tilt-laminate pd-reveal"><span class="press-tilt-label">Soft-Touch Laminate</span></div>
-          </div>
-          <canvas id="pressProofSpotlight" class="press-proof-spotlight" aria-hidden="true"></canvas>
+        <div class="ink-sheets" id="inkSheets">
+          <div class="ink-sheet ink-sheet-matte" data-sheet="0"><span>350gsm Matte</span></div>
+          <div class="ink-sheet ink-sheet-cotton" data-sheet="1"><span>Uncoated Cotton</span></div>
+          <div class="ink-sheet ink-sheet-laminate" data-sheet="2"><span>Soft-Touch Laminate</span></div>
         </div>
       </section>
 
-      <!-- 06 pricing + hook -->
-      <section class="press-pricing">
-        <p class="press-kicker pd-reveal">Investment</p>
-        <p class="press-pricing-note pd-reveal">
+      <!-- 07 pricing + hook -->
+      <section class="ink-pricing">
+        <p class="ink-kicker" data-scramble>Investment</p>
+        <p class="ink-pricing-note pd-reveal">
           Custom quote — scoped to material, finish, and quantity. A physical proof is included
           before every full run, no exceptions.
         </p>
       </section>
 
-      <section class="press-hook grain">
+      <section class="ink-hook grain">
         <h3 data-animate-variant="slide" data-animate-on-scroll="true">Finish the brand. Print it.</h3>
-        <a href="/contact?service=printing" class="btn btn-solid press-stamp-btn" id="pressStampBtn" data-magnetic>
-          <span class="press-stamp-label">Get A Quote</span>
+        <a href="/contact?service=printing" class="btn btn-solid ink-blot-btn" id="inkBlotBtn" data-magnetic>
+          <span class="ink-blot-btn-svg-wrap" aria-hidden="true">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <mask id="inkBtnMask">
+                <rect width="100" height="100" fill="black" />
+                <path id="inkBtnPie" d="" fill="white" />
+              </mask>
+              <rect width="100" height="100" fill="var(--accent-bright)" mask="url(#inkBtnMask)" />
+            </svg>
+          </span>
+          <span class="ink-blot-btn-label">Get A Quote</span>
         </a>
       </section>
 
-      <a href="/services/strategy" class="press-next">
+      <a href="/services/strategy" class="ink-next">
         <div class="container">
-          <span class="press-next-label">Next — 01</span>
+          <span class="ink-next-label">Next — 01</span>
           <h3 data-animate-variant="slide" data-animate-on-scroll="true">Strategy &amp; Creative Management</h3>
-          <span class="press-next-arrow">↗</span>
+          <span class="ink-next-arrow">↗</span>
         </div>
       </a>
     </main>
@@ -219,11 +217,12 @@
     <script type="module" src="/js/nav.js"></script>
     <script type="module" src="/js/home-extras.js"></script>
     <script type="module" src="/js/scroll-reveal.js"></script>
-    <script type="module" src="/js/services/printing-press.js"></script>
-    <script type="module" src="/js/services/printing-registration-bar.js"></script>
-    <script type="module" src="/js/services/printing-line.js"></script>
-    <script type="module" src="/js/services/printing-proof.js"></script>
-    <script type="module" src="/js/services/printing-stamp.js"></script>
+    <script type="module" src="/js/services/printing-scramble.js"></script>
+    <script type="module" src="/js/services/printing-hero-distortion.js"></script>
+    <script type="module" src="/js/services/printing-ink-wipe.js"></script>
+    <script type="module" src="/js/services/printing-card-fan.js"></script>
+    <script type="module" src="/js/services/printing-tickets.js"></script>
+    <script type="module" src="/js/services/printing-sheets.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>
   </body>
