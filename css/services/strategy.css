@@ -289,28 +289,58 @@
   opacity: 0.75;
 }
 
-.strat-diag-list {
-  list-style: none;
-  max-width: 44rem;
-  margin-bottom: 2.5rem;
+/* A pinned scatter of notes instead of a tidy checklist — these are five
+   separate complaints, not one orderly argument, and the layout should
+   feel like that: overlapping, unevenly weighted, slightly askew. */
+.strat-diag-notes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.75rem 2.25rem;
+  max-width: 60rem;
+  margin-bottom: 3rem;
 }
 
-.strat-diag-list li {
+.strat-diag-note {
   position: relative;
-  padding: 1.1rem 0 1.1rem 2.25rem;
-  border-top: 1px solid rgba(23, 19, 15, 0.12);
+  width: clamp(13.5rem, 28vw, 18rem);
+  padding: 1.5rem 1.5rem 1.75rem;
+  background: var(--white);
+  box-shadow: 0 1.25rem 2.25rem -1.25rem rgba(23, 19, 15, 0.4);
+  transform: rotate(var(--r, 0deg));
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
   text-transform: none;
-  opacity: 0.8;
+  font-weight: 600;
+  font-size: 0.98rem;
+  line-height: 1.35;
 }
 
-.strat-diag-list li::before {
+.strat-diag-note:nth-child(2) {
+  margin-top: 2rem;
+}
+
+.strat-diag-note:nth-child(3) {
+  margin-top: -0.75rem;
+}
+
+.strat-diag-note:nth-child(4) {
+  margin-top: 1.25rem;
+}
+
+.strat-diag-note::before {
   content: "×";
-  position: absolute;
-  left: 0;
-  top: 1.1rem;
+  display: block;
+  margin-bottom: 0.85rem;
   font-family: var(--f-h);
   font-weight: 700;
+  font-size: 1.5rem;
   color: var(--accent);
+}
+
+.strat-diag-note:hover {
+  transform: rotate(0deg) translateY(-0.4rem) scale(1.04);
+  box-shadow: 0 1.75rem 3rem -1.25rem rgba(23, 19, 15, 0.45);
+  z-index: 2;
 }
 
 .strat-turn {
@@ -498,11 +528,30 @@
 }
 
 .strat-compare-table {
+  position: relative;
   max-width: 62rem;
   border-top: 1px solid rgba(23, 19, 15, 0.15);
 }
 
+/* A courtroom "vs" instead of a demure two-column table — this is an
+   argument, not a spec sheet. */
+.strat-compare-vs {
+  position: absolute;
+  left: 50%;
+  top: 4.5rem;
+  transform: translate(-50%, 0) rotate(-8deg);
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: var(--accent);
+  opacity: 0.16;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .strat-compare-row {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
@@ -528,7 +577,10 @@
 }
 
 .strat-compare-yes {
+  position: relative;
+  padding-left: 0.9rem;
   font-weight: 600;
+  border-left: 2px solid var(--accent);
 }
 
 .strat-compare-yes::before {
@@ -545,16 +597,27 @@
 .strat-fw-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1px;
+  gap: 2.5rem 2rem;
   max-width: 62rem;
-  background-color: rgba(23, 19, 15, 0.12);
+  padding-top: 1rem;
 }
 
+/* Templates you'd actually pull off a desk, not a tidy spreadsheet grid —
+   each card sits at its own slight angle and straightens when picked up. */
 .strat-fw-card {
   position: relative;
   padding: 2.25rem;
   background-color: var(--white);
+  box-shadow: 0 1.5rem 2.5rem -1.5rem rgba(23, 19, 15, 0.4);
+  transform: rotate(var(--r, 0deg));
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
   overflow: hidden;
+}
+
+.strat-fw-card:hover {
+  transform: rotate(0deg) translateY(-0.4rem) scale(1.03);
+  box-shadow: 0 2rem 3.25rem -1.5rem rgba(23, 19, 15, 0.45);
+  z-index: 2;
 }
 
 .strat-fw-card::before {
@@ -606,44 +669,73 @@
 }
 
 /* ── 07 — how it runs: marginal-note rows with a drawn connector spine ── */
+/* A staggered climb instead of a uniform list — each step steps further
+   right than the last, with its own number blown up as a background
+   watermark, so the five steps read as a path with momentum rather than
+   five identical rows. */
 .strat-workflow-list {
   position: relative;
-  max-width: 48rem;
-}
-
-.strat-wf-spine {
-  position: absolute;
-  left: -1.35rem;
-  top: 0.5rem;
-  bottom: 0.5rem;
-  width: 3px;
-  height: calc(100% - 1rem);
-  overflow: visible;
+  max-width: 54rem;
 }
 
 .strat-wf-row {
-  display: grid;
-  grid-template-columns: 3.5rem 1fr;
-  gap: 0 1.5rem;
-  padding: 1.5rem 0;
+  position: relative;
+  padding: 1.75rem 1.5rem 1.75rem 0;
+  margin-left: 0;
   border-top: 1px solid rgba(23, 19, 15, 0.12);
+  overflow: hidden;
+}
+
+.strat-wf-row:nth-of-type(2) {
+  margin-left: clamp(1.5rem, 6vw, 3.5rem);
+}
+
+.strat-wf-row:nth-of-type(3) {
+  margin-left: clamp(3rem, 11vw, 6.5rem);
+}
+
+.strat-wf-row:nth-of-type(4) {
+  margin-left: clamp(4rem, 15vw, 9rem);
+}
+
+.strat-wf-row:nth-of-type(5) {
+  margin-left: clamp(5rem, 19vw, 11.5rem);
+}
+
+.strat-wf-ghost {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(4rem, 9vw, 7rem);
+  line-height: 1;
+  color: rgba(23, 19, 15, 0.05);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.strat-wf-row > *:not(.strat-wf-ghost) {
+  position: relative;
+  z-index: 1;
 }
 
 .strat-wf-num {
+  display: block;
+  margin-bottom: 0.5rem;
   font-family: var(--f-h);
   font-size: 0.85rem;
-  opacity: 0.4;
+  color: var(--accent);
 }
 
 .strat-wf-row h6 {
-  grid-column: 2;
   margin-bottom: 0.4rem;
   font-size: clamp(1.25rem, 2.2vw, 1.6rem);
 }
 
 .strat-wf-row p {
-  grid-column: 2;
-  max-width: 32rem;
+  max-width: 26rem;
   text-transform: none;
   opacity: 0.7;
 }
@@ -963,6 +1055,22 @@
   .strat > * {
     grid-column: 1;
     grid-row: auto;
+  }
+
+  .strat-wf-row:nth-of-type(2),
+  .strat-wf-row:nth-of-type(3),
+  .strat-wf-row:nth-of-type(4),
+  .strat-wf-row:nth-of-type(5) {
+    margin-left: 0;
+  }
+
+  .strat-wf-ghost {
+    font-size: clamp(2.5rem, 12vw, 4rem);
+  }
+
+  .strat-diag-notes,
+  .strat-fw-grid {
+    max-width: 100%;
   }
 
   .strat-block[data-num]::after,
