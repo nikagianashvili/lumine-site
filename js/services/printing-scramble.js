@@ -28,7 +28,11 @@ function scrambleChar(el, finalChar, cycles) {
 function initOne(el) {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  const split = SplitText.create(el, { type: "chars", charsClass: "ink-scramble-char" });
+  const split = SplitText.create(el, {
+    type: "words, chars",
+    wordsClass: "ink-scramble-word",
+    charsClass: "ink-scramble-char",
+  });
 
   ScrollTrigger.create({
     trigger: el,
