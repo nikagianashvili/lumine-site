@@ -872,6 +872,11 @@
     min-height: 100vh;
   }
 
+  .strat-disc-stage {
+    flex-direction: column;
+    overflow: visible;
+  }
+
   .strat-manifesto-stage {
     position: static;
     height: auto;

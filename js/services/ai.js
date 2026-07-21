@@ -7,7 +7,9 @@ function initAiDemo() {
   const thread = document.getElementById("aiDemoThread");
   if (!thread) return;
 
-  const exchanges = [
+  const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
+
+  const exchangesEn = [
     [
       { from: "user", text: "Do you have anything free Thursday afternoon?" },
       { from: "bot", text: "Yes — 2:00 PM or 4:30 PM are open. Book one for you?" },
@@ -21,6 +23,23 @@ function initAiDemo() {
       { from: "bot", text: "Flagging this for the team now — expect a reply within the hour." },
     ],
   ];
+
+  const exchangesKa = [
+    [
+      { from: "user", text: "ხუთშაბათს ნაშუადღევს გაქვთ თავისუფალი დრო?" },
+      { from: "bot", text: "დიახ — 14:00 ან 16:30 თავისუფალია. დაგიჯავშნოთ?" },
+    ],
+    [
+      { from: "user", text: "რა ღირს საწყისი პაკეტი?" },
+      { from: "bot", text: "1,000–1,500₾ თვეში. გინდათ სრული დაშლა ელფოსტით?" },
+    ],
+    [
+      { from: "user", text: "შემიძლია ვინმეს დავუკავშირდე ინდივიდუალურ ფასზე?" },
+      { from: "bot", text: "გუნდისთვის ვნიშნავ ახლავე — პასუხს ერთი საათის განმავლობაში მიიღებთ." },
+    ],
+  ];
+
+  const exchanges = isKa ? exchangesKa : exchangesEn;
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduced) {
