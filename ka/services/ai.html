@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ka">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Front Office | Lumine | შემოქმედებითი სააგენტო — თბილისი</title>
+    <meta name="author" content="Lumine" />
+    <meta
+      name="description"
+      content="AI ჩატბოტები, ავტომატური ლიდების კვალიფიკაცია, ჯავშნები, CRM ინტეგრაცია და ხმოვანი AI — რეალური ფრონტ-ოფისი, რომელიც მუშაობს დღე-ღამის განმავლობაში."
+    />
+    <meta name="theme-color" content="#17130f" />
+    <meta property="og:title" content="AI Front Office — Lumine" />
+    <meta property="og:description" content="უმეტესობა &quot;AI-ზე მომუშავე&quot; განცხადება მარკეტინგია, არა ინფრასტრუქტურა." />
+    <meta property="og:type" content="article" />
+    <meta property="og:image" content="/logo/lumine-logo-black.png" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon-mark.svg" />
+    <link rel="icon" type="image/png" href="/icons/favicon-mark.png" />
+    <link rel="canonical" href="https://lumine.ge/ka/services/ai" />
+    <link rel="alternate" hreflang="en" href="https://lumine.ge/services/ai" />
+    <link rel="alternate" hreflang="ka" href="https://lumine.ge/ka/services/ai" />
+    <link rel="alternate" hreflang="x-default" href="https://lumine.ge/services/ai" />
+    <link rel="stylesheet" href="/css/globals.css" />
+    <link rel="stylesheet" href="/css/nav.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/chat-widget.css" />
+    <link rel="stylesheet" href="/css/services/ai.css" />
+    <script src="/js/wrappedgl.js"></script>
+    <script src="/js/simulator.js"></script>
+  </head>
+  <body class="ai-page">
+    <nav>
+      <div class="nav-logo">
+        <a href="/ka"><img src="/logo/lumine-logo-white.png" alt="Lumine" /></a>
+      </div>
+      <div class="nav-icon"><img src="/logo/lumine-mark-2.svg" alt="" /></div>
+      <div class="nav-right">
+        <div class="nav-lang" role="group" aria-label="Language">
+          <a href="/services/ai" class="nav-lang-btn">EN</a>
+          <span class="nav-lang-sep">/</span>
+          <span class="nav-lang-btn is-active">GE</span>
+        </div>
+        <div class="nav-toggler"><p>მენიუ</p></div>
+      </div>
+    </nav>
+
+    <div id="custom-cursor"></div>
+
+    <main class="page ai-svc">
+      <div class="ai-shell">
+        <!-- persistent sidebar: reads like a chat app's channel list -->
+        <aside class="ai-sidebar" aria-hidden="true">
+          <span class="ai-sidebar-brand">Lumine — Front Office</span>
+          <div class="ai-sidebar-list">
+            <span class="ai-sidebar-item is-active"># chatbots</span>
+            <span class="ai-sidebar-item"># lead-qualification</span>
+            <span class="ai-sidebar-item"># booking</span>
+            <span class="ai-sidebar-item"># crm-sync</span>
+            <span class="ai-sidebar-item"># voice-ai</span>
+          </div>
+          <span class="ai-sidebar-status"><span class="ai-status-dot"></span> ონლაინ — ყოველთვის გადამოწმებული ადამიანის მიერ</span>
+        </aside>
+
+        <div class="ai-main">
+          <!-- 01 hero: the live demo itself is the hero -->
+          <section class="ai-hero">
+            <canvas id="aiAsciiCanvas" class="ai-ascii-bg" aria-hidden="true"></canvas>
+            <p class="ai-index pd-reveal">08 / AI Front Office</p>
+            <h1 data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.15">
+              ინფრასტრუქტურა. <span class="accent">არა ხრიკი.</span>
+            </h1>
+            <p class="ai-hero-sub pd-reveal">
+              უმეტესობა „AI-ზე მომუშავე" განცხადება მარკეტინგია, არა ინფრასტრუქტურა. AI
+              ჩატბოტები, ავტომატური ლიდების კვალიფიკაცია, ჯავშნები, CRM ინტეგრაცია და ხმოვანი
+              AI — რეალური ფრონტ-ოფისი, რომელიც მუშაობს დღე-ღამის განმავლობაში. ჩვენი საკუთარი
+              კლიენტების მიღება და შიდა ასისტენტი უკვე ამაზე მუშაობს, ყოველთვის გადამოწმებული
+              ადამიანის მიერ.
+            </p>
+            <div class="ai-demo pd-reveal">
+              <div class="ai-demo-head"><span class="ai-demo-dot"></span> Lumine AI Front Office — ცოცხალი</div>
+              <div id="aiDemoThread" class="ai-demo-thread"></div>
+            </div>
+          </section>
+
+          <!-- 02 agitation as a message bubble -->
+          <section class="ai-agitation">
+            <div class="ai-bubble pd-reveal">
+              <span class="ai-bubble-from">lumine-ai</span>
+              <blockquote data-animate-variant="slide" data-animate-on-scroll="true">
+                ჩატბოტი, რომელსაც არ შეუძლია დაჯავშნა, კვალიფიკაცია ან გადამისამართება, ფრონტ-ოფისი არაა — ის უფრო ნელა მბეჭდავი FAQ გვერდია.
+              </blockquote>
+              <p>მცირე ბიზნესის საიტებზე უმეტესი „AI" არაფერზე მიმაგრებული ვიჯეტია — არც კალენდარი,
+              არც CRM, არც რეალური გადამისამართება. მარტივ კითხვას პასუხობს და ყველაფერ დანარჩენზე ჩერდება.</p>
+              <p class="ai-turn"><span class="ai-turn-mark">→</span> ამიტომ ყოველი დანერგვა
+              დაკავშირებულია თქვენს რეალურ ჯავშნების სისტემასთან და CRM-თან, სანამ ის კლიენტს ესაუბრება.</p>
+            </div>
+          </section>
+
+          <!-- 03 subservices as channel cards -->
+          <section class="ai-channels">
+            <p class="ai-kicker pd-reveal"># დეტალურად</p>
+            <div class="ai-channel-grid">
+              <div class="ai-channel pd-reveal">
+                <span class="ai-channel-tag">chatbots</span>
+                <h6>AI ჩატბოტები</h6>
+                <p>გაწვრთნილი თქვენს რეალურ სერვისებსა და ფასებზე, არა ზოგად სცენარზე.</p>
+              </div>
+              <div class="ai-channel pd-reveal">
+                <span class="ai-channel-tag">lead-qualification</span>
+                <h6>ლიდების კვალიფიკაცია</h6>
+                <p>ბიუჯეტი, ვადები და შესაბამისობა შემოწმებულია, სანამ ადამიანი ლიდს საერთოდ დაინახავს.</p>
+              </div>
+              <div class="ai-channel pd-reveal">
+                <span class="ai-channel-tag">crm-sync</span>
+                <h6>CRM ინტეგრაცია</h6>
+                <p>ყოველი საუბარი ინახება იქ, სადაც თქვენი გუნდი უკვე მუშაობს — არაფერი იკარგება ცალკე აპში.</p>
+              </div>
+              <div class="ai-channel pd-reveal">
+                <span class="ai-channel-tag">voice-ai</span>
+                <h6>ხმოვანი AI</h6>
+                <p>ზარებზე პასუხობს და გადამისამართებს დღე-ღამის განმავლობაში, არა მხოლოდ ჩატის ფანჯარაში.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- 04 workflow -->
+          <section class="ai-workflow">
+            <p class="ai-kicker pd-reveal"># როგორ მუშაობს</p>
+            <div class="ai-wf-list">
+              <div class="ai-wf-row pd-reveal"><span class="ai-wf-num">01</span><div><h6>ნაკადების დახატვა</h6><p>ყოველი კითხვა, რასაც ლიდი რეალურად სვამს, და სად უნდა მიდიოდეს ყოველი პასუხი.</p></div></div>
+              <div class="ai-wf-row pd-reveal"><span class="ai-wf-num">02</span><div><h6>სისტემების დაკავშირება</h6><p>კალენდარი, CRM და გადახდები დაკავშირებულია — არა სიმულირებული.</p></div></div>
+              <div class="ai-wf-row pd-reveal"><span class="ai-wf-num">03</span><div><h6>წვრთნა და ტესტირება</h6><p>გაშვებულია რეალურ კითხვებზე, სანამ ის რეალურ კლიენტს საერთოდ ესაუბრება.</p></div></div>
+              <div class="ai-wf-row pd-reveal"><span class="ai-wf-num">04</span><div><h6>დანერგვა და მეთვალყურეობა</h6><p>ცოცხალია, ადამიანი ამოწმებს ზღვრულ შემთხვევებს, რომლებსაც ის ამაღლებს.</p></div></div>
+            </div>
+          </section>
+
+          <!-- 05 proof -->
+          <section class="ai-proof grain">
+            <p class="ai-kicker pd-reveal"># კონცეფციის დადასტურება</p>
+            <p class="ai-proof-note pd-reveal">ნახეთ, როგორ მუშაობს — ზემოთა demo ზუსტად ეს სისტემაა, საილუსტრაციო კონტენტით, ცოცხალი. კაპოტის ქვეშ ყოველი დანერგვა იმავე რამდენიმე რეალურ სისტემას უკავშირდება:</p>
+            <div class="ai-stack-grid">
+              <div class="ai-stack-item pd-reveal">
+                <span class="ai-stack-status"></span>
+                <span class="ai-stack-name">კალენდარი</span>
+                <span class="ai-stack-desc">Google / Outlook — რეალური ხელმისაწვდომობა, რეალური ჯავშნები</span>
+              </div>
+              <div class="ai-stack-item pd-reveal">
+                <span class="ai-stack-status"></span>
+                <span class="ai-stack-name">CRM</span>
+                <span class="ai-stack-desc">HubSpot, Pipedrive ან თქვენი საკუთარი — ჩაწერილი, არა დაკარგული</span>
+              </div>
+              <div class="ai-stack-item pd-reveal">
+                <span class="ai-stack-status"></span>
+                <span class="ai-stack-name">WhatsApp / SMS</span>
+                <span class="ai-stack-desc">პასუხობს იქ, სადაც კლიენტი უკვე იმყოფება</span>
+              </div>
+              <div class="ai-stack-item pd-reveal">
+                <span class="ai-stack-status"></span>
+                <span class="ai-stack-name">გადახდები</span>
+                <span class="ai-stack-desc">დეპოზიტები და ინვოისები, დამუშავებული პირდაპირ</span>
+              </div>
+              <div class="ai-stack-item pd-reveal">
+                <span class="ai-stack-status"></span>
+                <span class="ai-stack-name">ადამიანზე გადაცემა</span>
+                <span class="ai-stack-desc">ყველაფერი, რაშიც ის დარწმუნებული არაა, მიდის ადამიანთან, მონიშნული</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- 06 pricing + hook -->
+          <section class="ai-pricing">
+            <p class="ai-kicker pd-reveal"># ინვესტიცია</p>
+            <p class="ai-pricing-note pd-reveal">ინდივიდუალური ფასი — მორგებული იმ სისტემებზე, რომლებთანაც კავშირია საჭირო. უმეტესი დანერგვა პირველი ზარიდან გაშვებამდე ორი-სამი კვირაა.</p>
+          </section>
+
+          <section class="ai-hook">
+            <h3 data-animate-variant="slide" data-animate-on-scroll="true">ჩააყენეთ სამუშაოში რეალური ფრონტ-ოფისი.</h3>
+            <a href="/ka/contact?service=ai" class="btn btn-solid" data-magnetic>მიიღეთ ინდივიდუალური ფასი</a>
+          </section>
+
+          <a href="/ka/services/printing" class="ai-next">
+            <div class="container">
+              <span class="ai-next-label">შემდეგი — 09</span>
+              <h3 data-animate-variant="slide" data-animate-on-scroll="true">ბეჭდვის სერვისები</h3>
+              <span class="ai-next-arrow">↗</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div id="footer-canvas"></div>
+      <div class="footer-inner">
+        <div class="footer-cta">
+          <span class="footer-cta-eyebrow" data-animate-variant="slide" data-animate-on-scroll="true">გისმენთ</span>
+          <h3 class="footer-cta-heading" data-animate-variant="slide" data-animate-on-scroll="true" data-animate-delay="0.1">თქვენი შემდეგი დიდი საქმე სწორედ აქედან იწყება</h3>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-logo">Lumine</p>
+          <p class="footer-copy">თბილისი, საქართველო</p>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/js/lenis-scroll.js"></script>
+    <script type="module" src="/js/cursor.js"></script>
+    <script type="module" src="/js/mtavruli.js"></script>
+    <script type="module" src="/js/animated-copy.js"></script>
+    <script type="module" src="/js/simulation.js"></script>
+    <script type="module" src="/js/nav.js"></script>
+    <script type="module" src="/js/home-extras.js"></script>
+    <script type="module" src="/js/scroll-reveal.js"></script>
+    <script type="module" src="/js/services/ai.js"></script>
+    <script type="module" src="/js/services/ai-ascii.js"></script>
+    <script type="module" src="/js/footer.js"></script>
+    <script type="module" src="/js/chat-widget.js"></script>
+  </body>
+</html>
