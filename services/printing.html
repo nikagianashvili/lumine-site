@@ -22,8 +22,6 @@
     <link rel="stylesheet" href="/css/footer.css" />
     <link rel="stylesheet" href="/css/chat-widget.css" />
     <link rel="stylesheet" href="/css/services/printing.css" />
-    <script src="/js/wrappedgl.js"></script>
-    <script src="/js/simulator.js"></script>
   </head>
   <body class="print-page">
     <nav>
@@ -44,129 +42,137 @@
     <div id="custom-cursor"></div>
 
     <main class="page print-svc">
-      <!-- 01 hero — light -->
-      <section class="ink-hero ink-light">
-        <p class="ink-edition" data-scramble>No. 09 — Printing Services</p>
-        <h1 class="ink-hero-h1" data-scramble>Something You Can <span class="accent">Hold.</span></h1>
-        <p class="ink-hero-sub pd-reveal">
-          Digital work that never becomes something you can hold isn't finished. Promotional
-          print, large-format, packaging, branded merchandise, and full print management — the
-          physical half of a brand, handled with the same eye as the digital half.
-        </p>
-      </section>
+      <!-- top region: left reading column + sticky stock sample book -->
+      <div class="pr-top">
+        <div class="pr-col">
+          <section class="pr-hero">
+            <p class="pr-index pd-reveal">09 / Printing Services</p>
+            <h1 data-animate-variant="slide" data-animate-on-scroll="false" data-animate-delay="0.15">
+              Something You Can <span class="accent">Hold.</span>
+            </h1>
+            <p class="pr-hero-sub pd-reveal">
+              Every print decision starts on paper, not a screen. The stock book on the right holds
+              the same swatches a client flips through before anything runs — promotional print,
+              large-format, packaging, branded merchandise, and full print management.
+            </p>
+          </section>
 
-      <!-- 02 agitation — dark -->
-      <section class="ink-agitation ink-dark grain">
-        <blockquote data-animate-variant="slide" data-animate-on-scroll="true">
-          A brand that only exists on screens hasn't finished becoming real.
-        </blockquote>
-        <p class="pd-reveal">
-          A card, a box, a banner — the moment someone holds it, the brand is judged by weight,
-          texture, and finish, not pixels.
-        </p>
-        <p class="ink-turn pd-reveal">
-          <span class="ink-turn-mark">→</span> So print jobs run through the same design system
-          as everything else, not a separate afterthought.
-        </p>
-      </section>
+          <section class="pr-agitation">
+            <blockquote data-animate-variant="slide" data-animate-on-scroll="true">
+              A brand that only exists on screens hasn't finished becoming real.
+            </blockquote>
+            <p class="pd-reveal">
+              A card, a box, a banner — the moment someone holds it, the brand is judged by weight,
+              texture, and finish, not pixels.
+            </p>
+            <p class="pr-turn pd-reveal">
+              <span class="pr-turn-mark">→</span> So print jobs run through the same design system
+              as everything else, checked against the book, not guessed at.
+            </p>
+          </section>
 
-      <!-- 03 sub-services — light, cursor-follow preview list -->
-      <section class="ink-services-list-section ink-light">
-        <p class="ink-kicker" data-scramble>In Detail</p>
-        <div class="ink-services-list">
-          <div class="ink-service-row" data-run="Run 01/04" data-swatch="ink-swatch-1">
-            <span class="ink-service-index">01</span>
-            <span class="ink-service-name">Promo Print</span>
-            <span class="ink-service-desc">Flyers, brochures, and stationery — the everyday print run done right.</span>
-            <span class="ink-service-arrow">→</span>
+          <section class="pr-detail">
+            <p class="pr-kicker pd-reveal">In The Book</p>
+            <div class="pr-detail-list">
+              <div class="pr-detail-item pd-reveal" data-stbk-target="promo">
+                <h6>Promo Print</h6>
+                <p>Flyers, brochures, and stationery — the everyday print run done right.</p>
+              </div>
+              <div class="pr-detail-item pd-reveal" data-stbk-target="large">
+                <h6>Large Format</h6>
+                <p>Banners, signage, and event backdrops built to survive being seen from a distance.</p>
+              </div>
+              <div class="pr-detail-item pd-reveal" data-stbk-target="packaging">
+                <h6>Packaging</h6>
+                <p>Structural and print-ready packaging, from dieline to final production art.</p>
+              </div>
+              <div class="pr-detail-item pd-reveal" data-stbk-target="merch">
+                <h6>Merchandise</h6>
+                <p>Branded apparel and goods — the brand system applied to something wearable.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="pr-workflow">
+            <p class="pr-kicker pd-reveal">How It Runs</p>
+            <div class="pr-wf-list">
+              <div class="pr-wf-row pd-reveal">
+                <span class="pr-wf-num">01</span>
+                <div><h6>Spec</h6><p>Material, finish, and quantity decided against the budget up front, no surprises.</p></div>
+              </div>
+              <div class="pr-wf-row pd-reveal">
+                <span class="pr-wf-num">02</span>
+                <div><h6>Proof</h6><p>A physical proof before the full run — checked against the book by hand.</p></div>
+              </div>
+              <div class="pr-wf-row pd-reveal">
+                <span class="pr-wf-num">03</span>
+                <div><h6>Production</h6><p>Managed through the press run, so quality doesn't drift between the proof and delivery.</p></div>
+              </div>
+              <div class="pr-wf-row pd-reveal">
+                <span class="pr-wf-num">04</span>
+                <div><h6>Delivery</h6><p>Delivered on schedule, packed for whatever happens to it next — storage, shipping, or an event.</p></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- signature element: sticky stock sample book, tabs flip as the
+             matching section scrolls past -->
+        <aside class="stbk-wrap" aria-hidden="true">
+          <div class="stbk">
+            <div class="stbk-page stbk-page-promo is-active" data-page="promo" style="--i: 0">
+              <span class="stbk-tab">Promo Print</span>
+              <span class="stbk-swatch-label">120gsm Uncoated</span>
+            </div>
+            <div class="stbk-page stbk-page-large" data-page="large" style="--i: 1">
+              <span class="stbk-tab">Large Format</span>
+              <span class="stbk-swatch-label">Matte Vinyl</span>
+            </div>
+            <div class="stbk-page stbk-page-packaging" data-page="packaging" style="--i: 2">
+              <span class="stbk-tab">Packaging</span>
+              <span class="stbk-swatch-label">Kraft Board</span>
+            </div>
+            <div class="stbk-page stbk-page-merch" data-page="merch" style="--i: 3">
+              <span class="stbk-tab">Merchandise</span>
+              <span class="stbk-swatch-label">Cotton Weave</span>
+            </div>
           </div>
-          <div class="ink-service-row" data-run="Run 02/04" data-swatch="ink-swatch-2">
-            <span class="ink-service-index">02</span>
-            <span class="ink-service-name">Large Format</span>
-            <span class="ink-service-desc">Banners, signage, and event backdrops built to survive being seen from a distance.</span>
-            <span class="ink-service-arrow">→</span>
-          </div>
-          <div class="ink-service-row" data-run="Run 03/04" data-swatch="ink-swatch-3">
-            <span class="ink-service-index">03</span>
-            <span class="ink-service-name">Packaging</span>
-            <span class="ink-service-desc">Structural and print-ready packaging, from dieline to final production art.</span>
-            <span class="ink-service-arrow">→</span>
-          </div>
-          <div class="ink-service-row" data-run="Run 04/04" data-swatch="ink-swatch-4">
-            <span class="ink-service-index">04</span>
-            <span class="ink-service-name">Merchandise</span>
-            <span class="ink-service-desc">Branded apparel and goods — the brand system applied to something wearable.</span>
-            <span class="ink-service-arrow">→</span>
-          </div>
+        </aside>
+      </div>
+
+      <!-- proof: the same swatches from the book, shown full size -->
+      <section class="pr-proof grain">
+        <p class="pr-kicker pr-kicker-invert pd-reveal">Proof Of Concept — The Stock Book</p>
+        <p class="pr-proof-note pd-reveal">
+          The same three pages open in the book above, shown at full size — the format every
+          material choice gets approved in before a job runs. Once real client work exists, this is
+          where it's shown.
+        </p>
+        <div class="pr-proof-grid">
+          <div class="pr-proof-sample pr-proof-matte pd-reveal"><span>350gsm Matte</span></div>
+          <div class="pr-proof-sample pr-proof-cotton pd-reveal"><span>Uncoated Cotton</span></div>
+          <div class="pr-proof-sample pr-proof-laminate pd-reveal"><span>Soft-Touch Laminate</span></div>
         </div>
       </section>
 
-      <!-- 04 workflow — dark, parallax columns -->
-      <section class="ink-workflow-section ink-dark grain">
-        <p class="ink-kicker" data-scramble>How It Runs</p>
-        <div class="ink-workflow-grid">
-          <div class="ink-workflow-col">
-            <span class="ink-workflow-num">01</span>
-            <h6>Spec</h6>
-            <p>Material, finish, and quantity decided against the budget up front, no surprises.</p>
-          </div>
-          <div class="ink-workflow-col">
-            <span class="ink-workflow-num">02</span>
-            <h6>Proof</h6>
-            <p>A physical proof before the full run — color and material checked by hand.</p>
-          </div>
-          <div class="ink-workflow-col">
-            <span class="ink-workflow-num">03</span>
-            <h6>Production</h6>
-            <p>Managed through the press run, so quality doesn't drift between the proof and delivery.</p>
-          </div>
-          <div class="ink-workflow-col">
-            <span class="ink-workflow-num">04</span>
-            <h6>Delivery</h6>
-            <p>Delivered on schedule, packed for whatever happens to it next — storage, shipping, or an event.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- 05 proof of concept — light, peel-reveal -->
-      <section class="ink-peel-section ink-light" id="inkPeelSection">
-        <p class="ink-kicker" data-scramble>Proof Of Concept — The Stock Sample</p>
-        <p class="ink-peel-note pd-reveal">
-          The format every material choice gets approved in: a physical stock sample, tilted and
-          photographed. Once real client work exists, this is where it's shown.
-        </p>
-        <div class="ink-peel-stage" id="inkPeelStage">
-          <div class="ink-peel-final">
-            <div class="ink-peel-sample ink-sheet-matte"><span>350gsm Matte</span></div>
-            <div class="ink-peel-sample ink-sheet-cotton"><span>Uncoated Cotton</span></div>
-            <div class="ink-peel-sample ink-sheet-laminate"><span>Soft-Touch Laminate</span></div>
-          </div>
-          <div class="ink-peel-layer" data-layer="0"></div>
-          <div class="ink-peel-layer" data-layer="1"></div>
-          <div class="ink-peel-layer" data-layer="2"></div>
-        </div>
-      </section>
-
-      <!-- 06 pricing — dark -->
-      <section class="ink-pricing ink-dark grain">
-        <p class="ink-kicker" data-scramble>Investment</p>
-        <p class="ink-pricing-note pd-reveal">
+      <section class="pr-pricing">
+        <p class="pr-kicker pd-reveal">Investment</p>
+        <p class="pr-pricing-note pd-reveal">
           Custom quote — scoped to material, finish, and quantity. A physical proof is included
           before every full run, no exceptions.
         </p>
       </section>
 
-      <!-- 07 hook + CTA — dark -->
-      <section class="ink-hook ink-dark grain">
+      <section class="pr-hook grain">
         <h3 data-animate-variant="slide" data-animate-on-scroll="true">Finish the brand. Print it.</h3>
-        <a href="/contact?service=printing" class="btn btn-solid" id="inkCtaBtn" data-magnetic>Get A Quote</a>
+        <a href="/contact?service=printing" class="btn btn-solid" data-magnetic>Open The Book</a>
       </section>
 
-      <a href="/services/strategy" class="ink-next">
+      <a href="/services/strategy" class="pr-next">
         <div class="container">
-          <span class="ink-next-label">Next — 01</span>
+          <span class="pr-next-label">Next — 01</span>
           <h3 data-animate-variant="slide" data-animate-on-scroll="true">Strategy &amp; Creative Management</h3>
-          <span class="ink-next-arrow">↗</span>
+          <span class="pr-next-arrow">↗</span>
         </div>
       </a>
     </main>
@@ -188,16 +194,10 @@
     <script type="module" src="/js/lenis-scroll.js"></script>
     <script type="module" src="/js/cursor.js"></script>
     <script type="module" src="/js/animated-copy.js"></script>
-    <script type="module" src="/js/simulation.js"></script>
     <script type="module" src="/js/nav.js"></script>
     <script type="module" src="/js/home-extras.js"></script>
     <script type="module" src="/js/scroll-reveal.js"></script>
-    <script type="module" src="/js/services/printing-scramble.js"></script>
-    <script type="module" src="/js/services/printing-halftone-bg.js"></script>
-    <script type="module" src="/js/services/printing-preview-swatch.js"></script>
-    <script type="module" src="/js/services/printing-parallax-columns.js"></script>
-    <script type="module" src="/js/services/printing-peel.js"></script>
-    <script type="module" src="/js/services/printing-dot-burst.js"></script>
+    <script type="module" src="/js/services/printing-stockbook.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>
   </body>
