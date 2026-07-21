@@ -7,14 +7,41 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Mobile stacks front + back of every card instead of flipping between
+// them (there's no room to pin a card center-stage), so each card gets a
+// one-time fade/slide-up as it scrolls into view instead of no motion at all.
+function initMobileReveal(cards) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    cards.forEach((card) => card.classList.add("is-inview"));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-inview");
+        observer.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.15, rootMargin: "0px 0px -10% 0px" },
+  );
+
+  cards.forEach((card) => observer.observe(card));
+}
+
 function init() {
   const section = document.getElementById("stratDisciplines");
   if (!section) return;
-  if (window.matchMedia("(max-width: 900px)").matches) return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   const cards = gsap.utils.toArray(".strat-disc-card", section);
   if (!cards.length) return;
+
+  if (window.matchMedia("(max-width: 900px)").matches) {
+    initMobileReveal(cards);
+    return;
+  }
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   gsap.set(cards, { opacity: 0, scale: 0.92, rotateY: 0 });
 

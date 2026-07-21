@@ -33,11 +33,44 @@ function animateBlock(outBlock, inBlock, phaseProgress) {
   });
 }
 
+// Mobile has no room for a pinned scrub — the three lines just stack and
+// read top to bottom instead. They still get a one-time fade/slide-up as
+// each one enters the viewport, so the section isn't inert.
+function initMobileReveal(section) {
+  const blocks = gsap.utils.toArray(".strat-m-block", section);
+  if (!blocks.length) return;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    blocks.forEach((block) => block.classList.add("is-inview"));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-inview");
+        observer.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.35 },
+  );
+
+  blocks.forEach((block, i) => {
+    block.style.transitionDelay = `${i * 0.1}s`;
+    observer.observe(block);
+  });
+}
+
 function init() {
   const section = document.getElementById("stratManifesto");
   const ring = document.getElementById("stratManifestoRingProgress");
   if (!section) return;
-  if (window.matchMedia("(max-width: 900px)").matches) return;
+
+  if (window.matchMedia("(max-width: 900px)").matches) {
+    initMobileReveal(section);
+    return;
+  }
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   const blocks = gsap.utils.toArray(".strat-m-block", section);
