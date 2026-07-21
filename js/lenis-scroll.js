@@ -39,6 +39,21 @@ function initLenisScroll() {
   // the final layout + active Lenis loop.
   requestAnimationFrame(() => ScrollTrigger.refresh());
   window.addEventListener("load", () => ScrollTrigger.refresh(), { once: true });
+
+  // Mobile pinch-zoom fires visualViewport resize events, not window
+  // resize - ScrollTrigger's own default auto-refresh only listens on
+  // window, so a zoom change mid-scroll leaves every cached trigger
+  // start/end and pin distance stale against the new scale. Symptom:
+  // scrub-driven reveals (e.g. the strategy ecosystem map's opacity
+  // stagger) get stuck partway since the trigger's end point no longer
+  // lines up with where the user can actually scroll to.
+  let refreshTimer = null;
+  const scheduleRefresh = () => {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 150);
+  };
+  window.visualViewport?.addEventListener("resize", scheduleRefresh);
+  window.addEventListener("orientationchange", scheduleRefresh);
 }
 
 export { lenis };
