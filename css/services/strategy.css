@@ -853,6 +853,14 @@
     max-height: 14rem;
   }
 
+  .strat-dropcap {
+    float: none;
+    display: inline;
+    margin-right: 0.15rem;
+    font-size: 1em;
+    line-height: inherit;
+  }
+
   .strat-rail {
     padding: 5.5rem 0 1.5rem;
   }
@@ -864,14 +872,16 @@
   .strat-manifesto,
   .strat-disciplines {
     height: auto;
-    min-height: 100vh;
+    min-height: 0;
   }
 
   .strat-manifesto-inner,
   .strat-disc-stage {
     position: relative;
     height: auto;
-    min-height: 100vh;
+    min-height: 0;
+    padding-top: clamp(3rem, 8vw, 5rem);
+    padding-bottom: clamp(3rem, 8vw, 5rem);
   }
 
   .strat-disc-stage {
