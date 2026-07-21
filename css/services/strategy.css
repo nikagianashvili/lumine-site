@@ -61,6 +61,8 @@
 .strat-block {
   position: relative;
   grid-column: 2;
+  width: 100%;
+  min-width: 0;
   padding: clamp(4rem, 8vw, 7rem) clamp(1.75rem, 6vw, 6rem);
   max-width: 82rem;
   margin: 0 auto;
@@ -250,6 +252,8 @@
 /* ── 03 — the argument: full-bleed pinned scroll-scrubbed word morph ── */
 .strat-manifesto {
   grid-column: 2;
+  width: 100%;
+  min-width: 0;
   position: relative;
   height: 280vh;
   max-width: none;
@@ -305,6 +309,8 @@
 /* ── 04 — three disciplines: pinned 3D flip-card sequence ── */
 .strat-disciplines {
   grid-column: 2;
+  width: 100%;
+  min-width: 0;
   position: relative;
   height: 340vh;
   max-width: none;
@@ -548,6 +554,8 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  width: 100%;
+  min-width: 0;
 }
 
 .strat-proof-slider {
@@ -774,6 +782,8 @@
 .strat-hook {
   position: relative;
   grid-column: 2;
+  width: 100%;
+  min-width: 0;
   padding: 6rem clamp(1.75rem, 6vw, 6rem);
   max-width: 82rem;
   margin: 0 auto;
@@ -796,6 +806,8 @@
 /* ── next-service banner ── */
 .strat-next {
   grid-column: 2;
+  width: 100%;
+  min-width: 0;
   display: block;
   padding: 4rem clamp(1.75rem, 6vw, 6rem);
   text-decoration: none;
