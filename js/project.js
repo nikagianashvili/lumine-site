@@ -315,6 +315,7 @@ function chipsSection(label, items) {
 }
 
 function quoteSection(testimonial) {
+  if (!testimonial) return "";
   const quote = isKa ? testimonial.quote_ka || testimonial.quote : testimonial.quote;
   const author = isKa ? testimonial.author_ka || testimonial.author : testimonial.author;
   return `
