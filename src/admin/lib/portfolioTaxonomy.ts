@@ -12,4 +12,17 @@ export const PORTFOLIO_SERVICE_TYPES = [
   { id: "design", label: "Graphic Design" },
 ] as const;
 
-export const INDUSTRIES = ["Medical", "Hotels", "Restaurants", "Real Estate", "SaaS", "E-Commerce", "Startups"] as const;
+export const INDUSTRIES = [
+  "Medical",
+  "Hotels",
+  "Restaurants",
+  "Real Estate",
+  "SaaS",
+  "E-Commerce",
+  "Startups",
+  "Public Sector",
+  "Fitness",
+  "Electronics",
+  "Finance",
+  "Retail",
+] as const;
