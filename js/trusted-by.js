@@ -1,12 +1,11 @@
 import gsap from "gsap";
 
-// Placeholder marks — swap for real client logos once Lumine has them.
 const marks = [
-  "/clients/client-logo-1.svg",
-  "/clients/client-logo-2.svg",
-  "/clients/client-logo-3.svg",
-  "/clients/client-logo-4.svg",
-  "/clients/client-logo-5.svg",
+  "/clients/tbzoo.png",
+  "/clients/fitrock.png",
+  "/clients/tene.png",
+  "/clients/tera-leasing.png",
+  "/clients/4pets.png",
 ];
 
 function horizontalLoop(items, config) {

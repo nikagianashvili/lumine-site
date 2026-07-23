@@ -41,10 +41,17 @@
   display: none;
 }
 
+html {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   font-family: var(--f-nm);
   background-color: var(--l);
   color: var(--d);
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* Safety net: LK Lumina is the primary face for both --f-h and --f-nm, so
