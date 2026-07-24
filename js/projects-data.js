@@ -73,6 +73,13 @@ export const INDUSTRY_LABELS_KA = {
   Retail: "საცალო ვაჭრობა",
 };
 
+// Real client galleries live on disk as /work/design/<slug>/gallery1.jpg
+// .. galleryN.jpg — built here instead of typed out by hand so the count
+// always matches what's actually there.
+function galleryPaths(slug, count) {
+  return Array.from({ length: count }, (_, i) => `/work/design/${slug}/gallery${i + 1}.jpg`);
+}
+
 // Render order matters: the "All / All" grid reads this array in order and
 // puts a spotlight card at every 3rd slot (0, 3, 6…) — 1 featured + 2
 // regular, repeating, with the featured slot rotating across all 3 service
@@ -282,6 +289,12 @@ export const projects = [
       "ყოველი კონკურენტის ბრენდი ლურჯი გრადიენტი და აბსტრაქტული გრაფიკი იყო. Northbeam-მა ითხოვა რაღაც, რასაც არატექნიკური მყიდველი პირველივე შეხედვით ენდობოდა — დეკი ისეთი ოთახისთვისაც უნდა მუშაობდა, სადაც პროდუქტის დემო არ იქნებოდა.",
     moodboardImages: ["/work/work3.jpg", "/sample-project/details-2.jpg", "/work/work4.jpg"],
     deliverablesImages: ["/work/work3.jpg", "/sample-project/hero.jpg", "/work/work4.jpg", "/sample-project/details-1.jpg"],
+    services: ["Brand Identity", "Pitch Deck"],
+    services_ka: ["საბრენდო იდენტობა", "პიჩ-დეკი"],
+    role: "Identity & deck design",
+    role_ka: "იდენტობისა და დეკის დიზაინი",
+    timeline: "4 weeks",
+    timeline_ka: "4 კვირა",
     testimonial: {
       quote: "We closed our seed round on this deck. Nobody asked to see the product until slide nine.",
       quote_ka: "ამ დეკზე დავხურეთ ჩვენი პირველი რაუნდი. ცხრილამდე არავის უკითხავს პროდუქტის ჩვენება.",
@@ -310,6 +323,12 @@ export const projects = [
       "Aura-ს სურდა ეგონა ყავასავით და არა სხვა ყავის ბრენდივით: თბილი, ოდნავ ინდუსტრიული, ფოთლების ილუსტრაციისა და ხელნაწერი შრიფტების გარეშე.",
     moodboardImages: ["/work/work1.jpg", "/sample-project/details-1.jpg", "/work/work6.jpg"],
     deliverablesImages: ["/work/work1.jpg", "/sample-project/details-2.jpg", "/work/work6.jpg", "/sample-project/hero.jpg"],
+    services: ["Brand Identity", "Print System"],
+    services_ka: ["საბრენდო იდენტობა", "ბეჭდვითი სისტემა"],
+    role: "Full-service branding",
+    role_ka: "სრული საბრენდო მომსახურება",
+    timeline: "5 weeks",
+    timeline_ka: "5 კვირა",
     testimonial: {
       quote: "Regulars started asking if the cups were for sale. That's the whole brief, answered.",
       quote_ka: "მუდმივმა კლიენტებმა ჭიქების ყიდვაზეც კი გვკითხეს. მთელი ბრიფი, ერთ პასუხში.",
@@ -364,6 +383,12 @@ export const projects = [
       "Forma გაშვებამდე იყო — სივრცე ჯერ არ არსებობდა გადასაღებად. იდენტობასა და პოსტერების სერიას ოთახის შეგრძნება უნდა გაეყიდა, სანამ ოთახი თვითონ იარსებებდა.",
     moodboardImages: ["/work/work6.jpg", "/work/work1.jpg", "/sample-project/details-1.jpg"],
     deliverablesImages: ["/work/work6.jpg", "/sample-project/details-2.jpg", "/work/work1.jpg", "/sample-project/hero.jpg"],
+    services: ["Naming", "Brand Identity", "Poster Campaign"],
+    services_ka: ["სახელდება", "საბრენდო იდენტობა", "პოსტერების კამპანია"],
+    role: "Full-service branding",
+    role_ka: "სრული საბრენდო მომსახურება",
+    timeline: "6 weeks",
+    timeline_ka: "6 კვირა",
     testimonial: {
       quote: "We pre-sold a third of our desks off the poster campaign alone, before the paint dried.",
       quote_ka: "მაგიდების მესამედი წინასწარ გავყიდეთ მხოლოდ პოსტერების კამპანიით, ღებავიც არ გამშრალა.",
@@ -391,6 +416,13 @@ export const projects = [
       "თბილისის ზოოპარკს სურდა იდენტობა, რომელიც მხიარული და ოჯახზე ორიენტირებული იქნებოდა ცხოველების ფოტოგრაფიის გარეშე — ნიშანი და პატერნების სისტემა, საკმარისად მოქნილი ჩანთებზე, მაისურებზე, ბეჯებსა და აბრებზე გადასატანად.",
     moodboardImages: ["/work/design/tbilisi-zoo/mood1.jpg", "/work/design/tbilisi-zoo/cover.jpg"],
     deliverablesImages: ["/work/design/tbilisi-zoo/mood2.jpg", "/work/design/tbilisi-zoo/mood1.jpg"],
+    services: ["Brand Identity", "Illustration", "Merchandise System"],
+    services_ka: ["საბრენდო იდენტობა", "ილუსტრაცია", "სუვენირული სისტემა"],
+    role: "Full-service branding",
+    role_ka: "სრული საბრენდო მომსახურება",
+    timeline: "8 weeks",
+    timeline_ka: "8 კვირა",
+    galleryImages: galleryPaths("tbilisi-zoo", 10),
   },
   {
     slug: "fit-rock",
@@ -412,6 +444,13 @@ export const projects = [
       "Fit Rock-ს სჭირდებოდა შეფუთვა და სოციალური კონტენტი, რომელიც ჩვეულებრივ სავარჯიშო აღჭურვილობის ბრენდზე მძიმე და გამძლე შეგრძნებას მისცემდა — რეალურ ქვაზე დარენდერებული სავარჯიშო წონები, პლუს სავაჭრო ნიშანი და წონის დისკოს ბეჯების სისტემა პროდუქტის ხაზისთვის.",
     moodboardImages: ["/work/design/fit-rock/mood1.jpg", "/work/design/fit-rock/cover.jpg"],
     deliverablesImages: ["/work/design/fit-rock/mood2.jpg", "/work/design/fit-rock/deliv1.jpg"],
+    services: ["Brand Identity", "Packaging", "3D Product Rendering", "Social Content"],
+    services_ka: ["საბრენდო იდენტობა", "შეფუთვა", "3D რენდერინგი", "სოციალური კონტენტი"],
+    role: "Full-service branding",
+    role_ka: "სრული საბრენდო მომსახურება",
+    timeline: "6 weeks",
+    timeline_ka: "6 კვირა",
+    galleryImages: galleryPaths("fit-rock", 14),
   },
   {
     slug: "tene",
@@ -433,6 +472,13 @@ export const projects = [
       "TENE-ს კაბელების ხაზს სჭირდებოდა სოციალური პოსტები, რომლებიც მცირე ეკრანზეც მაშინვე იკითხებოდა — ერთი მოტივი, ელვის ჭრილობა, გამეორებული ყოველ პროდუქტის გამოცხადებაზე, რათა ბრენდი ყოველი გაშვებისას ამოსაცნობი დარჩენილიყო.",
     moodboardImages: ["/work/design/tene/mood1.jpg", "/work/design/tene/cover.jpg"],
     deliverablesImages: ["/work/design/tene/mood2.jpg", "/work/design/tene/mood1.jpg"],
+    services: ["Social Content System", "Art Direction"],
+    services_ka: ["სოციალური კონტენტის სისტემა", "არტ-დირექშენი"],
+    role: "Ongoing content partner",
+    role_ka: "მუდმივი კონტენტ-პარტნიორი",
+    timeline: "Ongoing",
+    timeline_ka: "მიმდინარე",
+    galleryImages: galleryPaths("tene", 15),
   },
   {
     slug: "tera-leasing",
@@ -454,6 +500,13 @@ export const projects = [
       "Tera Leasing-ის პროდუქტის პირობები ბუნებრივად რთული იყო გასაგებად. დავალება იყო განმეორებადი პოსტის ფორმატი — თამამი კითხვა, მოკლე პასუხი — რომელიც საფინანსო პირობებს იოლად ასახსნიდა, წვრილი შრიფტის შეგრძნების გარეშე.",
     moodboardImages: ["/work/design/tera-leasing/mood1.jpg", "/work/design/tera-leasing/cover.jpg"],
     deliverablesImages: ["/work/design/tera-leasing/mood2.jpg", "/work/design/tera-leasing/mood1.jpg"],
+    services: ["Social Content System", "Copy Direction"],
+    services_ka: ["სოციალური კონტენტის სისტემა", "კოპირაითინგის მიმართულება"],
+    role: "Ongoing content partner",
+    role_ka: "მუდმივი კონტენტ-პარტნიორი",
+    timeline: "Ongoing",
+    timeline_ka: "მიმდინარე",
+    galleryImages: galleryPaths("tera-leasing", 7),
   },
   {
     slug: "4pets",
@@ -475,6 +528,96 @@ export const projects = [
       "4Pets ყიდის ათობით პროდუქტის ხაზს რამდენიმე ცხოველის საკვების ბრენდში. დავალება იყო თანმიმდევრული პოსტის შაბლონი — პროდუქტი ცენტრში, ერთი მკაფიო სათაური — რომელიც მთელ კატალოგზე გავრცელდებოდა ახალი განლაგების გარეშე ყოველ ჯერზე.",
     moodboardImages: ["/work/design/4pets/mood1.jpg", "/work/design/4pets/cover.jpg"],
     deliverablesImages: ["/work/design/4pets/mood2.jpg", "/work/design/4pets/mood1.jpg"],
+    services: ["Social Content System", "Template Design"],
+    services_ka: ["სოციალური კონტენტის სისტემა", "შაბლონის დიზაინი"],
+    role: "Ongoing content partner",
+    role_ka: "მუდმივი კონტენტ-პარტნიორი",
+    timeline: "Ongoing",
+    timeline_ka: "მიმდინარე",
+    galleryImages: galleryPaths("4pets", 15),
+  },
+  {
+    slug: "template-preview",
+    title: "Full Template Preview",
+    client: "Internal QA",
+    serviceType: "design",
+    industry: "SaaS",
+    year: "2026",
+    status: "Concept",
+    status_ka: "კონცეფცია",
+    hidden: true,
+    cover: "/work/work3.jpg",
+    blurb: "Every optional section populated, for visual QA only — never linked from the live site.",
+    blurb_ka: "ყველა არასავალდებულო სექცია შევსებული, მხოლოდ ვიზუალური QA-სთვის — არასდროს ჩნდება საიტზე.",
+    heroTagline: "If every section can look right at once, each one alone will too.",
+    heroTagline_ka: "თუ ყველა სექცია ერთად კარგად გამოიყურება, თითოეული ცალკეც გამოიყურება.",
+    brief:
+      "This row exists only to render every optional block on the design template at the same time — Process, Brand Identity, Color System, Typography, Motion — so the whole page can be reviewed at full richness in one pass. It is excluded from the Work grid and Featured picks and is not linked from anywhere on the live site.",
+    brief_ka:
+      "ეს ჩანაწერი მხოლოდ იმისთვის არსებობს, რომ დიზაინის შაბლონის ყველა არასავალდებულო სექცია ერთდროულად აჩვენოს — პროცესი, საბრენდო იდენტობა, ფერების სისტემა, ტიპოგრაფია, მოძრაობა — რათა მთელი გვერდი ერთბაშად შემოწმდეს სრული სიმდიდრით. გამორიცხულია სამუშაოების ბადიდან და გამორჩეულთაგან და არსად არის მიბმული საიტზე.",
+    services: ["Brand Identity", "Packaging", "Motion", "Social Content"],
+    services_ka: ["საბრენდო იდენტობა", "შეფუთვა", "მოძრაობა", "სოციალური კონტენტი"],
+    role: "Full-service branding",
+    role_ka: "სრული საბრენდო მომსახურება",
+    timeline: "10 weeks",
+    timeline_ka: "10 კვირა",
+    moodboardImages: ["/work/work1.jpg", "/work/work3.jpg", "/sample-project/details-1.jpg"],
+    deliverablesImages: [
+      { src: "/work/work4.jpg", alt: "Packaging mockup", type: "packaging" },
+      { src: "/sample-project/hero.jpg", alt: "Poster application", type: "poster" },
+      { src: "/work/work6.jpg", alt: "Business card application", type: "card" },
+      { src: "/work/work2.jpg", alt: "Signage application", type: "signage" },
+    ],
+    galleryImages: ["/work/work5.jpg", "/sample-project/details-2.jpg", "/work/work1.jpg", "/work/work3.jpg"],
+    process: [
+      {
+        stage: "Concept",
+        stage_ka: "კონცეფცია",
+        description: "Two directions explored against the brief — one literal, one abstract.",
+        description_ka: "ბრიფის მიხედვით შესწავლილია ორი მიმართულება — ერთი პირდაპირი, ერთი აბსტრაქტული.",
+        image: "/work/work1.jpg",
+      },
+      {
+        stage: "Iterations",
+        stage_ka: "იტერაციები",
+        description: "The abstract mark refined across six passes for legibility at small sizes.",
+        description_ka: "აბსტრაქტული ნიშანი დახვეწილია ექვს ვერსიაში მცირე ზომაზე წაკითხვადობისთვის.",
+        image: "/work/work2.jpg",
+      },
+      {
+        stage: "Final",
+        stage_ka: "საბოლოო",
+        description: "Locked mark, full system, and a launch-ready asset library.",
+        description_ka: "დაფიქსირებული ნიშანი, სრული სისტემა და გასაშვებად მზა აქტივების ბიბლიოთეკა.",
+        image: "/work/work3.jpg",
+      },
+    ],
+    brandIdentity: {
+      construction: "/sample-project/details-1.jpg",
+      safeSpace: "/sample-project/details-2.jpg",
+      variations: ["/work/work1.jpg", "/work/work3.jpg"],
+      incorrectUsage: ["/work/work2.jpg", "/work/work6.jpg"],
+    },
+    colorPalette: [
+      { name: "Northbeam Ink", name_ka: "ინკი", hex: "#17130f" },
+      { name: "Signal Amber", name_ka: "სიგნალის ქარვა", hex: "#e8a33d" },
+      { name: "Paper", name_ka: "ქაღალდი", hex: "#f6f1e7" },
+    ],
+    typography: {
+      heading: { family: "LK Lumina", weights: [400, 700] },
+      body: { family: "Neue Montreal", weights: [400, 500] },
+    },
+    video: { src: "/work/work-reel.mp4", poster: "/work/work4.jpg" },
+    results: [
+      { stat: "+18%", label: "Merch Sales", label_ka: "სუვენირის გაყიდვები" },
+      { stat: "4", label: "Applications Shipped", label_ka: "შესრულებული აპლიკაცია" },
+    ],
+    testimonial: {
+      quote: "This is a placeholder testimonial used only to verify layout — never shown to a real visitor.",
+      quote_ka: "ეს არის მხოლოდ განლაგების შესამოწმებელი სატესტო ციტატა — რეალურ ვიზიტორს არასდროს ეჩვენება.",
+      author: "Internal QA",
+      author_ka: "შიდა QA",
+    },
   },
 ];
 
