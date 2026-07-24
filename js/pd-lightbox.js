@@ -67,6 +67,23 @@ function onKeydown(e) {
   if (e.key === "Escape") close();
   if (e.key === "ArrowLeft") step(-1);
   if (e.key === "ArrowRight") step(1);
+  if (e.key === "Tab") {
+    const focusable = Array.from(overlay.querySelectorAll("button")).filter((el) => !el.hidden);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first || !overlay.contains(document.activeElement)) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (document.activeElement === last || !overlay.contains(document.activeElement)) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  }
 }
 
 function open(groupName, index, triggerEl) {
@@ -77,6 +94,7 @@ function open(groupName, index, triggerEl) {
 
   const state = Flip.getState(triggerEl.querySelector("img"));
   render();
+  gsap.set(overlayImg, { opacity: 1 });
   overlay.hidden = false;
   document.body.classList.add("pdx-lightbox-open");
 
@@ -128,9 +146,9 @@ function close() {
     if (lastFocused && lastFocused.focus) lastFocused.focus();
   };
 
-  if (returnImg && !reduceMotion()) {
+  if (returnImg && document.body.contains(returnImg) && !reduceMotion()) {
     const state = Flip.getState(overlayImg);
-    overlayImg.src = returnImg.src;
+    gsap.to(overlayImg, { opacity: 0, duration: 0.2 });
     Flip.from(state, {
       targets: returnImg,
       duration: 0.4,
