@@ -114,3 +114,51 @@
     font-size: clamp(2.4rem, 14vw, 4rem);
   }
 }
+
+.pdx-overview-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.pdx-overview-text {
+  max-width: 40rem;
+  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+  line-height: 1.4;
+}
+
+.pdx-overview-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid rgba(23, 19, 15, 0.15);
+}
+
+.pdx-spec-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid rgba(23, 19, 15, 0.15);
+}
+
+.pdx-spec-label {
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+}
+
+.pdx-spec-value {
+  font-weight: 500;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .pdx-overview-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}

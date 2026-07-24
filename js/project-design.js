@@ -82,3 +82,43 @@ export function initHeroDesign(root) {
     },
   });
 }
+
+// ── Overview: two-column editorial spread ───────────────────────────────────
+
+function specRow(label, value) {
+  if (!value) return "";
+  const display = Array.isArray(value) ? value.join(", ") : value;
+  return `
+    <div class="pdx-spec-row">
+      <span class="pdx-spec-label">${label}</span>
+      <span class="pdx-spec-value">${display}</span>
+    </div>
+  `;
+}
+
+export function overviewSection(project) {
+  const L = isKa
+    ? { overview: "მიმოხილვა", client: "კლიენტი", industry: "ინდუსტრია", services: "სერვისები", role: "როლი", timeline: "ვადები", year: "წელი", status: "სტატუსი" }
+    : { overview: "Overview", client: "Client", industry: "Industry", services: "Services", role: "Role", timeline: "Timeline", year: "Year", status: "Status" };
+  const status = isKa ? project.status_ka || project.status : project.status;
+
+  return `
+    <section class="pdx-section pdx-overview">
+      <div class="container pdx-overview-grid">
+        <div class="pdx-overview-story">
+          <p class="pdx-section-label pd-reveal">${L.overview}</p>
+          <p class="pdx-overview-text pd-reveal">${t(project, "brief")}</p>
+        </div>
+        <div class="pdx-overview-specs pd-reveal">
+          ${specRow(L.client, project.client)}
+          ${specRow(L.industry, project.industry)}
+          ${specRow(L.services, isKa ? project.services_ka || project.services : project.services)}
+          ${specRow(L.role, t(project, "role"))}
+          ${specRow(L.timeline, t(project, "timeline"))}
+          ${specRow(L.year, project.year)}
+          ${specRow(L.status, status)}
+        </div>
+      </div>
+    </section>
+  `;
+}
