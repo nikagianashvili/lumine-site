@@ -86,7 +86,7 @@ export function initHeroDesign(root) {
 // ── Overview: two-column editorial spread ───────────────────────────────────
 
 function specRow(label, value) {
-  if (!value) return "";
+  if (!value || (Array.isArray(value) && value.length === 0)) return "";
   const display = Array.isArray(value) ? value.join(", ") : value;
   return `
     <div class="pdx-spec-row">
