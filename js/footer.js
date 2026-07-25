@@ -67,6 +67,9 @@ const CFG = {
   const mount = document.getElementById("footer-canvas");
   if (!mount) return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  // The sim is driven entirely by cursor velocity, so on touch devices it
+  // burns GPU and battery to render something nobody can interact with.
+  if (window.matchMedia("(pointer: coarse)").matches) return;
 
   let CW = 1,
     CH = 1;
@@ -664,14 +667,20 @@ const CFG = {
     canvas.style.height = CH + "px";
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    initCpuDrawState();
-    initGpuSim(() => {
-      readBackPositions();
-      for (let i = 0; i < N; i++) {
-        lastPosX[i] = positionPixels[i * 4];
-        lastPosY[i] = CH - positionPixels[i * 4 + 1];
-      }
-    });
+    // WebGL setup can fail outright (no context, missing float textures on
+    // older hardware) — that must not take the page down with it.
+    try {
+      initCpuDrawState();
+      initGpuSim(() => {
+        readBackPositions();
+        for (let i = 0; i < N; i++) {
+          lastPosX[i] = positionPixels[i * 4];
+          lastPosY[i] = CH - positionPixels[i * 4 + 1];
+        }
+      });
+    } catch (err) {
+      retireSim(err);
+    }
   }
 
   function ensureTick() {
@@ -680,10 +689,38 @@ const CFG = {
     rafId = requestAnimationFrame(tick);
   }
 
+  // A WebGL context loss (tab backgrounded, GPU reset, driver hiccup) makes
+  // every subsequent simulate() throw. Without this the raf loop kept
+  // rescheduling and threw once per frame forever. One failure retires the
+  // sim for the rest of the page's life; the footer keeps its layout, just
+  // without particles.
+  function retireSim(err) {
+    simReady = false;
+    active = false;
+    if (rafId != null) cancelAnimationFrame(rafId);
+    rafId = null;
+    ctx.clearRect(0, 0, CW, CH);
+    console.warn("[lumine] footer simulation stopped:", err?.message || err);
+  }
+
   function tick() {
     rafId = null;
     if (!active) return;
 
+    try {
+      simulateAndDraw();
+    } catch (err) {
+      retireSim(err);
+      return;
+    }
+
+    // Keep running only while the footer is near/visible.
+    if (active) {
+      rafId = requestAnimationFrame(tick);
+    }
+  }
+
+  function simulateAndDraw() {
     if (simReady) {
       const dt = CFG.timeStep;
 
@@ -747,11 +784,6 @@ const CFG = {
 
       mousePrevX = mouseX;
       mousePrevY = mouseY;
-    }
-
-    // Keep running only while the footer is near/visible.
-    if (active) {
-      rafId = requestAnimationFrame(tick);
     }
   }
 

@@ -19,6 +19,10 @@
   /* LK Lumina is the brand face for display AND body, Latin + Georgian */
   --f-h: "LK Lumina", "Humane", system-ui, sans-serif;
   --f-nm: "LK Lumina", "Neue Montreal", system-ui, sans-serif;
+  /* LK Lumina's digit glyphs carry a decorative bar that reads as a
+     strike-through at text sizes — anything numeric (prices, rates,
+     counters) sets in DM Mono instead */
+  --f-mono: "DM Mono", "Courier New", monospace;
 
   /* — spacing scale — */
   --sp-1: 0.5rem;
