@@ -1,12 +1,12 @@
 // js/project-design.js
 // All section builders + post-render interactivity for the `design`
-// service-type single-project template. Exports designTemplate(proj, projects)
+// service-type single-project template. Exports designTemplate(project, projects, deps)
 // (HTML string) and initDesignTemplate(root, proj) (wires interactivity) —
 // both consumed by js/project.js's TEMPLATES/POST_INIT dispatch.
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { initLightbox } from "/js/pd-lightbox.js";
-import { isKa, t, p } from "/js/project.js";
+import { isKa, t } from "/js/project.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -466,7 +466,6 @@ export function testimonialResultsSection(project) {
 // ── Next Project: full-bleed hover preview ──────────────────────────────────
 
 export function nextProjectSection(project, projects, p) {
-  const idx = projects.findIndex((proj) => proj.slug === project.slug);
   const pool = projects.filter((proj) => !proj.hidden);
   const poolIdx = pool.findIndex((proj) => proj.slug === project.slug);
   const next = poolIdx === -1 ? pool[0] : pool[(poolIdx + 1) % pool.length];
