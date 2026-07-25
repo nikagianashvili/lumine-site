@@ -317,3 +317,49 @@ export function typographySection(project) {
     </section>
   `;
 }
+
+// ── Applications ──────────────────────────────────────────────────────────────
+
+export function applicationsSection(project) {
+  const images = normalizeImages(project.deliverablesImages);
+  if (!images.length) return "";
+  const L = isKa ? "აპლიკაციები" : "Applications";
+  const hasTypes = images.some((img) => img.type);
+
+  let body;
+  if (hasTypes) {
+    const groupsByType = new Map();
+    images.forEach((img) => {
+      const key = img.type || "other";
+      if (!groupsByType.has(key)) groupsByType.set(key, []);
+      groupsByType.get(key).push(img);
+    });
+    body = Array.from(groupsByType.entries())
+      .map(
+        ([type, imgs]) => `
+        <div class="pdx-app-type-group">
+          <p class="pdx-app-type-label">${type}</p>
+          <div class="pdx-app-grid">
+            ${imgs.map((img) => `<div class="pdx-app-item pd-reveal">${frame(img, "applications")}</div>`).join("")}
+          </div>
+        </div>
+      `,
+      )
+      .join("");
+  } else {
+    body = `
+      <div class="pdx-app-grid">
+        ${images.map((img) => `<div class="pdx-app-item pd-reveal">${frame(img, "applications")}</div>`).join("")}
+      </div>
+    `;
+  }
+
+  return `
+    <section class="pdx-section pdx-applications">
+      <div class="container">
+        <p class="pdx-section-label pd-reveal">${L}</p>
+        ${body}
+      </div>
+    </section>
+  `;
+}
