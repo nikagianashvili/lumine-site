@@ -11,10 +11,28 @@
    - SPEC (.pdx-spec-section/.pdx-spec-block): label column + content column
      + hairline rules — systematic/reference content (facts, brand, color, type). */
 
+/* ── color rhythm ──────────────────────────────────────────────────────────
+   Sections alternate between paper and ink deliberately (Hero/Brief/Color
+   System/Full Gallery/Testimonial/Next-Project/CTA run dark; everything
+   else stays paper) so the background actively shifts down the page
+   instead of sitting on one flat tone. Every section reads its colors
+   from --tone-fg/--tone-bg/--tone-line, so child elements that just
+   inherit `color` (labels, copy, hairlines built on these vars) flip
+   automatically when .pdx-tone-dark is added — only elements with a
+   hardcoded ink color need an explicit var() swap. */
 .pdx-section {
   padding: 7rem 0;
-  background-color: var(--l);
-  color: var(--d);
+  --tone-fg: var(--d);
+  --tone-bg: var(--l);
+  --tone-line: rgba(23, 19, 15, 0.15);
+  background-color: var(--tone-bg);
+  color: var(--tone-fg);
+}
+
+.pdx-tone-dark {
+  --tone-fg: var(--l);
+  --tone-bg: var(--d);
+  --tone-line: rgba(246, 241, 231, 0.18);
 }
 
 /* ── ink fill: scroll-driven ink reveal ──────────────────────────────────
@@ -41,13 +59,14 @@
 }
 
 .pdx-ink-fill-track {
-  color: rgba(23, 19, 15, 0.2);
+  color: var(--tone-fg);
+  opacity: 0.2;
 }
 
 .pdx-ink-fill-solid {
   position: absolute;
   inset: 0;
-  color: var(--d);
+  color: var(--tone-fg);
   pointer-events: none;
 }
 
@@ -127,20 +146,21 @@ body.pdx-stamp-active #custom-cursor {
   height: 100%;
 }
 
+/* real color always — this template shows off a designer's actual color
+   work, so the grayscale-until-hover convention used elsewhere on the
+   site is deliberately dropped here; contrast(1.08) stays as a print-like
+   punch-up, hover only adds a slight zoom, no color reveal needed. */
 .pdx-frame img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(1) contrast(1.08);
-  transition:
-    transform 0.6s cubic-bezier(0.65, 0, 0.35, 1),
-    filter 0.6s ease;
+  filter: contrast(1.08);
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .pdx-frame:hover img,
 .pdx-frame:focus-visible img {
-  filter: grayscale(0) contrast(1);
   transform: scale(1.03);
 }
 
@@ -150,68 +170,70 @@ body.pdx-stamp-active #custom-cursor {
   }
 }
 
-/* ── hero: "Title as Window" — title-only, no facts/badge crowding it ──── */
-.pdx-hero-stage {
-  position: relative;
-  height: 100svh;
-  min-height: 32rem;
-  overflow: hidden;
+/* ── hero: framed color image + shuffled letter-assembly title ──────────
+   The page's first dark beat — establishes the light/dark rhythm from
+   the very top instead of opening flat. Real color image (this template
+   never desaturates the actual creative work), continuous idle breathing
+   scale so it's alive at rest, title assembles from shuffled letter
+   order beneath it. */
+.pdx-hero {
   background-color: var(--d);
+  color: var(--l);
+  padding: 7rem 0 5rem;
 }
 
-.pdx-hero-title {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
+.pdx-hero-inner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0 1rem;
-  font-family: var(--f-nm);
-  font-weight: 700;
-  text-transform: uppercase;
   text-align: center;
-  line-height: 0.92;
-  font-size: clamp(3.5rem, 11vw, 11rem);
-  background-size: cover;
-  background-position: center;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 
-.pdx-hero-media {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
+.pdx-hero-media-frame {
+  width: 100%;
+  max-width: 68rem;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.45);
 }
 
-.pdx-hero-media img {
+.pdx-hero-media-frame img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: contrast(1.08);
+}
+
+.pdx-hero-title {
+  margin: 2.75rem 0 0;
+  font-family: var(--f-nm);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 0.94;
+  font-size: clamp(2.75rem, 8vw, 7rem);
+  color: var(--l);
+}
+
+.pdx-hero-letter {
+  display: inline-block;
+  transform-origin: 50% 100%;
 }
 
 .pdx-hero-hint {
-  position: absolute;
-  z-index: 3;
-  left: 2.25rem;
-  bottom: 2rem;
+  display: block;
+  margin-top: 2rem;
   font-family: var(--f-nm);
   font-size: 0.85rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--l);
-  opacity: 0.6;
+  opacity: 0.55;
 }
 
 @media (max-width: 720px) {
-  .pdx-hero-title {
-    font-size: clamp(2.4rem, 14vw, 4rem);
-  }
-  .pdx-hero-hint {
-    left: 1.25rem;
+  .pdx-hero {
+    padding: 6rem 0 3.5rem;
   }
 }
 
@@ -233,7 +255,7 @@ body.pdx-stamp-active #custom-cursor {
   display: flex;
   flex-direction: column;
   margin-top: 3rem;
-  border-top: 1px solid rgba(23, 19, 15, 0.15);
+  border-top: 1px solid var(--tone-line);
 }
 
 .pdx-spec-row {
@@ -241,7 +263,7 @@ body.pdx-stamp-active #custom-cursor {
   justify-content: space-between;
   gap: 1rem;
   padding: 1.1rem 0;
-  border-bottom: 1px solid rgba(23, 19, 15, 0.15);
+  border-bottom: 1px solid var(--tone-line);
 }
 
 .pdx-spec-label {
@@ -306,12 +328,7 @@ body.pdx-stamp-active #custom-cursor {
 .pdx-band-image {
   width: 100%;
   border-radius: 0.85rem;
-  filter: grayscale(1) contrast(1.08);
-  transition: filter 0.6s ease;
-}
-
-.pdx-band-image:hover {
-  filter: grayscale(0) contrast(1);
+  filter: contrast(1.08);
 }
 
 @media (max-width: 900px) {
@@ -345,12 +362,7 @@ body.pdx-stamp-active #custom-cursor {
 .pdx-pinned-img {
   width: 100%;
   border-radius: 0.85rem;
-  filter: grayscale(1) contrast(1.08);
-  transition: filter 0.6s ease;
-}
-
-.pdx-pinned-img:hover {
-  filter: grayscale(0) contrast(1);
+  filter: contrast(1.08);
 }
 
 @media (max-width: 900px) {
@@ -363,34 +375,77 @@ body.pdx-stamp-active #custom-cursor {
   }
 }
 
-/* ── moodboard: paired images, independent parallax, one offset lower ──── */
-.pdx-pair-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 5rem;
+/* ── moodboard: scattered, rotated corkboard collage — not a grid ────────
+   Overlapping, tilted, unevenly staggered — reads as pinned-up reference
+   material, not aligned cells. Base tilt/offset per item cycles through a
+   deterministic 6-recipe (mirrored exactly in initMoodboardSway so the
+   JS-driven idle sway starts from the same angle instead of snapping). */
+.pdx-moodboard-scatter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 2rem 0 3rem;
 }
 
-.pdx-pair-row:last-child {
-  margin-bottom: 0;
-}
-
-.pdx-pair-col {
-  aspect-ratio: 4 / 5;
-}
-
-.pdx-pair-col:nth-child(2) {
-  margin-top: 5rem;
+.pdx-scatter-item {
+  position: relative;
+  width: 24%;
+  min-width: 13rem;
   aspect-ratio: 3 / 4;
+  margin: 1.5rem -1.75rem;
+  transition: transform 0.4s ease;
+}
+
+.pdx-scatter-item .pdx-frame {
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.3);
+}
+
+.pdx-scatter-item:nth-child(6n + 1) {
+  transform: rotate(-6deg) translateY(0.5rem);
+  z-index: 1;
+}
+
+.pdx-scatter-item:nth-child(6n + 2) {
+  transform: rotate(4deg) translateY(-1.5rem);
+  z-index: 2;
+}
+
+.pdx-scatter-item:nth-child(6n + 3) {
+  transform: rotate(-2deg) translateY(1.5rem);
+  z-index: 3;
+}
+
+.pdx-scatter-item:nth-child(6n + 4) {
+  transform: rotate(7deg) translateY(-0.5rem);
+  z-index: 2;
+}
+
+.pdx-scatter-item:nth-child(6n + 5) {
+  transform: rotate(-5deg) translateY(1rem);
+  z-index: 1;
+}
+
+.pdx-scatter-item:nth-child(6n) {
+  transform: rotate(3deg) translateY(-1rem);
+  z-index: 3;
+}
+
+.pdx-scatter-item:hover {
+  transform: rotate(0deg) translateY(0) scale(1.1) !important;
+  z-index: 10;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pdx-scatter-item {
+    transition: none;
+  }
 }
 
 @media (max-width: 720px) {
-  .pdx-pair-row {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  .pdx-pair-col:nth-child(2) {
-    margin-top: 0;
+  .pdx-scatter-item {
+    width: 60%;
+    min-width: 11rem;
+    margin: 1rem auto;
   }
 }
 
@@ -413,13 +468,16 @@ body.pdx-stamp-active #custom-cursor {
 
 /* ── spec section: label column + content column + hairline rules ──────── */
 .pdx-spec-section {
-  background-color: var(--l);
-  color: var(--d);
+  --tone-fg: var(--d);
+  --tone-bg: var(--l);
+  --tone-line: rgba(23, 19, 15, 0.15);
+  background-color: var(--tone-bg);
+  color: var(--tone-fg);
 }
 
 .pdx-spec-hr {
   border: none;
-  border-top: 1px solid rgba(23, 19, 15, 0.15);
+  border-top: 1px solid var(--tone-line);
   margin: 0;
 }
 
@@ -522,7 +580,7 @@ body.pdx-stamp-active #custom-cursor {
 
 .pdx-type-specimen {
   padding: 2rem 0;
-  border-bottom: 1px solid rgba(23, 19, 15, 0.15);
+  border-bottom: 1px solid var(--tone-line);
 }
 
 .pdx-type-specimen:last-child {
@@ -549,96 +607,55 @@ body.pdx-stamp-active #custom-cursor {
   opacity: 0.6;
 }
 
-/* ── applications: asymmetric, deterministic 6-recipe grid module ──────── */
-.pdx-app-type-group {
-  margin-bottom: 3rem;
+/* ── applications: visitor-driven horizontal scroll-snap, not a grid ────
+   A different mechanic from both the moodboard scatter (static, overlapping)
+   and the full-gallery ticker (passive auto-drift) — here scrolling is the
+   visitor's own, one deliverable presented at a time. Track's left padding
+   matches .container's exact gutter (max-width:2000px, padding:2.5rem) so
+   the first card lines up with the section label above it. */
+.pdx-app-scroll {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.pdx-app-type-group:last-child {
-  margin-bottom: 0;
+.pdx-app-scroll::-webkit-scrollbar {
+  display: none;
 }
 
-.pdx-app-type-label {
+.pdx-app-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  padding: 1rem max(2.5rem, calc((100vw - 2000px) / 2 + 2.5rem)) 1rem max(2.5rem, calc((100vw - 2000px) / 2 + 2.5rem));
+}
+
+.pdx-app-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  width: min(60vw, 26rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pdx-app-card .pdx-frame {
+  aspect-ratio: 4 / 5;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.22);
+}
+
+.pdx-app-card-label {
   font-family: var(--f-nm);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: capitalize;
+  letter-spacing: 0.05em;
   opacity: 0.55;
-  margin-bottom: 1rem;
 }
 
-/* deterministic 6-recipe rhythm — varied widths, aspect ratios, vertical
-   offsets so the grid reads as art-directed rather than a repeating
-   template. Widths across the cycle never divide the 12-col track evenly,
-   so it never lines up into a clean repeating row. */
-.pdx-app-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1.5rem;
-  align-items: start;
-}
-
-.pdx-app-item {
-  overflow: hidden;
-  border-radius: 0.85rem;
-}
-
-.pdx-app-item .pdx-frame {
-  box-shadow: 0 1.5rem 3rem rgba(23, 19, 15, 0.18);
-}
-
-.pdx-app-item:nth-child(6n + 1) {
-  grid-column: span 7;
-  aspect-ratio: 4 / 3;
-}
-
-.pdx-app-item:nth-child(6n + 2) {
-  grid-column: span 5;
-  aspect-ratio: 3 / 4;
-  margin-top: 4rem;
-}
-
-.pdx-app-item:nth-child(6n + 3) {
-  grid-column: span 4;
-  aspect-ratio: 1 / 1;
-}
-
-.pdx-app-item:nth-child(6n + 4) {
-  grid-column: span 8;
-  aspect-ratio: 16 / 7;
-  margin-top: -2rem;
-}
-
-.pdx-app-item:nth-child(6n + 5) {
-  grid-column: span 6;
-  aspect-ratio: 3 / 4;
-  margin-top: 3rem;
-}
-
-.pdx-app-item:nth-child(6n) {
-  grid-column: span 6;
-  aspect-ratio: 5 / 4;
-}
-
-@media (max-width: 900px) {
-  .pdx-app-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .pdx-app-item,
-  .pdx-app-item:nth-child(6n + 1),
-  .pdx-app-item:nth-child(6n + 4) {
-    grid-column: span 1;
-    aspect-ratio: 4 / 5;
-    margin-top: 0;
-  }
-}
-
-@media (max-width: 560px) {
-  .pdx-app-grid {
-    grid-template-columns: 1fr;
-  }
-  .pdx-app-item {
-    grid-column: span 1 !important;
-    margin-top: 0 !important;
+@media (max-width: 720px) {
+  .pdx-app-card {
+    width: min(78vw, 20rem);
   }
 }
 
@@ -670,7 +687,7 @@ body.pdx-stamp-active #custom-cursor {
   height: 100%;
   object-fit: cover;
   border-radius: 0.85rem;
-  filter: grayscale(1) contrast(1.08);
+  filter: contrast(1.08);
 }
 
 @media (max-width: 720px) {
@@ -689,12 +706,7 @@ body.pdx-stamp-active #custom-cursor {
 .pdx-motion-video {
   width: 100%;
   border-radius: 1rem;
-  filter: grayscale(1) contrast(1.08);
-  transition: filter 0.6s ease;
-}
-
-.pdx-motion-video:hover {
-  filter: grayscale(0) contrast(1);
+  filter: contrast(1.08);
 }
 
 /* ── testimonial: centered statement, double hairline rule ──────────────── */
@@ -714,7 +726,7 @@ body.pdx-stamp-active #custom-cursor {
   width: 3rem;
   margin: 1.5rem auto 0;
   border: none;
-  border-top: 1px solid rgba(23, 19, 15, 0.3);
+  border-top: 1px solid var(--tone-line);
 }
 
 .pdx-quote-hr + .pdx-quote-hr {
@@ -798,16 +810,13 @@ body.pdx-stamp-active #custom-cursor {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(1) contrast(1.05);
+  filter: contrast(1.05);
   transform: scale(1.05);
-  transition:
-    transform 0.8s cubic-bezier(0.65, 0, 0.35, 1),
-    filter 0.8s ease;
+  transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .pdx-next:hover .pdx-next-bg {
   transform: scale(1);
-  filter: grayscale(0) contrast(1);
 }
 
 .pdx-next-scrim {

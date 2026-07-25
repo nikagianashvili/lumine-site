@@ -152,27 +152,30 @@ function specRow(label, value) {
   `;
 }
 
-// ── Hero: "Title as Window" ─────────────────────────────────────────────────
-// The hero image is revealed *through* the massive title on load (CSS
-// background-clip: text), then the title recedes to a faint watermark as
-// the full image fades in behind it; a scroll-scrubbed parallax between
-// the two layers continues as the hero passes. Title-only, no facts/badge
-// crowding it — matching Montoya's real project-hero (project01.html),
-// which keeps the hero to the title and a scroll hint, moving everything
-// else into the section immediately below.
+// ── Hero: framed color image + shuffled letter-assembly title ──────────────
+// Sits on the SAME paper background as every other section (no dark
+// full-bleed stage) — the image is real color, generously framed like
+// every other frame on the page, with the title assembling itself out of
+// randomized letter order beneath it (Montoya's LazyLoad() shuffled-reveal:
+// letters arrive out of sequence, not left-to-right, so it reads as
+// assembled rather than typed). A slow continuous idle drift on the image
+// keeps the hero alive even at rest, not just while scrolling.
+
+function splitLetters(text) {
+  return text
+    .split("")
+    .map((ch) => `<span class="pdx-hero-letter">${ch === " " ? "&nbsp;" : ch}</span>`)
+    .join("");
+}
 
 export function heroDesign(project) {
   return `
     <section class="pdx-hero" data-pdx-hero>
-      <div class="pdx-hero-stage">
-        <h1
-          class="pdx-hero-title"
-          style="background-image:url('${project.cover}')"
-          data-pdx-hero-title
-        >${project.title}</h1>
-        <div class="pdx-hero-media" data-pdx-hero-media>
+      <div class="container pdx-hero-inner">
+        <div class="pdx-hero-media-frame" data-pdx-hero-media>
           <img src="${project.cover}" alt="${project.title}" />
         </div>
+        <h1 class="pdx-hero-title" data-pdx-hero-title>${splitLetters(project.title)}</h1>
         <span class="pdx-hero-hint">${isKa ? "დაასქროლეთ" : "Scroll to Explore"}</span>
       </div>
     </section>
@@ -182,31 +185,24 @@ export function heroDesign(project) {
 export function initHeroDesign(root) {
   const stage = root.querySelector("[data-pdx-hero]");
   if (!stage) return;
-  const title = stage.querySelector("[data-pdx-hero-title]");
   const media = stage.querySelector("[data-pdx-hero-media]");
+  const letters = Array.from(stage.querySelectorAll(".pdx-hero-letter"));
 
   if (reduceMotion()) {
-    gsap.set(media, { opacity: 1, scale: 1 });
-    gsap.set(title, { opacity: 0.14 });
+    gsap.set(letters, { opacity: 1, scaleY: 1 });
     return;
   }
 
-  gsap.set(media, { opacity: 0, scale: 1.08 });
-  const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-  tl.from(title, { scale: 1.15, duration: 1.4 })
-    .to(media, { opacity: 1, scale: 1, duration: 1.2 }, "-=0.5")
-    .to(title, { opacity: 0.14, duration: 1 }, "-=0.6");
+  // shuffle the ANIMATION order (not DOM order) so letters assemble out of
+  // sequence, like type being set on a press bed rather than typed in.
+  const shuffled = [...letters].sort(() => Math.random() - 0.5);
+  gsap.set(letters, { opacity: 0, scaleY: 0.3, transformOrigin: "50% 100%" });
+  gsap.to(shuffled, { opacity: 1, scaleY: 1, duration: 0.6, stagger: 0.035, ease: "power3.out", delay: 0.2 });
 
-  ScrollTrigger.create({
-    trigger: stage,
-    start: "top top",
-    end: "+=60%",
-    scrub: 0.6,
-    onUpdate: (self) => {
-      gsap.set(media, { scale: 1 + self.progress * 0.08 });
-      gsap.set(title, { yPercent: self.progress * -12 });
-    },
-  });
+  // continuous idle breathing — one GSAP tween owns `scale` here, so it
+  // never fights the entrance tween above (which only touches scaleY on
+  // letters, a different target entirely).
+  gsap.to(media, { scale: 1.035, duration: 5, ease: "sine.inOut", yoyo: true, repeat: -1 });
 }
 
 // ── Intro: badge + opening line + stacked facts ─────────────────────────────
@@ -279,7 +275,7 @@ export function briefSection(project) {
   const img = project.cover;
 
   return `
-    <section class="pdx-section pdx-pinned">
+    <section class="pdx-section pdx-tone-dark pdx-pinned">
       <div class="container pdx-pinned-grid">
         <div class="pdx-pinned-sticky">
           ${bandHeading(L)}
@@ -298,56 +294,50 @@ export function briefSection(project) {
 // row, each drifting at its own speed as the row scrolls, one offset
 // lower than the other so the pair never lines up as a flat grid cell.
 
+// Scattered, rotated "corkboard" collage — not a grid. Each item's tilt/
+// vertical offset comes from a deterministic 6-recipe cycle (like the
+// Applications rhythm) so it never repeats identically row over row, and
+// every item sways gently and independently at rest (per-item random
+// phase) so the whole board reads as pinned-up and alive, not aligned.
+
 export function moodboardSection(project) {
   const images = normalizeImages(project.moodboardImages);
   if (!images.length) return "";
   const L = isKa ? "კვლევა & მუდბორდი" : "Research & Moodboard";
 
-  const pairs = [];
-  for (let i = 0; i < images.length; i += 2) pairs.push(images.slice(i, i + 2));
-
-  const rows = pairs
-    .map(
-      (pair) => `
-      <div class="pdx-pair-row">
-        ${pair
-          .map(
-            (img, j) => `
-          <div class="pdx-pair-col" data-pdx-parallax data-parallax-speed="${j === 0 ? "0.12" : "0.05"}">
-            ${frame(img, "moodboard")}
-          </div>
-        `,
-          )
-          .join("")}
-      </div>
-    `,
-    )
+  const items = images
+    .map((img) => `<div class="pdx-scatter-item" data-pdx-sway>${frame(img, "moodboard")}</div>`)
     .join("");
 
   return `
     <section class="pdx-section pdx-moodboard">
       <div class="container">
         ${sectionLabel(L)}
-        ${rows}
+        <div class="pdx-moodboard-scatter">${items}</div>
       </div>
     </section>
   `;
 }
 
-export function initParallaxPairs(root) {
+// Base tilt per item mirrors the CSS nth-child(6n+N) cycle exactly — GSAP
+// sets this explicitly before swaying around it so motion users get a
+// smooth sway from the same angle reduced-motion users see statically
+// from CSS alone, instead of snapping from the CSS tilt to 0 on load.
+const SCATTER_BASE_ANGLES = [-6, 4, -2, 7, -5, 3];
+
+export function initMoodboardSway(root) {
+  const items = root.querySelectorAll("[data-pdx-sway]");
   if (reduceMotion()) return;
-  const els = root.querySelectorAll("[data-pdx-parallax]");
-  els.forEach((el) => {
-    const speed = parseFloat(el.dataset.parallaxSpeed) || 0.1;
+  items.forEach((el, i) => {
+    const base = SCATTER_BASE_ANGLES[i % SCATTER_BASE_ANGLES.length];
+    gsap.set(el, { rotate: base });
     gsap.to(el, {
-      yPercent: -speed * 100,
-      ease: "none",
-      scrollTrigger: {
-        trigger: el,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
-      },
+      rotate: base + 1.5 + (i % 3),
+      duration: 4 + (i % 4),
+      ease: "sine.inOut",
+      yoyo: true,
+      repeat: -1,
+      delay: i * 0.3,
     });
   });
 }
@@ -487,7 +477,7 @@ export function colorSystemSection(project) {
     .join("");
 
   return `
-    <section class="pdx-spec-section">
+    <section class="pdx-spec-section pdx-tone-dark">
       <div class="container">
         <hr class="pdx-spec-hr" />
         ${specBlock(L, `<div class="pdx-swatch-grid">${swatches}</div>`)}
@@ -526,45 +516,33 @@ export function typographySection(project) {
 // and vertical offsets per item so the grid reads as art-directed rather
 // than a repeating template.
 
+// Horizontal scroll-snap sequence, not a grid — a different mechanic from
+// both the moodboard scatter (overlapping, no scroll) and the full-gallery
+// ticker (passive auto-drift): here the visitor drives it, one deliverable
+// at a time, each card its own presentation moment with its application
+// type as a caption when tagged.
+
 export function applicationsSection(project) {
   const images = normalizeImages(project.deliverablesImages);
   if (!images.length) return "";
   const L = isKa ? "აპლიკაციები" : "Applications";
-  const hasTypes = images.some((img) => img.type);
 
-  let body;
-  if (hasTypes) {
-    const groupsByType = new Map();
-    images.forEach((img) => {
-      const key = img.type || "other";
-      if (!groupsByType.has(key)) groupsByType.set(key, []);
-      groupsByType.get(key).push(img);
-    });
-    body = Array.from(groupsByType.entries())
-      .map(
-        ([type, imgs]) => `
-        <div class="pdx-app-type-group">
-          <p class="pdx-app-type-label">${type}</p>
-          <div class="pdx-app-grid">
-            ${imgs.map((img) => `<div class="pdx-app-item">${frame(img, "applications")}</div>`).join("")}
-          </div>
-        </div>
-      `,
-      )
-      .join("");
-  } else {
-    body = `
-      <div class="pdx-app-grid">
-        ${images.map((img) => `<div class="pdx-app-item">${frame(img, "applications")}</div>`).join("")}
+  const cards = images
+    .map(
+      (img) => `
+      <div class="pdx-app-card">
+        ${img.type ? `<span class="pdx-app-card-label">${img.type}</span>` : ""}
+        ${frame(img, "applications")}
       </div>
-    `;
-  }
+    `,
+    )
+    .join("");
 
   return `
     <section class="pdx-section pdx-applications">
-      <div class="container">
-        ${sectionLabel(L)}
-        ${body}
+      <div class="container">${sectionLabel(L)}</div>
+      <div class="pdx-app-scroll">
+        <div class="pdx-app-track">${cards}</div>
       </div>
     </section>
   `;
@@ -606,7 +584,7 @@ export function fullGallerySection(project) {
   `;
 
   return `
-    <section class="pdx-section pdx-full-gallery">
+    <section class="pdx-section pdx-tone-dark pdx-full-gallery">
       <div class="container">${sectionLabel(L)}</div>
       ${tickerRow(rowA, "pdx-ticker-fw")}
       ${tickerRow(rowB, "pdx-ticker-bw")}
@@ -707,7 +685,7 @@ export function testimonialResultsSection(project) {
   }
   if (!parts.length) return "";
 
-  return `<section class="pdx-section pdx-testimonial-results grain"><div class="container">${parts.join("")}</div></section>`;
+  return `<section class="pdx-section pdx-tone-dark pdx-testimonial-results grain"><div class="container">${parts.join("")}</div></section>`;
 }
 
 // ── Next Project: cinematic unfurl entrance + hover preview ─────────────────
@@ -808,6 +786,27 @@ export function designTemplate(project, projects, deps) {
     .join("");
 }
 
+// Scroll-scrubbed parallax for any [data-pdx-parallax] element (currently
+// just the full-bleed punctuation image — the moodboard scatter uses its
+// own independent idle sway instead, see initMoodboardSway).
+function initScrollParallax(root) {
+  if (reduceMotion()) return;
+  const els = root.querySelectorAll("[data-pdx-parallax]");
+  els.forEach((el) => {
+    const speed = parseFloat(el.dataset.parallaxSpeed) || 0.1;
+    gsap.to(el, {
+      yPercent: -speed * 100,
+      ease: "none",
+      scrollTrigger: {
+        trigger: el,
+        start: "top bottom",
+        end: "bottom top",
+        scrub: true,
+      },
+    });
+  });
+}
+
 export function initDesignTemplate(root, project) {
   initHeroDesign(root);
   initMotion(root);
@@ -815,6 +814,7 @@ export function initDesignTemplate(root, project) {
   initInkFillLabels(root);
   initStampCursor(root);
   initNextUnfurl(root);
-  initParallaxPairs(root);
+  initScrollParallax(root);
+  initMoodboardSway(root);
   initTicker(root);
 }
