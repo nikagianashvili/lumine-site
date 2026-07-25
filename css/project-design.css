@@ -586,3 +586,128 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* — image lightbox (js/pd-lightbox.js): full-screen modal opened from any
+   .pdx-frame. z-index is set above every other fixed layer in the site
+   (chat-widget 15000, preloader/split-overlay/tags-overlay 10000, nav 100,
+   #custom-cursor 20001) so the modal covers the nav and everything else. — */
+.pdx-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 20010;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdx-lightbox-scrim {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(23, 19, 15, 0.92);
+}
+
+.pdx-lightbox-img {
+  position: relative;
+  z-index: 1;
+  max-width: min(90vw, 80rem);
+  max-height: 86vh;
+  object-fit: contain;
+  border-radius: 0.5rem;
+}
+
+.pdx-lightbox-nav,
+.pdx-lightbox-close {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0;
+  border: 1px solid rgba(246, 241, 231, 0.4);
+  border-radius: 50%;
+  background: none;
+  color: var(--l);
+  font-family: var(--f-nm);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+    background-color 0.4s ease,
+    color 0.4s ease;
+}
+
+.pdx-lightbox-nav:hover,
+.pdx-lightbox-close:hover {
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.pdx-lightbox-prev {
+  left: 2rem;
+}
+
+.pdx-lightbox-next {
+  right: 2rem;
+}
+
+.pdx-lightbox-close {
+  top: 2rem;
+  right: 2rem;
+  font-size: 1rem;
+}
+
+.pdx-lightbox-counter {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 2rem;
+  transform: translateX(-50%);
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--l);
+  opacity: 0.65;
+}
+
+body.pdx-lightbox-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pdx-lightbox-nav,
+  .pdx-lightbox-close {
+    transition: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .pdx-lightbox-nav,
+  .pdx-lightbox-close {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+
+  .pdx-lightbox-prev {
+    left: 0.75rem;
+  }
+
+  .pdx-lightbox-next {
+    right: 0.75rem;
+  }
+
+  .pdx-lightbox-close {
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .pdx-lightbox-counter {
+    bottom: 1rem;
+    font-size: 0.75rem;
+  }
+}
