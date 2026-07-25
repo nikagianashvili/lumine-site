@@ -161,3 +161,49 @@ export function moodboardSection(project) {
     </section>
   `;
 }
+
+// ── Process (optional — renders only if project.process exists) ────────────
+
+export function processSection(project) {
+  if (!project.process || !project.process.length) return "";
+  const L = isKa ? "პროცესი" : "Process";
+
+  const stages = project.process
+    .map(
+      (stage, i) => `
+      <div class="pdx-process-stage pd-reveal" data-pdx-process-stage>
+        <div class="pdx-process-head">
+          <span class="pdx-process-num">${String(i + 1).padStart(2, "0")}</span>
+          <h4 class="pdx-process-name">${isKa ? stage.stage_ka || stage.stage : stage.stage}</h4>
+        </div>
+        <div class="pdx-process-body">
+          <p>${isKa ? stage.description_ka || stage.description : stage.description}</p>
+          ${stage.image ? `<img src="${stage.image}" alt="" loading="lazy" />` : ""}
+        </div>
+      </div>
+    `,
+    )
+    .join("");
+
+  return `
+    <section class="pdx-section pdx-process">
+      <div class="container">
+        <p class="pdx-section-label pd-reveal">${L}</p>
+        <div class="pdx-process-list">${stages}</div>
+      </div>
+    </section>
+  `;
+}
+
+export function initProcess(root) {
+  const stages = root.querySelectorAll("[data-pdx-process-stage]");
+  stages.forEach((stage) => {
+    const open = () => stage.classList.add("is-open");
+    const close = () => stage.classList.remove("is-open");
+    if (fineHover()) {
+      stage.addEventListener("mouseenter", open);
+      stage.addEventListener("mouseleave", close);
+    }
+    stage.addEventListener("click", () => stage.classList.toggle("is-open"));
+  });
+}
