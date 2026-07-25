@@ -1,14 +1,68 @@
-/* services — six alternating service blocks */
+/* services — the studio rate card.
+   Nine sheets, equal weight: same anatomy per service (meta bar, outlined
+   numeral, problem pull-quote, specimen line, dot-leader rate). Editorial
+   print language — hairlines and flat panels, no rounded cards. */
 
 body {
   background-color: var(--l);
   color: var(--d);
 }
 
-/* — header — */
+/* ── fixed sheet marker ────────────────────────────────────────────────── */
+/* bottom-left: the chat widget owns the bottom-right corner */
+.svc-marker {
+  position: fixed;
+  left: 2.25rem;
+  bottom: 2rem;
+  z-index: 50;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  padding: 0.55rem 0.9rem;
+  font-family: var(--f-nm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--d);
+  background-color: var(--l);
+  border: 1px solid var(--d);
+  opacity: 0;
+  transform: translateY(0.5rem);
+  transition:
+    opacity 0.45s cubic-bezier(0.65, 0, 0.35, 1),
+    transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  pointer-events: none;
+}
+
+.svc-marker.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.svc-marker-label {
+  opacity: 0.55;
+}
+
+.svc-marker-num {
+  color: var(--accent);
+}
+
+.svc-marker-total {
+  opacity: 0.55;
+}
+
+/* ── header: rate-card cover ───────────────────────────────────────────── */
 .svc-hero {
   padding-top: 10rem;
-  padding-bottom: var(--sp-5);
+}
+
+.svc-hero-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  padding-bottom: var(--sp-4);
 }
 
 .svc-hero .eyebrow {
@@ -19,17 +73,142 @@ body {
   font-size: clamp(4rem, 11vw, 11rem);
 }
 
-.svc-hero-copy {
-  max-width: 34rem;
-  margin-top: var(--sp-3);
-  text-transform: none;
-  opacity: 0.7;
+.svc-hero-aside {
+  max-width: 26rem;
+  padding-left: var(--sp-3);
+  border-left: 1px solid rgba(23, 19, 15, 0.35);
 }
 
-/* — service blocks — */
+.svc-hero-copy {
+  text-transform: none;
+  opacity: 0.75;
+  line-height: 1.4;
+}
+
+.svc-hero-note {
+  margin-top: var(--sp-3);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  line-height: 1.7;
+  color: var(--accent-deep);
+}
+
+/* ── the index: nine lines, dot leaders, prices in the open ────────────── */
+.svc-index {
+  display: flex;
+  flex-direction: column;
+  padding-top: 0;
+}
+
+.svc-index-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding: 1.2rem 0;
+  text-decoration: none;
+  color: inherit;
+  border-top: 1px solid rgba(23, 19, 15, 0.3);
+  transition: opacity 0.35s ease;
+}
+
+.svc-index-row:last-child {
+  border-bottom: 1px solid rgba(23, 19, 15, 0.3);
+}
+
+/* dim the others, light the hovered — same trick as home, flat language */
+.svc-index:hover .svc-index-row {
+  opacity: 0.3;
+}
+
+.svc-index:hover .svc-index-row:hover {
+  opacity: 1;
+}
+
+.si-num {
+  flex-shrink: 0;
+  width: 2.5rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.si-name {
+  flex-shrink: 0;
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.2vw, 3rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  transition: color 0.3s ease, transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.svc-index-row:hover .si-name {
+  color: var(--accent);
+  transform: translateX(0.35rem);
+}
+
+.si-spec {
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.si-leader {
+  flex: 1;
+  min-width: 3rem;
+  border-bottom: 2px dotted rgba(23, 19, 15, 0.4);
+  transform: translateY(-0.35em);
+}
+
+.si-rate {
+  flex-shrink: 0;
+  font-family: var(--f-nm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* hover-follow image preview (markup injected by home-extras.js) */
+.service-preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  width: 20rem;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  opacity: 0;
+  border: 1px solid var(--d);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.service-preview img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.service-preview img.is-active {
+  opacity: 1;
+}
+
+/* ── the nine sheets ───────────────────────────────────────────────────── */
 .svc {
   position: relative;
-  padding: var(--sp-6) 0;
+  padding: var(--sp-6) 0 var(--sp-7);
   overflow: hidden;
 }
 
@@ -43,93 +222,213 @@ body {
   color: var(--l);
 }
 
-.svc-head {
-  display: flex;
-  align-items: baseline;
-  gap: var(--sp-3);
-  margin-bottom: var(--sp-4);
-}
-
-.svc-index {
-  flex-shrink: 0;
+/* huge outlined numeral — the sheet's margin object, equal on every sheet */
+.svc-numeral {
+  position: absolute;
+  top: 0.5rem;
+  right: -0.06em;
+  z-index: 0;
   font-family: var(--f-h);
-  font-size: clamp(3rem, 5vw, 5rem);
-  line-height: 0.85;
+  font-weight: 700;
+  font-size: clamp(9rem, 24vw, 24rem);
+  line-height: 0.8;
   color: transparent;
-  -webkit-text-stroke: 1.5px currentColor;
-  opacity: 0.5;
+  opacity: 0.22;
+  pointer-events: none;
+  user-select: none;
 }
 
-.svc-head h2 {
+/* currentColor would resolve to the transparent fill — stroke needs a real
+   color per atmosphere */
+.svc-light .svc-numeral {
+  -webkit-text-stroke: 1.5px var(--d);
+}
+
+.svc-dark .svc-numeral {
+  -webkit-text-stroke: 1.5px var(--l);
+}
+
+.svc .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* mono meta bar — the print artifact that stamps every sheet the same */
+.svc-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-bottom: 0.8rem;
+  margin-bottom: var(--sp-5);
+  border-bottom: 1px solid currentColor;
+  font-family: var(--f-nm);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.svc-meta span:nth-child(2) {
+  display: none;
+}
+
+@media (min-width: 1000px) {
+  .svc-meta span:nth-child(2) {
+    display: block;
+  }
+}
+
+.svc h2 {
+  max-width: 12ch;
   font-size: clamp(3rem, 7vw, 7rem);
 }
 
 .svc-body {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: var(--sp-5);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: var(--sp-4) var(--sp-6);
+  margin-top: var(--sp-5);
 }
 
 .svc-label {
-  margin-bottom: 1rem;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
+  margin-bottom: 1.1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
   opacity: 0.55;
 }
 
-.svc-col h6 {
-  max-width: 24rem;
-  font-size: clamp(1.75rem, 2.8vw, 2.75rem);
+/* the problem — an editorial pull-quote, not another block of caps */
+.svc-col-problem {
+  padding-left: var(--sp-3);
+  border-left: 2px solid var(--accent);
 }
 
+.svc-problem {
+  max-width: 20ch;
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 2.6vw, 2.6rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+
+.svc-dark .svc-problem {
+  color: var(--accent-pastel);
+}
+
+/* the answer — sentence case, readable, composed against the whitespace */
 .svc-copy {
-  max-width: 32rem;
+  max-width: 34rem;
+  font-size: 1.05rem;
+  line-height: 1.5;
   text-transform: none;
-  opacity: 0.75;
+  opacity: 0.85;
 }
 
-.svc-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
+/* specimen line replaces pill chips */
+.svc-specimen {
+  max-width: 34rem;
   margin-top: var(--sp-3);
-}
-
-.svc-chip {
-  padding: 0.6rem 1.2rem;
-  font-family: var(--f-nm);
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(128, 125, 115, 0.4);
   font-size: 0.8rem;
   font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 1.9;
   text-transform: uppercase;
-  border: 1px solid currentColor;
-  border-radius: 100px;
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
+/* rate as a menu line with a dot leader */
 .svc-foot {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-3);
-  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-4);
+  max-width: 34rem;
   margin-top: var(--sp-4);
-  padding-top: var(--sp-3);
-  border-top: 1px solid currentColor;
 }
 
-.svc-foot {
-  border-top-color: rgba(128, 125, 115, 0.35);
+.svc-rate-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
 }
 
-.svc-price {
+.svc-rate-label {
+  font-family: var(--f-nm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.svc-leader {
+  flex: 1;
+  min-width: 2rem;
+  border-bottom: 2px dotted currentColor;
+  opacity: 0.35;
+  transform: translateY(-0.3em);
+}
+
+.svc-rate-value {
   font-family: var(--f-nm);
   font-size: 1rem;
   font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  opacity: 0.8;
+  white-space: nowrap;
 }
 
-/* — industries strip — */
+/* flat, square link — underline draws in, arrow nudges */
+.svc-more {
+  position: relative;
+  flex-shrink: 0;
+  font-family: var(--f-nm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--accent);
+  padding-bottom: 0.3rem;
+}
+
+.svc-more::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.5px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.svc-more:hover::after {
+  transform: scaleX(1);
+}
+
+.svc-more span {
+  display: inline-block;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.svc-more:hover span {
+  transform: translateX(0.3rem);
+}
+
+.svc-dark .svc-more {
+  color: var(--accent-bright);
+}
+
+/* ── industries strip (unchanged language, kept) ───────────────────────── */
 .svc-industries {
   padding: var(--sp-6) 0;
   overflow: hidden;
@@ -184,23 +483,82 @@ body {
   opacity: 0.7;
 }
 
-/* — responsive — */
+/* ── responsive ────────────────────────────────────────────────────────── */
 @media (max-width: 1000px) {
   .svc-hero {
     padding-top: 8rem;
   }
 
+  .svc-hero-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-4);
+  }
+
+  .svc-hero-aside {
+    border-left: none;
+    border-top: 1px solid rgba(23, 19, 15, 0.35);
+    padding-left: 0;
+    padding-top: var(--sp-3);
+    max-width: 34rem;
+  }
+
+  .si-spec {
+    display: none;
+  }
+
+  .si-name {
+    flex-shrink: 1;
+  }
+
   .svc {
-    padding: var(--sp-5) 0;
+    padding: var(--sp-5) 0 var(--sp-6);
+  }
+
+  .svc-numeral {
+    font-size: clamp(7rem, 30vw, 12rem);
+    opacity: 0.1;
   }
 
   .svc-body {
     grid-template-columns: 1fr;
     gap: var(--sp-4);
+    margin-top: var(--sp-4);
+  }
+
+  .svc-foot {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-3);
+  }
+
+  .svc-marker {
+    left: 1rem;
+    bottom: 1rem;
   }
 
   .svc-industries-foot {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .svc-index-row {
+    gap: var(--sp-2);
+    padding: 1rem 0;
+  }
+
+  .si-num {
+    width: 1.8rem;
+    font-size: 0.75rem;
+  }
+
+  .si-name {
+    font-size: clamp(1.3rem, 6.4vw, 1.8rem);
+  }
+
+  .si-rate {
+    font-size: 0.75rem;
   }
 }
