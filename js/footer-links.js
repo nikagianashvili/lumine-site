@@ -116,6 +116,8 @@ const T = isKa
       terms: "წესები",
       invalid: "მიუთითეთ რეალური მეილი.",
       sent: "დრაფტი გაიხსნა თქვენს მეილ აპლიკაციაში — გააგზავნეთ და სიაშია ხართ.",
+      marquee:
+        "ფოტო · ვიდეო · დიზაინი · სოციალური მედია · მარკეტინგი · ვები · თბილისი · ",
     }
   : {
       tag: "Photo, video, design, social, marketing, and web — in house, in Tbilisi.",
@@ -128,6 +130,8 @@ const T = isKa
       terms: "Terms",
       invalid: "Add a real email first.",
       sent: "A draft opened in your mail app — send it and you're on the list.",
+      marquee:
+        "Photo · Video · Design · Social · Marketing · Web · Tbilisi · Est. 2024 · ",
     };
 
 // Turn the bare "big statement" CTA into a composed sign-off:
@@ -160,11 +164,20 @@ function buildLinks() {
 
   enhanceCta(footer);
 
-  // The link grid + bottom bar live on a solid panel (like the home page's
-  // ink CTA panel) instead of sitting exposed on the live particle canvas —
-  // readability shouldn't depend on where the simulation happens to settle.
+  // A marquee rule separates the dark sign-off from the light colophon —
+  // the seam between the two halves, rather than a gap.
+  const marquee = document.createElement("div");
+  marquee.className = "footer-marquee";
+  marquee.setAttribute("aria-hidden", "true");
+  const strip = `<span>${T.marquee}</span>`;
+  marquee.innerHTML = `<div class="footer-marquee-track">${strip}${strip}</div>`;
+  footer.appendChild(marquee);
+
+  // The colophon: a flat paper surface, not a translucent panel. The old
+  // glass treatment existed so the particle sim could show through it, which
+  // is exactly what made the links hard to read.
   const solid = document.createElement("div");
-  solid.className = "footer-solid grain";
+  solid.className = "footer-solid";
 
   const section = document.createElement("div");
   section.className = "footer-links";
@@ -209,6 +222,19 @@ function buildLinks() {
     legal.innerHTML = `<a href="${p("/legal")}#privacy">${T.privacy}</a> · <a href="${p("/legal")}#terms">${T.terms}</a> · © 2026 Lumine`;
     bottom.appendChild(legal);
     solid.appendChild(bottom);
+  }
+
+  // The floor: the wordmark set as large as the viewport allows, cropped by
+  // the bottom edge, inking in as the page ends.
+  if (!footer.querySelector(".footer-mark")) {
+    const mark = document.createElement("div");
+    mark.className = "footer-mark";
+    mark.setAttribute("aria-hidden", "true");
+    mark.innerHTML = `
+      <span class="footer-mark-outline">Lumine</span>
+      <span class="footer-mark-fill">Lumine</span>
+    `;
+    solid.appendChild(mark);
   }
 
   // newsletter — no backend yet: composes a subscribe email, says so.
