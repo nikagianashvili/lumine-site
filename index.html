@@ -71,16 +71,32 @@
 
     <!-- home: hero -->
     <section class="hero reticle">
-      <div class="hero-sparkle hero-sparkle-1" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
-        </svg>
+      <!--
+        The two floating sparkles used to live here as the only thing in the
+        hero's empty space. The margins now carry real content and the ink
+        carries the movement, so they were just competing with both.
+      -->
+      <!-- the roller: cursor lays Spark ink through a halftone screen -->
+      <canvas class="hero-ink" aria-hidden="true"></canvas>
+
+      <!-- left margin: what the studio actually does, as a printed index -->
+      <ol class="hero-rail hero-rail-left" aria-label="Services">
+        <li><i>01</i>Photo</li>
+        <li><i>02</i>Video</li>
+        <li><i>03</i>Design</li>
+        <li><i>04</i>Social</li>
+        <li><i>05</i>Marketing</li>
+        <li><i>06</i>Web</li>
+      </ol>
+
+      <!-- right margin: where the studio is, stamped like a press sheet -->
+      <div class="hero-rail hero-rail-right" aria-hidden="true">
+        <span>Tbilisi, Georgia</span>
+        <span>41.7151° N</span>
+        <span>44.8271° E</span>
+        <span class="hero-rail-live">Available for new projects</span>
       </div>
-      <div class="hero-sparkle hero-sparkle-2" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
-        </svg>
-      </div>
+
       <div class="hero-header">
         <h1
           data-animate-variant="slide-words"
@@ -91,6 +107,7 @@
           Lumine
         </h1>
       </div>
+
       <div class="hero-sub">
         <p
           data-animate-variant="slide"
@@ -100,17 +117,21 @@
           A creative agency in Tbilisi — photo, video, design, social,
           marketing, and web, handled in house and built to perform.
         </p>
-        <a
-          href="/contact"
-          class="btn btn-solid"
-          data-magnetic
-          data-animate-variant="slide"
-          data-animate-on-scroll="false"
-          data-animate-delay="1.4"
-        >
-          Book A Call
-        </a>
+        <div class="hero-actions">
+          <a
+            href="/contact"
+            class="btn btn-solid"
+            data-magnetic
+            data-animate-variant="slide"
+            data-animate-on-scroll="false"
+            data-animate-delay="1.4"
+          >
+            Book A Call
+          </a>
+          <a href="/work" class="hero-sub-link">See the work</a>
+        </div>
       </div>
+
       <div class="hero-footer">
         <div class="hero-footer-col">
           <p
@@ -125,16 +146,17 @@
             data-animate-on-scroll="false"
             data-animate-delay="1.1"
           >
-            Based In Tbilisi
+            Est. 2024
           </p>
         </div>
         <div class="hero-footer-col">
           <p
+            class="hero-scroll-cue"
             data-animate-variant="slide"
             data-animate-on-scroll="false"
             data-animate-delay="1.2"
           >
-            © Lumine 2026
+            Drag the ink
           </p>
         </div>
       </div>

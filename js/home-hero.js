@@ -72,3 +72,88 @@ function setupCursorTilt({ container, target }) {
 
 setupCursorTilt({ container: hero, target: heroHeader });
 setupCursorTilt({ container: particleCanvas, target: particleHeaderText });
+
+/* ── the roller ───────────────────────────────────────────────────────────
+   The cursor lays Spark ink across the hero; each dab spreads and dries.
+   CSS screens the canvas into halftone dots, so what the visitor leaves
+   behind reads as something printed rather than a glow. Paired with the
+   tilt above: the wordmark leans toward the cursor while the ink trails it. */
+/* The sitewide cursor fluid (js/simulation.js) paints a difference-blended
+   canvas over the whole document. Inside the hero it responds to the same
+   cursor as the roller and inverts whatever it crosses — which is what put a
+   dark blob across the wordmark. The hero gets the ink; the rest of the site
+   keeps the fluid. */
+function suppressGlobalFluidOverHero() {
+  const fluid = [...document.body.querySelectorAll("canvas")].find(
+    (c) =>
+      !c.classList.contains("hero-ink") &&
+      getComputedStyle(c).mixBlendMode === "difference",
+  );
+  if (!hero || !fluid) return;
+
+  const original = fluid.style.opacity || "1";
+  fluid.style.transition = "opacity 0.45s ease";
+  hero.addEventListener("mouseenter", () => (fluid.style.opacity = "0"));
+  hero.addEventListener("mouseleave", () => (fluid.style.opacity = original));
+}
+
+function setupInkRoller() {
+  const canvas = document.querySelector(".hero-ink");
+  if (!hero || !canvas) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const dabs = [];
+  const MAX_DABS = 200;
+  let W = 0;
+  let H = 0;
+  let raf = null;
+
+  const size = () => {
+    const r = hero.getBoundingClientRect();
+    W = canvas.width = r.width;
+    H = canvas.height = r.height;
+  };
+  size();
+  window.addEventListener("resize", size);
+
+  hero.addEventListener("mousemove", (e) => {
+    const r = hero.getBoundingClientRect();
+    dabs.push({ x: e.clientX - r.left, y: e.clientY - r.top, r: 18, life: 1 });
+    if (dabs.length > MAX_DABS) dabs.shift();
+    if (!raf) raf = requestAnimationFrame(frame);
+  });
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = dabs.length - 1; i >= 0; i--) {
+      const d = dabs[i];
+      d.r += (96 - d.r) * 0.05; // the ink spreads
+      d.life -= 0.005; // and dries
+      if (d.life <= 0) {
+        dabs.splice(i, 1);
+        continue;
+      }
+      ctx.globalAlpha = d.life * 0.85;
+      ctx.fillStyle = "#F2542D";
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // stop the loop once the sheet is dry again
+    if (dabs.length) {
+      raf = requestAnimationFrame(frame);
+    } else {
+      raf = null;
+    }
+  }
+}
+
+setupInkRoller();
+// simulation.js appends its canvas on its own schedule, so look for it after
+// the current task rather than racing it
+setTimeout(suppressGlobalFluidOverHero, 1200);
