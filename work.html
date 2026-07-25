@@ -51,38 +51,46 @@
       </div>
     </nav>
 
-    <!-- work: header -->
+    <!-- work: header — the archive's cover plate -->
     <header class="work-hero">
-      <div class="container">
-        <p class="eyebrow">Portfolio</p>
-        <h1
-          data-animate-variant="slide-words"
-          data-animate-on-scroll="false"
-          data-animate-delay="0.3"
-        >
-          The Archive
-        </h1>
-        <div class="work-meta">
-          <p class="work-count" id="workCount" aria-live="polite">
-            09 / 09 — All Types, All Industries
-          </p>
-          <p class="work-note">
-            A mix of real client work and speculative concept projects.
-          </p>
+      <div class="container work-hero-top">
+        <div class="work-hero-title">
+          <p class="eyebrow">Portfolio — Catalogue of Plates</p>
+          <h1
+            data-animate-variant="slide-words"
+            data-animate-on-scroll="false"
+            data-animate-delay="0.3"
+          >
+            The Archive
+          </h1>
         </div>
+        <!-- the archive described by its own numbers, not by adjectives -->
+        <dl class="work-tally" id="workTally" aria-label="Archive at a glance"></dl>
       </div>
     </header>
 
-    <!-- work: filters -->
-    <div class="work-filters">
-      <div class="container">
-        <div class="filter-group" data-filter-group="type">
-          <span class="filter-label">Type</span>
-          <div class="filter-pills" id="typeFilters"></div>
+    <!-- work: filters + view toggle (sticks while the plates scroll) -->
+    <div class="work-filters" id="workFilters">
+      <div class="container work-filters-inner">
+        <div class="filter-rows">
+          <div class="filter-group" data-filter-group="type">
+            <span class="filter-label">Type</span>
+            <div class="filter-tabs" id="typeFilters" role="group" aria-label="Filter by type"></div>
+          </div>
+          <div class="filter-group" data-filter-group="industry">
+            <span class="filter-label">Industry</span>
+            <div class="filter-tabs" id="industryFilters" role="group" aria-label="Filter by industry"></div>
+          </div>
         </div>
-        <div class="filter-group" data-filter-group="industry">
-          <span class="filter-label">Industry</span>
-          <div class="filter-pills" id="industryFilters"></div>
+        <div class="work-filters-foot">
+          <p class="work-count" id="workCount" aria-live="polite" aria-atomic="true">
+            22 / 22 — All Types, All Industries
+          </p>
+          <div class="work-views" role="group" aria-label="View">
+            <button type="button" class="work-view is-active" data-view="plates" aria-pressed="true">Plates</button>
+            <button type="button" class="work-view" data-view="index" aria-pressed="false">Index</button>
+            <button type="button" class="work-reset" id="workReset" hidden>Clear ✕</button>
+          </div>
         </div>
       </div>
     </div>
