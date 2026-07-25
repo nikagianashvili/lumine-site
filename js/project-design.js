@@ -265,8 +265,10 @@ export function processSection(project) {
 
   return `
     <section class="pdx-section pdx-process">
-      <div class="container">
-        ${sectionLabel(L)}
+      <div class="container pdx-process-layout">
+        <div class="pdx-process-sticky">
+          ${sectionLabel(L)}
+        </div>
         <div class="pdx-process-list">${stages}</div>
       </div>
     </section>

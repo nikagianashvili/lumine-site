@@ -192,10 +192,13 @@ body.pdx-stamp-active #custom-cursor {
   }
 }
 
+/* asymmetric editorial spread — a real empty gutter between the two
+   columns (not a tidy adjacent split), specs column dropped lower than
+   the story so the two blocks read as independently placed, not a form. */
 .pdx-overview-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 5rem;
+  grid-template-columns: 7fr 4fr;
+  column-gap: 9vw;
   align-items: start;
 }
 
@@ -209,6 +212,7 @@ body.pdx-stamp-active #custom-cursor {
   display: flex;
   flex-direction: column;
   gap: 0;
+  margin-top: 7rem;
   border-top: 1px solid rgba(23, 19, 15, 0.15);
 }
 
@@ -236,49 +240,130 @@ body.pdx-stamp-active #custom-cursor {
 @media (max-width: 900px) {
   .pdx-overview-grid {
     grid-template-columns: 1fr;
-    gap: 2.5rem;
+    column-gap: 0;
+    row-gap: 2.5rem;
+  }
+  .pdx-overview-specs {
+    margin-top: 0;
   }
 }
 
-.pdx-moodboard-grid {
+/* asymmetric, deterministic 6-recipe rhythm — varied widths, aspect
+   ratios, and vertical offsets per item so the grid reads as art-directed
+   rather than a repeating template, without any layout JS. Widths sum to
+   26 columns across the 6-recipe cycle on a 12-col track, so the cycle
+   never lines up into a clean repeating row and the offset feels earned
+   rather than mechanical. Reused by .pdx-app-grid (Applications). */
+.pdx-moodboard-grid,
+.pdx-app-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-auto-rows: 12rem;
-  gap: 1.25rem;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+  /* items are sized by their own aspect-ratio, not stretched to fill a
+     shared row height (grid's default) — otherwise every item in the same
+     implicit row would snap to the tallest neighbor's height. */
+  align-items: start;
 }
 
-.pdx-moodboard-item {
-  grid-column: span 3;
-  grid-row: span 2;
+.pdx-moodboard-item,
+.pdx-app-item {
+  overflow: hidden;
+  border-radius: 0.85rem;
 }
 
-.pdx-moodboard-item:nth-child(3n + 2) {
-  grid-column: span 2;
-  grid-row: span 1;
+.pdx-moodboard-item:nth-child(6n + 1),
+.pdx-app-item:nth-child(6n + 1) {
+  grid-column: span 7;
+  aspect-ratio: 4 / 3;
 }
 
-.pdx-moodboard-item:nth-child(3n) {
+.pdx-moodboard-item:nth-child(6n + 2),
+.pdx-app-item:nth-child(6n + 2) {
+  grid-column: span 5;
+  aspect-ratio: 3 / 4;
+  margin-top: 4rem;
+}
+
+.pdx-moodboard-item:nth-child(6n + 3),
+.pdx-app-item:nth-child(6n + 3) {
   grid-column: span 4;
-  grid-row: span 1;
+  aspect-ratio: 1 / 1;
+}
+
+.pdx-moodboard-item:nth-child(6n + 4),
+.pdx-app-item:nth-child(6n + 4) {
+  grid-column: span 8;
+  aspect-ratio: 16 / 7;
+  margin-top: -2rem;
+}
+
+.pdx-moodboard-item:nth-child(6n + 5),
+.pdx-app-item:nth-child(6n + 5) {
+  grid-column: span 6;
+  aspect-ratio: 3 / 4;
+  margin-top: 3rem;
+}
+
+.pdx-moodboard-item:nth-child(6n),
+.pdx-app-item:nth-child(6n) {
+  grid-column: span 6;
+  aspect-ratio: 5 / 4;
 }
 
 .pdx-moodboard-item .pdx-frame,
-.pdx-moodboard-item .pdx-frame img {
+.pdx-app-item .pdx-frame,
+.pdx-moodboard-item .pdx-frame img,
+.pdx-app-item .pdx-frame img {
   width: 100%;
   height: 100%;
 }
 
-@media (max-width: 720px) {
-  .pdx-moodboard-grid {
+@media (max-width: 900px) {
+  .pdx-moodboard-grid,
+  .pdx-app-grid {
     grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: 14rem;
   }
   .pdx-moodboard-item,
-  .pdx-moodboard-item:nth-child(3n + 2),
-  .pdx-moodboard-item:nth-child(3n) {
+  .pdx-app-item,
+  .pdx-moodboard-item:nth-child(6n + 1),
+  .pdx-app-item:nth-child(6n + 1),
+  .pdx-moodboard-item:nth-child(6n + 4),
+  .pdx-app-item:nth-child(6n + 4) {
     grid-column: span 1;
-    grid-row: span 1;
+    aspect-ratio: 4 / 5;
+    margin-top: 0;
   }
+}
+
+@media (max-width: 560px) {
+  .pdx-moodboard-grid,
+  .pdx-app-grid {
+    grid-template-columns: 1fr;
+  }
+  .pdx-moodboard-item,
+  .pdx-app-item {
+    grid-column: span 1 !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* the section label stays pinned in a narrow left column while the stages
+   scroll past on the right — the label reads as a fixed reference point
+   for a moving list, instead of sitting flat above it. */
+.pdx-process-layout {
+  display: grid;
+  grid-template-columns: 1fr 2.4fr;
+  column-gap: 4rem;
+  align-items: start;
+}
+
+.pdx-process-sticky {
+  position: sticky;
+  top: 8rem;
+}
+
+.pdx-process-sticky .pdx-section-label {
+  margin-bottom: 0;
 }
 
 .pdx-process-list {
@@ -293,18 +378,43 @@ body.pdx-stamp-active #custom-cursor {
 .pdx-process-head {
   display: flex;
   align-items: baseline;
-  gap: 1.5rem;
+  gap: 2rem;
   padding: 1.75rem 0;
 }
 
 .pdx-process-num {
   font-family: var(--f-nm);
-  font-size: 0.9rem;
-  opacity: 0.5;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.16;
+  flex-shrink: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pdx-process-stage.is-open .pdx-process-num {
+  opacity: 1;
 }
 
 .pdx-process-name {
   font-size: clamp(1.5rem, 3vw, 2.5rem);
+  transition: opacity 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pdx-process-num {
+    transition: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .pdx-process-layout {
+    grid-template-columns: 1fr;
+    row-gap: 2rem;
+  }
+  .pdx-process-sticky {
+    position: static;
+  }
 }
 
 .pdx-process-body {
@@ -453,36 +563,8 @@ body.pdx-stamp-active #custom-cursor {
   margin-bottom: 1rem;
 }
 
-.pdx-app-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-}
-
-.pdx-app-item {
-  aspect-ratio: 4 / 5;
-}
-
-.pdx-app-item .pdx-frame,
-.pdx-app-item .pdx-frame img {
-  width: 100%;
-  height: 100%;
-}
-
 .pdx-app-item .pdx-frame {
   box-shadow: 0 1.5rem 3rem rgba(23, 19, 15, 0.18);
-}
-
-@media (max-width: 900px) {
-  .pdx-app-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 560px) {
-  .pdx-app-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .pdx-masonry {
