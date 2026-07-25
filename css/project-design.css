@@ -407,3 +407,41 @@
     grid-template-columns: 1fr;
   }
 }
+
+.pdx-masonry {
+  columns: 3;
+  column-gap: 1.25rem;
+}
+
+.pdx-masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1.25rem;
+}
+
+.pdx-masonry-item .pdx-frame img {
+  width: 100%;
+  height: auto;
+}
+
+.pdx-motion-video {
+  width: 100%;
+  border-radius: 1rem;
+  filter: grayscale(1) contrast(1.08);
+  transition: filter 0.6s ease;
+}
+
+.pdx-motion-video:hover {
+  filter: grayscale(0) contrast(1);
+}
+
+@media (max-width: 900px) {
+  .pdx-masonry {
+    columns: 2;
+  }
+}
+
+@media (max-width: 560px) {
+  .pdx-masonry {
+    columns: 1;
+  }
+}

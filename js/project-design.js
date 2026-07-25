@@ -363,3 +363,73 @@ export function applicationsSection(project) {
     </section>
   `;
 }
+
+// ── Full Gallery ──────────────────────────────────────────────────────────────
+
+export function fullGallerySection(project) {
+  const all = [
+    ...normalizeImages(project.moodboardImages),
+    ...normalizeImages(project.deliverablesImages),
+    ...normalizeImages(project.galleryImages),
+  ];
+  const seen = new Set();
+  const deduped = all.filter((img) => {
+    if (seen.has(img.src)) return false;
+    seen.add(img.src);
+    return true;
+  });
+  if (deduped.length < 3) return "";
+  const L = isKa ? "სრული გალერეა" : "Full Gallery";
+
+  return `
+    <section class="pdx-section pdx-full-gallery">
+      <div class="container">
+        <p class="pdx-section-label pd-reveal">${L}</p>
+        <div class="pdx-masonry">
+          ${deduped.map((img) => `<div class="pdx-masonry-item pd-reveal">${frame(img, "gallery")}</div>`).join("")}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+// ── Motion Showcase (optional) ───────────────────────────────────────────────
+
+export function motionSection(project) {
+  const video = project.video;
+  if (!video || !video.src) return "";
+  const L = isKa ? "მოძრაობაში" : "Motion Showcase";
+
+  return `
+    <section class="pdx-section pdx-motion">
+      <div class="container">
+        <p class="pdx-section-label pd-reveal">${L}</p>
+        <video
+          class="pdx-motion-video pd-reveal"
+          src="${video.src}"
+          poster="${video.poster || ""}"
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          data-pdx-video
+        ></video>
+      </div>
+    </section>
+  `;
+}
+
+export function initMotion(root) {
+  const video = root.querySelector("[data-pdx-video]");
+  if (!video) return;
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      });
+    },
+    { threshold: 0.4 },
+  );
+  io.observe(video);
+}
