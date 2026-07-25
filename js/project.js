@@ -1,6 +1,6 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { getServiceType } from "/js/projects-data.js";
+import { getServiceType, projectHref, CASE_STUDY_PAGES } from "/js/projects-data.js";
 import { fetchProjects } from "/js/api-client.js";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -332,7 +332,7 @@ function nextSection(current) {
   const idx = projects.findIndex((proj) => proj.slug === current.slug);
   const next = projects[(idx + 1) % projects.length];
   return `
-    <a href="${p("/project")}?slug=${next.slug}" class="cs-next grain">
+    <a href="${projectHref(next, isKa)}" class="cs-next grain">
       <div class="container">
         <span class="cs-next-label">${L.nextProject}</span>
         <h3>${next.title}</h3>
@@ -419,6 +419,14 @@ async function init() {
   projects = await fetchProjects();
 
   const slug = new URLSearchParams(window.location.search).get("slug");
+
+  // Old links to /project?slug=… for projects that now have a dedicated
+  // case-study page land on the new page instead of the generic template.
+  if (!isKa && CASE_STUDY_PAGES[slug]) {
+    window.location.replace(CASE_STUDY_PAGES[slug]);
+    return;
+  }
+
   const project = slug ? getProject(slug) : null;
 
   if (!project) {

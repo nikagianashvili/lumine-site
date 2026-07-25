@@ -11,6 +11,7 @@ import tailwindcss from "@tailwindcss/vite";
 // SPA fallback then silently serves the English index.html instead.
 const CLEAN_ROUTES = {
   "/work": "/work.html",
+  "/work/tbilisi-zoo": "/work-tbilisi-zoo.html",
   "/sample-project": "/sample-project.html",
   "/project": "/project.html",
   "/studio": "/studio.html",
@@ -115,6 +116,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         work: resolve(__dirname, "work.html"),
+        "work-tbilisi-zoo": resolve(__dirname, "work-tbilisi-zoo.html"),
         "sample-project": resolve(__dirname, "sample-project.html"),
         project: resolve(__dirname, "project.html"),
         studio: resolve(__dirname, "studio.html"),

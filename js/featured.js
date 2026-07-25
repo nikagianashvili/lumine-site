@@ -1,4 +1,4 @@
-import { SERVICE_TYPES, getServiceType } from "/js/projects-data.js";
+import { SERVICE_TYPES, getServiceType, projectHref } from "/js/projects-data.js";
 import { fetchProjects } from "/js/api-client.js";
 
 let projects = [];
@@ -18,7 +18,7 @@ function buildCard(project, index) {
   const type = getServiceType(project.serviceType);
   const label = isKa ? type.label_ka : type.label;
   const card = document.createElement("a");
-  card.href = `${p("/project")}?slug=${project.slug}`;
+  card.href = projectHref(project, isKa);
   card.className = "featured-card card-base";
   card.innerHTML = `
     <div class="featured-card-img" style="background-image: url('${project.cover}')"></div>

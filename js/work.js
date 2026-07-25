@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import { SERVICE_TYPES, INDUSTRIES, INDUSTRY_LABELS_KA, getServiceType } from "/js/projects-data.js";
+import { SERVICE_TYPES, INDUSTRIES, INDUSTRY_LABELS_KA, getServiceType, projectHref } from "/js/projects-data.js";
 import { fetchProjects } from "/js/api-client.js";
 
 let projects = [];
@@ -86,7 +86,7 @@ function buildCard(project) {
   const blurb = isKa ? project.blurb_ka : project.blurb;
   const card = document.createElement("a");
   card.className = "work-card" + (project.featured ? " is-featured" : "");
-  card.href = `${p("/project")}?slug=${project.slug}`;
+  card.href = projectHref(project, isKa);
   card.dataset.type = project.serviceType;
   card.dataset.industry = project.industry;
   card.innerHTML = `

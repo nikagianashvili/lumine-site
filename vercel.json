@@ -3,6 +3,7 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/work", "destination": "/work.html" },
+    { "source": "/work/tbilisi-zoo", "destination": "/work-tbilisi-zoo.html" },
     { "source": "/sample-project", "destination": "/sample-project.html" },
     { "source": "/project", "destination": "/project.html" },
     { "source": "/studio", "destination": "/studio.html" },
