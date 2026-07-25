@@ -433,3 +433,108 @@ export function initMotion(root) {
   );
   io.observe(video);
 }
+
+// ── Testimonial & Results (both independently data-gated) ──────────────────
+
+export function testimonialResultsSection(project) {
+  const parts = [];
+  if (project.testimonial) {
+    const quote = isKa ? project.testimonial.quote_ka || project.testimonial.quote : project.testimonial.quote;
+    const author = isKa ? project.testimonial.author_ka || project.testimonial.author : project.testimonial.author;
+    parts.push(`
+      <div class="pdx-quote pd-reveal">
+        <h4>"${quote}"</h4>
+        <p class="pdx-quote-attr">— ${author}</p>
+      </div>
+    `);
+  }
+  if (project.results && project.results.length) {
+    parts.push(`
+      <div class="pdx-results-grid">
+        ${project.results
+          .map(
+            (r) => `
+          <div class="pdx-result pd-reveal">
+            <h3>${r.stat}</h3>
+            <p>${isKa ? r.label_ka || r.label : r.label}</p>
+          </div>
+        `,
+          )
+          .join("")}
+      </div>
+    `);
+  }
+  if (!parts.length) return "";
+
+  return `<section class="pdx-section pdx-testimonial-results grain">${`<div class="container">${parts.join("")}</div>`}</section>`;
+}
+
+// ── Next Project: full-bleed hover preview ──────────────────────────────────
+
+export function nextProjectSection(project, projects, p) {
+  const idx = projects.findIndex((proj) => proj.slug === project.slug);
+  const pool = projects.filter((proj) => !proj.hidden);
+  const poolIdx = pool.findIndex((proj) => proj.slug === project.slug);
+  const next = poolIdx === -1 ? pool[0] : pool[(poolIdx + 1) % pool.length];
+  if (!next) return "";
+  const L = isKa ? "შემდეგი პროექტი" : "Next Project";
+
+  return `
+    <a href="${p("/project")}?slug=${next.slug}" class="pdx-next">
+      <img src="${next.cover}" alt="" class="pdx-next-bg" />
+      <div class="pdx-next-scrim"></div>
+      <div class="container pdx-next-inner">
+        <span class="pdx-next-label">${L}</span>
+        <h2 class="pdx-next-title">${next.title}</h2>
+        <span class="pdx-next-arrow">↗</span>
+      </div>
+    </a>
+  `;
+}
+
+// ── Contact CTA — minimal, one line + button, not a duplicate of the ────────
+// sitewide footer CTA that already appears on every page.
+
+export function contactCtaSection(project, p) {
+  const L = isKa
+    ? { line: "მოდი, ერთად შევქმნათ დაუვიწყარი რამ.", button: "დაგვიკავშირდი" }
+    : { line: "Let's build something unforgettable.", button: "Get In Touch" };
+  return `
+    <section class="pdx-cta">
+      <div class="container pdx-cta-inner">
+        <p class="pdx-cta-line pd-reveal">${L.line}</p>
+        <a href="${p("/contact")}" class="btn btn-solid pd-reveal">${L.button}</a>
+      </div>
+    </section>
+  `;
+}
+
+// ── Assembly ──────────────────────────────────────────────────────────────────
+
+export function designTemplate(project, projects, deps) {
+  const { heroBadge, factsRow, p } = deps;
+  return [
+    heroDesign(project, heroBadge, factsRow),
+    overviewSection(project),
+    moodboardSection(project),
+    processSection(project),
+    brandIdentitySection(project),
+    colorSystemSection(project),
+    typographySection(project),
+    applicationsSection(project),
+    fullGallerySection(project),
+    motionSection(project),
+    testimonialResultsSection(project),
+    nextProjectSection(project, projects, p),
+    contactCtaSection(project, p),
+  ]
+    .filter(Boolean)
+    .join("");
+}
+
+export function initDesignTemplate(root, project) {
+  initHeroDesign(root);
+  initProcess(root);
+  initMotion(root);
+  initLightbox(root);
+}
