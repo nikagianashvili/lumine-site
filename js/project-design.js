@@ -122,3 +122,42 @@ export function overviewSection(project) {
     </section>
   `;
 }
+
+// ── Shared image normalization ──────────────────────────────────────────────
+// moodboardImages/deliverablesImages/galleryImages accept either a bare
+// string (legacy, still used by every project today) or an object with
+// alt text and an application `type` tag. Every section reads through
+// this so both shapes work everywhere.
+
+function normalizeImages(images) {
+  return (images || []).map((entry) =>
+    typeof entry === "string" ? { src: entry, alt: "", type: null } : { src: entry.src, alt: entry.alt || "", type: entry.type || null },
+  );
+}
+
+function frame(image, group) {
+  return `
+    <button type="button" class="pdx-frame" data-lightbox-group="${group}">
+      <img src="${image.src}" alt="${image.alt}" loading="lazy" />
+    </button>
+  `;
+}
+
+// ── Research / Moodboard ─────────────────────────────────────────────────────
+
+export function moodboardSection(project) {
+  const L = isKa ? "კვლევა & მუდბორდი" : "Research & Moodboard";
+  const images = normalizeImages(project.moodboardImages);
+  if (!images.length) return "";
+
+  return `
+    <section class="pdx-section pdx-moodboard">
+      <div class="container">
+        <p class="pdx-section-label pd-reveal">${L}</p>
+        <div class="pdx-moodboard-grid">
+          ${images.map((img) => `<div class="pdx-moodboard-item pd-reveal">${frame(img, "moodboard")}</div>`).join("")}
+        </div>
+      </div>
+    </section>
+  `;
+}
