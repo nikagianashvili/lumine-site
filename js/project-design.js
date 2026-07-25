@@ -207,3 +207,113 @@ export function initProcess(root) {
     stage.addEventListener("click", () => stage.classList.toggle("is-open"));
   });
 }
+
+// ── Brand Identity (optional) ────────────────────────────────────────────────
+
+export function brandIdentitySection(project) {
+  const bi = project.brandIdentity;
+  if (!bi) return "";
+  const L = isKa
+    ? { title: "საბრენდო იდენტობა", construction: "კონსტრუქცია", safeSpace: "დაცული სივრცე", variations: "ვარიაციები", incorrect: "არასწორი გამოყენება" }
+    : { title: "Brand Identity", construction: "Construction", safeSpace: "Safe Space", variations: "Variations", incorrect: "Incorrect Usage" };
+
+  const blocks = [];
+  if (bi.construction) blocks.push(`<figure class="pdx-brand-block pd-reveal"><img src="${bi.construction}" alt="${L.construction}" loading="lazy" /><figcaption>${L.construction}</figcaption></figure>`);
+  if (bi.safeSpace) blocks.push(`<figure class="pdx-brand-block pd-reveal"><img src="${bi.safeSpace}" alt="${L.safeSpace}" loading="lazy" /><figcaption>${L.safeSpace}</figcaption></figure>`);
+  (bi.variations || []).forEach((src) => blocks.push(`<figure class="pdx-brand-block pd-reveal"><img src="${src}" alt="${L.variations}" loading="lazy" /><figcaption>${L.variations}</figcaption></figure>`));
+  (bi.incorrectUsage || []).forEach((src) => blocks.push(`<figure class="pdx-brand-block pdx-brand-block-incorrect pd-reveal"><img src="${src}" alt="${L.incorrect}" loading="lazy" /><figcaption>${L.incorrect}</figcaption></figure>`));
+
+  if (!blocks.length) return "";
+
+  return `
+    <section class="pdx-section pdx-brand">
+      <div class="container">
+        <p class="pdx-section-label pd-reveal">${L.title}</p>
+        <div class="pdx-brand-grid">${blocks.join("")}</div>
+      </div>
+    </section>
+  `;
+}
+
+// ── Color System (optional) ──────────────────────────────────────────────────
+// Contrast is computed from the real hex value, never hand-entered.
+
+function relativeLuminance(hex) {
+  const rgb = hex
+    .replace("#", "")
+    .match(/.{2}/g)
+    .map((c) => parseInt(c, 16) / 255)
+    .map((c) => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)));
+  return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+}
+
+function contrastRatio(hexA, hexB) {
+  const lA = relativeLuminance(hexA) + 0.05;
+  const lB = relativeLuminance(hexB) + 0.05;
+  return Math.round((Math.max(lA, lB) / Math.min(lA, lB)) * 100) / 100;
+}
+
+function hexToContrastLabel(hex) {
+  const onWhite = contrastRatio(hex, "#ffffff");
+  const onInk = contrastRatio(hex, "#17130f");
+  const best = Math.max(onWhite, onInk);
+  const grade = best >= 7 ? "AAA" : best >= 4.5 ? "AA" : best >= 3 ? "AA Large" : "Fail";
+  return `${best.toFixed(1)}:1 · ${grade}`;
+}
+
+export function colorSystemSection(project) {
+  const palette = project.colorPalette;
+  if (!palette || !palette.length) return "";
+  const L = isKa ? "ფერების სისტემა" : "Color System";
+
+  const swatches = palette
+    .map(
+      (c) => `
+      <div class="pdx-swatch pd-reveal">
+        <div class="pdx-swatch-block" style="background-color:${c.hex}"></div>
+        <div class="pdx-swatch-meta">
+          <span class="pdx-swatch-name">${isKa ? c.name_ka || c.name : c.name}</span>
+          <span class="pdx-swatch-hex">${c.hex.toUpperCase()}</span>
+          ${c.cmyk ? `<span class="pdx-swatch-cmyk">${c.cmyk}</span>` : ""}
+          <span class="pdx-swatch-contrast">${hexToContrastLabel(c.hex)}</span>
+        </div>
+      </div>
+    `,
+    )
+    .join("");
+
+  return `
+    <section class="pdx-section pdx-colors">
+      <div class="container">
+        <p class="pdx-section-label pd-reveal">${L}</p>
+        <div class="pdx-swatch-grid">${swatches}</div>
+      </div>
+    </section>
+  `;
+}
+
+// ── Typography (optional) ────────────────────────────────────────────────────
+
+export function typographySection(project) {
+  const typ = project.typography;
+  if (!typ) return "";
+  const L = isKa ? { title: "ტიპოგრაფია", heading: "სათაური", body: "ტექსტი", weights: "წონები" } : { title: "Typography", heading: "Heading", body: "Body", weights: "Weights" };
+
+  const specimen = (role, label) => `
+    <div class="pdx-type-specimen pd-reveal">
+      <span class="pdx-type-role">${label}</span>
+      <p class="pdx-type-sample" style="font-family:'${role.family}'">Aa Bb Cc</p>
+      <span class="pdx-type-name">${role.family} — ${L.weights} ${role.weights.join(", ")}</span>
+    </div>
+  `;
+
+  return `
+    <section class="pdx-section pdx-typography">
+      <div class="container">
+        <p class="pdx-section-label pd-reveal">${L.title}</p>
+        ${specimen(typ.heading, L.heading)}
+        ${specimen(typ.body, L.body)}
+      </div>
+    </section>
+  `;
+}
