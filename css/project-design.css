@@ -1,7 +1,15 @@
 /* css/project-design.css
    Design-template-only styling — everything prefixed .pdx- to avoid any
    collision with the shared .pd-/.cs- classes still used by the web and
-   photo-video templates. Loaded only from project.html/ka/project.html. */
+   photo-video templates. Loaded only from project.html/ka/project.html.
+
+   Ground-up rebuild referencing Montoya (ClaPat Studio)'s real project-page
+   and reference-page vocabulary, translated into ink/paper/LK-Lumina. Two
+   registers, alternated deliberately:
+   - NARRATIVE (.pdx-band, .pdx-pinned): mask-fill headline + an asymmetric
+     empty-or-image column, alternating sides — telling the story of the work.
+   - SPEC (.pdx-spec-section/.pdx-spec-block): label column + content column
+     + hairline rules — systematic/reference content (facts, brand, color, type). */
 
 .pdx-section {
   padding: 7rem 0;
@@ -9,12 +17,14 @@
   color: var(--d);
 }
 
-/* section label: scroll-driven ink fill — a pale outline layer sits behind
-   a solid layer that's revealed left-to-right via clip-path as the label
-   scrolls into view, like a stencil being inked in. */
-.pdx-section-label {
+/* ── ink fill: scroll-driven ink reveal ──────────────────────────────────
+   used both for small eyebrow labels and big narrative headlines. */
+.pdx-ink-fill {
   position: relative;
   display: inline-block;
+}
+
+.pdx-section-label {
   font-family: var(--f-nm);
   font-size: 0.9rem;
   font-weight: 500;
@@ -23,8 +33,15 @@
   margin-bottom: 2rem;
 }
 
+.pdx-band-heading {
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  line-height: 1;
+  margin: 0 0 1.5rem;
+  text-transform: none;
+}
+
 .pdx-ink-fill-track {
-  color: rgba(23, 19, 15, 0.22);
+  color: rgba(23, 19, 15, 0.2);
 }
 
 .pdx-ink-fill-solid {
@@ -34,10 +51,10 @@
   pointer-events: none;
 }
 
-/* ink-stamp cursor: a heavier companion to the sitewide cursor dot — grows
-   into a solid ink circle with a one-word verb inside on hover over
-   openable frames / the next-project link. Suppresses the sitewide dot
-   while active so the two never double up (see body.pdx-stamp-active). */
+/* ── ink-stamp cursor ─────────────────────────────────────────────────────
+   heavier companion to the sitewide cursor dot — grows into a solid ink
+   circle with a one-word verb inside on hover. Suppresses the sitewide
+   dot while active so the two never double up. */
 .pdx-cursor {
   position: fixed;
   top: 0;
@@ -96,6 +113,7 @@ body.pdx-stamp-active #custom-cursor {
   }
 }
 
+/* ── openable frame (any image wired into the lightbox) ────────────────── */
 .pdx-frame {
   display: block;
   position: relative;
@@ -105,6 +123,8 @@ body.pdx-stamp-active #custom-cursor {
   cursor: zoom-in;
   border-radius: 0.85rem;
   background: none;
+  width: 100%;
+  height: 100%;
 }
 
 .pdx-frame img {
@@ -130,6 +150,7 @@ body.pdx-stamp-active #custom-cursor {
   }
 }
 
+/* ── hero: "Title as Window" — title-only, no facts/badge crowding it ──── */
 .pdx-hero-stage {
   position: relative;
   height: 100svh;
@@ -172,47 +193,46 @@ body.pdx-stamp-active #custom-cursor {
   object-fit: cover;
 }
 
-.pdx-hero-meta {
-  position: relative;
+.pdx-hero-hint {
+  position: absolute;
   z-index: 3;
-  padding: 3rem 0 4rem;
-  background-color: var(--l);
-  color: var(--d);
-}
-
-.pdx-hero-tagline {
-  max-width: 42rem;
-  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
-  opacity: 0.75;
+  left: 2.25rem;
+  bottom: 2rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--l);
+  opacity: 0.6;
 }
 
 @media (max-width: 720px) {
   .pdx-hero-title {
     font-size: clamp(2.4rem, 14vw, 4rem);
   }
+  .pdx-hero-hint {
+    left: 1.25rem;
+  }
 }
 
-/* asymmetric editorial spread — a real empty gutter between the two
-   columns (not a tidy adjacent split), specs column dropped lower than
-   the story so the two blocks read as independently placed, not a form. */
-.pdx-overview-grid {
+/* ── intro: badge + big opening line + stacked facts ────────────────────── */
+.pdx-intro-grid {
   display: grid;
-  grid-template-columns: 7fr 4fr;
+  grid-template-columns: 6fr 5fr;
   column-gap: 9vw;
   align-items: start;
 }
 
-.pdx-overview-text {
-  max-width: 40rem;
-  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
-  line-height: 1.4;
+.pdx-intro-tagline {
+  margin-top: 1.5rem;
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  line-height: 1.3;
 }
 
-.pdx-overview-specs {
+.pdx-intro-specs {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  margin-top: 7rem;
+  margin-top: 3rem;
   border-top: 1px solid rgba(23, 19, 15, 0.15);
 }
 
@@ -238,216 +258,193 @@ body.pdx-stamp-active #custom-cursor {
 }
 
 @media (max-width: 900px) {
-  .pdx-overview-grid {
+  .pdx-intro-grid {
     grid-template-columns: 1fr;
     column-gap: 0;
     row-gap: 2.5rem;
   }
-  .pdx-overview-specs {
+  .pdx-intro-specs {
     margin-top: 0;
   }
 }
 
-/* asymmetric, deterministic 6-recipe rhythm — varied widths, aspect
-   ratios, and vertical offsets per item so the grid reads as art-directed
-   rather than a repeating template, without any layout JS. Widths sum to
-   26 columns across the 6-recipe cycle on a 12-col track, so the cycle
-   never lines up into a clean repeating row and the offset feels earned
-   rather than mechanical. Reused by .pdx-app-grid (Applications). */
-.pdx-moodboard-grid,
-.pdx-app-grid {
+/* ── narrative band: mask-fill headline + asymmetric empty/image column ─── */
+.pdx-band {
+  padding: 6rem 0;
+}
+
+.pdx-band-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1.5rem;
-  /* items are sized by their own aspect-ratio, not stretched to fill a
-     shared row height (grid's default) — otherwise every item in the same
-     implicit row would snap to the tallest neighbor's height. */
-  align-items: start;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
 }
 
-.pdx-moodboard-item,
-.pdx-app-item {
-  overflow: hidden;
-  border-radius: 0.85rem;
+.pdx-band-right .pdx-band-content {
+  order: 2;
 }
 
-.pdx-moodboard-item:nth-child(6n + 1),
-.pdx-app-item:nth-child(6n + 1) {
-  grid-column: span 7;
-  aspect-ratio: 4 / 3;
+.pdx-band-num {
+  display: block;
+  font-family: var(--f-nm);
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1;
+  opacity: 0.16;
+  margin-bottom: 1rem;
 }
 
-.pdx-moodboard-item:nth-child(6n + 2),
-.pdx-app-item:nth-child(6n + 2) {
-  grid-column: span 5;
-  aspect-ratio: 3 / 4;
-  margin-top: 4rem;
+.pdx-band-copy {
+  max-width: 32rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.7;
+  opacity: 0.65;
 }
 
-.pdx-moodboard-item:nth-child(6n + 3),
-.pdx-app-item:nth-child(6n + 3) {
-  grid-column: span 4;
-  aspect-ratio: 1 / 1;
-}
-
-.pdx-moodboard-item:nth-child(6n + 4),
-.pdx-app-item:nth-child(6n + 4) {
-  grid-column: span 8;
-  aspect-ratio: 16 / 7;
-  margin-top: -2rem;
-}
-
-.pdx-moodboard-item:nth-child(6n + 5),
-.pdx-app-item:nth-child(6n + 5) {
-  grid-column: span 6;
-  aspect-ratio: 3 / 4;
-  margin-top: 3rem;
-}
-
-.pdx-moodboard-item:nth-child(6n),
-.pdx-app-item:nth-child(6n) {
-  grid-column: span 6;
-  aspect-ratio: 5 / 4;
-}
-
-.pdx-moodboard-item .pdx-frame,
-.pdx-app-item .pdx-frame,
-.pdx-moodboard-item .pdx-frame img,
-.pdx-app-item .pdx-frame img {
+.pdx-band-image {
   width: 100%;
-  height: 100%;
+  border-radius: 0.85rem;
+  filter: grayscale(1) contrast(1.08);
+  transition: filter 0.6s ease;
+}
+
+.pdx-band-image:hover {
+  filter: grayscale(0) contrast(1);
 }
 
 @media (max-width: 900px) {
-  .pdx-moodboard-grid,
-  .pdx-app-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .pdx-moodboard-item,
-  .pdx-app-item,
-  .pdx-moodboard-item:nth-child(6n + 1),
-  .pdx-app-item:nth-child(6n + 1),
-  .pdx-moodboard-item:nth-child(6n + 4),
-  .pdx-app-item:nth-child(6n + 4) {
-    grid-column: span 1;
-    aspect-ratio: 4 / 5;
-    margin-top: 0;
-  }
-}
-
-@media (max-width: 560px) {
-  .pdx-moodboard-grid,
-  .pdx-app-grid {
+  .pdx-band-grid {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
-  .pdx-moodboard-item,
-  .pdx-app-item {
-    grid-column: span 1 !important;
-    margin-top: 0 !important;
+  .pdx-band-right .pdx-band-content {
+    order: 0;
   }
 }
 
-/* the section label stays pinned in a narrow left column while the stages
-   scroll past on the right — the label reads as a fixed reference point
-   for a moving list, instead of sitting flat above it. */
-.pdx-process-layout {
+/* ── pinned section (The Brief): sticky text beside a scrolling image ──── */
+.pdx-pinned-grid {
   display: grid;
-  grid-template-columns: 1fr 2.4fr;
-  column-gap: 4rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
   align-items: start;
 }
 
-.pdx-process-sticky {
+.pdx-pinned-sticky {
   position: sticky;
   top: 8rem;
 }
 
-.pdx-process-sticky .pdx-section-label {
-  margin-bottom: 0;
-}
-
-.pdx-process-list {
-  border-top: 1px solid rgba(23, 19, 15, 0.15);
-}
-
-.pdx-process-stage {
-  border-bottom: 1px solid rgba(23, 19, 15, 0.15);
-  cursor: pointer;
-}
-
-.pdx-process-head {
+.pdx-pinned-scroll {
   display: flex;
-  align-items: baseline;
-  gap: 2rem;
-  padding: 1.75rem 0;
+  align-items: center;
 }
 
-.pdx-process-num {
-  font-family: var(--f-nm);
-  font-size: clamp(2.5rem, 6vw, 5rem);
-  font-weight: 700;
-  line-height: 1;
-  opacity: 0.16;
-  flex-shrink: 0;
-  transition: opacity 0.3s ease;
+.pdx-pinned-img {
+  width: 100%;
+  border-radius: 0.85rem;
+  filter: grayscale(1) contrast(1.08);
+  transition: filter 0.6s ease;
 }
 
-.pdx-process-stage.is-open .pdx-process-num {
-  opacity: 1;
-}
-
-.pdx-process-name {
-  font-size: clamp(1.5rem, 3vw, 2.5rem);
-  transition: opacity 0.3s ease;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pdx-process-num {
-    transition: none;
-  }
+.pdx-pinned-img:hover {
+  filter: grayscale(0) contrast(1);
 }
 
 @media (max-width: 900px) {
-  .pdx-process-layout {
+  .pdx-pinned-grid {
     grid-template-columns: 1fr;
-    row-gap: 2rem;
+    gap: 2rem;
   }
-  .pdx-process-sticky {
+  .pdx-pinned-sticky {
     position: static;
   }
 }
 
-.pdx-process-body {
+/* ── moodboard: paired images, independent parallax, one offset lower ──── */
+.pdx-pair-row {
   display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 5rem;
 }
 
-.pdx-process-body > * {
+.pdx-pair-row:last-child {
+  margin-bottom: 0;
+}
+
+.pdx-pair-col {
+  aspect-ratio: 4 / 5;
+}
+
+.pdx-pair-col:nth-child(2) {
+  margin-top: 5rem;
+  aspect-ratio: 3 / 4;
+}
+
+@media (max-width: 720px) {
+  .pdx-pair-row {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .pdx-pair-col:nth-child(2) {
+    margin-top: 0;
+  }
+}
+
+/* ── full-bleed punctuation break — shown in full color, not hover-gated ─ */
+.pdx-punctuation {
+  position: relative;
+  height: 90svh;
+  min-height: 30rem;
   overflow: hidden;
+  background-color: var(--d);
 }
 
-.pdx-process-stage.is-open .pdx-process-body {
-  grid-template-rows: 1fr;
-}
-
-.pdx-process-body p {
-  max-width: 40rem;
-  padding-bottom: 1.5rem;
-  opacity: 0.8;
-}
-
-.pdx-process-body img {
+.pdx-punctuation-img {
+  position: absolute;
+  inset: -8% 0;
   width: 100%;
-  max-width: 28rem;
-  border-radius: 0.75rem;
-  margin-bottom: 1.5rem;
-  filter: grayscale(1) contrast(1.08);
+  height: 116%;
+  object-fit: cover;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .pdx-process-body {
-    transition: none;
+/* ── spec section: label column + content column + hairline rules ──────── */
+.pdx-spec-section {
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.pdx-spec-hr {
+  border: none;
+  border-top: 1px solid rgba(23, 19, 15, 0.15);
+  margin: 0;
+}
+
+.pdx-spec-block {
+  display: grid;
+  grid-template-columns: 1fr 2.5fr;
+  gap: 3rem;
+  padding: 5rem 0;
+}
+
+.pdx-spec-block-label h5 {
+  font-family: var(--f-nm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .pdx-spec-block {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 3.5rem 0;
   }
 }
 
@@ -480,6 +477,12 @@ body.pdx-stamp-active #custom-cursor {
 
 .pdx-brand-block-incorrect img {
   outline: 1px solid rgba(178, 46, 26, 0.4);
+}
+
+@media (max-width: 720px) {
+  .pdx-brand-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .pdx-swatch-grid {
@@ -518,8 +521,13 @@ body.pdx-stamp-active #custom-cursor {
 }
 
 .pdx-type-specimen {
-  padding: 3rem 0;
+  padding: 2rem 0;
   border-bottom: 1px solid rgba(23, 19, 15, 0.15);
+}
+
+.pdx-type-specimen:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .pdx-type-role {
@@ -541,12 +549,7 @@ body.pdx-stamp-active #custom-cursor {
   opacity: 0.6;
 }
 
-@media (max-width: 900px) {
-  .pdx-brand-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
+/* ── applications: asymmetric, deterministic 6-recipe grid module ──────── */
 .pdx-app-type-group {
   margin-bottom: 3rem;
 }
@@ -563,23 +566,124 @@ body.pdx-stamp-active #custom-cursor {
   margin-bottom: 1rem;
 }
 
+/* deterministic 6-recipe rhythm — varied widths, aspect ratios, vertical
+   offsets so the grid reads as art-directed rather than a repeating
+   template. Widths across the cycle never divide the 12-col track evenly,
+   so it never lines up into a clean repeating row. */
+.pdx-app-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.pdx-app-item {
+  overflow: hidden;
+  border-radius: 0.85rem;
+}
+
 .pdx-app-item .pdx-frame {
   box-shadow: 0 1.5rem 3rem rgba(23, 19, 15, 0.18);
 }
 
-.pdx-masonry {
-  columns: 3;
-  column-gap: 1.25rem;
+.pdx-app-item:nth-child(6n + 1) {
+  grid-column: span 7;
+  aspect-ratio: 4 / 3;
 }
 
-.pdx-masonry-item {
-  break-inside: avoid;
-  margin-bottom: 1.25rem;
+.pdx-app-item:nth-child(6n + 2) {
+  grid-column: span 5;
+  aspect-ratio: 3 / 4;
+  margin-top: 4rem;
 }
 
-.pdx-masonry-item .pdx-frame img {
+.pdx-app-item:nth-child(6n + 3) {
+  grid-column: span 4;
+  aspect-ratio: 1 / 1;
+}
+
+.pdx-app-item:nth-child(6n + 4) {
+  grid-column: span 8;
+  aspect-ratio: 16 / 7;
+  margin-top: -2rem;
+}
+
+.pdx-app-item:nth-child(6n + 5) {
+  grid-column: span 6;
+  aspect-ratio: 3 / 4;
+  margin-top: 3rem;
+}
+
+.pdx-app-item:nth-child(6n) {
+  grid-column: span 6;
+  aspect-ratio: 5 / 4;
+}
+
+@media (max-width: 900px) {
+  .pdx-app-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pdx-app-item,
+  .pdx-app-item:nth-child(6n + 1),
+  .pdx-app-item:nth-child(6n + 4) {
+    grid-column: span 1;
+    aspect-ratio: 4 / 5;
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .pdx-app-grid {
+    grid-template-columns: 1fr;
+  }
+  .pdx-app-item {
+    grid-column: span 1 !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* ── full gallery: horizontal moving ticker, two rows, opposite drift ──── */
+.pdx-full-gallery {
+  overflow: hidden;
+}
+
+.pdx-ticker-row {
+  overflow: hidden;
+  margin-top: 1.5rem;
+}
+
+.pdx-ticker-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+}
+
+.pdx-ticker-item {
+  flex-shrink: 0;
+  width: 22rem;
+  aspect-ratio: 4 / 5;
+}
+
+.pdx-ticker-plain {
+  display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.85rem;
+  filter: grayscale(1) contrast(1.08);
+}
+
+@media (max-width: 720px) {
+  .pdx-ticker-item {
+    width: 15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pdx-ticker-track {
+    flex-wrap: wrap;
+    width: 100%;
+  }
 }
 
 .pdx-motion-video {
@@ -593,31 +697,36 @@ body.pdx-stamp-active #custom-cursor {
   filter: grayscale(0) contrast(1);
 }
 
-@media (max-width: 900px) {
-  .pdx-masonry {
-    columns: 2;
-  }
-}
-
-@media (max-width: 560px) {
-  .pdx-masonry {
-    columns: 1;
-  }
-}
-
+/* ── testimonial: centered statement, double hairline rule ──────────────── */
 .pdx-quote {
   max-width: 56rem;
   margin: 0 auto 4rem;
   text-align: center;
 }
 
-.pdx-quote h4 {
+.pdx-quote-text {
   font-size: clamp(1.75rem, 3.5vw, 3rem);
+  line-height: 1.3;
   text-transform: none;
+}
+
+.pdx-quote-hr {
+  width: 3rem;
+  margin: 1.5rem auto 0;
+  border: none;
+  border-top: 1px solid rgba(23, 19, 15, 0.3);
+}
+
+.pdx-quote-hr + .pdx-quote-hr {
+  margin-top: 0.4rem;
 }
 
 .pdx-quote-attr {
   margin-top: 1.5rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   opacity: 0.6;
 }
 
@@ -635,6 +744,42 @@ body.pdx-stamp-active #custom-cursor {
 .pdx-result p {
   margin-top: 0.5rem;
   opacity: 0.7;
+}
+
+@media (max-width: 720px) {
+  .pdx-results-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── next project: cinematic unfurl + "View All Works" ─────────────────── */
+.pdx-next-wrap {
+  position: relative;
+}
+
+.pdx-all-works {
+  position: absolute;
+  z-index: 2;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+}
+
+.pdx-all-works-link {
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--l);
+  opacity: 0.75;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(246, 241, 231, 0.4);
+  transition: opacity 0.3s ease;
+}
+
+.pdx-all-works-link:hover {
+  opacity: 1;
 }
 
 .pdx-next {
@@ -712,15 +857,18 @@ body.pdx-stamp-active #custom-cursor {
   transition:
     transform 0.5s cubic-bezier(0.65, 0, 0.35, 1),
     background-color 0.4s ease,
-    color 0.4s ease;
+    color 0.4s ease,
+    border-color 0.4s ease;
 }
 
 .pdx-next:hover .pdx-next-arrow {
   transform: rotate(45deg);
   background-color: var(--l);
   color: var(--d);
+  border-color: var(--l);
 }
 
+/* ── contact CTA — minimal, one line + button ───────────────────────────── */
 .pdx-cta {
   padding: 6rem 0;
   background-color: var(--d);
@@ -740,16 +888,10 @@ body.pdx-stamp-active #custom-cursor {
   max-width: 36rem;
 }
 
-@media (max-width: 720px) {
-  .pdx-results-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* — image lightbox (js/pd-lightbox.js): full-screen modal opened from any
+/* ── image lightbox (js/pd-lightbox.js): full-screen modal opened from any
    .pdx-frame. z-index is set above every other fixed layer in the site
    (chat-widget 15000, preloader/split-overlay/tags-overlay 10000, nav 100,
-   #custom-cursor 20001) so the modal covers the nav and everything else. — */
+   #custom-cursor 20001) so the modal covers the nav and everything else. ── */
 .pdx-lightbox {
   position: fixed;
   inset: 0;

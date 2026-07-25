@@ -3,6 +3,16 @@
 // service-type single-project template. Exports designTemplate(project, projects, deps)
 // (HTML string) and initDesignTemplate(root, proj) (wires interactivity) —
 // both consumed by js/project.js's TEMPLATES/POST_INIT dispatch.
+//
+// Structure is a ground-up rebuild referencing Montoya (ClaPat Studio)'s
+// real case-study/reference-page vocabulary, translated into Lumine's own
+// ink/paper/LK-Lumina identity: two registers, alternated deliberately —
+// NARRATIVE bands (mask-fill headline + an asymmetric empty-or-image
+// column, alternating sides — the Challenge/Research/Solution rhythm of
+// Montoya's project01.html) for anything telling the story of the work,
+// and SPEC rows (label column + content column + hairline rules — the
+// one_third/two_third rhythm of Montoya's typography.html) for anything
+// systematic/reference-like (facts, brand identity, color, type).
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { initLightbox } from "/js/pd-lightbox.js";
@@ -18,18 +28,27 @@ function fineHover() {
   return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 }
 
-// ── Section label: scroll-driven ink fill ───────────────────────────────────
-// Every "SECTION LABEL" eyebrow renders as a pale ink outline, then fills
-// solid black as it scrolls into view — like a stencil being inked in,
-// instead of a flat static label.
+// ── Ink fill: scroll-driven ink reveal ──────────────────────────────────────
+// A pale outline layer sits behind a solid layer that's revealed
+// left-to-right via clip-path as the element scrolls into view — like a
+// stencil being inked in. Used both for small eyebrow labels and for the
+// big mask-fill narrative headlines (Montoya's `.has-mask-fill`).
 
-function sectionLabel(text) {
+function inkFill(text, tag, extraClass) {
   return `
-    <p class="pdx-section-label" data-pdx-ink-fill>
+    <${tag} class="pdx-ink-fill ${extraClass}" data-pdx-ink-fill>
       <span class="pdx-ink-fill-track">${text}</span>
       <span class="pdx-ink-fill-solid" aria-hidden="true">${text}</span>
-    </p>
+    </${tag}>
   `;
+}
+
+function sectionLabel(text) {
+  return inkFill(text, "p", "pdx-section-label");
+}
+
+function bandHeading(text) {
+  return inkFill(text, "h2", "pdx-band-heading");
 }
 
 function initInkFillLabels(root) {
@@ -48,7 +67,7 @@ function initInkFillLabels(root) {
       scrollTrigger: {
         trigger: label,
         start: "top 88%",
-        end: "top 55%",
+        end: "top 45%",
         scrub: 0.4,
       },
     });
@@ -102,14 +121,47 @@ function initStampCursor(root) {
   });
 }
 
+// ── Shared image normalization ──────────────────────────────────────────────
+// moodboardImages/deliverablesImages/galleryImages accept either a bare
+// string (legacy, still used by every project today) or an object with
+// alt text and an application `type` tag. Every section reads through
+// this so both shapes work everywhere.
+
+function normalizeImages(images) {
+  return (images || []).map((entry) =>
+    typeof entry === "string" ? { src: entry, alt: "", type: null } : { src: entry.src, alt: entry.alt || "", type: entry.type || null },
+  );
+}
+
+function frame(image, group) {
+  return `
+    <button type="button" class="pdx-frame" data-lightbox-group="${group}" data-cursor-label="OPEN">
+      <img src="${image.src}" alt="${image.alt}" loading="lazy" />
+    </button>
+  `;
+}
+
+function specRow(label, value) {
+  if (!value || (Array.isArray(value) && value.length === 0)) return "";
+  const display = Array.isArray(value) ? value.join(", ") : value;
+  return `
+    <div class="pdx-spec-row">
+      <span class="pdx-spec-label">${label}</span>
+      <span class="pdx-spec-value">${display}</span>
+    </div>
+  `;
+}
+
 // ── Hero: "Title as Window" ─────────────────────────────────────────────────
 // The hero image is revealed *through* the massive title on load (CSS
 // background-clip: text), then the title recedes to a faint watermark as
 // the full image fades in behind it; a scroll-scrubbed parallax between
-// the two layers continues as the hero passes.
+// the two layers continues as the hero passes. Title-only, no facts/badge
+// crowding it — matching Montoya's real project-hero (project01.html),
+// which keeps the hero to the title and a scroll hint, moving everything
+// else into the section immediately below.
 
-export function heroDesign(project, heroBadge, factsRow) {
-  const tagline = t(project, "heroTagline") || t(project, "blurb");
+export function heroDesign(project) {
   return `
     <section class="pdx-hero" data-pdx-hero>
       <div class="pdx-hero-stage">
@@ -121,11 +173,7 @@ export function heroDesign(project, heroBadge, factsRow) {
         <div class="pdx-hero-media" data-pdx-hero-media>
           <img src="${project.cover}" alt="${project.title}" />
         </div>
-      </div>
-      <div class="container pdx-hero-meta">
-        ${heroBadge(project)}
-        <p class="pdx-hero-tagline pd-reveal">${tagline}</p>
-        ${factsRow(project)}
+        <span class="pdx-hero-hint">${isKa ? "დაასქროლეთ" : "Scroll to Explore"}</span>
       </div>
     </section>
   `;
@@ -161,33 +209,27 @@ export function initHeroDesign(root) {
   });
 }
 
-// ── Overview: two-column editorial spread ───────────────────────────────────
+// ── Intro: badge + opening line + stacked facts ─────────────────────────────
+// Replaces the old boxed two-column Overview grid. A short punchy line
+// (heroTagline) sits beside a Montoya-style STACKED label/value facts
+// list (not a table) — the longer explanatory `brief` copy is its own
+// narrative beat further down, not duplicated here.
 
-function specRow(label, value) {
-  if (!value || (Array.isArray(value) && value.length === 0)) return "";
-  const display = Array.isArray(value) ? value.join(", ") : value;
-  return `
-    <div class="pdx-spec-row">
-      <span class="pdx-spec-label">${label}</span>
-      <span class="pdx-spec-value">${display}</span>
-    </div>
-  `;
-}
-
-export function overviewSection(project) {
-  const L = isKa
-    ? { overview: "მიმოხილვა", client: "კლიენტი", industry: "ინდუსტრია", services: "სერვისები", role: "როლი", timeline: "ვადები", year: "წელი", status: "სტატუსი" }
-    : { overview: "Overview", client: "Client", industry: "Industry", services: "Services", role: "Role", timeline: "Timeline", year: "Year", status: "Status" };
+export function introSection(project, heroBadge) {
+  const tagline = t(project, "heroTagline") || t(project, "blurb");
   const status = isKa ? project.status_ka || project.status : project.status;
+  const L = isKa
+    ? { client: "კლიენტი", industry: "ინდუსტრია", services: "სერვისები", role: "როლი", timeline: "ვადები", year: "წელი", status: "სტატუსი" }
+    : { client: "Client", industry: "Industry", services: "Services", role: "Role", timeline: "Timeline", year: "Year", status: "Status" };
 
   return `
-    <section class="pdx-section pdx-overview">
-      <div class="container pdx-overview-grid">
-        <div class="pdx-overview-story">
-          ${sectionLabel(L.overview)}
-          <p class="pdx-overview-text pd-reveal">${t(project, "brief")}</p>
+    <section class="pdx-section pdx-intro">
+      <div class="container pdx-intro-grid">
+        <div class="pdx-intro-open">
+          ${heroBadge(project)}
+          <p class="pdx-intro-tagline pd-reveal">${tagline}</p>
         </div>
-        <div class="pdx-overview-specs pd-reveal">
+        <div class="pdx-intro-specs">
           ${specRow(L.client, project.client)}
           ${specRow(L.industry, project.industry)}
           ${specRow(L.services, isKa ? project.services_ka || project.services : project.services)}
@@ -201,91 +243,173 @@ export function overviewSection(project) {
   `;
 }
 
-// ── Shared image normalization ──────────────────────────────────────────────
-// moodboardImages/deliverablesImages/galleryImages accept either a bare
-// string (legacy, still used by every project today) or an object with
-// alt text and an application `type` tag. Every section reads through
-// this so both shapes work everywhere.
+// ── Narrative band: mask-fill headline + asymmetric empty/image column ──────
+// The core rhythm reused by The Brief and every Process stage — alternates
+// which side carries the empty/secondary column via the `align` flag,
+// matching Montoya's Challenge (content-left) / Research (content-left,
+// empty-right stays but visually the whitespace read varies with content
+// length) rhythm. Here we alternate strictly left/right for a clear beat.
 
-function normalizeImages(images) {
-  return (images || []).map((entry) =>
-    typeof entry === "string" ? { src: entry, alt: "", type: null } : { src: entry.src, alt: entry.alt || "", type: entry.type || null },
-  );
-}
-
-function frame(image, group) {
+function narrativeBand(headingText, bodyText, opts) {
+  const { align = "left", eyebrow = "", secondary = "", num = "" } = opts || {};
   return `
-    <button type="button" class="pdx-frame" data-lightbox-group="${group}" data-cursor-label="OPEN">
-      <img src="${image.src}" alt="${image.alt}" loading="lazy" />
-    </button>
+    <section class="pdx-section pdx-band pdx-band-${align}">
+      <div class="container pdx-band-grid">
+        <div class="pdx-band-content">
+          ${num ? `<span class="pdx-band-num">${num}</span>` : ""}
+          ${eyebrow ? sectionLabel(eyebrow) : ""}
+          ${bandHeading(headingText)}
+          ${bodyText ? `<p class="pdx-band-copy">${bodyText}</p>` : ""}
+        </div>
+        <div class="pdx-band-secondary">${secondary}</div>
+      </div>
+    </section>
   `;
 }
 
-// ── Research / Moodboard ─────────────────────────────────────────────────────
+// ── The Brief: pinned text beside a scrolling image ──────────────────────────
+// A real pinned-section technique (Montoya's project02.html) — the text
+// stays put via CSS position:sticky while a tall image scrolls past
+// beside it, instead of a flat empty column.
 
-export function moodboardSection(project) {
-  const L = isKa ? "კვლევა & მუდბორდი" : "Research & Moodboard";
-  const images = normalizeImages(project.moodboardImages);
-  if (!images.length) return "";
+export function briefSection(project) {
+  const brief = t(project, "brief");
+  if (!brief) return "";
+  const L = isKa ? "დავალება" : "The Brief";
+  const img = project.cover;
 
   return `
-    <section class="pdx-section pdx-moodboard">
-      <div class="container">
-        ${sectionLabel(L)}
-        <div class="pdx-moodboard-grid">
-          ${images.map((img) => `<div class="pdx-moodboard-item pd-reveal">${frame(img, "moodboard")}</div>`).join("")}
+    <section class="pdx-section pdx-pinned">
+      <div class="container pdx-pinned-grid">
+        <div class="pdx-pinned-sticky">
+          ${bandHeading(L)}
+          <p class="pdx-band-copy">${brief}</p>
+        </div>
+        <div class="pdx-pinned-scroll">
+          <img src="${img}" alt="" loading="lazy" class="pdx-pinned-img" />
         </div>
       </div>
     </section>
   `;
 }
 
-// ── Process (optional — renders only if project.process exists) ────────────
+// ── Research / Moodboard: paired images with independent parallax ──────────
+// Montoya's project01.html vertical-parallax image pairs — two images per
+// row, each drifting at its own speed as the row scrolls, one offset
+// lower than the other so the pair never lines up as a flat grid cell.
 
-export function processSection(project) {
-  if (!project.process || !project.process.length) return "";
-  const L = isKa ? "პროცესი" : "Process";
+export function moodboardSection(project) {
+  const images = normalizeImages(project.moodboardImages);
+  if (!images.length) return "";
+  const L = isKa ? "კვლევა & მუდბორდი" : "Research & Moodboard";
 
-  const stages = project.process
+  const pairs = [];
+  for (let i = 0; i < images.length; i += 2) pairs.push(images.slice(i, i + 2));
+
+  const rows = pairs
     .map(
-      (stage, i) => `
-      <div class="pdx-process-stage pd-reveal" data-pdx-process-stage>
-        <div class="pdx-process-head">
-          <span class="pdx-process-num">${String(i + 1).padStart(2, "0")}</span>
-          <h4 class="pdx-process-name">${isKa ? stage.stage_ka || stage.stage : stage.stage}</h4>
-        </div>
-        <div class="pdx-process-body">
-          <p>${isKa ? stage.description_ka || stage.description : stage.description}</p>
-          ${stage.image ? `<img src="${stage.image}" alt="" loading="lazy" />` : ""}
-        </div>
+      (pair) => `
+      <div class="pdx-pair-row">
+        ${pair
+          .map(
+            (img, j) => `
+          <div class="pdx-pair-col" data-pdx-parallax data-parallax-speed="${j === 0 ? "0.12" : "0.05"}">
+            ${frame(img, "moodboard")}
+          </div>
+        `,
+          )
+          .join("")}
       </div>
     `,
     )
     .join("");
 
   return `
-    <section class="pdx-section pdx-process">
-      <div class="container pdx-process-layout">
-        <div class="pdx-process-sticky">
-          ${sectionLabel(L)}
-        </div>
-        <div class="pdx-process-list">${stages}</div>
+    <section class="pdx-section pdx-moodboard">
+      <div class="container">
+        ${sectionLabel(L)}
+        ${rows}
       </div>
     </section>
   `;
 }
 
-export function initProcess(root) {
-  const stages = root.querySelectorAll("[data-pdx-process-stage]");
-  stages.forEach((stage) => {
-    const open = () => stage.classList.add("is-open");
-    const close = () => stage.classList.remove("is-open");
-    if (fineHover()) {
-      stage.addEventListener("mouseenter", open);
-      stage.addEventListener("mouseleave", close);
-    }
-    stage.addEventListener("click", () => stage.classList.toggle("is-open"));
+export function initParallaxPairs(root) {
+  if (reduceMotion()) return;
+  const els = root.querySelectorAll("[data-pdx-parallax]");
+  els.forEach((el) => {
+    const speed = parseFloat(el.dataset.parallaxSpeed) || 0.1;
+    gsap.to(el, {
+      yPercent: -speed * 100,
+      ease: "none",
+      scrollTrigger: {
+        trigger: el,
+        start: "top bottom",
+        end: "bottom top",
+        scrub: true,
+      },
+    });
   });
+}
+
+// ── Process: alternating narrative bands, not an accordion ─────────────────
+// Every stage becomes its own beat in the page's scroll narrative — giant
+// ghost numeral, mask-fill stage name, description — alternating sides,
+// with the stage's own image (when supplied) filling the secondary column
+// instead of leaving it empty. Optional — renders "" if project.process
+// is absent.
+
+export function processSection(project) {
+  if (!project.process || !project.process.length) return "";
+  return project.process
+    .map((stage, i) => {
+      const align = i % 2 === 0 ? "left" : "right";
+      const num = String(i + 1).padStart(2, "0");
+      const name = isKa ? stage.stage_ka || stage.stage : stage.stage;
+      const desc = isKa ? stage.description_ka || stage.description : stage.description;
+      const secondary = stage.image ? `<img src="${stage.image}" alt="" loading="lazy" class="pdx-band-image pd-reveal" />` : "";
+      return narrativeBand(name, desc, { align, num, secondary });
+    })
+    .join("");
+}
+
+// ── Full-bleed punctuation break ─────────────────────────────────────────────
+// One large image on ink, parallax-scrubbed — a "breath" beat between the
+// narrative sections and the systematic spec sections, matching Montoya's
+// full-bleed dark-section rows. Shown in full color (not monochrome-until-
+// hover) since it's a singular emotional beat, not a grid thumbnail — the
+// same deliberate exception the Color System swatches already carry.
+
+export function punctuationSection(project) {
+  const candidates = [
+    ...(project.deliverablesImages || []),
+    ...(project.galleryImages || []),
+    ...(project.moodboardImages || []),
+  ];
+  if (!candidates.length) return "";
+  const first = candidates[0];
+  const src = typeof first === "string" ? first : first.src;
+
+  return `
+    <section class="pdx-punctuation">
+      <img src="${src}" alt="" loading="lazy" class="pdx-punctuation-img" data-pdx-parallax data-parallax-speed="0.15" />
+    </section>
+  `;
+}
+
+// ── Spec block: label column + content column, hairline rules ──────────────
+// The systematic register (Montoya's typography.html one_third/two_third
+// rhythm) — reused by Brand Identity, Color System, and Typography so
+// they read as one continuous "spec sheet" when several appear together,
+// distinct from the narrative bands above.
+
+function specBlock(label, contentHtml) {
+  return `
+    <div class="pdx-spec-block pd-reveal">
+      <div class="pdx-spec-block-label"><h5>${label}</h5></div>
+      <div class="pdx-spec-block-content">${contentHtml}</div>
+    </div>
+  `;
 }
 
 // ── Brand Identity (optional) ────────────────────────────────────────────────
@@ -298,18 +422,18 @@ export function brandIdentitySection(project) {
     : { title: "Brand Identity", construction: "Construction", safeSpace: "Safe Space", variations: "Variations", incorrect: "Incorrect Usage" };
 
   const blocks = [];
-  if (bi.construction) blocks.push(`<figure class="pdx-brand-block pd-reveal"><img src="${bi.construction}" alt="${L.construction}" loading="lazy" /><figcaption>${L.construction}</figcaption></figure>`);
-  if (bi.safeSpace) blocks.push(`<figure class="pdx-brand-block pd-reveal"><img src="${bi.safeSpace}" alt="${L.safeSpace}" loading="lazy" /><figcaption>${L.safeSpace}</figcaption></figure>`);
-  (bi.variations || []).forEach((src) => blocks.push(`<figure class="pdx-brand-block pd-reveal"><img src="${src}" alt="${L.variations}" loading="lazy" /><figcaption>${L.variations}</figcaption></figure>`));
-  (bi.incorrectUsage || []).forEach((src) => blocks.push(`<figure class="pdx-brand-block pdx-brand-block-incorrect pd-reveal"><img src="${src}" alt="${L.incorrect}" loading="lazy" /><figcaption>${L.incorrect}</figcaption></figure>`));
+  if (bi.construction) blocks.push(`<figure class="pdx-brand-block"><img src="${bi.construction}" alt="${L.construction}" loading="lazy" /><figcaption>${L.construction}</figcaption></figure>`);
+  if (bi.safeSpace) blocks.push(`<figure class="pdx-brand-block"><img src="${bi.safeSpace}" alt="${L.safeSpace}" loading="lazy" /><figcaption>${L.safeSpace}</figcaption></figure>`);
+  (bi.variations || []).forEach((src) => blocks.push(`<figure class="pdx-brand-block"><img src="${src}" alt="${L.variations}" loading="lazy" /><figcaption>${L.variations}</figcaption></figure>`));
+  (bi.incorrectUsage || []).forEach((src) => blocks.push(`<figure class="pdx-brand-block pdx-brand-block-incorrect"><img src="${src}" alt="${L.incorrect}" loading="lazy" /><figcaption>${L.incorrect}</figcaption></figure>`));
 
   if (!blocks.length) return "";
 
   return `
-    <section class="pdx-section pdx-brand">
+    <section class="pdx-spec-section">
       <div class="container">
-        ${sectionLabel(L.title)}
-        <div class="pdx-brand-grid">${blocks.join("")}</div>
+        <hr class="pdx-spec-hr" />
+        ${specBlock(L.title, `<div class="pdx-brand-grid">${blocks.join("")}</div>`)}
       </div>
     </section>
   `;
@@ -349,7 +473,7 @@ export function colorSystemSection(project) {
   const swatches = palette
     .map(
       (c) => `
-      <div class="pdx-swatch pd-reveal">
+      <div class="pdx-swatch">
         <div class="pdx-swatch-block" style="background-color:${c.hex}"></div>
         <div class="pdx-swatch-meta">
           <span class="pdx-swatch-name">${isKa ? c.name_ka || c.name : c.name}</span>
@@ -363,10 +487,10 @@ export function colorSystemSection(project) {
     .join("");
 
   return `
-    <section class="pdx-section pdx-colors">
+    <section class="pdx-spec-section">
       <div class="container">
-        ${sectionLabel(L)}
-        <div class="pdx-swatch-grid">${swatches}</div>
+        <hr class="pdx-spec-hr" />
+        ${specBlock(L, `<div class="pdx-swatch-grid">${swatches}</div>`)}
       </div>
     </section>
   `;
@@ -380,7 +504,7 @@ export function typographySection(project) {
   const L = isKa ? { title: "ტიპოგრაფია", heading: "სათაური", body: "ტექსტი", weights: "წონები" } : { title: "Typography", heading: "Heading", body: "Body", weights: "Weights" };
 
   const specimen = (role, label) => `
-    <div class="pdx-type-specimen pd-reveal">
+    <div class="pdx-type-specimen">
       <span class="pdx-type-role">${label}</span>
       <p class="pdx-type-sample" style="font-family:'${role.family}'">Aa Bb Cc</p>
       <span class="pdx-type-name">${role.family} — ${L.weights} ${role.weights.join(", ")}</span>
@@ -388,17 +512,19 @@ export function typographySection(project) {
   `;
 
   return `
-    <section class="pdx-section pdx-typography">
+    <section class="pdx-spec-section">
       <div class="container">
-        ${sectionLabel(L.title)}
-        ${specimen(typ.heading, L.heading)}
-        ${specimen(typ.body, L.body)}
+        <hr class="pdx-spec-hr" />
+        ${specBlock(L.title, `${specimen(typ.heading, L.heading)}${specimen(typ.body, L.body)}`)}
       </div>
     </section>
   `;
 }
 
 // ── Applications ──────────────────────────────────────────────────────────────
+// Asymmetric, deterministic 6-recipe rhythm — varied widths, aspect ratios,
+// and vertical offsets per item so the grid reads as art-directed rather
+// than a repeating template.
 
 export function applicationsSection(project) {
   const images = normalizeImages(project.deliverablesImages);
@@ -420,7 +546,7 @@ export function applicationsSection(project) {
         <div class="pdx-app-type-group">
           <p class="pdx-app-type-label">${type}</p>
           <div class="pdx-app-grid">
-            ${imgs.map((img) => `<div class="pdx-app-item pd-reveal">${frame(img, "applications")}</div>`).join("")}
+            ${imgs.map((img) => `<div class="pdx-app-item">${frame(img, "applications")}</div>`).join("")}
           </div>
         </div>
       `,
@@ -429,7 +555,7 @@ export function applicationsSection(project) {
   } else {
     body = `
       <div class="pdx-app-grid">
-        ${images.map((img) => `<div class="pdx-app-item pd-reveal">${frame(img, "applications")}</div>`).join("")}
+        ${images.map((img) => `<div class="pdx-app-item">${frame(img, "applications")}</div>`).join("")}
       </div>
     `;
   }
@@ -444,7 +570,12 @@ export function applicationsSection(project) {
   `;
 }
 
-// ── Full Gallery ──────────────────────────────────────────────────────────────
+// ── Full Gallery: horizontal moving ticker, not a grid ──────────────────────
+// Two rows drifting in opposite directions (Montoya's project06.html
+// moving-gallery) — a genuinely different rhythm from every other grid on
+// the page, closing out the imagery before Results/Next Project. The
+// duplicated "loop" half of each row is decorative only (aria-hidden,
+// plain <img>) so it never pollutes the lightbox group's real image count.
 
 export function fullGallerySection(project) {
   const all = [
@@ -461,16 +592,42 @@ export function fullGallerySection(project) {
   if (deduped.length < 3) return "";
   const L = isKa ? "სრული გალერეა" : "Full Gallery";
 
+  const half = Math.ceil(deduped.length / 2);
+  const rowA = deduped.slice(0, half);
+  const rowB = deduped.slice(half).length ? deduped.slice(half) : rowA;
+
+  const tickerRow = (imgs, dirClass) => `
+    <div class="pdx-ticker-row ${dirClass}" data-pdx-ticker>
+      <div class="pdx-ticker-track">
+        ${imgs.map((img) => `<div class="pdx-ticker-item">${frame(img, "gallery")}</div>`).join("")}
+        ${imgs.map((img) => `<div class="pdx-ticker-item" aria-hidden="true"><img src="${img.src}" alt="" loading="lazy" class="pdx-ticker-plain" /></div>`).join("")}
+      </div>
+    </div>
+  `;
+
   return `
     <section class="pdx-section pdx-full-gallery">
-      <div class="container">
-        ${sectionLabel(L)}
-        <div class="pdx-masonry">
-          ${deduped.map((img) => `<div class="pdx-masonry-item pd-reveal">${frame(img, "gallery")}</div>`).join("")}
-        </div>
-      </div>
+      <div class="container">${sectionLabel(L)}</div>
+      ${tickerRow(rowA, "pdx-ticker-fw")}
+      ${tickerRow(rowB, "pdx-ticker-bw")}
     </section>
   `;
+}
+
+export function initTicker(root) {
+  if (reduceMotion()) return;
+  const rows = root.querySelectorAll("[data-pdx-ticker]");
+  rows.forEach((row) => {
+    const track = row.querySelector(".pdx-ticker-track");
+    const isBackward = row.classList.contains("pdx-ticker-bw");
+    gsap.set(track, { xPercent: isBackward ? -50 : 0 });
+    gsap.to(track, {
+      xPercent: isBackward ? 0 : -50,
+      duration: 44,
+      ease: "none",
+      repeat: -1,
+    });
+  });
 }
 
 // ── Motion Showcase (optional) ───────────────────────────────────────────────
@@ -514,7 +671,10 @@ export function initMotion(root) {
   io.observe(video);
 }
 
-// ── Testimonial & Results (both independently data-gated) ──────────────────
+// ── Testimonial & Results ───────────────────────────────────────────────────
+// Testimonial styled as Montoya's centered "Solution" beat (double hairline
+// rule, big centered statement); Results stays a numeral grid below it.
+// Both independently data-gated.
 
 export function testimonialResultsSection(project) {
   const parts = [];
@@ -523,8 +683,9 @@ export function testimonialResultsSection(project) {
     const author = isKa ? project.testimonial.author_ka || project.testimonial.author : project.testimonial.author;
     parts.push(`
       <div class="pdx-quote pd-reveal">
-        <h4>"${quote}"</h4>
-        <p class="pdx-quote-attr">— ${author}</p>
+        <h2 class="pdx-quote-text">"${quote}"</h2>
+        <hr class="pdx-quote-hr" /><hr class="pdx-quote-hr" />
+        <p class="pdx-quote-attr">${author}</p>
       </div>
     `);
   }
@@ -546,13 +707,14 @@ export function testimonialResultsSection(project) {
   }
   if (!parts.length) return "";
 
-  return `<section class="pdx-section pdx-testimonial-results grain">${`<div class="container">${parts.join("")}</div>`}</section>`;
+  return `<section class="pdx-section pdx-testimonial-results grain"><div class="container">${parts.join("")}</div></section>`;
 }
 
 // ── Next Project: cinematic unfurl entrance + hover preview ─────────────────
 // The image un-clips from the bottom edge and settles out of a slight
 // rotation as the banner scrolls into view — a load-in moment, not just a
-// hover state — before the existing zoom-to-color hover takes over.
+// hover state. A "View All Works" link sits above it, matching Montoya's
+// project-nav pattern.
 
 export function nextProjectSection(project, projects, p) {
   const pool = projects.filter((proj) => !proj.hidden);
@@ -560,17 +722,21 @@ export function nextProjectSection(project, projects, p) {
   const next = poolIdx === -1 ? pool[0] : pool[(poolIdx + 1) % pool.length];
   if (!next) return "";
   const L = isKa ? "შემდეგი პროექტი" : "Next Project";
+  const allWorks = isKa ? "ყველა სამუშაო" : "View All Works";
 
   return `
-    <a href="${p("/project")}?slug=${next.slug}" class="pdx-next" data-cursor-label="VIEW" data-pdx-next>
-      <img src="${next.cover}" alt="" class="pdx-next-bg" data-pdx-next-bg />
-      <div class="pdx-next-scrim"></div>
-      <div class="container pdx-next-inner">
-        <span class="pdx-next-label">${L}</span>
-        <h2 class="pdx-next-title">${next.title}</h2>
-        <span class="pdx-next-arrow">↗</span>
-      </div>
-    </a>
+    <div class="pdx-next-wrap">
+      <p class="pdx-all-works"><a href="${p("/work")}" class="pdx-all-works-link">${allWorks}</a></p>
+      <a href="${p("/project")}?slug=${next.slug}" class="pdx-next" data-cursor-label="VIEW" data-pdx-next>
+        <img src="${next.cover}" alt="" class="pdx-next-bg" data-pdx-next-bg />
+        <div class="pdx-next-scrim"></div>
+        <div class="container pdx-next-inner">
+          <span class="pdx-next-label">${L}</span>
+          <h2 class="pdx-next-title">${next.title}</h2>
+          <span class="pdx-next-arrow">↗</span>
+        </div>
+      </a>
+    </div>
   `;
 }
 
@@ -620,12 +786,14 @@ export function contactCtaSection(project, p) {
 // ── Assembly ──────────────────────────────────────────────────────────────────
 
 export function designTemplate(project, projects, deps) {
-  const { heroBadge, factsRow, p } = deps;
+  const { heroBadge, p } = deps;
   return [
-    heroDesign(project, heroBadge, factsRow),
-    overviewSection(project),
+    heroDesign(project),
+    introSection(project, heroBadge),
+    briefSection(project),
     moodboardSection(project),
     processSection(project),
+    punctuationSection(project),
     brandIdentitySection(project),
     colorSystemSection(project),
     typographySection(project),
@@ -642,10 +810,11 @@ export function designTemplate(project, projects, deps) {
 
 export function initDesignTemplate(root, project) {
   initHeroDesign(root);
-  initProcess(root);
   initMotion(root);
   initLightbox(root);
   initInkFillLabels(root);
   initStampCursor(root);
   initNextUnfurl(root);
+  initParallaxPairs(root);
+  initTicker(root);
 }
