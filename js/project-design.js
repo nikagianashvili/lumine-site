@@ -18,6 +18,90 @@ function fineHover() {
   return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 }
 
+// ── Section label: scroll-driven ink fill ───────────────────────────────────
+// Every "SECTION LABEL" eyebrow renders as a pale ink outline, then fills
+// solid black as it scrolls into view — like a stencil being inked in,
+// instead of a flat static label.
+
+function sectionLabel(text) {
+  return `
+    <p class="pdx-section-label" data-pdx-ink-fill>
+      <span class="pdx-ink-fill-track">${text}</span>
+      <span class="pdx-ink-fill-solid" aria-hidden="true">${text}</span>
+    </p>
+  `;
+}
+
+function initInkFillLabels(root) {
+  const labels = root.querySelectorAll("[data-pdx-ink-fill]");
+  labels.forEach((label) => {
+    const solid = label.querySelector(".pdx-ink-fill-solid");
+    if (!solid) return;
+    if (reduceMotion()) {
+      gsap.set(solid, { clipPath: "inset(0 0% 0 0)" });
+      return;
+    }
+    gsap.set(solid, { clipPath: "inset(0 100% 0 0)" });
+    gsap.to(solid, {
+      clipPath: "inset(0 0% 0 0)",
+      ease: "none",
+      scrollTrigger: {
+        trigger: label,
+        start: "top 88%",
+        end: "top 55%",
+        scrub: 0.4,
+      },
+    });
+  });
+}
+
+// ── Ink-stamp cursor ─────────────────────────────────────────────────────────
+// A heavier companion to the sitewide cursor dot: hovering an openable frame
+// or the next-project link grows a solid ink circle that stamps a one-word
+// verb inside itself ("OPEN", "VIEW") — reads like a rubber date-stamp, and
+// stays legible over photography since it's opaque, not blend-mode-based.
+// The sitewide dot (#custom-cursor) is suppressed while this is active so
+// the two never double up.
+
+function initStampCursor(root) {
+  if (!fineHover() || reduceMotion()) return;
+
+  const cursor = document.createElement("div");
+  cursor.className = "pdx-cursor";
+  cursor.innerHTML = `<span class="pdx-cursor-label"></span>`;
+  document.body.appendChild(cursor);
+  const label = cursor.querySelector(".pdx-cursor-label");
+
+  let tx = -100,
+    ty = -100,
+    cx = tx,
+    cy = ty;
+  const onMove = (e) => {
+    tx = e.clientX;
+    ty = e.clientY;
+  };
+  window.addEventListener("mousemove", onMove, { passive: true });
+  gsap.ticker.add(() => {
+    cx += (tx - cx) * 0.16;
+    cy += (ty - cy) * 0.16;
+    cursor.style.setProperty("--sx", `${cx}px`);
+    cursor.style.setProperty("--sy", `${cy}px`);
+  });
+
+  const targets = root.querySelectorAll("[data-cursor-label]");
+  targets.forEach((el) => {
+    el.addEventListener("mouseenter", () => {
+      label.textContent = el.dataset.cursorLabel;
+      cursor.classList.add("is-active");
+      document.body.classList.add("pdx-stamp-active");
+    });
+    el.addEventListener("mouseleave", () => {
+      cursor.classList.remove("is-active");
+      document.body.classList.remove("pdx-stamp-active");
+    });
+  });
+}
+
 // ── Hero: "Title as Window" ─────────────────────────────────────────────────
 // The hero image is revealed *through* the massive title on load (CSS
 // background-clip: text), then the title recedes to a faint watermark as
@@ -100,7 +184,7 @@ export function overviewSection(project) {
     <section class="pdx-section pdx-overview">
       <div class="container pdx-overview-grid">
         <div class="pdx-overview-story">
-          <p class="pdx-section-label pd-reveal">${L.overview}</p>
+          ${sectionLabel(L.overview)}
           <p class="pdx-overview-text pd-reveal">${t(project, "brief")}</p>
         </div>
         <div class="pdx-overview-specs pd-reveal">
@@ -131,7 +215,7 @@ function normalizeImages(images) {
 
 function frame(image, group) {
   return `
-    <button type="button" class="pdx-frame" data-lightbox-group="${group}">
+    <button type="button" class="pdx-frame" data-lightbox-group="${group}" data-cursor-label="OPEN">
       <img src="${image.src}" alt="${image.alt}" loading="lazy" />
     </button>
   `;
@@ -147,7 +231,7 @@ export function moodboardSection(project) {
   return `
     <section class="pdx-section pdx-moodboard">
       <div class="container">
-        <p class="pdx-section-label pd-reveal">${L}</p>
+        ${sectionLabel(L)}
         <div class="pdx-moodboard-grid">
           ${images.map((img) => `<div class="pdx-moodboard-item pd-reveal">${frame(img, "moodboard")}</div>`).join("")}
         </div>
@@ -182,7 +266,7 @@ export function processSection(project) {
   return `
     <section class="pdx-section pdx-process">
       <div class="container">
-        <p class="pdx-section-label pd-reveal">${L}</p>
+        ${sectionLabel(L)}
         <div class="pdx-process-list">${stages}</div>
       </div>
     </section>
@@ -222,7 +306,7 @@ export function brandIdentitySection(project) {
   return `
     <section class="pdx-section pdx-brand">
       <div class="container">
-        <p class="pdx-section-label pd-reveal">${L.title}</p>
+        ${sectionLabel(L.title)}
         <div class="pdx-brand-grid">${blocks.join("")}</div>
       </div>
     </section>
@@ -279,7 +363,7 @@ export function colorSystemSection(project) {
   return `
     <section class="pdx-section pdx-colors">
       <div class="container">
-        <p class="pdx-section-label pd-reveal">${L}</p>
+        ${sectionLabel(L)}
         <div class="pdx-swatch-grid">${swatches}</div>
       </div>
     </section>
@@ -304,7 +388,7 @@ export function typographySection(project) {
   return `
     <section class="pdx-section pdx-typography">
       <div class="container">
-        <p class="pdx-section-label pd-reveal">${L.title}</p>
+        ${sectionLabel(L.title)}
         ${specimen(typ.heading, L.heading)}
         ${specimen(typ.body, L.body)}
       </div>
@@ -351,7 +435,7 @@ export function applicationsSection(project) {
   return `
     <section class="pdx-section pdx-applications">
       <div class="container">
-        <p class="pdx-section-label pd-reveal">${L}</p>
+        ${sectionLabel(L)}
         ${body}
       </div>
     </section>
@@ -378,7 +462,7 @@ export function fullGallerySection(project) {
   return `
     <section class="pdx-section pdx-full-gallery">
       <div class="container">
-        <p class="pdx-section-label pd-reveal">${L}</p>
+        ${sectionLabel(L)}
         <div class="pdx-masonry">
           ${deduped.map((img) => `<div class="pdx-masonry-item pd-reveal">${frame(img, "gallery")}</div>`).join("")}
         </div>
@@ -397,7 +481,7 @@ export function motionSection(project) {
   return `
     <section class="pdx-section pdx-motion">
       <div class="container">
-        <p class="pdx-section-label pd-reveal">${L}</p>
+        ${sectionLabel(L)}
         <video
           class="pdx-motion-video pd-reveal"
           src="${video.src}"
@@ -463,7 +547,10 @@ export function testimonialResultsSection(project) {
   return `<section class="pdx-section pdx-testimonial-results grain">${`<div class="container">${parts.join("")}</div>`}</section>`;
 }
 
-// ── Next Project: full-bleed hover preview ──────────────────────────────────
+// ── Next Project: cinematic unfurl entrance + hover preview ─────────────────
+// The image un-clips from the bottom edge and settles out of a slight
+// rotation as the banner scrolls into view — a load-in moment, not just a
+// hover state — before the existing zoom-to-color hover takes over.
 
 export function nextProjectSection(project, projects, p) {
   const pool = projects.filter((proj) => !proj.hidden);
@@ -473,8 +560,8 @@ export function nextProjectSection(project, projects, p) {
   const L = isKa ? "შემდეგი პროექტი" : "Next Project";
 
   return `
-    <a href="${p("/project")}?slug=${next.slug}" class="pdx-next">
-      <img src="${next.cover}" alt="" class="pdx-next-bg" />
+    <a href="${p("/project")}?slug=${next.slug}" class="pdx-next" data-cursor-label="VIEW" data-pdx-next>
+      <img src="${next.cover}" alt="" class="pdx-next-bg" data-pdx-next-bg />
       <div class="pdx-next-scrim"></div>
       <div class="container pdx-next-inner">
         <span class="pdx-next-label">${L}</span>
@@ -483,6 +570,32 @@ export function nextProjectSection(project, projects, p) {
       </div>
     </a>
   `;
+}
+
+export function initNextUnfurl(root) {
+  const el = root.querySelector("[data-pdx-next]");
+  if (!el) return;
+  const bg = el.querySelector("[data-pdx-next-bg]");
+  if (reduceMotion()) return;
+
+  // Ends exactly at the CSS rest state (scale(1.05), no clip) — clearProps
+  // hands control back to the stylesheet on completion so the existing
+  // hover zoom (scale(1.05) -> scale(1)) keeps working afterward instead of
+  // being pinned by a leftover inline transform.
+  gsap.set(bg, { clipPath: "inset(100% 0 0 0)", scale: 1.25, rotate: -3 });
+  gsap.to(bg, {
+    clipPath: "inset(0% 0 0 0)",
+    scale: 1.05,
+    rotate: 0,
+    duration: 1.3,
+    ease: "power3.out",
+    clearProps: "transform,clipPath",
+    scrollTrigger: {
+      trigger: el,
+      start: "top 85%",
+      once: true,
+    },
+  });
 }
 
 // ── Contact CTA — minimal, one line + button, not a duplicate of the ────────
@@ -530,4 +643,7 @@ export function initDesignTemplate(root, project) {
   initProcess(root);
   initMotion(root);
   initLightbox(root);
+  initInkFillLabels(root);
+  initStampCursor(root);
+  initNextUnfurl(root);
 }

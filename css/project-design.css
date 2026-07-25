@@ -9,14 +9,91 @@
   color: var(--d);
 }
 
+/* section label: scroll-driven ink fill — a pale outline layer sits behind
+   a solid layer that's revealed left-to-right via clip-path as the label
+   scrolls into view, like a stencil being inked in. */
 .pdx-section-label {
+  position: relative;
+  display: inline-block;
   font-family: var(--f-nm);
   font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.55;
   margin-bottom: 2rem;
+}
+
+.pdx-ink-fill-track {
+  color: rgba(23, 19, 15, 0.22);
+}
+
+.pdx-ink-fill-solid {
+  position: absolute;
+  inset: 0;
+  color: var(--d);
+  pointer-events: none;
+}
+
+/* ink-stamp cursor: a heavier companion to the sitewide cursor dot — grows
+   into a solid ink circle with a one-word verb inside on hover over
+   openable frames / the next-project link. Suppresses the sitewide dot
+   while active so the two never double up (see body.pdx-stamp-active). */
+.pdx-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20005;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-left: -1.75rem;
+  margin-top: -1.75rem;
+  border-radius: 50%;
+  border: 1px solid rgba(23, 19, 15, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transform: translate3d(var(--sx, -100px), var(--sy, -100px), 0);
+  transition:
+    width 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    height 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    margin 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.pdx-cursor-label {
+  font-family: var(--f-nm);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--l);
+  opacity: 0;
+  transition: opacity 0.25s ease 0.05s;
+}
+
+.pdx-cursor.is-active {
+  width: 5.5rem;
+  height: 5.5rem;
+  margin-left: -2.75rem;
+  margin-top: -2.75rem;
+  background-color: var(--d);
+  border-color: var(--d);
+}
+
+.pdx-cursor.is-active .pdx-cursor-label {
+  opacity: 1;
+}
+
+body.pdx-stamp-active #custom-cursor {
+  opacity: 0 !important;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .pdx-cursor {
+    display: none;
+  }
 }
 
 .pdx-frame {
