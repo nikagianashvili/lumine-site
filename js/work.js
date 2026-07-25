@@ -225,7 +225,7 @@ function reveal() {
 
 async function init() {
   if (!grid) return;
-  projects = await fetchProjects();
+  projects = (await fetchProjects()).filter((proj) => !proj.hidden);
   render();
 
   const cards = Array.from(grid.querySelectorAll(".work-card"));

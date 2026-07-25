@@ -35,7 +35,7 @@ function buildCard(project, index) {
 async function init() {
   const grid = document.getElementById("featuredGrid");
   if (!grid) return;
-  projects = await fetchProjects();
+  projects = (await fetchProjects()).filter((proj) => !proj.hidden);
   pickFeatured().forEach((proj, i) => grid.appendChild(buildCard(proj, i)));
 }
 

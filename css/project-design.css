@@ -1,0 +1,1023 @@
+/* css/project-design.css
+   Design-template-only styling — everything prefixed .pdx- to avoid any
+   collision with the shared .pd-/.cs- classes still used by the web and
+   photo-video templates. Loaded only from project.html/ka/project.html.
+
+   Ground-up rebuild referencing Montoya (ClaPat Studio)'s real project-page
+   and reference-page vocabulary, translated into ink/paper/LK-Lumina. Two
+   registers, alternated deliberately:
+   - NARRATIVE (.pdx-band, .pdx-pinned): mask-fill headline + an asymmetric
+     empty-or-image column, alternating sides — telling the story of the work.
+   - SPEC (.pdx-spec-section/.pdx-spec-block): label column + content column
+     + hairline rules — systematic/reference content (facts, brand, color, type). */
+
+/* ── color rhythm ──────────────────────────────────────────────────────────
+   Sections alternate between paper and ink deliberately (Hero/Brief/Color
+   System/Full Gallery/Testimonial/Next-Project/CTA run dark; everything
+   else stays paper) so the background actively shifts down the page
+   instead of sitting on one flat tone. Every section reads its colors
+   from --tone-fg/--tone-bg/--tone-line, so child elements that just
+   inherit `color` (labels, copy, hairlines built on these vars) flip
+   automatically when .pdx-tone-dark is added — only elements with a
+   hardcoded ink color need an explicit var() swap. */
+.pdx-section {
+  padding: 7rem 0;
+  --tone-fg: var(--d);
+  --tone-bg: var(--l);
+  --tone-line: rgba(23, 19, 15, 0.15);
+  background-color: var(--tone-bg);
+  color: var(--tone-fg);
+}
+
+.pdx-tone-dark {
+  --tone-fg: var(--l);
+  --tone-bg: var(--d);
+  --tone-line: rgba(246, 241, 231, 0.18);
+}
+
+/* ── ink fill: scroll-driven ink reveal ──────────────────────────────────
+   used both for small eyebrow labels and big narrative headlines. */
+.pdx-ink-fill {
+  position: relative;
+  display: inline-block;
+}
+
+.pdx-section-label {
+  font-family: var(--f-nm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+.pdx-band-heading {
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  line-height: 1;
+  margin: 0 0 1.5rem;
+  text-transform: none;
+}
+
+.pdx-ink-fill-track {
+  color: var(--tone-fg);
+  opacity: 0.2;
+}
+
+.pdx-ink-fill-solid {
+  position: absolute;
+  inset: 0;
+  color: var(--tone-fg);
+  pointer-events: none;
+}
+
+/* ── ink-stamp cursor ─────────────────────────────────────────────────────
+   heavier companion to the sitewide cursor dot — grows into a solid ink
+   circle with a one-word verb inside on hover. Suppresses the sitewide
+   dot while active so the two never double up. */
+.pdx-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20005;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-left: -1.75rem;
+  margin-top: -1.75rem;
+  border-radius: 50%;
+  border: 1px solid rgba(23, 19, 15, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transform: translate3d(var(--sx, -100px), var(--sy, -100px), 0);
+  transition:
+    width 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    height 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    margin 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.pdx-cursor-label {
+  font-family: var(--f-nm);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--l);
+  opacity: 0;
+  transition: opacity 0.25s ease 0.05s;
+}
+
+.pdx-cursor.is-active {
+  width: 5.5rem;
+  height: 5.5rem;
+  margin-left: -2.75rem;
+  margin-top: -2.75rem;
+  background-color: var(--d);
+  border-color: var(--d);
+}
+
+.pdx-cursor.is-active .pdx-cursor-label {
+  opacity: 1;
+}
+
+body.pdx-stamp-active #custom-cursor {
+  opacity: 0 !important;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .pdx-cursor {
+    display: none;
+  }
+}
+
+/* ── openable frame (any image wired into the lightbox) ────────────────── */
+.pdx-frame {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  cursor: zoom-in;
+  border-radius: 0.85rem;
+  background: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* real color always — this template shows off a designer's actual color
+   work, so the grayscale-until-hover convention used elsewhere on the
+   site is deliberately dropped here; contrast(1.08) stays as a print-like
+   punch-up, hover only adds a slight zoom, no color reveal needed. */
+.pdx-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.08);
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.pdx-frame:hover img,
+.pdx-frame:focus-visible img {
+  transform: scale(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pdx-frame img {
+    transition: none;
+  }
+}
+
+/* ── hero: framed color image + shuffled letter-assembly title ──────────
+   The page's first dark beat — establishes the light/dark rhythm from
+   the very top instead of opening flat. Real color image (this template
+   never desaturates the actual creative work), continuous idle breathing
+   scale so it's alive at rest, title assembles from shuffled letter
+   order beneath it. */
+.pdx-hero {
+  background-color: var(--d);
+  color: var(--l);
+  padding: 7rem 0 5rem;
+}
+
+.pdx-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.pdx-hero-media-frame {
+  width: 100%;
+  max-width: 68rem;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.45);
+}
+
+.pdx-hero-media-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.08);
+}
+
+.pdx-hero-title {
+  margin: 2.75rem 0 0;
+  font-family: var(--f-nm);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 0.94;
+  font-size: clamp(2.75rem, 8vw, 7rem);
+  color: var(--l);
+}
+
+.pdx-hero-letter {
+  display: inline-block;
+  transform-origin: 50% 100%;
+}
+
+.pdx-hero-hint {
+  display: block;
+  margin-top: 2rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--l);
+  opacity: 0.55;
+}
+
+@media (max-width: 720px) {
+  .pdx-hero {
+    padding: 6rem 0 3.5rem;
+  }
+}
+
+/* ── intro: badge + big opening line + stacked facts ────────────────────── */
+.pdx-intro-grid {
+  display: grid;
+  grid-template-columns: 6fr 5fr;
+  column-gap: 9vw;
+  align-items: start;
+}
+
+.pdx-intro-tagline {
+  margin-top: 1.5rem;
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  line-height: 1.3;
+}
+
+.pdx-intro-specs {
+  display: flex;
+  flex-direction: column;
+  margin-top: 3rem;
+  border-top: 1px solid var(--tone-line);
+}
+
+.pdx-spec-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--tone-line);
+}
+
+.pdx-spec-label {
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+}
+
+.pdx-spec-value {
+  font-weight: 500;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .pdx-intro-grid {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+    row-gap: 2.5rem;
+  }
+  .pdx-intro-specs {
+    margin-top: 0;
+  }
+}
+
+/* ── narrative band: mask-fill headline + asymmetric empty/image column ─── */
+.pdx-band {
+  padding: 6rem 0;
+}
+
+.pdx-band-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.pdx-band-right .pdx-band-content {
+  order: 2;
+}
+
+.pdx-band-num {
+  display: block;
+  font-family: var(--f-nm);
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1;
+  opacity: 0.16;
+  margin-bottom: 1rem;
+}
+
+.pdx-band-copy {
+  max-width: 32rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.7;
+  opacity: 0.65;
+}
+
+.pdx-band-image {
+  width: 100%;
+  border-radius: 0.85rem;
+  filter: contrast(1.08);
+}
+
+@media (max-width: 900px) {
+  .pdx-band-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .pdx-band-right .pdx-band-content {
+    order: 0;
+  }
+}
+
+/* ── pinned section (The Brief): sticky text beside a scrolling image ──── */
+.pdx-pinned-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.pdx-pinned-sticky {
+  position: sticky;
+  top: 8rem;
+}
+
+.pdx-pinned-scroll {
+  display: flex;
+  align-items: center;
+}
+
+.pdx-pinned-img {
+  width: 100%;
+  border-radius: 0.85rem;
+  filter: contrast(1.08);
+}
+
+@media (max-width: 900px) {
+  .pdx-pinned-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .pdx-pinned-sticky {
+    position: static;
+  }
+}
+
+/* ── moodboard: scattered, rotated corkboard collage — not a grid ────────
+   Overlapping, tilted, unevenly staggered — reads as pinned-up reference
+   material, not aligned cells. Base tilt/offset per item cycles through a
+   deterministic 6-recipe (mirrored exactly in initMoodboardSway so the
+   JS-driven idle sway starts from the same angle instead of snapping). */
+.pdx-moodboard-scatter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 2rem 0 3rem;
+}
+
+.pdx-scatter-item {
+  position: relative;
+  width: 24%;
+  min-width: 13rem;
+  aspect-ratio: 3 / 4;
+  margin: 1.5rem -1.75rem;
+  transition: transform 0.4s ease;
+}
+
+.pdx-scatter-item .pdx-frame {
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.3);
+}
+
+.pdx-scatter-item:nth-child(6n + 1) {
+  transform: rotate(-6deg) translateY(0.5rem);
+  z-index: 1;
+}
+
+.pdx-scatter-item:nth-child(6n + 2) {
+  transform: rotate(4deg) translateY(-1.5rem);
+  z-index: 2;
+}
+
+.pdx-scatter-item:nth-child(6n + 3) {
+  transform: rotate(-2deg) translateY(1.5rem);
+  z-index: 3;
+}
+
+.pdx-scatter-item:nth-child(6n + 4) {
+  transform: rotate(7deg) translateY(-0.5rem);
+  z-index: 2;
+}
+
+.pdx-scatter-item:nth-child(6n + 5) {
+  transform: rotate(-5deg) translateY(1rem);
+  z-index: 1;
+}
+
+.pdx-scatter-item:nth-child(6n) {
+  transform: rotate(3deg) translateY(-1rem);
+  z-index: 3;
+}
+
+.pdx-scatter-item:hover {
+  transform: rotate(0deg) translateY(0) scale(1.1) !important;
+  z-index: 10;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pdx-scatter-item {
+    transition: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .pdx-scatter-item {
+    width: 60%;
+    min-width: 11rem;
+    margin: 1rem auto;
+  }
+}
+
+/* ── full-bleed punctuation break — shown in full color, not hover-gated ─ */
+.pdx-punctuation {
+  position: relative;
+  height: 90svh;
+  min-height: 30rem;
+  overflow: hidden;
+  background-color: var(--d);
+}
+
+.pdx-punctuation-img {
+  position: absolute;
+  inset: -8% 0;
+  width: 100%;
+  height: 116%;
+  object-fit: cover;
+}
+
+/* ── spec section: label column + content column + hairline rules ──────── */
+.pdx-spec-section {
+  --tone-fg: var(--d);
+  --tone-bg: var(--l);
+  --tone-line: rgba(23, 19, 15, 0.15);
+  background-color: var(--tone-bg);
+  color: var(--tone-fg);
+}
+
+.pdx-spec-hr {
+  border: none;
+  border-top: 1px solid var(--tone-line);
+  margin: 0;
+}
+
+.pdx-spec-block {
+  display: grid;
+  grid-template-columns: 1fr 2.5fr;
+  gap: 3rem;
+  padding: 5rem 0;
+}
+
+.pdx-spec-block-label h5 {
+  font-family: var(--f-nm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .pdx-spec-block {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 3.5rem 0;
+  }
+}
+
+.pdx-brand-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.pdx-brand-block {
+  margin: 0;
+}
+
+.pdx-brand-block img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background-color: var(--white);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.pdx-brand-block figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.55;
+}
+
+.pdx-brand-block-incorrect img {
+  outline: 1px solid rgba(178, 46, 26, 0.4);
+}
+
+@media (max-width: 720px) {
+  .pdx-brand-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.pdx-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 2rem;
+}
+
+.pdx-swatch-block {
+  height: 10rem;
+  border-radius: 0.75rem;
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.pdx-swatch:hover .pdx-swatch-block {
+  transform: scale(1.03);
+}
+
+.pdx-swatch-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 1rem;
+  font-family: var(--f-nm);
+}
+
+.pdx-swatch-name {
+  font-weight: 600;
+}
+
+.pdx-swatch-hex,
+.pdx-swatch-cmyk,
+.pdx-swatch-contrast {
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.pdx-type-specimen {
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--tone-line);
+}
+
+.pdx-type-specimen:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.pdx-type-role {
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+}
+
+.pdx-type-sample {
+  font-size: clamp(3rem, 9vw, 8rem);
+  line-height: 1;
+  margin: 1rem 0;
+}
+
+.pdx-type-name {
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+/* ── applications: visitor-driven horizontal scroll-snap, not a grid ────
+   A different mechanic from both the moodboard scatter (static, overlapping)
+   and the full-gallery ticker (passive auto-drift) — here scrolling is the
+   visitor's own, one deliverable presented at a time. Track's left padding
+   matches .container's exact gutter (max-width:2000px, padding:2.5rem) so
+   the first card lines up with the section label above it. */
+.pdx-app-scroll {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.pdx-app-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.pdx-app-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  padding: 1rem max(2.5rem, calc((100vw - 2000px) / 2 + 2.5rem)) 1rem max(2.5rem, calc((100vw - 2000px) / 2 + 2.5rem));
+}
+
+.pdx-app-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  width: min(60vw, 26rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pdx-app-card .pdx-frame {
+  aspect-ratio: 4 / 5;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.22);
+}
+
+.pdx-app-card-label {
+  font-family: var(--f-nm);
+  font-size: 0.8rem;
+  text-transform: capitalize;
+  letter-spacing: 0.05em;
+  opacity: 0.55;
+}
+
+@media (max-width: 720px) {
+  .pdx-app-card {
+    width: min(78vw, 20rem);
+  }
+}
+
+/* ── full gallery: horizontal moving ticker, two rows, opposite drift ──── */
+.pdx-full-gallery {
+  overflow: hidden;
+}
+
+.pdx-ticker-row {
+  overflow: hidden;
+  margin-top: 1.5rem;
+}
+
+.pdx-ticker-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+}
+
+.pdx-ticker-item {
+  flex-shrink: 0;
+  width: 22rem;
+  aspect-ratio: 4 / 5;
+}
+
+.pdx-ticker-plain {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.85rem;
+  filter: contrast(1.08);
+}
+
+@media (max-width: 720px) {
+  .pdx-ticker-item {
+    width: 15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pdx-ticker-track {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
+
+.pdx-motion-video {
+  width: 100%;
+  border-radius: 1rem;
+  filter: contrast(1.08);
+}
+
+/* ── testimonial: centered statement, double hairline rule ──────────────── */
+.pdx-quote {
+  max-width: 56rem;
+  margin: 0 auto 4rem;
+  text-align: center;
+}
+
+.pdx-quote-text {
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+  line-height: 1.3;
+  text-transform: none;
+}
+
+.pdx-quote-hr {
+  width: 3rem;
+  margin: 1.5rem auto 0;
+  border: none;
+  border-top: 1px solid var(--tone-line);
+}
+
+.pdx-quote-hr + .pdx-quote-hr {
+  margin-top: 0.4rem;
+}
+
+.pdx-quote-attr {
+  margin-top: 1.5rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.pdx-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 2rem;
+  text-align: center;
+}
+
+.pdx-result h3 {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.pdx-result p {
+  margin-top: 0.5rem;
+  opacity: 0.7;
+}
+
+@media (max-width: 720px) {
+  .pdx-results-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── next project: cinematic unfurl + "View All Works" ─────────────────── */
+.pdx-next-wrap {
+  position: relative;
+}
+
+.pdx-all-works {
+  position: absolute;
+  z-index: 2;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+}
+
+.pdx-all-works-link {
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--l);
+  opacity: 0.75;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(246, 241, 231, 0.4);
+  transition: opacity 0.3s ease;
+}
+
+.pdx-all-works-link:hover {
+  opacity: 1;
+}
+
+.pdx-next {
+  position: relative;
+  display: block;
+  height: 70svh;
+  min-height: 26rem;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--white);
+}
+
+.pdx-next-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.05);
+  transform: scale(1.05);
+  transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.pdx-next:hover .pdx-next-bg {
+  transform: scale(1);
+}
+
+.pdx-next-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(23, 19, 15, 0.75), rgba(23, 19, 15, 0.15));
+}
+
+.pdx-next-inner {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-bottom: 3rem;
+}
+
+.pdx-next-label {
+  font-family: var(--f-nm);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+}
+
+.pdx-next-title {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.pdx-next:hover .pdx-next-title {
+  transform: translateX(1rem);
+}
+
+.pdx-next-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 4rem;
+  height: 4rem;
+  font-size: 1.5rem;
+  border: 1px solid rgba(246, 241, 231, 0.4);
+  border-radius: 50%;
+  transition:
+    transform 0.5s cubic-bezier(0.65, 0, 0.35, 1),
+    background-color 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease;
+}
+
+.pdx-next:hover .pdx-next-arrow {
+  transform: rotate(45deg);
+  background-color: var(--l);
+  color: var(--d);
+  border-color: var(--l);
+}
+
+/* ── contact CTA — minimal, one line + button ───────────────────────────── */
+.pdx-cta {
+  padding: 6rem 0;
+  background-color: var(--d);
+  color: var(--l);
+  text-align: center;
+}
+
+.pdx-cta-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.pdx-cta-line {
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+  max-width: 36rem;
+}
+
+/* ── image lightbox (js/pd-lightbox.js): full-screen modal opened from any
+   .pdx-frame. z-index is set above every other fixed layer in the site
+   (chat-widget 15000, preloader/split-overlay/tags-overlay 10000, nav 100,
+   #custom-cursor 20001) so the modal covers the nav and everything else. ── */
+.pdx-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 20010;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdx-lightbox-scrim {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(23, 19, 15, 0.92);
+}
+
+.pdx-lightbox-img {
+  position: relative;
+  z-index: 1;
+  max-width: min(90vw, 80rem);
+  max-height: 86vh;
+  object-fit: contain;
+  border-radius: 0.5rem;
+}
+
+.pdx-lightbox-nav,
+.pdx-lightbox-close {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0;
+  border: 1px solid rgba(246, 241, 231, 0.4);
+  border-radius: 50%;
+  background: none;
+  color: var(--l);
+  font-family: var(--f-nm);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+    background-color 0.4s ease,
+    color 0.4s ease;
+}
+
+.pdx-lightbox-nav:hover,
+.pdx-lightbox-close:hover {
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.pdx-lightbox-prev {
+  left: 2rem;
+}
+
+.pdx-lightbox-next {
+  right: 2rem;
+}
+
+.pdx-lightbox-close {
+  top: 2rem;
+  right: 2rem;
+  font-size: 1rem;
+}
+
+.pdx-lightbox-counter {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 2rem;
+  transform: translateX(-50%);
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--l);
+  opacity: 0.65;
+}
+
+body.pdx-lightbox-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pdx-lightbox-nav,
+  .pdx-lightbox-close {
+    transition: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .pdx-lightbox-nav,
+  .pdx-lightbox-close {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+
+  .pdx-lightbox-prev {
+    left: 0.75rem;
+  }
+
+  .pdx-lightbox-next {
+    right: 0.75rem;
+  }
+
+  .pdx-lightbox-close {
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .pdx-lightbox-counter {
+    bottom: 1rem;
+    font-size: 0.75rem;
+  }
+}
