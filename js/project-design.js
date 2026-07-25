@@ -6,15 +6,9 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { initLightbox } from "/js/pd-lightbox.js";
+import { isKa, t, p } from "/js/project.js";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
-
-function t(project, field) {
-  if (isKa && project[`${field}_ka`] !== undefined) return project[`${field}_ka`];
-  return project[field];
-}
 
 function reduceMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;

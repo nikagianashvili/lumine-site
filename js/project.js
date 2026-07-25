@@ -2,16 +2,17 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { getServiceType } from "/js/projects-data.js";
 import { fetchProjects } from "/js/api-client.js";
+import { designTemplate as buildDesignTemplate, initDesignTemplate } from "/js/project-design.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
 let projects = [];
 const getProject = (slug) => projects.find((proj) => proj.slug === slug);
 
-const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
-const p = (route) => (isKa ? `/ka${route}` : route);
+export const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
+export const p = (route) => (isKa ? `/ka${route}` : route);
 
-const L = isKa
+export const L = isKa
   ? {
       client: "კლიენტი",
       industry: "ინდუსტრია",
@@ -57,7 +58,7 @@ const L = isKa
 
 // Picks `${field}_ka` when present and the page is under /ka/, otherwise
 // the English field.
-function t(project, field) {
+export function t(project, field) {
   if (isKa && project[`${field}_ka`] !== undefined) return project[`${field}_ka`];
   return project[field];
 }
@@ -66,13 +67,13 @@ function t(project, field) {
 // Goal (per brief): screenshot the hero of each type side by side and the
 // type should be readable without reading a word of copy.
 
-function heroBadge(project) {
+export function heroBadge(project) {
   const type = getServiceType(project.serviceType);
   const label = isKa ? type.label_ka : type.label;
   return `<span class="pd-hero-badge" style="background-color:${type.color};color:${type.onColor}">${label}</span>`;
 }
 
-function factsRow(project) {
+export function factsRow(project) {
   const status = isKa ? project.status_ka || project.status : project.status;
   return `
     <div class="pd-hero-facts">
@@ -146,42 +147,6 @@ function heroPhotoVideo(project) {
         ${heroBadge(project)}
         <h2 class="pd-reveal">${project.title}</h2>
         <p class="pd-hero-tagline pd-reveal">${tagline}</p>
-        ${factsRow(project)}
-      </div>
-    </section>
-  `;
-}
-
-// graphic design: title on flat paper, then an asymmetric collage — one
-// tall piece + two stacked — a portfolio wall, not one photograph.
-function heroDesign(project) {
-  const tagline = t(project, "heroTagline") || t(project, "blurb");
-  const mood = project.moodboardImages || [];
-  const tall = project.cover;
-  const a = mood[1] || mood[0] || project.cover;
-  const b = mood[2] || mood[0] || project.cover;
-
-  return `
-    <section class="pd-hero pd-hero-design">
-      <div class="container">
-        ${heroBadge(project)}
-        <h2 class="pd-reveal">${project.title}</h2>
-        <p class="pd-hero-tagline pd-reveal">${tagline}</p>
-
-        <div class="pd-collage pd-reveal">
-          <div class="pd-collage-item pd-collage-tall">
-            <img src="${tall}" alt="${project.title}" />
-          </div>
-          <div class="pd-collage-item pd-collage-a">
-            <img src="${a}" alt="" loading="lazy" />
-          </div>
-          <div class="pd-collage-item pd-collage-b">
-            <img src="${b}" alt="" loading="lazy" />
-          </div>
-        </div>
-      </div>
-
-      <div class="container">
         ${factsRow(project)}
       </div>
     </section>
@@ -371,21 +336,10 @@ function photoVideoTemplate(proj) {
   ].join("");
 }
 
-function designTemplate(proj) {
-  return [
-    heroDesign(proj),
-    phaseSection(L.theBrief, `<h6 class="pd-reveal">${t(proj, "brief")}</h6>`),
-    imageSection(L.conceptMoodboard, proj.moodboardImages, true),
-    imageSection(L.finalDeliverables, proj.deliverablesImages, true),
-    quoteSection(proj.testimonial),
-    nextSection(proj),
-  ].join("");
-}
-
 const TEMPLATES = {
   web: webTemplate,
   "photo-video": photoVideoTemplate,
-  design: designTemplate,
+  design: (proj) => buildDesignTemplate(proj, projects, { heroBadge, factsRow, p }),
 };
 
 // ── reveal animation for injected content ────────────────────────────────────
@@ -435,6 +389,7 @@ async function init() {
   gsap.set(main.querySelectorAll(".pd-reveal"), { opacity: 0, y: 30 });
   requestAnimationFrame(() => {
     initReveals(main);
+    if (project.serviceType === "design") initDesignTemplate(main, project);
     ScrollTrigger.refresh();
   });
 }
