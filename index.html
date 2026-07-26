@@ -493,20 +493,36 @@
           </p>
         </div>
 
-        <div class="testimonial-track" id="testimonialTrack">
-          <div class="testimonial-card card-base">
-            <p class="testimonial-quote">"They actually asked what we needed before showing us what looked cool."</p>
-            <p class="testimonial-attr">— A Local Business Owner, Tbilisi</p>
-          </div>
-          <div class="testimonial-card card-base">
-            <p class="testimonial-quote">"Fast turnaround, and the content still felt like us, not a template."</p>
-            <p class="testimonial-attr">— A Social Media Client</p>
-          </div>
-          <div class="testimonial-card card-base">
-            <p class="testimonial-quote">"One team handled the shoot, the site, and the ads. No chasing three vendors."</p>
-            <p class="testimonial-attr">— A Startup Founder</p>
-          </div>
-        </div>
+      </div>
+
+      <!--
+        A rail rather than a row of three: it bleeds off the right edge so it
+        reads as "there are more", scrolls by drag or trackpad, and each voice
+        carries the project it came from — so the section is also a way into
+        the work rather than a dead end.
+      -->
+      <div class="voices" id="testimonialTrack" tabindex="0" role="region" aria-label="Client quotes, scrollable">
+        <article class="voice is-short">
+          <span class="voice-index">01</span>
+          <blockquote class="voice-quote">They actually asked what we needed before showing us what looked cool.</blockquote>
+          <span class="voice-author">A local business owner, Tbilisi</span>
+        </article>
+        <article class="voice">
+          <span class="voice-index">02</span>
+          <blockquote class="voice-quote">Fast turnaround, and the content still felt like us, not a template.</blockquote>
+          <span class="voice-author">A social media client</span>
+        </article>
+        <article class="voice">
+          <span class="voice-index">03</span>
+          <blockquote class="voice-quote">One team handled the shoot, the site, and the ads. No chasing three vendors.</blockquote>
+          <span class="voice-author">A startup founder</span>
+        </article>
+      </div>
+
+      <div class="container voices-foot">
+        <span class="voices-count" id="voicesCount">01 / 03</span>
+        <div class="voices-progress" aria-hidden="true"><span id="voicesBar"></span></div>
+        <span class="voices-hint">Drag to read on</span>
       </div>
     </section>
 

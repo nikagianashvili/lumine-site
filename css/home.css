@@ -948,45 +948,202 @@ html[lang="ka"] .service-name {
   gap: var(--sp-3);
 }
 
-/* Pull-quotes set in columns, divided by hairlines — they used to be tilted
-   rounded cards on shadows, a third visual language on the same page. */
-.testimonial-track {
+/* — client voices: a draggable rail —
+   Three columns of equal quotes read as a wall of text. Set at a size that
+   follows the length of what was actually said, the rail gets a rhythm: a
+   short line lands like a headline, a longer one settles back. */
+.voices {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  /* bleeds off the right edge so it reads as "there is more" */
+  padding: 0 0 0 2.5rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  cursor: grab;
+}
+
+.voices::-webkit-scrollbar {
+  display: none;
+}
+
+.voices.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+}
+
+.voices:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+}
+
+.voice {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  width: min(34rem, 78vw);
+  padding: var(--sp-4) var(--sp-4) var(--sp-3) 0;
+  scroll-snap-align: start;
   border-top: 1px solid rgba(23, 19, 15, 0.28);
 }
 
-.testimonial-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: var(--sp-4);
-  min-height: 18rem;
-  padding: var(--sp-3) var(--sp-3) var(--sp-3) 0;
-}
-
-.testimonial-card + .testimonial-card {
-  padding-left: var(--sp-3);
+.voice + .voice {
+  padding-left: var(--sp-4);
   border-left: 1px solid rgba(23, 19, 15, 0.28);
 }
 
-.testimonial-quote {
-  position: relative;
+/* the whole record links through when the quote belongs to a project */
+a.voice {
+  text-decoration: none;
+  color: inherit;
+}
+
+.voice-index {
+  font-family: var(--f-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+
+.voice-quote {
+  flex: 1;
   font-family: var(--f-h);
-  font-size: clamp(1.4rem, 2vw, 1.85rem);
-  line-height: 1.08;
+  font-weight: 700;
+  font-size: clamp(1.35rem, 1.9vw, 1.75rem);
+  line-height: 1.14;
   text-transform: none;
   color: var(--accent-deep);
 }
 
-html[lang="ka"] .testimonial-quote {
-  line-height: 1.3;
+/* size follows what was said — the section's whole typographic idea */
+.voice.is-short .voice-quote {
+  font-size: clamp(1.7rem, 2.9vw, 2.75rem);
+  line-height: 1.05;
 }
 
-.testimonial-attr {
+.voice.is-long .voice-quote {
+  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+  line-height: 1.25;
+}
+
+.voice-quote::before {
+  content: "“";
+  color: var(--accent);
+  margin-right: 0.05em;
+}
+
+.voice-quote::after {
+  content: "”";
+  color: var(--accent);
+}
+
+html[lang="ka"] .voice-quote {
+  line-height: 1.35;
+}
+
+.voice-author {
   font-family: var(--f-mono);
   font-size: 0.75rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   opacity: 0.55;
+}
+
+/* the project this voice came from */
+.voice-project {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-top: var(--sp-3);
+  border-top: 1px solid rgba(23, 19, 15, 0.18);
+}
+
+.voice-plate {
+  flex: 0 0 auto;
+  width: 3.5rem;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--r-sm);
+  background-color: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(23, 19, 15, 0.18);
+}
+
+.voice-plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.voice-project-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.voice-project-label {
+  font-family: var(--f-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.voice-project-name {
+  font-family: var(--f-nm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+a.voice:hover .voice-project-name {
+  color: var(--accent);
+}
+
+/* — foot: position, progress, invitation — */
+.voices-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding-top: var(--sp-3);
+}
+
+.voices-count,
+.voices-hint {
+  flex: 0 0 auto;
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.voices-progress {
+  flex: 1;
+  height: 2px;
+  background-color: rgba(23, 19, 15, 0.18);
+}
+
+.voices-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background-color: var(--accent);
+}
+
+@media (max-width: 1000px) {
+  .voices {
+    padding-left: 2rem;
+  }
+
+  .voices-hint {
+    display: none;
+  }
 }
 
 /* — statistics — */
