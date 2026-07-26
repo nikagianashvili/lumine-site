@@ -328,6 +328,7 @@ footer .footer-cta-heading {
   color: var(--d);
   background: none;
   border: 1px solid rgba(23, 19, 15, 0.35);
+  border-radius: 50%;
   cursor: pointer;
   transition:
     background-color 0.3s ease,

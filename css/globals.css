@@ -24,6 +24,13 @@
      counters) sets in DM Mono instead */
   --f-mono: "DM Mono", "Courier New", monospace;
 
+  /* — corner radius —
+     One scale so every framed thing on the site rounds by the same amount:
+     --r  boxes that hold an image or a block of content
+     --r-sm  small chips, inputs, markers */
+  --r: 0.85rem;
+  --r-sm: 0.5rem;
+
   /* — spacing scale — */
   --sp-1: 0.5rem;
   --sp-2: 1rem;

@@ -345,7 +345,8 @@ html.js .ident{display:grid}
 }
 
 /* --- figures --- */
-.fig{position:relative;overflow:hidden}
+.fig{position:relative;overflow:hidden;border-radius:var(--r)}
+.toc-preview-inner{border-radius:var(--r)}
 /* real artwork from the delivered identity */
 .fig-photo{background:var(--paper);box-shadow:0 0 0 1px rgba(23,17,15,.18)}
 .fig-photo img{width:100%;height:auto;display:block}

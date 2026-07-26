@@ -316,6 +316,7 @@ body {
   letter-spacing: -0.02em;
   color: var(--d);
   background-color: var(--l);
+  border-radius: var(--r-sm);
   opacity: 0;
   transform: translateY(-0.25rem);
   transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
@@ -331,6 +332,7 @@ body {
   overflow: hidden;
   aspect-ratio: 4 / 3;
   background-color: var(--white);
+  border-radius: var(--r);
   box-shadow: inset 0 0 0 1px rgba(23, 19, 15, 0.18);
   transition: box-shadow 0.5s ease;
 }
@@ -465,6 +467,7 @@ body {
 .stack-poster {
   position: absolute;
   overflow: hidden;
+  border-radius: var(--r-sm);
   box-shadow: 0 0 0 1px rgba(23, 19, 15, 0.18);
   transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -533,6 +536,7 @@ body {
   width: 0.5rem;
   height: 0.5rem;
   flex-shrink: 0;
+  border-radius: 50%;
   box-shadow: inset 0 0 0 1px rgba(23, 19, 15, 0.25);
 }
 

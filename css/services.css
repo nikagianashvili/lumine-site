@@ -27,6 +27,7 @@ body {
   color: var(--d);
   background-color: var(--l);
   border: 1px solid var(--d);
+  border-radius: var(--r-sm);
   opacity: 0;
   transform: translateY(0.5rem);
   transition:
@@ -186,6 +187,7 @@ body {
   overflow: hidden;
   opacity: 0;
   border: 1px solid var(--d);
+  border-radius: var(--r);
   pointer-events: none;
   will-change: transform, opacity;
 }

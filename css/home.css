@@ -441,6 +441,7 @@ html[lang="ka"] .section-head h3 {
   overflow: hidden;
   text-decoration: none;
   color: var(--d);
+  border-radius: var(--r);
   box-shadow: inset 0 0 0 1px rgba(23, 19, 15, 0.2);
   transition: box-shadow 0.45s ease;
 }
@@ -620,11 +621,12 @@ html[lang="ka"] .service-name {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: minmax(15rem, auto);
-  gap: 0;
-  border-top: 1px solid rgba(23, 19, 15, 0.28);
-  border-left: 1px solid rgba(23, 19, 15, 0.28);
+  gap: var(--sp-2);
 }
 
+/* Outlined and rounded rather than filled and floating: the cells keep a
+   hairline frame and sit on the paper, so they read as part of the page
+   instead of hovering above it. */
 .bento-cell {
   position: relative;
   display: flex;
@@ -634,8 +636,8 @@ html[lang="ka"] .service-name {
   padding: var(--sp-3);
   overflow: hidden;
   background-color: transparent;
-  border-right: 1px solid rgba(23, 19, 15, 0.28);
-  border-bottom: 1px solid rgba(23, 19, 15, 0.28);
+  border: 1px solid rgba(23, 19, 15, 0.28);
+  border-radius: var(--r);
   transition: background-color 0.4s ease;
 }
 
