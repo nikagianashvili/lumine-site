@@ -408,37 +408,69 @@
           </h3>
         </div>
 
-        <div class="process-list">
-          <div class="process-step">
-            <span class="process-step-index">01</span>
-            <h6>Discovery</h6>
-            <p>Understanding the brand, the audience, and what success looks like.</p>
-          </div>
-          <div class="process-step">
-            <span class="process-step-index">02</span>
-            <h6>Strategy</h6>
-            <p>A plan for the services, formats, and channels that fit.</p>
-          </div>
-          <div class="process-step">
-            <span class="process-step-index">03</span>
-            <h6>Design</h6>
-            <p>Concepts you can react to, refined until they're right.</p>
-          </div>
-          <div class="process-step">
-            <span class="process-step-index">04</span>
-            <h6>Development</h6>
-            <p>Building it — photo, video, design, or code.</p>
-          </div>
-          <div class="process-step">
-            <span class="process-step-index">05</span>
-            <h6>Launch</h6>
-            <p>Shipped, tested, and live.</p>
-          </div>
-          <div class="process-step">
-            <span class="process-step-index">06</span>
-            <h6>Growth</h6>
-            <p>Ongoing content, marketing, and support after launch.</p>
-          </div>
+        <!--
+          The route: a single line drawn by scroll that meanders between the
+          six stages, with the brand mark travelling at its head. Steps sit on
+          alternating sides of it, and each node fills as the line reaches it,
+          so progress through the journey is readable at any scroll position.
+          The SVG is decorative — the steps themselves are the real content.
+        -->
+        <div class="process-route">
+          <svg class="route-svg" viewBox="0 0 1000 1560" preserveAspectRatio="none" aria-hidden="true">
+            <path
+              class="route-track"
+              d="M500 40 C 500 150, 200 170, 200 280 C 200 390, 800 410, 800 520 C 800 630, 200 650, 200 760 C 200 870, 800 890, 800 1000 C 800 1110, 200 1130, 200 1240 C 200 1350, 500 1370, 500 1520"
+            />
+            <path
+              class="route-line"
+              d="M500 40 C 500 150, 200 170, 200 280 C 200 390, 800 410, 800 520 C 800 630, 200 650, 200 760 C 200 870, 800 890, 800 1000 C 800 1110, 200 1130, 200 1240 C 200 1350, 500 1370, 500 1520"
+            />
+          </svg>
+
+          <span class="route-head" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+            </svg>
+          </span>
+
+          <ol class="process-list">
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">01</span>
+              <h6>Discovery</h6>
+              <p>Understanding the brand, the audience, and what success looks like.</p>
+            </li>
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">02</span>
+              <h6>Strategy</h6>
+              <p>A plan for the services, formats, and channels that fit.</p>
+            </li>
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">03</span>
+              <h6>Design</h6>
+              <p>Concepts you can react to, refined until they're right.</p>
+            </li>
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">04</span>
+              <h6>Development</h6>
+              <p>Building it — photo, video, design, or code.</p>
+            </li>
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">05</span>
+              <h6>Launch</h6>
+              <p>Shipped, tested, and live.</p>
+            </li>
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">06</span>
+              <h6>Growth</h6>
+              <p>Ongoing content, marketing, and support after launch.</p>
+            </li>
+          </ol>
         </div>
       </div>
     </section>

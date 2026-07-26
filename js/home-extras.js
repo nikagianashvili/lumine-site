@@ -85,6 +85,68 @@ function initServicePreviews() {
   section.addEventListener("mouseleave", hide);
 }
 
+// ── process: the route draws itself ──────────────────────────────────────────
+// The line is drawn by scroll position rather than by a timed animation, so
+// the visitor is the one moving the project through the studio. The brand
+// mark rides the head of the line via getPointAtLength, and each stage marks
+// itself reached as the line passes its node — which is what turns a list of
+// six labels into a journey with a position in it.
+
+function initProcessRoute() {
+  const route = document.querySelector(".process-route");
+  const line = route?.querySelector(".route-line");
+  const head = route?.querySelector(".route-head");
+  const steps = route ? [...route.querySelectorAll(".process-step")] : [];
+  if (!route || !line || !steps.length) return;
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const narrow = () => window.matchMedia("(max-width: 1000px)").matches;
+
+  // Reduced motion, or the mobile rail: show the finished state and stop.
+  if (reduced || narrow()) {
+    line.style.strokeDasharray = "none";
+    steps.forEach((s) => s.classList.add("is-reached"));
+    return;
+  }
+
+  const total = line.getTotalLength();
+  line.style.strokeDasharray = String(total);
+  line.style.strokeDashoffset = String(total);
+
+  // Each step is "reached" at the fraction of the path level with its node.
+  const marks = steps.map((_, i) => (i + 0.5) / steps.length);
+
+  const draw = (p) => {
+    const clamped = Math.max(0, Math.min(1, p));
+    line.style.strokeDashoffset = String(total * (1 - clamped));
+
+    if (head) {
+      const pt = line.getPointAtLength(total * clamped);
+      // the path is drawn in viewBox units and stretched by the SVG's box,
+      // so convert through the rendered size rather than assuming 1:1
+      const box = line.getBoundingClientRect();
+      const vb = line.ownerSVGElement.viewBox.baseVal;
+      const sx = box.width / vb.width;
+      const sy = box.height / vb.height;
+      head.style.transform = `translate(${pt.x * sx}px, ${pt.y * sy}px)`;
+      head.style.opacity = clamped > 0.01 && clamped < 0.995 ? "1" : "0";
+    }
+
+    steps.forEach((s, i) => s.classList.toggle("is-reached", clamped >= marks[i]));
+  };
+
+  draw(0);
+
+  ScrollTrigger.create({
+    trigger: route,
+    start: "top 78%",
+    end: "bottom 65%",
+    scrub: 0.5,
+    invalidateOnRefresh: true,
+    onUpdate: (self) => draw(self.progress),
+  });
+}
+
 // ── stats: count-up on scroll ────────────────────────────────────────────────
 
 function initStatsCountUp() {
@@ -169,6 +231,7 @@ export function initMagneticButtons() {
 
 function init() {
   initServicePreviews();
+  initProcessRoute();
   initStatsCountUp();
   initManifestoParallax();
   initMagneticButtons();

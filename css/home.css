@@ -729,10 +729,12 @@ html[lang="ka"] .service-name {
   filter: grayscale(0) contrast(1);
 }
 
-/* wider than its neighbours, but built the same way as them */
+/* wider than its neighbours, but built the same way as them. It hugs its
+   content rather than inheriting the row minimum — at full width that
+   minimum opened a void between the index and the heading. */
 .bento-wide {
   grid-column: span 4;
-  min-height: 11rem;
+  min-height: auto;
 }
 
 /* the section's action, closing the grid rather than sitting inside it */
@@ -777,28 +779,136 @@ html[lang="ka"] .service-name {
   flex-direction: column;
 }
 
-/* six one-line rows had been the airiest block on the page; the row padding
-   and the oversized index carried most of that height */
-.process-step {
-  display: grid;
-  grid-template-columns: 4rem 1fr 2fr;
-  align-items: center;
-  gap: var(--sp-3);
-  padding: var(--sp-2) 0;
-  border-top: 1px solid rgba(246, 241, 231, 0.2);
+/* — process: the route —
+   A drawn line that meanders between the six stages while the brand mark
+   travels at its head. Steps alternate sides of the line; each node fills
+   as the line reaches it, so how far through the journey you are stays
+   readable at any scroll position. */
+.process-route {
+  position: relative;
+  margin-top: var(--sp-4);
 }
 
-.process-list .process-step:last-child {
-  border-bottom: 1px solid rgba(246, 241, 231, 0.2);
+.route-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.route-track,
+.route-line {
+  fill: none;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+}
+
+/* the unwalked route, faint */
+.route-track {
+  stroke: rgba(246, 241, 231, 0.16);
+}
+
+/* the walked route, drawn by scroll */
+.route-line {
+  stroke: var(--accent);
+}
+
+.route-head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin: -0.8rem 0 0 -0.8rem;
+  color: var(--accent);
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.route-head svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  animation: sparkle-spin 8s linear infinite;
+}
+
+.process-list {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 6vh, 5rem);
+  list-style: none;
+}
+
+.process-step {
+  position: relative;
+  width: min(38%, 27rem);
+  padding: var(--sp-3);
+  background-color: rgba(23, 19, 15, 0.55);
+  border: 1px solid rgba(246, 241, 231, 0.16);
+  border-radius: var(--r);
+  backdrop-filter: blur(2px);
+  transition:
+    border-color 0.5s ease,
+    transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* alternate sides so the line has something to meander between */
+.process-step:nth-child(odd) {
+  align-self: flex-start;
+  text-align: left;
+}
+
+.process-step:nth-child(even) {
+  align-self: flex-end;
+  text-align: right;
+}
+
+/* the stage the line has reached */
+.process-step.is-reached {
+  border-color: rgba(242, 84, 45, 0.55);
+}
+
+.process-node {
+  position: absolute;
+  top: 50%;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background-color: var(--d);
+  border: 2px solid rgba(246, 241, 231, 0.35);
+  transform: translateY(-50%);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.process-step:nth-child(odd) .process-node {
+  right: -2.6rem;
+}
+
+.process-step:nth-child(even) .process-node {
+  left: -2.6rem;
+}
+
+.process-step.is-reached .process-node {
+  background-color: var(--accent);
+  border-color: var(--accent);
 }
 
 .process-step-index {
-  font-family: var(--f-h);
-  font-size: clamp(2.5rem, 4vw, 4rem);
-  line-height: 0.85;
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--l);
-  opacity: 0.5;
+  display: block;
+  font-family: var(--f-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
 }
 
 .process-step h6 {
@@ -806,9 +916,37 @@ html[lang="ka"] .service-name {
 }
 
 .process-step p {
+  margin-top: 0.5rem;
   opacity: 0.7;
   text-transform: none;
-  text-align: right;
+}
+
+@media (max-width: 1000px) {
+  /* the meander collapses to a straight rail on the left, steps to its right */
+  .route-svg,
+  .route-head {
+    display: none;
+  }
+
+  .process-list {
+    gap: var(--sp-3);
+    padding-left: 1.6rem;
+    border-left: 2px solid rgba(246, 241, 231, 0.18);
+  }
+
+  .process-step,
+  .process-step:nth-child(odd),
+  .process-step:nth-child(even) {
+    width: 100%;
+    align-self: stretch;
+    text-align: left;
+  }
+
+  .process-step:nth-child(odd) .process-node,
+  .process-step:nth-child(even) .process-node {
+    left: -2.15rem;
+    right: auto;
+  }
 }
 
 /* — testimonials — */
