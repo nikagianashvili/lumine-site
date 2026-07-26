@@ -44,10 +44,29 @@ html::before {
   }
 }
 
+/* Ink behind the page for the whole exit.
+
+   Without this the page appears to come apart on its way out. A body
+   background propagates to the canvas while <html> has none of its own, so
+   `background-color` on body paints the whole viewport rather than the body
+   box — and a transform on body then moves the content while that painted
+   field stays exactly where it is. The page looks like it is running up over
+   its own background, with nothing behind it but the veil still climbing.
+
+   Giving html a background stops the propagation. From that moment body
+   paints and carries its own background, so the page lifts as one slab and
+   what it uncovers is ink, immediately, rather than the paper it was just
+   sitting on. Every page sets its own body background (globals var(--l),
+   the case studies var(--paper)), so none of them are left transparent. */
+html.pt-leaving {
+  background-color: var(--d, #17130f);
+}
+
 /* leaving: the ink climbs back in from the bottom. js/page-transition.js
-   sets the class and waits for this to end before letting the browser go. */
+   sets the class and waits for this to end before letting the browser go.
+   Eased to leave fast, so the viewport is mostly ink early on. */
 html.pt-leaving::before {
-  animation: ptCover 0.7s cubic-bezier(0.87, 0, 0.13, 1) both;
+  animation: ptCover 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes ptCover {
@@ -62,9 +81,14 @@ html.pt-leaving::before {
 /* …and the page recedes behind it, which is the old
    ::view-transition-old(root) `move-out`: lift and dim, same distance and
    same darkness as before. Fixed children (nav, chat launcher) travel with
-   it, exactly as they did inside the old snapshot. */
+   it, exactly as they did inside the old snapshot.
+
+   This one eases *in* while the ink eases out — the page holds still long
+   enough for the ink to climb over it, then does most of its travelling
+   behind cover. Matched durations with opposite easings is what keeps the
+   lift from being the thing you watch. */
 html.pt-leaving body {
-  animation: ptLift 0.7s cubic-bezier(0.87, 0, 0.13, 1) both;
+  animation: ptLift 0.6s cubic-bezier(0.55, 0, 1, 0.45) both;
 }
 
 @keyframes ptLift {
