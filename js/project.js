@@ -104,7 +104,7 @@ function heroWeb(project) {
     <section class="pd-hero pd-hero-web">
       <div class="container">
         ${heroBadge(project)}
-        <h2 class="pd-reveal">${project.title}</h2>
+        <h1 class="pd-reveal">${project.title}</h1>
         <p class="pd-hero-tagline pd-reveal">${tagline}</p>
 
         <div class="pd-browser-frame pd-reveal">
@@ -144,7 +144,7 @@ function heroPhotoVideo(project) {
       </span>
       <div class="container">
         ${heroBadge(project)}
-        <h2 class="pd-reveal">${project.title}</h2>
+        <h1 class="pd-reveal">${project.title}</h1>
         <p class="pd-hero-tagline pd-reveal">${tagline}</p>
         ${factsRow(project)}
       </div>
@@ -165,7 +165,7 @@ function heroDesign(project) {
     <section class="pd-hero pd-hero-design">
       <div class="container">
         ${heroBadge(project)}
-        <h2 class="pd-reveal">${project.title}</h2>
+        <h1 class="pd-reveal">${project.title}</h1>
         <p class="pd-hero-tagline pd-reveal">${tagline}</p>
 
         <div class="pd-collage pd-reveal">

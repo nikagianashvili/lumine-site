@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
-import fs from "fs";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -72,42 +71,12 @@ function devCleanUrls() {
   };
 }
 
-function copyToDist() {
-  return {
-    name: "copy-non-bundled-js-assets",
-    apply: "build",
-    closeBundle() {
-      const distDir = resolve(__dirname, "dist");
-      const distJsDir = resolve(distDir, "js");
-
-      fs.mkdirSync(distJsDir, { recursive: true });
-
-      fs.copyFileSync(
-        resolve(__dirname, "js/wrappedgl.js"),
-        resolve(distJsDir, "wrappedgl.js"),
-      );
-      fs.copyFileSync(
-        resolve(__dirname, "js/simulator.js"),
-        resolve(distJsDir, "simulator.js"),
-      );
-
-      fs.cpSync(
-        resolve(__dirname, "js/shaders"),
-        resolve(distJsDir, "shaders"),
-        {
-          recursive: true,
-        },
-      );
-    },
-  };
-}
-
 export default defineConfig({
   // react() + tailwindcss() only activate for files that opt in (.tsx
   // imports, `@import "tailwindcss"` in a stylesheet) — the vanilla public
   // pages and the old admin.css never reference either, so they're
   // unaffected. Scoped to /admin's rebuild only.
-  plugins: [copyToDist(), devCleanUrls(), react(), tailwindcss()],
+  plugins: [devCleanUrls(), react(), tailwindcss()],
   resolve: {
     alias: {
       "@": resolve(__dirname, "src/admin"),
