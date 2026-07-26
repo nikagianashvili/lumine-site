@@ -351,54 +351,178 @@ html[lang="ka"] .section-head h3 {
   opacity: 0.75;
 }
 
-/* — trusted by — */
+/* — trusted by: the client register —
+   One row per client, read like a signed ledger line: number, name, what we
+   made, the year, and the mark stamped at the end. Hovering inks the whole
+   band from the left, which is the same ink-fills-the-shape move the floor
+   wordmark and the hero roller use. */
 .trusted-by {
   padding-bottom: var(--sp-5);
 }
 
 .trusted-by .section-head {
-  margin-bottom: var(--sp-4);
+  margin-bottom: var(--sp-3);
 }
 
-.trusted-marquee-wrapper {
+.register {
   display: flex;
-  width: 100%;
-  overflow: hidden;
+  flex-direction: column;
+  border-top: 1px solid var(--d-soft);
 }
 
-.trusted-marquee-row {
-  display: flex;
-  align-items: stretch;
-  width: max-content;
-  will-change: transform;
+.register-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3rem minmax(0, auto) minmax(1.5rem, 1fr) minmax(0, auto) 4rem 7rem;
+  align-items: center;
+  gap: 0 1.25rem;
+  padding: 1.35rem 1.25rem;
+  border-bottom: 1px solid var(--d-soft);
+  color: var(--d);
+  text-decoration: none;
+  isolation: isolate;
 }
 
-.trusted-marquee-item {
+/* the ink band: a wipe rather than a fade, so the row reads as being filled
+   in by hand instead of switching state */
+.register-band {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--d);
+  border-radius: var(--r-sm);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.register-row:hover .register-band,
+.register-row:focus-visible .register-band {
+  transform: scaleX(1);
+}
+
+.register-row:hover,
+.register-row:focus-visible {
+  color: var(--l);
+}
+
+.register-index,
+.register-work,
+.register-year {
+  font-family: var(--f-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  transition: opacity 0.4s ease;
+}
+
+.register-row:hover .register-index,
+.register-row:hover .register-work,
+.register-row:hover .register-year {
+  opacity: 0.8;
+}
+
+.register-year {
+  text-align: right;
+}
+
+.register-name {
+  font-family: var(--f-h);
+  font-size: clamp(1.5rem, 3.4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.register-row:hover .register-name {
+  transform: translateX(0.5rem);
+}
+
+.register-rule {
+  height: 1px;
+  background-color: currentColor;
+  opacity: 0.25;
+  transform-origin: left center;
+}
+
+/* the mark sits on its own paper chip so it still reads once the band inks
+   in — the client artwork is dark-on-transparent and would disappear */
+.register-mark {
   display: flex;
-  flex-shrink: 0;
   justify-content: center;
   align-items: center;
-  width: 14vw;
-  min-width: 190px;
-  height: 6.5vw;
-  min-height: 90px;
-  padding: 1.75rem 2.5rem;
-  border: 1px solid var(--d-soft);
-  border-radius: 100px;
-  opacity: 0.45;
-  transition: opacity 0.3s ease;
+  height: 2.6rem;
+  padding: 0.4rem 0.75rem;
+  background-color: transparent;
+  border-radius: var(--r-sm);
+  transition:
+    background-color 0.45s ease,
+    box-shadow 0.45s ease;
 }
 
-.trusted-marquee-item:hover {
-  opacity: 0.9;
+.register-row:hover .register-mark {
+  background-color: var(--l);
+  box-shadow: var(--lift);
 }
 
-.trusted-marquee-item img {
-  width: 100%;
-  height: 100%;
+.register-mark img {
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   pointer-events: none;
   user-select: none;
+  opacity: 0.45;
+  transition: opacity 0.45s ease;
+}
+
+.register-row:hover .register-mark img {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .register-band,
+  .register-name,
+  .register-mark {
+    transition: none;
+  }
+}
+
+/* Below the fold of a laptop the six-column line cannot hold: the name and
+   the deliverable both need room. Two rows instead — the ledger line wraps
+   the way a real one would rather than shrinking the name to nothing. */
+@media (max-width: 900px) {
+  .register-row {
+    grid-template-columns: 2.5rem 1fr auto;
+    gap: 0.5rem 0.9rem;
+    padding: 1.1rem 0.9rem;
+  }
+
+  .register-rule {
+    display: none;
+  }
+
+  .register-name {
+    font-size: clamp(1.25rem, 5.5vw, 1.9rem);
+    white-space: normal;
+  }
+
+  .register-mark {
+    grid-row: 1 / span 2;
+    grid-column: 3;
+    height: 2.2rem;
+  }
+
+  .register-work {
+    grid-column: 2;
+  }
+
+  .register-year {
+    grid-column: 1;
+    text-align: left;
+  }
 }
 
 /* — featured projects — */

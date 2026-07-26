@@ -1,102 +1,110 @@
-import gsap from "gsap";
+// Trusted By — a register of the studio's real clients.
+//
+// This was a logo marquee, which is the section every agency site ships and
+// which says nothing: five marks sliding past, no name you can read, no way
+// to find out what was actually made. It is now a signed register — one row
+// per client, carrying the work and the year, and every row opens the
+// project it came from. The logo stops being the content and becomes the
+// stamp at the end of the line.
 
-const marks = [
-  "/clients/tbzoo.png",
-  "/clients/fitrock.png",
-  "/clients/tene.png",
-  "/clients/tera-leasing.png",
-  "/clients/4pets.png",
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { getProject, projectHref } from "/js/projects-data.js";
+
+gsap.registerPlugin(ScrollTrigger);
+
+const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
+
+// Each entry points at a real project in the registry — name, year and link
+// are read from there so this list can never drift out of sync with the
+// portfolio. Only the mark and the short deliverable live here.
+const REGISTER = [
+  {
+    slug: "tbilisi-zoo",
+    mark: "/clients/tbzoo.png",
+    work: "Identity & merchandise",
+    work_ka: "იდენტობა და სუვენირები",
+  },
+  {
+    slug: "tene",
+    mark: "/clients/tene.png",
+    work: "Product launch campaign",
+    work_ka: "პროდუქტის გაშვების კამპანია",
+  },
+  {
+    slug: "tera-leasing",
+    mark: "/clients/tera-leasing.png",
+    work: "Social content system",
+    work_ka: "სოციალური კონტენტის სისტემა",
+  },
+  {
+    slug: "fit-rock",
+    mark: "/clients/fitrock.png",
+    work: "Packaging & product identity",
+    work_ka: "შეფუთვა და პროდუქტის იდენტობა",
+  },
+  {
+    slug: "4pets",
+    mark: "/clients/4pets.png",
+    work: "Catalog content system",
+    work_ka: "კატალოგის კონტენტის სისტემა",
+  },
 ];
 
-function horizontalLoop(items, config) {
-  items = gsap.utils.toArray(items);
-  config = config || {};
-  let tl = gsap.timeline({
-      repeat: -1,
-      defaults: { ease: "none" },
-    }),
-    length = items.length,
-    startX = items[0].offsetLeft,
-    widths = [],
-    xPercents = [],
-    pixelsPerSecond = (config.speed || 1) * 100,
-    totalWidth,
-    curX,
-    distanceToStart,
-    distanceToLoop,
-    item,
-    i;
+function buildRow(entry, i) {
+  const project = getProject(entry.slug);
+  if (!project) return null;
 
-  gsap.set(items, {
-    xPercent: (i, el) => {
-      let w = (widths[i] = parseFloat(gsap.getProperty(el, "width", "px")));
-      xPercents[i] =
-        (parseFloat(gsap.getProperty(el, "x", "px")) / w) * 100 +
-        gsap.getProperty(el, "xPercent");
-      return xPercents[i];
-    },
-  });
-  gsap.set(items, { x: 0 });
-  totalWidth =
-    items[length - 1].offsetLeft +
-    (xPercents[length - 1] / 100) * widths[length - 1] -
-    startX +
-    items[length - 1].offsetWidth;
+  const row = document.createElement("a");
+  row.className = "register-row";
+  row.href = projectHref(project, isKa);
 
-  for (i = 0; i < length; i++) {
-    item = items[i];
-    curX = (xPercents[i] / 100) * widths[i];
-    distanceToStart = item.offsetLeft + curX - startX;
-    distanceToLoop = distanceToStart + widths[i];
-    tl.to(
-      item,
-      {
-        xPercent: ((curX - distanceToLoop) / widths[i]) * 100,
-        duration: distanceToLoop / pixelsPerSecond,
-      },
-      0,
-    ).fromTo(
-      item,
-      {
-        xPercent: ((curX - distanceToLoop + totalWidth) / widths[i]) * 100,
-      },
-      {
-        xPercent: xPercents[i],
-        duration:
-          (curX - distanceToLoop + totalWidth - curX) / pixelsPerSecond,
-        immediateRender: false,
-      },
-      distanceToLoop / pixelsPerSecond,
-    );
-  }
+  const index = String(i + 1).padStart(2, "0");
+  const work = isKa ? entry.work_ka : entry.work;
 
-  tl.progress(1, true).progress(0, true);
-  return tl;
-}
+  row.innerHTML = `
+    <span class="register-band" aria-hidden="true"></span>
+    <span class="register-index">${index}</span>
+    <span class="register-name">${project.client}</span>
+    <span class="register-rule" aria-hidden="true"></span>
+    <span class="register-work">${work}</span>
+    <span class="register-year">${project.year}</span>
+    <span class="register-mark"><img src="${entry.mark}" alt="${project.client}" draggable="false" /></span>
+  `;
 
-function buildRow() {
-  const row = document.createElement("div");
-  row.className = "trusted-marquee-row";
-  const COPIES = 6;
-  for (let c = 0; c < COPIES; c++) {
-    marks.forEach((src) => {
-      const item = document.createElement("div");
-      item.className = "trusted-marquee-item";
-      item.innerHTML = `<img src="${src}" alt="" draggable="false" />`;
-      row.appendChild(item);
-    });
-  }
   return row;
 }
 
 function init() {
-  const wrapper = document.querySelector(".trusted-marquee-wrapper");
-  if (!wrapper) return;
+  const mount = document.querySelector("[data-register]");
+  if (!mount) return;
 
-  const row = buildRow();
-  wrapper.appendChild(row);
+  const rows = REGISTER.map(buildRow).filter(Boolean);
+  rows.forEach((row) => mount.appendChild(row));
+  if (!rows.length) return;
 
-  horizontalLoop(row.querySelectorAll(".trusted-marquee-item"), { speed: 1 });
+  // The rules draw themselves in left-to-right as the register scrolls up,
+  // the same gesture the process route uses further down the page — so the
+  // section reads as part of the same drawing, not a new idea.
+  gsap.from(
+    rows.map((row) => row.querySelector(".register-rule")),
+    {
+      scaleX: 0,
+      duration: 0.9,
+      stagger: 0.08,
+      ease: "power3.out",
+      scrollTrigger: { trigger: mount, start: "top 80%", once: true },
+    },
+  );
+
+  gsap.from(rows, {
+    y: 18,
+    opacity: 0,
+    duration: 0.7,
+    stagger: 0.08,
+    ease: "power3.out",
+    scrollTrigger: { trigger: mount, start: "top 80%", once: true },
+  });
 }
 
 if (document.readyState === "loading") {
