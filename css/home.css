@@ -36,84 +36,6 @@
   font-size: clamp(4rem, 14vw, 14rem);
 }
 
-/* — margins: the sheet's marginalia — */
-.hero-rail {
-  position: absolute;
-  top: 50%;
-  z-index: 2;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  font-family: var(--f-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  list-style: none;
-  text-align: left;
-}
-
-.hero-rail-left {
-  left: 2.5rem;
-}
-
-.hero-rail-right {
-  right: 2.5rem;
-  text-align: right;
-  opacity: 0.55;
-}
-
-.hero-rail-left li {
-  display: flex;
-  align-items: baseline;
-  gap: 0.7rem;
-  opacity: 0.55;
-  transition: opacity 0.3s ease, color 0.3s ease;
-}
-
-.hero-rail-left li:hover {
-  opacity: 1;
-  color: var(--accent);
-}
-
-.hero-rail-left i {
-  font-style: normal;
-  color: var(--accent);
-  opacity: 0.8;
-}
-
-.hero-rail-right span {
-  display: block;
-}
-
-/* the availability line carries the same live dot as the footer rail */
-.hero-rail-live {
-  display: flex !important;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
-  padding-top: 0.6rem;
-  border-top: 1px solid rgba(23, 19, 15, 0.25);
-  color: var(--accent-deep);
-  opacity: 1;
-}
-
-.hero-rail-live::after {
-  content: "";
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 50%;
-  background-color: var(--accent);
-  animation: hero-pulse 2.4s ease-out infinite;
-}
-
-@keyframes hero-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(242, 84, 45, 0.55); }
-  70% { box-shadow: 0 0 0 0.5rem rgba(242, 84, 45, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(242, 84, 45, 0); }
-}
-
 .hero-sub {
   position: relative;
   z-index: 2;
@@ -145,12 +67,6 @@
   color: var(--accent);
 }
 
-@media (max-width: 1100px) {
-  /* the margins are the first thing to go — the wordmark needs the width */
-  .hero-rail {
-    display: none;
-  }
-}
 
 .hero .hero-footer {
   position: absolute;
