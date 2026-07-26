@@ -10,7 +10,7 @@
 
 const LEAVING = "pt-leaving";
 // safety net only — the real signal is the animationend for ptCover
-const COVER_FALLBACK_MS = 900;
+const COVER_FALLBACK_MS = 1050;
 
 function isPlainLeftClick(e) {
   return (
@@ -74,10 +74,12 @@ document.addEventListener("click", (e) => {
     window.location.href = href;
   };
 
-  document.body.addEventListener("animationend", function onEnd(ev) {
-    // body carries other animations; only the veil finishing means anything
+  // The veil is html::before, and a pseudo-element's animationend fires on
+  // the element it hangs off — so this listens on <html>, not on body.
+  // Filtered by name because the page lift (ptLift) finishes here too.
+  document.documentElement.addEventListener("animationend", function onEnd(ev) {
     if (ev.animationName !== "ptCover") return;
-    document.body.removeEventListener("animationend", onEnd);
+    document.documentElement.removeEventListener("animationend", onEnd);
     go();
   });
 

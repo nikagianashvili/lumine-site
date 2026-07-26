@@ -1,23 +1,26 @@
-/* page-transition — one ink wipe across every navigation.
+/* page-transition — the old view-transition's movement, on a driver that runs.
 
-   This replaces the CSS-only `@view-transition` that used to live in
-   globals.css. That mechanism looked right when it ran, but it ran on a
-   coin flip: it is Chrome/Edge-only, it never runs on the Vite dev server
-   at all (Vite serves stylesheets through JS, so the opt-in is not in the
-   document at first paint), and even in a production build it fired on some
-   navigations and not others. That is why a few pages seemed to arrive with
-   a wipe and others — /work most reliably — appeared to load straight.
+   This is the same choreography the CSS-only `@view-transition` in
+   globals.css used to play: the page you are leaving lifts and darkens, and
+   the page you land on is uncovered from the bottom edge upward. What
+   changed is what drives it.
 
-   The ink travels one way: it rises from the bottom to cover the page you
-   are leaving, then keeps rising off the top to uncover the page you land
-   on. Two halves of a single movement rather than two separate effects.
+   The old rule was Chrome/Edge only, never ran on the Vite dev server (Vite
+   serves stylesheets through JS, so the opt-in is not in the document at
+   first paint), and Chrome skipped it unpredictably even in a build — the
+   same click to /work transitioned on some loads and not others. None of
+   that is patchable from here, so the movement moved onto a veil we own.
 
-   The uncovering half is pure CSS on body::before, so it is on screen from
-   the very first paint and still runs if the JS never loads. Only the
-   covering half needs JS, because only that half has to hold the page back
-   until the animation has finished. */
+   The veil hangs off `html`, not `body`, on purpose: the leaving half
+   transforms `body`, and a transformed element becomes the containing block
+   for its fixed descendants — a veil inside `body` would ride along with the
+   page instead of staying put over it.
 
-body::before {
+   The uncovering half is pure CSS, so it is on screen from the first paint
+   and still runs if the JS never loads. Only the covering half needs JS, to
+   hold the navigation back until the animation has finished. */
+
+html::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -27,10 +30,11 @@ body::before {
   background-color: var(--d, #17130f);
   pointer-events: none;
   will-change: clip-path;
-  animation: ptReveal 0.7s cubic-bezier(0.87, 0, 0.13, 1) both;
+  animation: ptReveal 0.75s cubic-bezier(0.87, 0, 0.13, 1) both;
 }
 
-/* arriving: the ink retreats off the top edge */
+/* arriving: the ink retreats off the top, uncovering the page from the
+   bottom edge up — the old ::view-transition-new(root) wipe */
 @keyframes ptReveal {
   from {
     clip-path: inset(0 0 0 0);
@@ -40,10 +44,10 @@ body::before {
   }
 }
 
-/* leaving: the ink climbs in from the bottom edge. js/page-transition.js puts
-   the class on <html> and waits for this to end before it lets the browser go. */
-html.pt-leaving body::before {
-  animation: ptCover 0.55s cubic-bezier(0.87, 0, 0.13, 1) both;
+/* leaving: the ink climbs back in from the bottom. js/page-transition.js
+   sets the class and waits for this to end before letting the browser go. */
+html.pt-leaving::before {
+  animation: ptCover 0.7s cubic-bezier(0.87, 0, 0.13, 1) both;
 }
 
 @keyframes ptCover {
@@ -55,6 +59,25 @@ html.pt-leaving body::before {
   }
 }
 
+/* …and the page recedes behind it, which is the old
+   ::view-transition-old(root) `move-out`: lift and dim, same distance and
+   same darkness as before. Fixed children (nav, chat launcher) travel with
+   it, exactly as they did inside the old snapshot. */
+html.pt-leaving body {
+  animation: ptLift 0.7s cubic-bezier(0.87, 0, 0.13, 1) both;
+}
+
+@keyframes ptLift {
+  from {
+    transform: translateY(0);
+    filter: brightness(1);
+  }
+  to {
+    transform: translateY(-35%);
+    filter: brightness(0.25);
+  }
+}
+
 /* globals.css already collapses every animation to 0.01ms under reduced
-   motion, which lands both halves on their finished frame instantly — the
+   motion, which lands all three on their finished frame instantly — the
    navigation still happens, it just stops being a movement. */
