@@ -79,11 +79,11 @@ nav {
 
 .nav-logo a img {
   width: auto;
-  height: 1.65rem;
+  height: 1.5rem;
   object-fit: contain;
-  /* asset is a white wordmark - always inverted now that nav is always
-     solid (was only inverted past the old scroll threshold) */
-  filter: invert(1);
+  /* the wordmark is now an SVG drawn in ink, so it needs no inversion —
+     the old asset was a white PNG that had to be flipped to read on the
+     solid bar */
 }
 
 .nav-icon {

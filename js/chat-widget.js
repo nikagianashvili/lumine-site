@@ -121,7 +121,7 @@ function buildWidget() {
   const wrap = document.createElement("div");
   wrap.className = "chat-widget";
   wrap.innerHTML = `
-    <button class="chat-bubble" type="button" aria-label="${MSG.bubbleLabel}">${RETICLE_SVG}</button>
+    <button class="chat-bubble" type="button" aria-label="${MSG.bubbleLabel}">${RETICLE_SVG}<span class="chat-bubble-label">${MSG.title}</span></button>
     <div class="chat-panel" role="dialog" aria-label="${MSG.title}">
       <div class="chat-panel-head">
         <span class="chat-panel-head-title"><span class="chat-mark">${RETICLE_SVG}</span> ${MSG.title}</span>
@@ -205,6 +205,10 @@ function renderThread(body, getState, persist) {
   body.innerHTML = "";
   const messages = document.createElement("div");
   messages.className = "chat-messages";
+  // Lenis hijacks wheel events for the whole document, so without this the
+  // message log could not be scrolled with a wheel or trackpad at all — the
+  // page scrolled behind the open panel instead.
+  messages.setAttribute("data-lenis-prevent", "");
   const state = getState();
   if (state.messages.length === 0) {
     messages.appendChild(messageEl("assistant", MSG.greeting));
