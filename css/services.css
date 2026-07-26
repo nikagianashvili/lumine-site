@@ -28,6 +28,7 @@ body {
   background-color: var(--l);
   border: 1px solid var(--d);
   border-radius: var(--r-sm);
+  box-shadow: var(--lift);
   opacity: 0;
   transform: translateY(0.5rem);
   transition:
@@ -188,6 +189,7 @@ body {
   opacity: 0;
   border: 1px solid var(--d);
   border-radius: var(--r);
+  box-shadow: var(--lift-hover);
   pointer-events: none;
   will-change: transform, opacity;
 }

@@ -25,6 +25,13 @@
   --font-body:"Archivo", "Helvetica Neue", Arial, sans-serif;
   --font-mono:"Space Mono", "Courier New", monospace;
 
+  /* this page ships its own token block (it does not load globals.css), so
+     the shared radius and elevation are restated here */
+  --r:0.85rem;
+  --r-sm:0.5rem;
+  --lift:0 0.6rem 1.6rem -0.9rem rgba(23,17,15,.28);
+  --lift-hover:0 1.1rem 2.4rem -1rem rgba(23,17,15,.34);
+
   --gutter:clamp(1.25rem, 4vw, 4rem);
   --hair:1px solid rgba(23,17,15,.22);
   --hair-paper:1px solid rgba(251,243,238,.22);
@@ -345,7 +352,7 @@ html.js .ident{display:grid}
 }
 
 /* --- figures --- */
-.fig{position:relative;overflow:hidden;border-radius:var(--r)}
+.fig{position:relative;overflow:hidden;border-radius:var(--r);box-shadow:var(--lift)}
 .toc-preview-inner{border-radius:var(--r)}
 /* real artwork from the delivered identity */
 .fig-photo{background:var(--paper);box-shadow:0 0 0 1px rgba(23,17,15,.18)}

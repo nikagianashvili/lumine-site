@@ -31,6 +31,12 @@
   --r: 0.85rem;
   --r-sm: 0.5rem;
 
+  /* — elevation —
+     Tinted with the ink rather than pure black, so the lift stays warm
+     against the paper. Kept shallow: enough to float, not enough to shout. */
+  --lift: 0 0.6rem 1.6rem -0.9rem rgba(23, 19, 15, 0.28);
+  --lift-hover: 0 1.1rem 2.4rem -1rem rgba(23, 19, 15, 0.34);
+
   /* — spacing scale — */
   --sp-1: 0.5rem;
   --sp-2: 1rem;
