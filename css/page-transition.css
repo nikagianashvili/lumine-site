@@ -33,6 +33,13 @@ html::before {
   animation: ptReveal 0.75s cubic-bezier(0.87, 0, 0.13, 1) both;
 }
 
+/* On timing: the original played one 1.5s move — the new page wiped in over
+   the old one, and that single gesture was the whole navigation. This runs
+   as two halves either side of a page load, so each gets half the budget.
+   0.75s out plus 0.75s in lands the whole trip on the same 1.5s the original
+   took from click to settled. Doubling each to 1.5s would look faithful in
+   isolation and feel twice as slow in use. */
+
 /* arriving: the ink retreats off the top, uncovering the page from the
    bottom edge up — the old ::view-transition-new(root) wipe */
 @keyframes ptReveal {
@@ -64,9 +71,15 @@ html.pt-leaving {
 
 /* leaving: the ink climbs back in from the bottom. js/page-transition.js
    sets the class and waits for this to end before letting the browser go.
-   Eased to leave fast, so the viewport is mostly ink early on. */
+
+   Back on the original curve. It was split briefly — ink easing out, page
+   easing in — to stop the page being seen running up, but that was treating
+   the symptom. The cause was the canvas background below, and with that
+   fixed the two can travel together on one curve again, which is what the
+   original did: old page and incoming wipe on the same 1.5s
+   cubic-bezier(0.87, 0, 0.13, 1), moving as one gesture. */
 html.pt-leaving::before {
-  animation: ptCover 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: ptCover 0.75s cubic-bezier(0.87, 0, 0.13, 1) both;
 }
 
 @keyframes ptCover {
@@ -83,21 +96,26 @@ html.pt-leaving::before {
    same darkness as before. Fixed children (nav, chat launcher) travel with
    it, exactly as they did inside the old snapshot.
 
-   This one eases *in* while the ink eases out — the page holds still long
-   enough for the ink to climb over it, then does most of its travelling
-   behind cover. Matched durations with opposite easings is what keeps the
-   lift from being the thing you watch. */
+   Same duration and same curve as the ink, so the page recedes in step with
+   it rather than racing ahead — the relationship the old page and the
+   incoming wipe had with each other. */
 html.pt-leaving body {
-  animation: ptLift 0.6s cubic-bezier(0.55, 0, 1, 0.45) both;
+  animation: ptLift 0.75s cubic-bezier(0.87, 0, 0.13, 1) both;
 }
 
+/* -35vh, not the original's -35%. The old rule moved
+   ::view-transition-old(root), which is a viewport-sized snapshot, so 35%
+   there meant 35% of the screen. A percentage on `body` resolves against
+   body's own height instead — on the work page that is 35% of ~3800px, so
+   the page shot up 1333px rather than a couple of hundred. Same movement as
+   the original only once it is measured against the same thing. */
 @keyframes ptLift {
   from {
     transform: translateY(0);
     filter: brightness(1);
   }
   to {
-    transform: translateY(-35%);
+    transform: translateY(-35vh);
     filter: brightness(0.25);
   }
 }

@@ -10,7 +10,7 @@
 
 const LEAVING = "pt-leaving";
 // safety net only — the real signal is the animationend for ptCover
-const COVER_FALLBACK_MS = 1050;
+const COVER_FALLBACK_MS = 1200;
 
 function isPlainLeftClick(e) {
   return (
