@@ -19,7 +19,8 @@ function buildCard(project, index) {
   const label = isKa ? type.label_ka : type.label;
   const card = document.createElement("a");
   card.href = projectHref(project, isKa);
-  card.className = "featured-card card-base";
+  // no card-base: these are plates, matching the archive on /work
+  card.className = "featured-card";
   card.innerHTML = `
     <div class="featured-card-img" style="background-image: url('${project.cover}')"></div>
     <div class="featured-card-scrim"></div>

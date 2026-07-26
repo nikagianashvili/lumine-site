@@ -14,7 +14,8 @@ function buildCard(testimonial) {
   const quote = isKa ? testimonial.quote_ka || testimonial.quote : testimonial.quote;
   const author = isKa ? testimonial.author_ka || testimonial.author : testimonial.author;
   const card = document.createElement("div");
-  card.className = "testimonial-card card-base";
+  // no card-base: these read as pull-quotes on the page, not as cards
+  card.className = "testimonial-card";
   card.innerHTML = `
     <p class="testimonial-quote">"${quote}"</p>
     <p class="testimonial-attr">— ${author}</p>

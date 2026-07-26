@@ -431,6 +431,9 @@ html[lang="ka"] .section-head h3 {
   opacity: 0.8;
 }
 
+/* flat plates with a hairline frame, the same treatment the archive uses —
+   they were rounded cards on drop shadows, which is the language this page
+   has otherwise dropped */
 .featured-card {
   position: relative;
   display: block;
@@ -438,6 +441,12 @@ html[lang="ka"] .section-head h3 {
   overflow: hidden;
   text-decoration: none;
   color: var(--d);
+  box-shadow: inset 0 0 0 1px rgba(23, 19, 15, 0.2);
+  transition: box-shadow 0.45s ease;
+}
+
+.featured-card:hover {
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 
 .featured-card-img {
@@ -602,12 +611,18 @@ html[lang="ka"] .service-name {
   opacity: 1;
 }
 
-/* — why choose us: bento grid — */
+/* — why choose us: a printed capability grid —
+   Was a bento of rounded white cards on drop shadows, which is the one
+   piece of furniture on this page that belongs to a different site. The
+   asymmetry was worth keeping; the card chrome was not. Cells now sit
+   directly on the paper and are divided by hairlines, like a ruled table. */
 .bento {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: minmax(15rem, auto);
-  gap: var(--sp-2);
+  gap: 0;
+  border-top: 1px solid rgba(23, 19, 15, 0.28);
+  border-left: 1px solid rgba(23, 19, 15, 0.28);
 }
 
 .bento-cell {
@@ -618,24 +633,26 @@ html[lang="ka"] .service-name {
   gap: 0.75rem;
   padding: var(--sp-3);
   overflow: hidden;
-  background-color: var(--white);
-  border-radius: 1.25rem;
-  box-shadow: 0 1rem 2.5rem -1.75rem rgba(23, 19, 15, 0.4);
-  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  background-color: transparent;
+  border-right: 1px solid rgba(23, 19, 15, 0.28);
+  border-bottom: 1px solid rgba(23, 19, 15, 0.28);
+  transition: background-color 0.4s ease;
 }
 
+/* the cell tints rather than lifting — nothing on this page floats */
 .bento-cell:hover {
-  transform: translateY(-0.4rem);
+  background-color: rgba(250, 212, 200, 0.45);
 }
 
 .bento-num {
   margin-bottom: auto;
-  font-family: var(--f-h);
-  font-size: 4rem;
-  line-height: 0.85;
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--d);
-  opacity: 0.45;
+  font-family: var(--f-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.9;
 }
 
 .bento-cell h6 {
@@ -656,8 +673,11 @@ html[lang="ka"] .service-name {
 }
 
 .bento-lead .bento-num {
-  font-size: 8rem;
-  -webkit-text-stroke-color: var(--l);
+  color: var(--accent-bright);
+}
+
+.bento-lead:hover {
+  background-color: var(--d);
 }
 
 .bento-lead h6 {
@@ -699,6 +719,7 @@ html[lang="ka"] .service-name {
   filter: grayscale(0) contrast(1);
 }
 
+/* the closing row of the table, not a fifth card */
 .bento-wide {
   grid-column: span 4;
   flex-direction: row;
@@ -706,6 +727,11 @@ html[lang="ka"] .service-name {
   justify-content: space-between;
   gap: var(--sp-3);
   min-height: auto;
+  padding: var(--sp-3);
+}
+
+.bento-wide:hover {
+  background-color: transparent;
 }
 
 .bento-wide .bento-copy {
@@ -760,38 +786,33 @@ html[lang="ka"] .service-name {
   gap: var(--sp-3);
 }
 
+/* Pull-quotes set in columns, divided by hairlines — they used to be tilted
+   rounded cards on shadows, a third visual language on the same page. */
+.testimonial-track {
+  border-top: 1px solid rgba(23, 19, 15, 0.28);
+}
+
 .testimonial-card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: var(--sp-4);
-  min-height: 20rem;
+  min-height: 18rem;
+  padding: var(--sp-3) var(--sp-3) var(--sp-3) 0;
 }
 
-/* collage tilt — cards sit slightly off-axis, straighten on hover */
-@media (min-width: 1001px) {
-  .testimonial-card:nth-child(1) {
-    transform: rotate(-2deg);
-  }
-
-  .testimonial-card:nth-child(2) {
-    transform: rotate(1.25deg) translateY(1.5rem);
-  }
-
-  .testimonial-card:nth-child(3) {
-    transform: rotate(-1deg);
-  }
-
-  .testimonial-card:hover {
-    transform: rotate(0deg) translateY(0);
-  }
+.testimonial-card + .testimonial-card {
+  padding-left: var(--sp-3);
+  border-left: 1px solid rgba(23, 19, 15, 0.28);
 }
 
 .testimonial-quote {
+  position: relative;
   font-family: var(--f-h);
-  font-size: clamp(1.5rem, 2.2vw, 2rem);
-  line-height: 1.05;
+  font-size: clamp(1.4rem, 2vw, 1.85rem);
+  line-height: 1.08;
   text-transform: none;
+  color: var(--accent-deep);
 }
 
 html[lang="ka"] .testimonial-quote {
@@ -799,7 +820,11 @@ html[lang="ka"] .testimonial-quote {
 }
 
 .testimonial-attr {
-  opacity: 0.6;
+  font-family: var(--f-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.55;
 }
 
 /* — statistics — */
@@ -810,14 +835,24 @@ html[lang="ka"] .testimonial-quote {
   text-align: center;
 }
 
+/* mono, like every other figure on the site: LK Lumina's digits carry a
+   decorative crossbar that reads as a strike-through at this size */
 .stat-item h2 {
-  font-size: clamp(3rem, 6vw, 6rem);
+  font-family: var(--f-mono);
+  font-size: clamp(2.25rem, 4.4vw, 4.25rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
   color: var(--accent);
 }
 
 .stat-item p {
-  margin-top: 0.75rem;
-  opacity: 0.7;
+  margin-top: 0.9rem;
+  font-family: var(--f-nm);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.6;
 }
 
 /* — faq — */

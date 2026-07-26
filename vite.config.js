@@ -117,8 +117,6 @@ export default defineConfig({
         main: resolve(__dirname, "index.html"),
         work: resolve(__dirname, "work.html"),
         "work-tbilisi-zoo": resolve(__dirname, "work-tbilisi-zoo.html"),
-        // temporary: three candidate homepage heroes, side by side for review
-        "hero-lab": resolve(__dirname, "hero-lab.html"),
         "sample-project": resolve(__dirname, "sample-project.html"),
         project: resolve(__dirname, "project.html"),
         studio: resolve(__dirname, "studio.html"),
