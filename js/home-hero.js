@@ -130,24 +130,46 @@ function layoutPrinciples(W, H, ctx) {
   const overlaps = (a, b) =>
     a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
 
+  // Purely random placement clumps: a few lines land on top of each other
+  // while whole regions stay bare. Dealing one line per grid cell and
+  // jittering inside it keeps them spread while still differing every load.
+  const COLS = 3;
+  const ROWS = 4;
+  const cellW = W / COLS;
+  const cellH = H / ROWS;
+
+  const cells = [];
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) cells.push({ c, r });
+  }
+  cells.sort(() => Math.random() - 0.5);
+
   const placed = [];
   const shuffled = [...PRINCIPLES].sort(() => Math.random() - 0.5);
 
   shuffled.forEach((text) => {
     const w = ctx.measureText(text).width;
     const box = { w: w + 24, h: 34 };
-    for (let attempt = 0; attempt < 60; attempt++) {
+
+    for (let i = 0; i < cells.length; i++) {
+      const cell = cells[i];
+      // jitter inside the cell, then clamp so long lines stay on the sheet
+      const jx = cell.c * cellW + 16 + Math.random() * Math.max(1, cellW - w - 32);
+      const jy = cell.r * cellH + 30 + Math.random() * Math.max(1, cellH - 60);
       const cand = {
-        x: 40 + Math.random() * Math.max(1, W - w - 120),
-        y: 60 + Math.random() * Math.max(1, H - 160),
+        x: Math.min(Math.max(24, jx), Math.max(24, W - w - 24)),
+        y: Math.min(Math.max(50, jy), H - 40),
         w: box.w,
         h: box.h,
       };
+
       const clash =
         keepOut.some((k) => overlaps(cand, k)) ||
         placed.some((p) => overlaps(cand, p));
+
       if (!clash) {
         placed.push({ ...cand, text });
+        cells.splice(i, 1); // one line per cell
         return;
       }
     }
@@ -167,7 +189,11 @@ function setupInkRoller() {
   if (!ctx) return;
 
   const dabs = [];
-  const MAX_DABS = 200;
+  // a longer dwell means more ink is on the sheet at once, so the cap has to
+  // rise with it or the oldest dabs pop out of existence mid-stroke
+  const MAX_DABS = 340;
+  const HOLD_FRAMES = 70; // ink sits wet before it starts drying
+  const DRY_RATE = 0.0032; // then fades over roughly five seconds
   const FONT = "500 13px 'DM Mono', 'Courier New', monospace";
   let W = 0;
   let H = 0;
@@ -194,7 +220,13 @@ function setupInkRoller() {
   if (!reduced) {
     hero.addEventListener("mousemove", (e) => {
       const r = hero.getBoundingClientRect();
-      dabs.push({ x: e.clientX - r.left, y: e.clientY - r.top, r: 18, life: 1 });
+      dabs.push({
+        x: e.clientX - r.left,
+        y: e.clientY - r.top,
+        r: 18,
+        life: 1,
+        hold: HOLD_FRAMES,
+      });
       if (dabs.length > MAX_DABS) dabs.shift();
       if (!raf) raf = requestAnimationFrame(frame);
     });
@@ -257,7 +289,8 @@ function setupInkRoller() {
     for (let i = dabs.length - 1; i >= 0; i--) {
       const d = dabs[i];
       d.r += (96 - d.r) * 0.05; // the ink spreads
-      d.life -= 0.005; // and dries
+      if (d.hold > 0) d.hold--; // stays wet a beat
+      else d.life -= DRY_RATE; // then dries
       if (d.life <= 0) {
         dabs.splice(i, 1);
         continue;
