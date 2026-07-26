@@ -1,4 +1,5 @@
 ﻿@import "./fonts.css";
+@import "./page-transition.css";
 
 :root {
   /* — Final Cut palette: warm ink/paper close to the original baseline,
@@ -380,49 +381,7 @@ html.lenis body {
   }
 }
 
-@view-transition {
-  navigation: auto;
-}
-
-::view-transition-group(root) {
-  animation: none;
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.5s;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  will-change: transform, clip-path, filter;
-}
-
-::view-transition-old(root) {
-  animation: 1.5s cubic-bezier(0.87, 0, 0.13, 1) both move-out;
-}
-
-::view-transition-new(root) {
-  clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
-  animation: 1.5s cubic-bezier(0.87, 0, 0.13, 1) both move-in;
-}
-
-@keyframes move-out {
-  from {
-    opacity: 1;
-    filter: none;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 1;
-    filter: brightness(0.25);
-    transform: translateY(-35%);
-  }
-}
-
-@keyframes move-in {
-  from {
-    clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
-  }
-  to {
-    clip-path: polygon(0% 100%, 100% 100%, 100% 0%, 0% 0%);
-  }
-}
+/* The page transition used to live here as a CSS-only `@view-transition`.
+   It fired on a coin flip — Chrome/Edge only, never on the dev server, and
+   inconsistently even in a build — so it moved to css/page-transition.css
+   and js/page-transition.js, which run the same wipe everywhere. */

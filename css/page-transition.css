@@ -1,0 +1,60 @@
+/* page-transition — one ink wipe across every navigation.
+
+   This replaces the CSS-only `@view-transition` that used to live in
+   globals.css. That mechanism looked right when it ran, but it ran on a
+   coin flip: it is Chrome/Edge-only, it never runs on the Vite dev server
+   at all (Vite serves stylesheets through JS, so the opt-in is not in the
+   document at first paint), and even in a production build it fired on some
+   navigations and not others. That is why a few pages seemed to arrive with
+   a wipe and others — /work most reliably — appeared to load straight.
+
+   The ink travels one way: it rises from the bottom to cover the page you
+   are leaving, then keeps rising off the top to uncover the page you land
+   on. Two halves of a single movement rather than two separate effects.
+
+   The uncovering half is pure CSS on body::before, so it is on screen from
+   the very first paint and still runs if the JS never loads. Only the
+   covering half needs JS, because only that half has to hold the page back
+   until the animation has finished. */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  /* under the custom cursor (20001), over the chat launcher (15000) */
+  z-index: 20000;
+  /* the fallback covers the case-study pages, which set their own tokens */
+  background-color: var(--d, #17130f);
+  pointer-events: none;
+  will-change: clip-path;
+  animation: ptReveal 0.7s cubic-bezier(0.87, 0, 0.13, 1) both;
+}
+
+/* arriving: the ink retreats off the top edge */
+@keyframes ptReveal {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+/* leaving: the ink climbs in from the bottom edge. js/page-transition.js puts
+   the class on <html> and waits for this to end before it lets the browser go. */
+html.pt-leaving body::before {
+  animation: ptCover 0.55s cubic-bezier(0.87, 0, 0.13, 1) both;
+}
+
+@keyframes ptCover {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* globals.css already collapses every animation to 0.01ms under reduced
+   motion, which lands both halves on their finished frame instantly — the
+   navigation still happens, it just stops being a movement. */

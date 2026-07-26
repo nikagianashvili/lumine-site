@@ -1,6 +1,10 @@
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+// The page wipe belongs on every page that scrolls, and this module is
+// already on all of them — importing it here beats adding a script tag to
+// forty-odd files and then forgetting it on the forty-first.
+import "/js/page-transition.js";
 
 let lenis = null;
 
