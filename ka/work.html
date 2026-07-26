@@ -53,38 +53,46 @@
       </div>
     </nav>
 
-    <!-- work: header -->
+    <!-- work: header — the archive's cover plate -->
     <header class="work-hero">
-      <div class="container">
-        <p class="eyebrow">პორტფოლიო</p>
-        <h1
-          data-animate-variant="slide-words"
-          data-animate-on-scroll="false"
-          data-animate-delay="0.3"
-        >
-          არქივი
-        </h1>
-        <div class="work-meta">
-          <p class="work-count" id="workCount" aria-live="polite">
-            09 / 09 — ყველა ტიპი, ყველა ინდუსტრია
-          </p>
-          <p class="work-note">
-            რეალური კლიენტის სამუშაოსა და საკონცეფციო პროექტების ნაზავი.
-          </p>
+      <div class="container work-hero-top">
+        <div class="work-hero-title">
+          <p class="eyebrow">პორტფოლიო — ფირფიტების კატალოგი</p>
+          <h1
+            data-animate-variant="slide-words"
+            data-animate-on-scroll="false"
+            data-animate-delay="0.3"
+          >
+            არქივი
+          </h1>
         </div>
+        <!-- the archive described by its own numbers, not by adjectives -->
+        <dl class="work-tally" id="workTally" aria-label="არქივი ერთი შეხედვით"></dl>
       </div>
     </header>
 
-    <!-- work: filters -->
-    <div class="work-filters">
-      <div class="container">
-        <div class="filter-group" data-filter-group="type">
-          <span class="filter-label">ტიპი</span>
-          <div class="filter-pills" id="typeFilters"></div>
+    <!-- work: filters + view toggle (sticks while the plates scroll) -->
+    <div class="work-filters" id="workFilters">
+      <div class="container work-filters-inner">
+        <div class="filter-rows">
+          <div class="filter-group" data-filter-group="type">
+            <span class="filter-label">ტიპი</span>
+            <div class="filter-tabs" id="typeFilters" role="group" aria-label="ტიპით ფილტრაცია"></div>
+          </div>
+          <div class="filter-group" data-filter-group="industry">
+            <span class="filter-label">ინდუსტრია</span>
+            <div class="filter-tabs" id="industryFilters" role="group" aria-label="ინდუსტრიით ფილტრაცია"></div>
+          </div>
         </div>
-        <div class="filter-group" data-filter-group="industry">
-          <span class="filter-label">ინდუსტრია</span>
-          <div class="filter-pills" id="industryFilters"></div>
+        <div class="work-filters-foot">
+          <p class="work-count" id="workCount" aria-live="polite" aria-atomic="true">
+            22 / 22 — ყველა ტიპი, ყველა ინდუსტრია
+          </p>
+          <div class="work-views" role="group" aria-label="ხედი">
+            <button type="button" class="work-view is-active" data-view="plates" aria-pressed="true">ფირფიტები</button>
+            <button type="button" class="work-view" data-view="index" aria-pressed="false">საძიებელი</button>
+            <button type="button" class="work-reset" id="workReset" hidden>გასუფთავება ✕</button>
+          </div>
         </div>
       </div>
     </div>

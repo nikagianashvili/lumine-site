@@ -35,6 +35,7 @@ const menuItems = isKa
       { label: "სერვისები", route: "/ka/services" },
       { label: "ნამუშევრები", route: "/ka/work" },
       { label: "ფასები", route: "/ka/pricing" },
+      { label: "კითხვები", route: "/ka/questions" },
       { label: "ჟურნალი", route: "/ka/journal" },
       { label: "კონტაქტი", route: "/ka/contact" },
     ]
@@ -44,6 +45,7 @@ const menuItems = isKa
       { label: "Services", route: "/services" },
       { label: "Work", route: "/work" },
       { label: "Pricing", route: "/pricing" },
+      { label: "Questions", route: "/questions" },
       { label: "Journal", route: "/journal" },
       { label: "Contact", route: "/contact" },
     ];

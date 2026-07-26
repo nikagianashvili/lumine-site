@@ -1,0 +1,406 @@
+/* questions — the long-form answer page.
+   Two columns: a sticky section index that tracks where you are, and the
+   questions themselves as rows that open. The page is long by design, so
+   everything here exists to make a long page navigable: the index, the
+   running number on every question, and the filter above them. */
+
+.qa-hero {
+  padding: 12rem 2.5rem 3rem;
+}
+
+.qa-hero-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--sp-4);
+}
+
+.qa-hero h1 {
+  max-width: 14ch;
+}
+
+.qa-hero-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  max-width: 24rem;
+  text-align: right;
+}
+
+.qa-hero-aside p {
+  opacity: 0.75;
+}
+
+.qa-count {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* — filter — */
+.qa-filter-row {
+  padding: 0 2.5rem 3rem;
+}
+
+.qa-filter {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 1rem 1.35rem;
+  border: 1px solid var(--d-soft);
+  border-radius: 100px;
+  background-color: transparent;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.qa-filter:focus-within {
+  border-color: var(--d);
+  box-shadow: var(--lift);
+}
+
+.qa-filter svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: none;
+  opacity: 0.45;
+}
+
+.qa-filter input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--f-nm);
+  font-size: 1rem;
+  color: var(--d);
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.qa-filter input::placeholder {
+  color: var(--d);
+  opacity: 0.4;
+}
+
+/* — the two-column body — */
+.qa-body {
+  display: grid;
+  grid-template-columns: 16rem minmax(0, 1fr);
+  gap: var(--sp-5);
+  padding: 0 2.5rem var(--sp-5);
+}
+
+.qa-index-col {
+  position: relative;
+}
+
+.qa-index {
+  position: sticky;
+  top: 9rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* the index rows are hairline-separated the same way the client register
+   and the rate card are — one convention for "a list of records" */
+.qa-nav-item {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--d-soft);
+  color: var(--d);
+  text-decoration: none;
+  opacity: 0.45;
+  transition:
+    opacity 0.3s ease,
+    padding-left 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.qa-nav-item:hover {
+  opacity: 0.8;
+}
+
+.qa-nav-item.is-active {
+  opacity: 1;
+  padding-left: 0.5rem;
+}
+
+.qa-nav-item.is-active .qa-nav-num {
+  color: var(--accent);
+}
+
+.qa-nav-num,
+.qa-nav-count {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}
+
+.qa-nav-count {
+  opacity: 0.5;
+}
+
+.qa-nav-title {
+  font-family: var(--f-nm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+/* — sections — */
+.qa-section + .qa-section {
+  margin-top: var(--sp-5);
+}
+
+.qa-section-head {
+  margin-bottom: var(--sp-3);
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--d);
+}
+
+.qa-section-head h2 {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.05;
+}
+
+.qa-section-head p {
+  margin-top: 0.5rem;
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+/* — a question row — */
+.qa-item {
+  border-bottom: 1px solid var(--d-soft);
+}
+
+.qa-question {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) 1.5rem;
+  align-items: start;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.4rem 0;
+  font-family: inherit;
+  text-align: left;
+  color: var(--d);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.qa-num {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  line-height: 1.9;
+  opacity: 0.4;
+}
+
+.qa-question-text {
+  font-family: var(--f-nm);
+  font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+  font-weight: 500;
+  line-height: 1.35;
+  transition: color 0.3s ease;
+}
+
+.qa-item:hover .qa-question-text,
+.qa-item.is-open .qa-question-text {
+  color: var(--accent);
+}
+
+/* a drawn plus that becomes a minus — two rules, one of which rotates away,
+   rather than swapping a glyph */
+.qa-sign {
+  position: relative;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.25rem;
+  justify-self: end;
+}
+
+.qa-sign::before,
+.qa-sign::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: currentColor;
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.qa-sign::after {
+  transform: rotate(90deg);
+}
+
+.qa-item.is-open .qa-sign::after {
+  transform: rotate(0deg);
+}
+
+.qa-answer {
+  height: 0;
+  overflow: hidden;
+}
+
+.qa-answer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  max-width: 48rem;
+  padding: 0 1.5rem 1.9rem 4rem;
+}
+
+.qa-answer-inner > p {
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+/* — the second layer: the specifics behind the answer — */
+.qa-detail {
+  width: 100%;
+  padding: 1.1rem 1.35rem;
+  background-color: var(--d);
+  color: var(--l);
+  border-radius: var(--r-sm);
+}
+
+.qa-detail-label {
+  display: block;
+  margin-bottom: 0.7rem;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.qa-detail ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.qa-detail li {
+  position: relative;
+  padding-left: 1.1rem;
+  font-family: var(--f-mono);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
+.qa-detail li::before {
+  content: "";
+  position: absolute;
+  top: 0.6em;
+  left: 0;
+  width: 0.45rem;
+  height: 1px;
+  background-color: var(--accent);
+}
+
+.qa-link {
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--d);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.15rem;
+  transition: color 0.3s ease;
+}
+
+.qa-link:hover {
+  color: var(--accent);
+}
+
+.qa-empty {
+  padding: var(--sp-4) 0;
+  font-size: 1.05rem;
+  opacity: 0.6;
+}
+
+/* — closing prompt — */
+.qa-outro {
+  padding: var(--sp-5) 2.5rem;
+  border-top: 1px solid var(--d-soft);
+}
+
+.qa-outro-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  text-align: center;
+}
+
+.qa-outro-inner p {
+  max-width: 34rem;
+  opacity: 0.75;
+}
+
+@media (max-width: 1000px) {
+  .qa-hero {
+    padding: 9rem 1.5rem 2rem;
+  }
+
+  .qa-hero-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .qa-hero-aside {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .qa-filter-row {
+    padding: 0 1.5rem 2rem;
+  }
+
+  /* The index is the first thing on a phone and would push the questions a
+     screen down. The section heads already carry the same structure, so the
+     rail is desktop-only rather than restyled into a second nav. */
+  .qa-index-col {
+    display: none;
+  }
+
+  .qa-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 0 1.5rem var(--sp-5);
+  }
+
+  .qa-question {
+    grid-template-columns: 2.2rem minmax(0, 1fr) 1.2rem;
+    gap: 0.7rem;
+  }
+
+  .qa-answer-inner {
+    padding: 0 0 1.6rem 2.9rem;
+  }
+
+  .qa-outro {
+    padding: var(--sp-4) 1.5rem;
+  }
+}

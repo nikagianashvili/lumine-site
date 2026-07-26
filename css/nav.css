@@ -386,8 +386,8 @@ html[lang="ka"] .menu-overlay .menu-link a {
   }
 
   .menu-overlay .menu-link a {
-    /* 7 items must fit a phone screen above the wrapper padding */
-    font-size: min(11vh, 4.5rem);
+    /* 8 items must fit a phone screen above the wrapper padding */
+    font-size: min(9.5vh, 4rem);
   }
 
   /* stacked links have zero gap between rows, so an index sitting above

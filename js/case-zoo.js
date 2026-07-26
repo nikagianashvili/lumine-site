@@ -517,7 +517,12 @@
     var cy = gsap.quickTo(cursor, "y", { duration: 0.25, ease: "power3.out" });
     document.addEventListener("mousemove", function (e) { cx(e.clientX); cy(e.clientY); });
 
-    var LABELS = { view: "VIEW", drag: "SCROLL", link: "" };
+    // the only strings this file paints on screen, so they follow the page
+    // rather than being hard-coded English on the Georgian proof
+    var isKa = /^\/ka(\/|$)/.test(window.location.pathname);
+    var LABELS = isKa
+      ? { view: "ნახე", drag: "დააგორე", link: "" }
+      : { view: "VIEW", drag: "SCROLL", link: "" };
     document.addEventListener("mouseover", function (e) {
       var el = e.target.closest("[data-cursor], a");
       cursor.classList.remove("is-link", "is-view", "is-drag");

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ka">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>კითხვები | Lumine | შემოქმედებითი სააგენტო — თბილისი</title>
+    <meta name="author" content="Lumine" />
+    <meta
+      name="description"
+      content="ყველა კითხვა Lumine-ის პაკეტებზე, ცალკეულ სერვისებზე, ფასებზე, პროცესზე, ფაილებსა და უფლებებზე — სრულად ნაპასუხები."
+    />
+    <meta name="theme-color" content="#17130f" />
+    <meta property="og:title" content="კითხვები — Lumine" />
+    <meta
+      property="og:description"
+      content="გრძელი პასუხები: პაკეტები, ცალკეული სერვისები, ფული, პროცესი, ფაილები და უფლებები."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/logo/lumine-logo-black.png" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon-mark.svg" />
+    <link rel="icon" type="image/png" href="/icons/favicon-mark.png" />
+    <link rel="canonical" href="https://lumine.ge/ka/questions" />
+    <link rel="alternate" hreflang="en" href="https://lumine.ge/questions" />
+    <link rel="alternate" hreflang="ka" href="https://lumine.ge/ka/questions" />
+    <link rel="alternate" hreflang="x-default" href="https://lumine.ge/questions" />
+    <link rel="stylesheet" href="/css/globals.css" />
+    <link rel="stylesheet" href="/css/nav.css" />
+    <link rel="stylesheet" href="/css/questions.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/chat-widget.css" />
+  </head>
+  <body>
+    <!-- questions: navigation -->
+    <nav>
+      <div class="nav-logo">
+        <a href="/ka">
+          <img src="/logo/lumine-wordmark.svg" alt="Lumine" />
+        </a>
+      </div>
+      <div class="nav-icon">
+        <img src="/logo/lumine-mark-2.svg" alt="" />
+      </div>
+      <div class="nav-right">
+        <div class="nav-lang" role="group" aria-label="Language">
+          <a href="/questions" class="nav-lang-btn">EN</a>
+          <span class="nav-lang-sep">/</span>
+          <span class="nav-lang-btn is-active">GE</span>
+        </div>
+        <div class="nav-toggler">
+          <p>Menu</p>
+        </div>
+      </div>
+    </nav>
+
+    <!-- questions: header -->
+    <header class="qa-hero">
+      <div class="container qa-hero-row">
+        <div class="qa-hero-head">
+          <p class="eyebrow">კითხვები</p>
+          <h1
+            data-animate-variant="slide-words"
+            data-animate-on-scroll="false"
+            data-animate-delay="0.3"
+          >
+            იკითხე ყველაფერი
+          </h1>
+        </div>
+        <div class="qa-hero-aside">
+          <span class="qa-count" id="qaCount"></span>
+          <p>
+            მოკლე ვერსია მთავარ გვერდზეა. ეს გრძელია — ყოველი პაკეტი, ყოველი
+            ცალკეული სერვისი, რა რა ღირს, ვის რა ეკუთვნის და რა ხდება ზარის
+            შემდეგ.
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- questions: filter -->
+    <div class="qa-filter-row">
+      <div class="container">
+        <label class="qa-filter">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle
+              cx="11"
+              cy="11"
+              r="7"
+              stroke="currentColor"
+              stroke-width="1.6"
+            />
+            <path
+              d="M16.5 16.5 21 21"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
+          <input
+            type="search"
+            id="qaFilter"
+            autocomplete="off"
+            aria-label="მოძებნე კითხვა"
+          />
+        </label>
+      </div>
+    </div>
+
+    <!-- questions: index + answers -->
+    <div class="container qa-body">
+      <div class="qa-index-col">
+        <nav class="qa-index" id="qaIndex" aria-label="სექციები"></nav>
+      </div>
+      <div>
+        <div id="qaSections"></div>
+        <p class="qa-empty" id="qaEmpty" hidden></p>
+      </div>
+    </div>
+
+    <!-- questions: outro -->
+    <section class="qa-outro">
+      <div class="container qa-outro-inner">
+        <h4 data-animate-variant="slide" data-animate-on-scroll="true">
+          კიდევ დარჩა კითხვა?
+        </h4>
+        <p>
+          თხუთმეტი წუთი ზარზე და გექნება რეალური ციფრი და რეალური გეგმა —
+          თუნდაც პასუხი ის იყოს, რომ ნაკლები გჭირდება, ვიდრე გეგონა.
+        </p>
+        <a href="/ka/contact" class="btn btn-solid" data-magnetic
+          >დაჯავშნე ზარი</a
+        >
+      </div>
+    </section>
+
+    <!-- questions: footer -->
+    <footer>
+      <div id="footer-canvas"></div>
+      <div class="footer-inner">
+        <div class="footer-cta">
+          <span
+            class="footer-cta-eyebrow"
+            data-animate-variant="slide"
+            data-animate-on-scroll="true"
+          >
+            გისმენთ
+          </span>
+          <h3
+            class="footer-cta-heading"
+            data-animate-variant="slide"
+            data-animate-on-scroll="true"
+            data-animate-delay="0.1"
+          >
+            თქვენი შემდეგი დიდი საქმე სწორედ აქედან იწყება
+          </h3>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-logo">Lumine</p>
+          <p class="footer-copy">თბილისი, საქართველო</p>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/js/lenis-scroll.js"></script>
+    <script type="module" src="/js/cursor.js"></script>
+    <script type="module" src="/js/mtavruli.js"></script>
+    <script type="module" src="/js/animated-copy.js"></script>
+    <script type="module" src="/js/simulation.js"></script>
+    <script type="module" src="/js/nav.js"></script>
+    <script type="module" src="/js/questions.js"></script>
+    <script type="module" src="/js/home-extras.js"></script>
+    <script type="module" src="/js/footer.js"></script>
+    <script type="module" src="/js/chat-widget.js"></script>
+  </body>
+</html>

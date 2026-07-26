@@ -18,7 +18,7 @@ const COLUMNS_EN = [
       { label: "Work", href: p("/work") },
       { label: "Pricing", href: p("/pricing") },
       { label: "Journal", href: p("/journal") },
-      { label: "Q&A", href: `${p("/")}#faq` },
+      { label: "Q&A", href: p("/questions") },
     ],
   },
   {
@@ -65,7 +65,7 @@ const COLUMNS_KA = [
       { label: "ნამუშევრები", href: p("/work") },
       { label: "ფასები", href: p("/pricing") },
       { label: "ჟურნალი", href: p("/journal") },
-      { label: "კითხვა-პასუხი", href: `${p("/")}#faq` },
+      { label: "კითხვა-პასუხი", href: p("/questions") },
     ],
   },
   {
@@ -224,9 +224,13 @@ function buildLinks() {
     solid.appendChild(bottom);
   }
 
-  // The floor: the wordmark set as large as the viewport allows, cropped by
-  // the bottom edge, inking in as the page ends.
-  if (!footer.querySelector(".footer-mark")) {
+  // The wordmark drawn as an outline that inks in on scroll. It used to sit
+  // on the floor of the colophon, below every link, where it was the last
+  // thing on the page and read as a rug. It now fills the empty right half
+  // of the sign-off band, so the studio signs its name beside the ask
+  // instead of after it.
+  const signOff = footer.querySelector(".footer-cta");
+  if (signOff && !footer.querySelector(".footer-mark")) {
     const mark = document.createElement("div");
     mark.className = "footer-mark";
     mark.setAttribute("aria-hidden", "true");
@@ -234,7 +238,7 @@ function buildLinks() {
       <span class="footer-mark-outline">Lumine</span>
       <span class="footer-mark-fill">Lumine</span>
     `;
-    solid.appendChild(mark);
+    signOff.appendChild(mark);
   }
 
   // newsletter — no backend yet: composes a subscribe email, says so.

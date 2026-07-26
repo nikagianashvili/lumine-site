@@ -7,13 +7,13 @@
     <meta name="author" content="Lumine" />
     <meta
       name="description"
-      content="ექვსი სერვისი, ერთი გუნდი: ფოტოგრაფია, ვიდეო, გრაფიკული დიზაინი, სოციალური მედია, ციფრული მარკეტინგი და ვებ დეველოპმენტი."
+      content="ცხრა მიმართულება, ერთი გუნდი: სტრატეგია, ფოტოგრაფია, ვიდეო, ბრენდი და დიზაინი, სოციალური მედია, მარკეტინგი, ვები, AI და ბეჭდვა."
     />
     <meta name="theme-color" content="#17130f" />
     <meta property="og:title" content="სერვისები — Lumine" />
     <meta
       property="og:description"
-      content="ექვსი სერვისი, ერთი გუნდი, ერთი საკონტაქტო პირი."
+      content="ცხრა მიმართულება, ერთი გუნდი, ერთი საკონტაქტო პირი. ფასები ღიად, ლარში."
     />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="/logo/lumine-logo-black.png" />
@@ -53,234 +53,446 @@
       </div>
     </nav>
 
-    <!-- services: header -->
+    <!-- fixed sheet marker: which of the nine sheets is under the needle -->
+    <div class="svc-marker" aria-hidden="true">
+      <span class="svc-marker-label">ფურცელი</span>
+      <span class="svc-marker-num">01</span>
+      <span class="svc-marker-total">/ 09</span>
+    </div>
+
+    <!-- services: header — the rate card cover + full index -->
     <header class="svc-hero">
-      <div class="container">
-        <p class="eyebrow">სერვისები</p>
-        <h1
-          data-animate-variant="slide-words"
-          data-animate-on-scroll="false"
-          data-animate-delay="0.3"
-        >
-          რას ვაკეთებთ
-        </h1>
-        <p class="svc-hero-copy">
-          ექვსი სერვისი, ერთი გუნდი, ერთი საკონტაქტო პირი. დაჯავშნეთ ერთი
-          სერვისი ან აიღეთ თვიური პაკეტი — ორივე შემთხვევაში პროექტი
-          არავის ხელში არ გადადის.
-        </p>
+      <div class="container svc-hero-top">
+        <div class="svc-hero-title">
+          <p class="eyebrow">სერვისები — ფასების ბარათი, 2026</p>
+          <h1
+            data-animate-variant="slide-words"
+            data-animate-on-scroll="false"
+            data-animate-delay="0.3"
+          >
+            რას ვაკეთებთ
+          </h1>
+        </div>
+        <div class="svc-hero-aside">
+          <p class="svc-hero-copy">
+            ცხრა მიმართულება, ერთი გუნდი, ერთი საკონტაქტო პირი. შეუკვეთე
+            ერთი სერვისი ან აიღე მთელი თვე — არცერთ შემთხვევაში არაფერი
+            გადაეცემა კონტრაქტორს, რომელსაც ვერასდროს ნახავ.
+          </p>
+          <p class="svc-hero-note">
+            ტარიფები ღიად, ლარში.<br />გადაატარე ხაზზე და ნახე სამუშაო.
+            დააჭირე და წაიკითხე ფურცელი.
+          </p>
+        </div>
+      </div>
+
+      <div class="container services-list svc-index" role="navigation" aria-label="სერვისების საძიებელი">
+        <a href="#strategy" class="service-row svc-index-row" data-image="/sample-project/hero.jpg">
+          <span class="si-num">01</span>
+          <span class="si-name">სტრატეგია</span>
+          <span class="si-spec">პოზიციონირება · კამპანიები · მენეჯმენტი</span>
+          <b class="si-leader" aria-hidden="true"></b>
+          <span class="si-rate">ყოველ პაკეტში</span>
+        </a>
+        <a href="#photography" class="service-row svc-index-row" data-image="/work/work1.jpg">
+          <span class="si-num">02</span>
+          <span class="si-name">ფოტოგრაფია</span>
+          <span class="si-spec">პროდუქტი · კომერციული · ღონისძიება · საკვები</span>
+          <b class="si-leader" aria-hidden="true"></b>
+          <span class="si-rate">200₾-დან</span>
+        </a>
+        <a href="#video" class="service-row svc-index-row" data-image="/work/work2.jpg">
+          <span class="si-num">03</span>
+          <span class="si-name">ვიდეო წარმოება</span>
+          <span class="si-spec">რეკლამა · სოციალური · საბრენდო ფილმი · მოუშენი</span>
+          <b class="si-leader" aria-hidden="true"></b>
+          <span class="si-rate">300₾-დან</span>
+        </a>
+        <a href="#brand" class="service-row svc-index-row" data-image="/work/design/tbilisi-zoo/cover.jpg">
+          <span class="si-num">04</span>
+          <span class="si-name">ბრენდი და დიზაინი</span>
+          <span class="si-spec">იდენტობა · ბეჭდვა · შეფუთვა · UI/UX</span>
+          <b class="si-leader" aria-hidden="true"></b>
+          <span class="si-rate">1500–2500₾</span>
+        </a>
+        <a href="#smm" class="service-row svc-index-row" data-image="/work/work4.jpg">
+          <span class="si-num">05</span>
+          <span class="si-name">სოციალური მედია</span>
+          <span class="si-spec">სტრატეგია · კალენდარი · ტექსტი · კომუნიკაცია</span>
+          <b class="si-leader" aria-hidden="true"></b>
+          <span class="si-rate">პაკეტებში</span>
+        </a>
+        <a href="#marketing" class="service-row svc-index-row" data-image="/work/work5.jpg">
+          <span class="si-num">06</span>
+          <span class="si-name">მარკეტინგი და რეკლამა</span>
+          <span class="si-spec">ფასიანი სოციალური · Google Ads · SEO · ანალიტიკა</span>
+          <b class="si-leader" aria-hidden="true"></b>
+          <span class="si-rate">პაკეტებში</span>
+        </a>
+        <a href="#web" class="service-row svc-index-row" data-image="/work/work6.jpg">
+          <span class="si-num">07</span>
+          <span class="si-name">ვებ დეველოპმენტი</span>
+          <span class="si-spec">საიტები · ელ-კომერცია · პორტალები · დეშბორდები</span>
+          <b class="si-leader" aria-hidden="true"></b>
+          <span class="si-rate">2000–3000₾</span>
+        </a>
+        <a href="#ai" class="service-row svc-index-row" data-image="/sample-project/details-2.jpg">
+          <span class="si-num">08</span>
+          <span class="si-name">AI Front Office</span>
+          <span class="si-spec">ჩატბოტები · ლიდების კვალიფიკაცია · ხმოვანი AI</span>
+          <b class="si-leader" aria-hidden="true"></b>
+          <span class="si-rate">ინდივიდუალური</span>
+        </a>
+        <a href="#printing" class="service-row svc-index-row" data-image="/work/design/tene/cover.jpg">
+          <span class="si-num">09</span>
+          <span class="si-name">ბეჭდვა</span>
+          <span class="si-spec">სარეკლამო · დიდი ფორმატი · მერჩი · მენეჯმენტი</span>
+          <b class="si-leader" aria-hidden="true"></b>
+          <span class="si-rate">ინდივიდუალური</span>
+        </a>
       </div>
     </header>
 
-    <!-- 01 photography -->
-    <section class="svc svc-light" id="photography">
+    <!-- 01 strategy -->
+    <section class="svc svc-light" id="strategy">
+      <span class="svc-numeral" aria-hidden="true">01</span>
       <div class="container">
-        <div class="svc-head">
-          <span class="svc-index">01</span>
-          <h2 data-animate-variant="slide" data-animate-on-scroll="true">
-            ფოტოგრაფია
-          </h2>
+        <div class="svc-meta" aria-hidden="true">
+          <span>ფურცელი 01 / 09</span><span>სტრატეგია და კრეატიული მენეჯმენტი</span><span>ფასების ბარათი — 2026</span>
         </div>
+        <h2 data-animate-variant="slide" data-animate-on-scroll="true">
+          სტრატეგია და კრეატიული<br />მენეჯმენტი
+        </h2>
         <div class="svc-body">
-          <div class="svc-col">
+          <div class="svc-col-problem">
             <p class="svc-label">პრობლემა</p>
-            <h6>ტელეფონის ფოტო ბრტყელს ხდის კარგ პროდუქტს. თქვენი სამუშაო უკეთეს განათებას იმსახურებს.</h6>
+            <p class="svc-problem" data-animate-variant="slide-lines" data-animate-on-scroll="true">
+              არასწორ ბრიფზე აგებული კარგი კრეატივი უბრალოდ ძვირი ვარაუდია.
+            </p>
           </div>
-          <div class="svc-col">
+          <div class="svc-col-answer">
             <p class="svc-label">რას ვაკეთებთ</p>
             <p class="svc-copy">
-              პროდუქტისა და კამპანიის გადაღებები, ლოკაციაზე თუ სტუდიაში,
-              რეტუშითა და ფერთა კორექციით საკუთარ გუნდში. იღებთ ფაილებს,
-              მზადს ბეჭდვისთვის, ვებისთვის და ნებისმიერი ზომის ფიდისთვის.
+              პროექტის მენეჯმენტი, ბრენდის პოზიციონირება და კამპანიების
+              მართვა — ერთი ძაფი პიტჩიდან ჩაბარებამდე, რომ აუდიტორიას სახელი
+              დაერქვას და ბრიფი გასწორდეს, სანამ რამე დამზადდება.
             </p>
-            <div class="svc-chips">
-              <span class="svc-chip">პროდუქტის გადაღება</span>
-              <span class="svc-chip">კამპანიის გადაღება</span>
-              <span class="svc-chip">რეტუში</span>
-              <span class="svc-chip">ფერთა კორექცია</span>
-            </div>
+            <p class="svc-specimen">პროექტის მენეჯმენტი · ბრენდის პოზიციონირება · კამპანიების მართვა</p>
             <div class="svc-foot">
-              <span class="svc-price">200₾-დან</span>
-              <a href="/ka/work?service=Photography" class="btn btn-outline">ნამუშევრების ნახვა</a>
+              <span class="svc-rate-row">
+                <span class="svc-rate-label">ტარიფი</span>
+                <b class="svc-leader" aria-hidden="true"></b>
+                <span class="svc-rate-value">ყოველ პაკეტში</span>
+              </span>
+              <a href="/ka/services/strategy" class="svc-more">სრული ფურცელი <span aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 02 video -->
-    <section class="svc svc-dark grain" id="video">
+    <!-- 02 photography -->
+    <section class="svc svc-dark grain" id="photography">
+      <span class="svc-numeral" aria-hidden="true">02</span>
       <div class="container">
-        <div class="svc-head">
-          <span class="svc-index">02</span>
-          <h2 data-animate-variant="slide" data-animate-on-scroll="true">
-            ვიდეო
-          </h2>
+        <div class="svc-meta" aria-hidden="true">
+          <span>ფურცელი 02 / 09</span><span>ფოტოგრაფია</span><span>ფასების ბარათი — 2026</span>
         </div>
+        <h2 data-animate-variant="slide" data-animate-on-scroll="true">
+          ფოტოგრაფია
+        </h2>
         <div class="svc-body">
-          <div class="svc-col">
+          <div class="svc-col-problem">
             <p class="svc-label">პრობლემა</p>
-            <h6>სამი წამი გაქვთ, სანამ თითი გადავა შემდეგზე.</h6>
+            <p class="svc-problem" data-animate-variant="slide-lines" data-animate-on-scroll="true">
+              ტელეფონის ფოტო კარგ პროდუქტს აბრტყელებს, ნაჩქარევი გადაღება კი სწორედ ისე გამოიყურება.
+            </p>
           </div>
-          <div class="svc-col">
+          <div class="svc-col-answer">
             <p class="svc-label">რას ვაკეთებთ</p>
             <p class="svc-copy">
-              მოკლემეტრაჟიანი ვიდეო, აგებული ფიდისთვის — გადაღებული,
-              მონტაჟირებული, რეტუშირებული და ფერადკორექტირებული ერთი
-              ხელით. პროდუქტის ციკლური ვიდეოებიდან საბრენდო ფილმებამდე,
-              რომლებიც ყურადღებას აჩერებენ ჰუკის შემდეგაც.
+              პროდუქტის, კომერციული, კორპორატიული, ღონისძიებისა და საკვების
+              ფოტოგრაფია — გადაღებული, რეტუშირებული და ფერადკორექტირებული
+              ერთი შიდა გუნდის ხელით, რომ სტანდარტი ტიპებს შორის არ დაეცეს.
             </p>
-            <div class="svc-chips">
-              <span class="svc-chip">მოკლემეტრაჟიანი</span>
-              <span class="svc-chip">საბრენდო ფილმები</span>
-              <span class="svc-chip">მონტაჟი</span>
-              <span class="svc-chip">ფერთა კორექცია</span>
-            </div>
+            <p class="svc-specimen">პროდუქტი · კომერციული · კორპორატიული · ღონისძიებები · საკვები</p>
             <div class="svc-foot">
-              <span class="svc-price">300₾-დან</span>
-              <a href="/ka/work?service=Video" class="btn btn-outline">ნამუშევრების ნახვა</a>
+              <span class="svc-rate-row">
+                <span class="svc-rate-label">ტარიფი</span>
+                <b class="svc-leader" aria-hidden="true"></b>
+                <span class="svc-rate-value">200₾-დან</span>
+              </span>
+              <a href="/ka/services/photography" class="svc-more">სრული ფურცელი <span aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 03 design -->
-    <section class="svc svc-light" id="design">
+    <!-- 03 video -->
+    <section class="svc svc-light" id="video">
+      <span class="svc-numeral" aria-hidden="true">03</span>
       <div class="container">
-        <div class="svc-head">
-          <span class="svc-index">03</span>
-          <h2 data-animate-variant="slide" data-animate-on-scroll="true">
-            გრაფიკული დიზაინი
-          </h2>
+        <div class="svc-meta" aria-hidden="true">
+          <span>ფურცელი 03 / 09</span><span>ვიდეო წარმოება</span><span>ფასების ბარათი — 2026</span>
         </div>
+        <h2 data-animate-variant="slide" data-animate-on-scroll="true">
+          ვიდეო წარმოება
+        </h2>
         <div class="svc-body">
-          <div class="svc-col">
+          <div class="svc-col-problem">
             <p class="svc-label">პრობლემა</p>
-            <h6>ბრენდს, რომელიც იმპროვიზირებულად გამოიყურება, ისეთადვე ეპყრობიან.</h6>
+            <p class="svc-problem" data-animate-variant="slide-lines" data-animate-on-scroll="true">
+              სამი წამი გაქვს, სანამ თითი გადაფურცლავს.
+            </p>
           </div>
-          <div class="svc-col">
+          <div class="svc-col-answer">
             <p class="svc-label">რას ვაკეთებთ</p>
             <p class="svc-copy">
-              ყველაფერი ვიზუალური, რაც ბრენდს ერთიანობისთვის სჭირდება:
-              ლოგოები და სრული ბრენდბუქები, პოსტერები, ბანერები, სავიზიტო
-              ბარათები, სერტიფიკატები — ერთი ვიზუალური ენა ყველგან.
+              რეკლამები, მოკლე ფორმატის სოციალური ვიდეო, კორპორატიული და
+              საბრენდო ფილმები, ღონისძიების ამონარიდები და მოუშენ გრაფიკა —
+              კონცეფციიდან ფერამდე, ყველაფერი საკუთარ გუნდში.
             </p>
-            <div class="svc-chips">
-              <span class="svc-chip">ლოგოები</span>
-              <span class="svc-chip">ბრენდბუქები</span>
-              <span class="svc-chip">პოსტერები</span>
-              <span class="svc-chip">ბანერები</span>
-              <span class="svc-chip">სავიზიტო ბარათები</span>
-            </div>
+            <p class="svc-specimen">რეკლამები · სოციალური ვიდეო · საბრენდო ფილმები · ღონისძიებები · მოუშენი</p>
             <div class="svc-foot">
-              <span class="svc-price">ბრენდბუქი 1500–2500₾</span>
-              <a href="/ka/work?service=Design" class="btn btn-outline">ნამუშევრების ნახვა</a>
+              <span class="svc-rate-row">
+                <span class="svc-rate-label">ტარიფი</span>
+                <b class="svc-leader" aria-hidden="true"></b>
+                <span class="svc-rate-value">300₾-დან</span>
+              </span>
+              <a href="/ka/services/video" class="svc-more">სრული ფურცელი <span aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 04 social -->
-    <section class="svc svc-dark grain" id="social">
+    <!-- 04 brand & graphic design -->
+    <section class="svc svc-dark grain" id="brand">
+      <span class="svc-numeral" aria-hidden="true">04</span>
       <div class="container">
-        <div class="svc-head">
-          <span class="svc-index">04</span>
-          <h2 data-animate-variant="slide" data-animate-on-scroll="true">
-            სოციალური მედია
-          </h2>
+        <div class="svc-meta" aria-hidden="true">
+          <span>ფურცელი 04 / 09</span><span>ბრენდი და გრაფიკული დიზაინი</span><span>ფასების ბარათი — 2026</span>
         </div>
+        <h2 data-animate-variant="slide" data-animate-on-scroll="true">
+          ბრენდი და გრაფიკული<br />დიზაინი
+        </h2>
         <div class="svc-body">
-          <div class="svc-col">
+          <div class="svc-col-problem">
             <p class="svc-label">პრობლემა</p>
-            <h6>პოსტინგი, როცა გაგახსენდება, სტრატეგია არ არის.</h6>
+            <p class="svc-problem" data-animate-variant="slide-lines" data-animate-on-scroll="true">
+              ბრენდს, რომელიც იმპროვიზაციას ჰგავს, ისევე ეპყრობიან.
+            </p>
           </div>
-          <div class="svc-col">
+          <div class="svc-col-answer">
             <p class="svc-label">რას ვაკეთებთ</p>
             <p class="svc-copy">
-              გვერდის სრული მართვა კონტენტ-გეგმით, რომელიც რეალურად
-              სრულდება — პოსტები, სთორები და კომენტარების სექცია, თქვენი
-              ბრენდის ხმით, არა შაბლონის.
+              სისტემა და არა ლოგო ცალკე აღებული — შრიფტი, ფერი და გამოყენების
+              წესები, ერთხელ ჩაწერილი. ლოგოები და სრული ბრენდბუქები,
+              პოსტერები, ბანერები, სავიზიტოები, პრეზენტაციები, შეფუთვა და
+              UI/UX: ერთი ვიზუალური ენა ყველაფერზე.
             </p>
-            <div class="svc-chips">
-              <span class="svc-chip">გვერდის მართვა</span>
-              <span class="svc-chip">კონტენტ-დაგეგმვა</span>
-              <span class="svc-chip">საზოგადოება</span>
-            </div>
+            <p class="svc-specimen">ვიზუალური იდენტობა · ბრენდბუქები · ბეჭდვა · შეფუთვა · UI/UX</p>
             <div class="svc-foot">
-              <span class="svc-price">პაკეტებში — იხილეთ ფასები</span>
-              <a href="/ka/work?service=Social" class="btn btn-outline">ნამუშევრების ნახვა</a>
+              <span class="svc-rate-row">
+                <span class="svc-rate-label">ბრენდბუქი</span>
+                <b class="svc-leader" aria-hidden="true"></b>
+                <span class="svc-rate-value">1500–2500₾</span>
+              </span>
+              <a href="/ka/services/brand" class="svc-more">სრული ფურცელი <span aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 05 marketing -->
-    <section class="svc svc-light" id="marketing">
+    <!-- 05 social media management -->
+    <section class="svc svc-light" id="smm">
+      <span class="svc-numeral" aria-hidden="true">05</span>
       <div class="container">
-        <div class="svc-head">
-          <span class="svc-index">05</span>
-          <h2 data-animate-variant="slide" data-animate-on-scroll="true">
-            ციფრული მარკეტინგი
-          </h2>
+        <div class="svc-meta" aria-hidden="true">
+          <span>ფურცელი 05 / 09</span><span>სოციალური მედიის მენეჯმენტი</span><span>ფასების ბარათი — 2026</span>
         </div>
+        <h2 data-animate-variant="slide" data-animate-on-scroll="true">
+          სოციალური მედიის<br />მენეჯმენტი
+        </h2>
         <div class="svc-body">
-          <div class="svc-col">
+          <div class="svc-col-problem">
             <p class="svc-label">პრობლემა</p>
-            <h6>კარგი კონტენტი, რომელსაც არავინ ხედავს, დღიურია და არა მარკეტინგი.</h6>
+            <p class="svc-problem" data-animate-variant="slide-lines" data-animate-on-scroll="true">
+              პოსტვა მაშინ, როცა გაგახსენდება, სტრატეგია არ არის.
+            </p>
           </div>
-          <div class="svc-col">
+          <div class="svc-col-answer">
             <p class="svc-label">რას ვაკეთებთ</p>
             <p class="svc-copy">
-              ფასიანი კამპანიები სოციალურ პლატფორმებზე და SEO, რომელიც
-              აგროვდება — მიზნობრივი, გაზომვადი და დარეპორტებული ციფრებში,
-              რომლის გადამოწმებაც თვითონ შეგიძლიათ.
+              სტრატეგია, რეალური კონტენტ-კალენდარი, ტექსტების წერა,
+              კომუნიკაცია აუდიტორიასთან და ინფლუენსერებთან თანამშრომლობა —
+              გვერდის სრული მართვა და არა მხოლოდ პოსტვა.
             </p>
-            <div class="svc-chips">
-              <span class="svc-chip">ფასიანი სოციალური</span>
-              <span class="svc-chip">SEO</span>
-              <span class="svc-chip">რეპორტინგი</span>
-            </div>
+            <p class="svc-specimen">სტრატეგია · კონტენტ-კალენდარი · ტექსტები · კომუნიკაცია · ინფლუენსერები</p>
             <div class="svc-foot">
-              <span class="svc-price">პაკეტებში — იხილეთ ფასები</span>
-              <a href="/ka/work?service=Marketing" class="btn btn-outline">ნამუშევრების ნახვა</a>
+              <span class="svc-rate-row">
+                <span class="svc-rate-label">ტარიფი</span>
+                <b class="svc-leader" aria-hidden="true"></b>
+                <span class="svc-rate-value">პაკეტებში — იხილე ფასები</span>
+              </span>
+              <a href="/ka/services/smm" class="svc-more">სრული ფურცელი <span aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 06 web -->
-    <section class="svc svc-dark grain" id="web">
+    <!-- 06 digital marketing & ads -->
+    <section class="svc svc-dark grain" id="marketing">
+      <span class="svc-numeral" aria-hidden="true">06</span>
       <div class="container">
-        <div class="svc-head">
-          <span class="svc-index">06</span>
-          <h2 data-animate-variant="slide" data-animate-on-scroll="true">
-            ვებ დეველოპმენტი
-          </h2>
+        <div class="svc-meta" aria-hidden="true">
+          <span>ფურცელი 06 / 09</span><span>ციფრული მარკეტინგი და რეკლამა</span><span>ფასების ბარათი — 2026</span>
         </div>
+        <h2 data-animate-variant="slide" data-animate-on-scroll="true">
+          ციფრული მარკეტინგი<br />და რეკლამის მართვა
+        </h2>
         <div class="svc-body">
-          <div class="svc-col">
+          <div class="svc-col-problem">
             <p class="svc-label">პრობლემა</p>
-            <h6>თქვენი საიტი ერთადერთი არხია, რომელიც თქვენია. უმეტესობა ქირავნობას ჰგავს.</h6>
+            <p class="svc-problem" data-animate-variant="slide-lines" data-animate-on-scroll="true">
+              კარგი კონტენტი, რომელსაც არავინ ხედავს, დღიურია და არა მარკეტინგი.
+            </p>
           </div>
-          <div class="svc-col">
+          <div class="svc-col-answer">
             <p class="svc-label">რას ვაკეთებთ</p>
             <p class="svc-copy">
-              საიტები, დაპროექტებული და აშენებული საკუთარ გუნდში —
-              სწრაფი, მხარდაჭერილი და აგებული ბრენდზე, არა თემის
-              მაღაზიაზე. ეს საიტი სწორედ პორტფოლიოს ნიმუშია.
+              ფასიანი სოციალური რეკლამა, Google Ads, ვორონკის ოპტიმიზაცია,
+              SEO და რეალური ანალიტიკა — ხარჯი მიმართული იქით, რაც მართლა
+              კონვერტირდება და არა იქით, რაც პრეზენტაციაში ლამაზად გამოიყურება.
             </p>
-            <div class="svc-chips">
-              <span class="svc-chip">დიზაინი და აშენება</span>
-              <span class="svc-chip">მხარდაჭერა</span>
-              <span class="svc-chip">წარმადობა</span>
-            </div>
+            <p class="svc-specimen">ფასიანი სოციალური · Google Ads · ვორონკები · SEO · ანალიტიკა</p>
             <div class="svc-foot">
-              <span class="svc-price">2000–3000₾</span>
-              <a href="/ka/work?service=Web" class="btn btn-outline">ნამუშევრების ნახვა</a>
+              <span class="svc-rate-row">
+                <span class="svc-rate-label">ტარიფი</span>
+                <b class="svc-leader" aria-hidden="true"></b>
+                <span class="svc-rate-value">პაკეტებში — იხილე ფასები</span>
+              </span>
+              <a href="/ka/services/marketing" class="svc-more">სრული ფურცელი <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 web development -->
+    <section class="svc svc-light" id="web">
+      <span class="svc-numeral" aria-hidden="true">07</span>
+      <div class="container">
+        <div class="svc-meta" aria-hidden="true">
+          <span>ფურცელი 07 / 09</span><span>ვებ დეველოპმენტი და ციფრული პლატფორმები</span><span>ფასების ბარათი — 2026</span>
+        </div>
+        <h2 data-animate-variant="slide" data-animate-on-scroll="true">
+          ვებ დეველოპმენტი და<br />ციფრული პლატფორმები
+        </h2>
+        <div class="svc-body">
+          <div class="svc-col-problem">
+            <p class="svc-label">პრობლემა</p>
+            <p class="svc-problem" data-animate-variant="slide-lines" data-animate-on-scroll="true">
+              საიტი ერთადერთი არხია, რომელიც შენია. უმეტესობა ნაქირავებს ჰგავს.
+            </p>
+          </div>
+          <div class="svc-col-answer">
+            <p class="svc-label">რას ვაკეთებთ</p>
+            <p class="svc-copy">
+              კორპორატიული საიტები, ელ-კომერცია და სადესანტო გვერდები,
+              დაპროექტებული და აშენებული საკუთარ გუნდში — პლუს შიდა
+              ინსტრუმენტები, რომლებზეც სააგენტოების უმეტესობა არ საუბრობს:
+              კლიენტის პორტალები, ადმინ პანელები, ოპერაციული დეშბორდები.
+              სწორედ ეს საიტია პორტფოლიოს ნიმუში.
+            </p>
+            <p class="svc-specimen">კორპორატიული საიტები · ელ-კომერცია · სადესანტო გვერდები · პორტალები · დეშბორდები</p>
+            <div class="svc-foot">
+              <span class="svc-rate-row">
+                <span class="svc-rate-label">ტარიფი</span>
+                <b class="svc-leader" aria-hidden="true"></b>
+                <span class="svc-rate-value">2000–3000₾</span>
+              </span>
+              <a href="/ka/services/web" class="svc-more">სრული ფურცელი <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 ai front office -->
+    <section class="svc svc-dark grain" id="ai">
+      <span class="svc-numeral" aria-hidden="true">08</span>
+      <div class="container">
+        <div class="svc-meta" aria-hidden="true">
+          <span>ფურცელი 08 / 09</span><span>AI Front Office</span><span>ფასების ბარათი — 2026</span>
+        </div>
+        <h2 data-animate-variant="slide" data-animate-on-scroll="true">
+          AI Front Office
+        </h2>
+        <div class="svc-body">
+          <div class="svc-col-problem">
+            <p class="svc-label">პრობლემა</p>
+            <p class="svc-problem" data-animate-variant="slide-lines" data-animate-on-scroll="true">
+              „AI-ზე აგებულის“ უმეტესობა მარკეტინგია და არა ინფრასტრუქტურა.
+            </p>
+          </div>
+          <div class="svc-col-answer">
+            <p class="svc-label">რას ვაკეთებთ</p>
+            <p class="svc-copy">
+              AI ჩატბოტები, ლიდების ავტომატური კვალიფიკაცია, ჯავშნები, CRM-თან
+              ინტეგრაცია და ხმოვანი AI — რეალური მიმღები, რომელიც ღამითაც
+              მუშაობს. ჩვენივე კლიენტების მიღება და შიდა ასისტენტი უკვე ამაზე
+              დგას, და ყოველთვის ადამიანის თვალით შემოწმებული.
+            </p>
+            <p class="svc-specimen">AI ჩატბოტები · ლიდების კვალიფიკაცია · ჯავშნები · CRM · ხმოვანი AI</p>
+            <div class="svc-foot">
+              <span class="svc-rate-row">
+                <span class="svc-rate-label">ტარიფი</span>
+                <b class="svc-leader" aria-hidden="true"></b>
+                <span class="svc-rate-value">ინდივიდუალური შეთავაზება</span>
+              </span>
+              <a href="/ka/services/ai" class="svc-more">სრული ფურცელი <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 printing -->
+    <section class="svc svc-light" id="printing">
+      <span class="svc-numeral" aria-hidden="true">09</span>
+      <div class="container">
+        <div class="svc-meta" aria-hidden="true">
+          <span>ფურცელი 09 / 09</span><span>ბეჭდვის სერვისები</span><span>ფასების ბარათი — 2026</span>
+        </div>
+        <h2 data-animate-variant="slide" data-animate-on-scroll="true">
+          ბეჭდვის სერვისები
+        </h2>
+        <div class="svc-body">
+          <div class="svc-col-problem">
+            <p class="svc-label">პრობლემა</p>
+            <p class="svc-problem" data-animate-variant="slide-lines" data-animate-on-scroll="true">
+              ციფრული სამუშაო, რომელიც ხელში დასაჭერად არასდროს იქცევა, დასრულებული არ არის.
+            </p>
+          </div>
+          <div class="svc-col-answer">
+            <p class="svc-label">რას ვაკეთებთ</p>
+            <p class="svc-copy">
+              სარეკლამო ბეჭდვა, დიდი ფორმატი, შეფუთვა, ბრენდირებული
+              სუვენირები და ბეჭდვის სრული მართვა — ბრენდის ფიზიკური ნახევარი,
+              იმავე თვალით ნაკეთები, რითაც ციფრული.
+            </p>
+            <p class="svc-specimen">სარეკლამო ბეჭდვა · დიდი ფორმატი · შეფუთვა · სუვენირები · ბეჭდვის მართვა</p>
+            <div class="svc-foot">
+              <span class="svc-rate-row">
+                <span class="svc-rate-label">ტარიფი</span>
+                <b class="svc-leader" aria-hidden="true"></b>
+                <span class="svc-rate-value">ინდივიდუალური შეთავაზება</span>
+              </span>
+              <a href="/ka/services/printing" class="svc-more">სრული ფურცელი <span aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
@@ -290,7 +502,7 @@
     <!-- industries strip -->
     <section class="svc-industries">
       <div class="container">
-        <p class="eyebrow">მზადაა</p>
+        <p class="eyebrow">ვმუშაობთ სფეროებში</p>
       </div>
       <div class="strip-track svc-industries-track" aria-hidden="true">
         <span>სამედიცინო</span>
@@ -310,11 +522,11 @@
       </div>
       <div class="container svc-industries-foot">
         <p>
-          სხვადასხვა ოთახი, ერთი და იგივე საქმე: ბრენდი გავხადოთ ისეთი,
-          რომ თვალს ვერ მოაშორო. არ ხედავთ თქვენს ინდუსტრიას? უბრალოდ
-          ჯერ არ გვქონია შანსი.
+          სხვადასხვა ოთახი, ერთი საქმე: ბრენდი ისე გამოიყურებოდეს, რომ
+          უგულებელყოფა შეუძლებელი იყოს. ვერ ხედავ შენს სფეროს? ეს მხოლოდ
+          იმას ნიშნავს, რომ ჯერ არ შევხვედრივართ.
         </p>
-        <a href="/ka/pricing" class="btn btn-solid" data-magnetic>ფასების ნახვა</a>
+        <a href="/ka/pricing" class="btn btn-solid" data-magnetic>იხილე ფასები</a>
       </div>
     </section>
 
@@ -353,6 +565,7 @@
     <script type="module" src="/js/simulation.js"></script>
     <script type="module" src="/js/nav.js"></script>
     <script type="module" src="/js/home-extras.js"></script>
+    <script type="module" src="/js/services-index.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>
   </body>
