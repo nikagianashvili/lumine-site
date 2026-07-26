@@ -8,10 +8,16 @@ const p = (route) => (isKa ? `/ka${route}` : route);
 
 // One project per service type, so the first thing a visitor sees on Home
 // already shows Lumine's full range — not three projects from one bucket.
+//
+// Delivered client work wins its slot over a concept every time. Without
+// this the picker simply took the first match in registry order, which put
+// speculative projects on the homepage while real ones sat unseen on /work —
+// the least convincing possible arrangement.
 function pickFeatured() {
-  return SERVICE_TYPES.map((type) =>
-    projects.find((proj) => proj.serviceType === type.id),
-  ).filter(Boolean);
+  return SERVICE_TYPES.map((type) => {
+    const ofType = projects.filter((proj) => proj.serviceType === type.id);
+    return ofType.find((proj) => proj.status === "Completed") || ofType[0];
+  }).filter(Boolean);
 }
 
 function buildCard(project, index) {

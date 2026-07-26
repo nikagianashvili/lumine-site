@@ -114,8 +114,8 @@
           data-animate-on-scroll="false"
           data-animate-delay="1.3"
         >
-          A creative agency in Tbilisi — photo, video, design, social,
-          marketing, and web, handled in house and built to perform.
+          A creative agency in Tbilisi. Everything your brand needs to be
+          seen, made under one roof by the same team.
         </p>
         <div class="hero-actions">
           <a
@@ -195,9 +195,9 @@
           data-animate-variant="slide"
           data-animate-on-scroll="true"
         >
-          Lumine is a young studio in Tbilisi that treats every brand like its
-          own — strategy first, then photo, video, design, social, marketing,
-          and web, all under one roof.
+          A young studio that treats every brand like its own. Strategy comes
+          first, the work follows, and nothing gets handed to a vendor you
+          never meet.
         </p>
       </div>
     </section>
@@ -380,13 +380,21 @@
             <p>Content and ads that get measured, not just posted.</p>
           </div>
           <div class="bento-cell bento-wide">
-            <div class="bento-copy">
-              <span class="bento-num">05</span>
-              <h6>Support</h6>
-              <p>One team, one point of contact, from brief to launch and after.</p>
-            </div>
-            <a href="/contact" class="btn btn-outline">Start A Project</a>
+            <span class="bento-num">05</span>
+            <h6>Support</h6>
+            <p>One team, one point of contact, from brief to launch and after.</p>
           </div>
+        </div>
+
+        <!--
+          The action moved out of cell 05, which had been a full-width bar with
+          a button inside it while every other cell was a stacked panel — the
+          grid was breaking its own logic to hold a CTA. It closes the section
+          instead, matching the "View All Work" row under Featured Work.
+        -->
+        <div class="bento-foot">
+          <a href="/contact" class="btn btn-solid" data-magnetic>Start A Project</a>
+          <a href="/pricing" class="bento-foot-link">See what it costs</a>
         </div>
       </div>
     </section>

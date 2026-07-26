@@ -241,8 +241,8 @@ html[lang="ka"] .strip-track span {
 /* — manifesto — */
 .manifesto .container {
   position: relative;
-  padding-top: var(--sp-5);
-  padding-bottom: var(--sp-5);
+  padding-top: var(--sp-4);
+  padding-bottom: var(--sp-3);
 }
 
 .manifesto .eyebrow {
@@ -729,19 +729,39 @@ html[lang="ka"] .service-name {
   filter: grayscale(0) contrast(1);
 }
 
-/* the closing row of the table, not a fifth card */
+/* wider than its neighbours, but built the same way as them */
 .bento-wide {
   grid-column: span 4;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-3);
-  min-height: auto;
-  padding: var(--sp-3);
+  min-height: 11rem;
 }
 
-.bento-wide:hover {
-  background-color: transparent;
+/* the section's action, closing the grid rather than sitting inside it */
+.bento-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-top: var(--sp-4);
+}
+
+.bento-foot-link {
+  font-family: var(--f-nm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+  opacity: 0.6;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.2rem;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.bento-foot-link:hover {
+  opacity: 1;
+  color: var(--accent);
 }
 
 .bento-wide .bento-copy {
@@ -757,12 +777,14 @@ html[lang="ka"] .service-name {
   flex-direction: column;
 }
 
+/* six one-line rows had been the airiest block on the page; the row padding
+   and the oversized index carried most of that height */
 .process-step {
   display: grid;
-  grid-template-columns: 5rem 1fr 2fr;
+  grid-template-columns: 4rem 1fr 2fr;
   align-items: center;
   gap: var(--sp-3);
-  padding: var(--sp-3) 0;
+  padding: var(--sp-2) 0;
   border-top: 1px solid rgba(246, 241, 231, 0.2);
 }
 
@@ -772,7 +794,7 @@ html[lang="ka"] .service-name {
 
 .process-step-index {
   font-family: var(--f-h);
-  font-size: clamp(3.5rem, 6vw, 6rem);
+  font-size: clamp(2.5rem, 4vw, 4rem);
   line-height: 0.85;
   color: transparent;
   -webkit-text-stroke: 1.5px var(--l);
@@ -780,7 +802,7 @@ html[lang="ka"] .service-name {
 }
 
 .process-step h6 {
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
 }
 
 .process-step p {
