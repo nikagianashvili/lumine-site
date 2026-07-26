@@ -513,24 +513,33 @@
     <!-- home: statistics -->
     <section class="section section-dark">
       <div class="container">
-        <div class="stats-grid">
-          <div class="stat-item">
-            <h2 data-count="6">0</h2>
-            <p>Core Services</p>
-          </div>
-          <div class="stat-item">
-            <h2 data-count="100" data-suffix="%">0%</h2>
-            <p>In-House Team</p>
-          </div>
-          <div class="stat-item">
-            <h2 data-count="48" data-suffix="h">0h</h2>
-            <p>Average Response</p>
-          </div>
-          <div class="stat-item">
-            <h2 data-count="1">0</h2>
-            <p>Dedicated Point Of Contact</p>
-          </div>
-        </div>
+        <!--
+          Not a stats grid and not a ledger — one sentence, with the figures
+          set several times the size of the words around them. The numbers
+          become the composition instead of sitting in cells beside it, and
+          the section says something rather than displaying badges.
+
+          The old version claimed "6 core services" (the services page lists
+          nine), "100% in-house" and "1 point of contact" — two of those were
+          claims wearing a number's clothes, and the last was already said by
+          Why Lumine cell 05.
+        -->
+        <p class="stat-sentence">
+          <span class="stat-line stat-line-left">
+            We are
+            <em class="stat-fig" data-count="9" data-pad="2">09</em>
+            disciplines under one roof,
+          </span>
+          <span class="stat-line stat-line-center">
+            we answer a new brief inside
+            <em class="stat-fig" data-count="48" data-suffix="h">0h</em>
+            — usually the same day —
+          </span>
+          <span class="stat-line stat-line-right">
+            and we have been doing it since
+            <em class="stat-fig">2024</em>.
+          </span>
+        </p>
       </div>
     </section>
 

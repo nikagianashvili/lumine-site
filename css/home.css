@@ -990,31 +990,71 @@ html[lang="ka"] .testimonial-quote {
 }
 
 /* — statistics — */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--sp-3);
+/* — statistics: one sentence, with the figures oversized inline —
+   The numbers carry the composition instead of sitting in cells next to it,
+   so the section reads as a claim the studio is making rather than a row of
+   badges. Nothing here is a grid, a card or a rule. */
+.stat-sentence {
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2.6vw, 2.5rem);
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--l);
+}
+
+/* the three clauses step across the section — left, centre, right — so the
+   figures land on a diagonal and the sentence uses the full width instead of
+   sitting in a column */
+.stat-line {
+  display: block;
+}
+
+.stat-line + .stat-line {
+  margin-top: clamp(1rem, 3vh, 2.5rem);
+}
+
+.stat-line-left {
+  text-align: left;
+}
+
+.stat-line-center {
   text-align: center;
+}
+
+.stat-line-right {
+  text-align: right;
+}
+
+.stat-fig {
+  display: inline-block;
+  font-family: var(--f-mono);
+  font-style: normal;
+  font-weight: 500;
+  /* several times the size of the words it sits between — the whole point */
+  font-size: clamp(3.2rem, 8.5vw, 8.5rem);
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  color: var(--accent);
+  /* pull the oversized figures back onto the sentence's baseline */
+  margin: 0 0.06em -0.06em;
+  transform: translateY(0.06em);
 }
 
 /* mono, like every other figure on the site: LK Lumina's digits carry a
    decorative crossbar that reads as a strike-through at this size */
-.stat-item h2 {
-  font-family: var(--f-mono);
-  font-size: clamp(2.25rem, 4.4vw, 4.25rem);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  color: var(--accent);
-}
+@media (max-width: 1000px) {
+  /* the step across the width needs the width — narrow screens read it as
+     three ragged blocks instead, so everything returns to the left */
+  .stat-line-center,
+  .stat-line-right {
+    text-align: left;
+  }
 
-.stat-item p {
-  margin-top: 0.9rem;
-  font-family: var(--f-nm);
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  opacity: 0.6;
+  .stat-sentence {
+    line-height: 1.4;
+  }
 }
 
 /* — faq — */

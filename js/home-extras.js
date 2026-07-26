@@ -196,9 +196,12 @@ function initProcessRoute() {
 // ── stats: count-up on scroll ────────────────────────────────────────────────
 
 function initStatsCountUp() {
-  document.querySelectorAll(".stat-item h2[data-count]").forEach((el) => {
+  document.querySelectorAll("[data-count]").forEach((el) => {
     const end = parseFloat(el.dataset.count);
     const suffix = el.dataset.suffix || "";
+    // data-pad keeps a single digit from looking stranded beside a longer
+    // figure, and matches how the rest of the site numbers things (01–09)
+    const pad = parseInt(el.dataset.pad, 10) || 0;
     const counter = { value: 0 };
 
     ScrollTrigger.create({
@@ -211,7 +214,8 @@ function initStatsCountUp() {
           duration: 1.6,
           ease: "power3.out",
           onUpdate: () => {
-            el.textContent = Math.round(counter.value) + suffix;
+            el.textContent =
+              String(Math.round(counter.value)).padStart(pad, "0") + suffix;
           },
         });
       },
