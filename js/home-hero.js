@@ -93,38 +93,148 @@ function suppressGlobalFluidOverHero() {
 
   const original = fluid.style.opacity || "1";
   fluid.style.transition = "opacity 0.45s ease";
-  hero.addEventListener("mouseenter", () => (fluid.style.opacity = "0"));
+  // mousemove, not mouseenter: enter only fires on a real boundary crossing,
+  // so a cursor that is already inside the hero would never suppress it
+  hero.addEventListener("mousemove", () => {
+    if (fluid.style.opacity !== "0") fluid.style.opacity = "0";
+  });
   hero.addEventListener("mouseleave", () => (fluid.style.opacity = original));
+}
+
+/* The sheet is printed before anyone arrives: the studio's working
+   principles sit under the hero in near-invisible ink, and the roller
+   develops them. Positions are shuffled once per page load — so a return
+   visit uncovers a different arrangement — then held for the whole visit,
+   because text that moved while you were drawing would read as a slogan
+   generator rather than as something that was already there. */
+const PRINCIPLES = [...document.querySelectorAll("#heroPrinciples li")].map(
+  (li) => li.textContent.trim(),
+);
+
+function layoutPrinciples(W, H, ctx) {
+  // keep clear of the wordmark, the dek and the buttons
+  const heroRect = hero.getBoundingClientRect();
+  const keepOut = [".hero-header", ".hero-sub"]
+    .map((sel) => document.querySelector(sel))
+    .filter(Boolean)
+    .map((el) => {
+      const r = el.getBoundingClientRect();
+      return {
+        x: r.left - heroRect.left - 40,
+        y: r.top - heroRect.top - 30,
+        w: r.width + 80,
+        h: r.height + 60,
+      };
+    });
+
+  const overlaps = (a, b) =>
+    a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+  const placed = [];
+  const shuffled = [...PRINCIPLES].sort(() => Math.random() - 0.5);
+
+  shuffled.forEach((text) => {
+    const w = ctx.measureText(text).width;
+    const box = { w: w + 24, h: 34 };
+    for (let attempt = 0; attempt < 60; attempt++) {
+      const cand = {
+        x: 40 + Math.random() * Math.max(1, W - w - 120),
+        y: 60 + Math.random() * Math.max(1, H - 160),
+        w: box.w,
+        h: box.h,
+      };
+      const clash =
+        keepOut.some((k) => overlaps(cand, k)) ||
+        placed.some((p) => overlaps(cand, p));
+      if (!clash) {
+        placed.push({ ...cand, text });
+        return;
+      }
+    }
+  });
+
+  return placed;
 }
 
 function setupInkRoller() {
   const canvas = document.querySelector(".hero-ink");
+  const script = document.querySelector(".hero-script");
   if (!hero || !canvas) return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const ctx = canvas.getContext("2d");
+  const sctx = script ? script.getContext("2d") : null;
   if (!ctx) return;
 
   const dabs = [];
   const MAX_DABS = 200;
+  const FONT = "500 13px 'DM Mono', 'Courier New', monospace";
   let W = 0;
   let H = 0;
+  let lines = [];
   let raf = null;
 
   const size = () => {
     const r = hero.getBoundingClientRect();
     W = canvas.width = r.width;
     H = canvas.height = r.height;
+    if (script) {
+      script.width = r.width;
+      script.height = r.height;
+    }
+    if (sctx) {
+      sctx.font = FONT;
+      lines = layoutPrinciples(W, H, sctx);
+      paintScript();
+    }
   };
-  size();
-  window.addEventListener("resize", size);
 
-  hero.addEventListener("mousemove", (e) => {
-    const r = hero.getBoundingClientRect();
-    dabs.push({ x: e.clientX - r.left, y: e.clientY - r.top, r: 18, life: 1 });
-    if (dabs.length > MAX_DABS) dabs.shift();
-    if (!raf) raf = requestAnimationFrame(frame);
-  });
+  // With reduced motion the roller never runs, so the principles simply stay
+  // printed — faint, legible, and completely still.
+  if (!reduced) {
+    hero.addEventListener("mousemove", (e) => {
+      const r = hero.getBoundingClientRect();
+      dabs.push({ x: e.clientX - r.left, y: e.clientY - r.top, r: 18, life: 1 });
+      if (dabs.length > MAX_DABS) dabs.shift();
+      if (!raf) raf = requestAnimationFrame(frame);
+    });
+  }
+
+  // The words are clipped to exactly the shape the roller has painted:
+  // draw the ink, switch to source-in so only the overlap survives, then
+  // lay the type over it. A ghost pass underneath hints that there is
+  // something printed here at all, so nobody has to guess.
+  function paintScript() {
+    if (!sctx) return;
+    sctx.clearRect(0, 0, W, H);
+    sctx.font = FONT;
+    sctx.textBaseline = "middle";
+
+    // the ghost: enough to show something is printed here, not enough to read
+    sctx.globalAlpha = reduced ? 0.34 : 0.1;
+    sctx.fillStyle = "#17130F";
+    lines.forEach((l) => sctx.fillText(l.text, l.x, l.y));
+
+    // developed: the same type again at full strength, clipped to the shape
+    // the roller has actually covered. A clip path rather than a composite
+    // operation — the union of the dab arcs is exactly the wet ink, and it
+    // survives being rebuilt every frame.
+    if (dabs.length) {
+      sctx.save();
+      sctx.beginPath();
+      dabs.forEach((d) => {
+        sctx.moveTo(d.x + d.r * 0.92, d.y);
+        sctx.arc(d.x, d.y, d.r * 0.92, 0, Math.PI * 2);
+      });
+      sctx.clip();
+      sctx.globalAlpha = 1;
+      sctx.fillStyle = "#7E2810";
+      lines.forEach((l) => sctx.fillText(l.text, l.x, l.y));
+      sctx.restore();
+    }
+
+    sctx.globalAlpha = 1;
+  }
 
   function frame() {
     ctx.clearRect(0, 0, W, H);
@@ -143,6 +253,7 @@ function setupInkRoller() {
       ctx.fill();
     }
     ctx.globalAlpha = 1;
+    paintScript();
 
     // stop the loop once the sheet is dry again
     if (dabs.length) {
@@ -151,6 +262,9 @@ function setupInkRoller() {
       raf = null;
     }
   }
+
+  size();
+  window.addEventListener("resize", size);
 }
 
 setupInkRoller();

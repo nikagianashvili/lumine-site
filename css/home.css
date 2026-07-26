@@ -26,6 +26,28 @@
   mask-size: 9px 9px;
 }
 
+/* the words develop crisp — no halftone screen here, a 9px dot grid would
+   turn small type into mush */
+.hero-script {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 .hero .hero-header {
   position: relative;
   z-index: 2;
