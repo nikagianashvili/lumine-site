@@ -210,29 +210,45 @@ function setupInkRoller() {
     sctx.font = FONT;
     sctx.textBaseline = "middle";
 
-    // the ghost: enough to show something is printed here, not enough to read
-    sctx.globalAlpha = reduced ? 0.34 : 0.1;
+    // Nothing shows at rest — the sheet looks blank, and the "drag the ink"
+    // cue in the corner is what invites the first move. Reduced motion is the
+    // exception: with no roller to develop anything, the lines simply print.
+    if (reduced) {
+      sctx.globalAlpha = 0.34;
+      sctx.fillStyle = "#17130F";
+      lines.forEach((l) => sctx.fillText(l.text, l.x, l.y));
+      sctx.globalAlpha = 1;
+      return;
+    }
+
+    // Developed: clipped to the shape the roller has actually covered. A clip
+    // path rather than a composite operation — the union of the dab arcs is
+    // exactly the wet ink, and it survives being rebuilt every frame.
+    if (!dabs.length) return;
+
+    sctx.save();
+    sctx.beginPath();
+    dabs.forEach((d) => {
+      sctx.moveTo(d.x + d.r * 0.92, d.y);
+      sctx.arc(d.x, d.y, d.r * 0.92, 0, Math.PI * 2);
+    });
+    sctx.clip();
+
+    // Each line gets the ink wiped off behind it before it is set, so the
+    // type lands on clean paper instead of fighting the halftone dots
+    // underneath. Signature on a Spark dot field was close to unreadable.
+    lines.forEach((l) => {
+      const w = sctx.measureText(l.text).width;
+      sctx.globalAlpha = 0.94;
+      sctx.fillStyle = "#F6F1E7";
+      sctx.fillRect(l.x - 10, l.y - 13, w + 20, 26);
+    });
+
+    sctx.globalAlpha = 1;
     sctx.fillStyle = "#17130F";
     lines.forEach((l) => sctx.fillText(l.text, l.x, l.y));
 
-    // developed: the same type again at full strength, clipped to the shape
-    // the roller has actually covered. A clip path rather than a composite
-    // operation — the union of the dab arcs is exactly the wet ink, and it
-    // survives being rebuilt every frame.
-    if (dabs.length) {
-      sctx.save();
-      sctx.beginPath();
-      dabs.forEach((d) => {
-        sctx.moveTo(d.x + d.r * 0.92, d.y);
-        sctx.arc(d.x, d.y, d.r * 0.92, 0, Math.PI * 2);
-      });
-      sctx.clip();
-      sctx.globalAlpha = 1;
-      sctx.fillStyle = "#7E2810";
-      lines.forEach((l) => sctx.fillText(l.text, l.x, l.y));
-      sctx.restore();
-    }
-
+    sctx.restore();
     sctx.globalAlpha = 1;
   }
 
