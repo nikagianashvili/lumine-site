@@ -789,10 +789,12 @@ html[lang="ka"] .service-name {
   margin-top: var(--sp-4);
 }
 
+/* the rail occupies the right gutter; the rows clear it */
 .route-svg {
   position: absolute;
-  inset: 0;
-  width: 100%;
+  top: 0;
+  right: 0;
+  width: 7rem;
   height: 100%;
   overflow: visible;
   pointer-events: none;
@@ -843,109 +845,99 @@ html[lang="ka"] .service-name {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: clamp(2rem, 6vh, 5rem);
   list-style: none;
+  padding-right: 9rem;
 }
 
+/* full-width rows against the rail — no panels, no floating boxes */
 .process-step {
   position: relative;
-  width: min(38%, 27rem);
-  padding: var(--sp-3);
-  background-color: rgba(23, 19, 15, 0.55);
-  border: 1px solid rgba(246, 241, 231, 0.16);
-  border-radius: var(--r);
-  backdrop-filter: blur(2px);
-  transition:
-    border-color 0.5s ease,
-    transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 1.3fr);
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding: clamp(1.5rem, 4vh, 2.75rem) 0;
+  border-top: 1px solid rgba(246, 241, 231, 0.16);
+  opacity: 0.4;
+  transition: opacity 0.5s ease;
 }
 
-/* alternate sides so the line has something to meander between */
-.process-step:nth-child(odd) {
-  align-self: flex-start;
-  text-align: left;
+.process-list .process-step:last-child {
+  border-bottom: 1px solid rgba(246, 241, 231, 0.16);
 }
 
-.process-step:nth-child(even) {
-  align-self: flex-end;
-  text-align: right;
-}
-
-/* the stage the line has reached */
+/* the stages the line has already passed are lit; the rest wait */
 .process-step.is-reached {
-  border-color: rgba(242, 84, 45, 0.55);
+  opacity: 1;
 }
 
+/* placed on the path itself by js/home-extras.js, since the rail drifts */
 .process-node {
   position: absolute;
+  left: 0;
   top: 50%;
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 0.75rem;
+  height: 0.75rem;
   border-radius: 50%;
   background-color: var(--d);
-  border: 2px solid rgba(246, 241, 231, 0.35);
-  transform: translateY(-50%);
-  transition: background-color 0.4s ease, border-color 0.4s ease;
-}
-
-.process-step:nth-child(odd) .process-node {
-  right: -2.6rem;
-}
-
-.process-step:nth-child(even) .process-node {
-  left: -2.6rem;
+  border: 2px solid rgba(246, 241, 231, 0.4);
+  transform: translate(-50%, -50%);
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
 }
 
 .process-step.is-reached .process-node {
   background-color: var(--accent);
   border-color: var(--accent);
+  box-shadow: 0 0 0 0.35rem rgba(242, 84, 45, 0.15);
 }
 
 .process-step-index {
-  display: block;
   font-family: var(--f-mono);
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0.16em;
   color: var(--accent);
-  margin-bottom: 0.6rem;
 }
 
 .process-step h6 {
-  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-size: clamp(1.5rem, 2.8vw, 2.25rem);
 }
 
 .process-step p {
-  margin-top: 0.5rem;
   opacity: 0.7;
   text-transform: none;
+  text-align: right;
 }
 
 @media (max-width: 1000px) {
-  /* the meander collapses to a straight rail on the left, steps to its right */
+  /* the drifting rail needs width to read; below this it becomes a plain
+     vertical line and the rows stack */
   .route-svg,
   .route-head {
     display: none;
   }
 
   .process-list {
-    gap: var(--sp-3);
-    padding-left: 1.6rem;
+    padding-right: 0;
+    padding-left: 1.75rem;
     border-left: 2px solid rgba(246, 241, 231, 0.18);
   }
 
-  .process-step,
-  .process-step:nth-child(odd),
-  .process-step:nth-child(even) {
-    width: 100%;
-    align-self: stretch;
+  .process-step {
+    grid-template-columns: 3rem minmax(0, 1fr);
+    padding: var(--sp-3) 0;
+  }
+
+  .process-step p {
+    grid-column: 1 / -1;
     text-align: left;
   }
 
-  .process-step:nth-child(odd) .process-node,
-  .process-step:nth-child(even) .process-node {
-    left: -2.15rem;
-    right: auto;
+  .process-node {
+    left: -1.75rem;
   }
 }
 

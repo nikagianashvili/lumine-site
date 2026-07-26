@@ -109,40 +109,86 @@ function initProcessRoute() {
     return;
   }
 
+  const svg = line.ownerSVGElement;
   const total = line.getTotalLength();
   line.style.strokeDasharray = String(total);
   line.style.strokeDashoffset = String(total);
 
-  // Each step is "reached" at the fraction of the path level with its node.
-  const marks = steps.map((_, i) => (i + 0.5) / steps.length);
+  // The rail drifts sideways as it descends, so a node pinned to a fixed x
+  // would sit off the line. Sample the path once per layout and look each
+  // node's x up from its own row's vertical centre.
+  let samples = [];
+  let marks = [];
+
+  // Path points come out in the SVG's own coordinates. The rail is inset in
+  // the route (right gutter), so everything has to be shifted by the SVG's
+  // offset before it can be compared with element positions.
+  const frame = () => {
+    const routeBox = route.getBoundingClientRect();
+    const svgBox = svg.getBoundingClientRect();
+    const vb = svg.viewBox.baseVal;
+    return {
+      dx: svgBox.left - routeBox.left,
+      dy: svgBox.top - routeBox.top,
+      sx: svgBox.width / vb.width,
+      sy: svgBox.height / vb.height,
+    };
+  };
+
+  const measure = () => {
+    const f = frame();
+
+    samples = [];
+    for (let i = 0; i <= 240; i++) {
+      const pt = line.getPointAtLength((total * i) / 240);
+      samples.push({ x: f.dx + pt.x * f.sx, y: f.dy + pt.y * f.sy, t: i / 240 });
+    }
+
+    marks = steps.map((step) => {
+      const centre = step.offsetTop + step.offsetHeight / 2;
+      // nearest sampled point on the rail at this row's height
+      let best = samples[0];
+      for (const s of samples) {
+        if (Math.abs(s.y - centre) < Math.abs(best.y - centre)) best = s;
+      }
+      const node = step.querySelector(".process-node");
+      if (node) node.style.left = `${best.x - step.offsetLeft}px`;
+      return best.t;
+    });
+  };
 
   const draw = (p) => {
     const clamped = Math.max(0, Math.min(1, p));
     line.style.strokeDashoffset = String(total * (1 - clamped));
 
-    if (head) {
+    if (head && samples.length) {
       const pt = line.getPointAtLength(total * clamped);
-      // the path is drawn in viewBox units and stretched by the SVG's box,
-      // so convert through the rendered size rather than assuming 1:1
-      const box = line.getBoundingClientRect();
-      const vb = line.ownerSVGElement.viewBox.baseVal;
-      const sx = box.width / vb.width;
-      const sy = box.height / vb.height;
-      head.style.transform = `translate(${pt.x * sx}px, ${pt.y * sy}px)`;
-      head.style.opacity = clamped > 0.01 && clamped < 0.995 ? "1" : "0";
+      const f = frame();
+      head.style.transform = `translate(${f.dx + pt.x * f.sx}px, ${
+        f.dy + pt.y * f.sy
+      }px)`;
+      head.style.opacity = clamped > 0.004 && clamped < 0.996 ? "1" : "0";
     }
 
     steps.forEach((s, i) => s.classList.toggle("is-reached", clamped >= marks[i]));
   };
 
+  measure();
   draw(0);
 
+  // The window is deliberately inset at both ends. Starting the moment the
+  // section's top touches the viewport meant the line was already running
+  // before the stages were readable; finishing exactly at its bottom meant
+  // the line reached its final stop as that stop left the screen. Both ends
+  // now sit inside the section, so the whole journey happens while you are
+  // actually looking at it.
   ScrollTrigger.create({
     trigger: route,
-    start: "top 78%",
-    end: "bottom 65%",
+    start: "top 70%",
+    end: "bottom 80%",
     scrub: 0.5,
     invalidateOnRefresh: true,
+    onRefresh: measure,
     onUpdate: (self) => draw(self.progress),
   });
 }

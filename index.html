@@ -415,16 +415,16 @@
           so progress through the journey is readable at any scroll position.
           The SVG is decorative — the steps themselves are the real content.
         -->
+        <!--
+          The route runs as a rail down the left margin and the stages read as
+          full-width rows against it — no panels. The line drifts gently
+          left/right as it descends, so the nodes are placed from the path
+          itself in JS rather than pinned to a fixed x.
+        -->
         <div class="process-route">
-          <svg class="route-svg" viewBox="0 0 1000 1560" preserveAspectRatio="none" aria-hidden="true">
-            <path
-              class="route-track"
-              d="M500 40 C 500 150, 200 170, 200 280 C 200 390, 800 410, 800 520 C 800 630, 200 650, 200 760 C 200 870, 800 890, 800 1000 C 800 1110, 200 1130, 200 1240 C 200 1350, 500 1370, 500 1520"
-            />
-            <path
-              class="route-line"
-              d="M500 40 C 500 150, 200 170, 200 280 C 200 390, 800 410, 800 520 C 800 630, 200 650, 200 760 C 200 870, 800 890, 800 1000 C 800 1110, 200 1130, 200 1240 C 200 1350, 500 1370, 500 1520"
-            />
+          <svg class="route-svg" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true">
+            <path class="route-track" d="M50 0 C 50 130, 14 190, 14 330 C 14 470, 86 520, 86 660 C 86 800, 50 850, 50 1000" />
+            <path class="route-line" d="M50 0 C 50 130, 14 190, 14 330 C 14 470, 86 520, 86 660 C 86 800, 50 850, 50 1000" />
           </svg>
 
           <span class="route-head" aria-hidden="true">
