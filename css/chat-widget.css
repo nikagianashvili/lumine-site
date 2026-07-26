@@ -59,6 +59,12 @@
   .chat-bubble {
     padding: 0.95rem;
   }
+
+  /* without the label the launcher is a disc again, so layouts dodging it
+     get their space back */
+  :root {
+    --chat-clear: 4rem;
+  }
 }
 
 .chat-bubble:hover svg {

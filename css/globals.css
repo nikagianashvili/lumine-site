@@ -43,6 +43,12 @@
   --sp-3: 1.5rem;
   --sp-4: 2.5rem;
   --sp-5: 4rem;
+
+  /* How much of the bottom-right corner the fixed chat launcher owns. Any
+     page that puts content in that corner reserves this much room, so the
+     launcher's size lives in one place instead of in every layout that has
+     to dodge it. See css/chat-widget.css. */
+  --chat-clear: 11rem;
   --sp-6: 6rem;
   --sp-7: 9rem;
 }

@@ -109,9 +109,13 @@
   gap: 5rem;
 }
 
-/* keep the right-hand cue clear of the floating chat button */
+/* The chat launcher is fixed to this exact corner, so the cue has to give it
+   room. 4rem was enough for the old icon disc and is not enough for the
+   labelled pill that replaced it — measured, the two overlapped by 68px. The
+   reserve is expressed as a token so the two stay tied together: change the
+   launcher's width and this is the one place that has to follow. */
 .hero .hero-footer .hero-footer-col:last-child {
-  padding-right: 4rem;
+  padding-right: var(--chat-clear, 11rem);
 }
 
 @media (max-width: 1000px) {
