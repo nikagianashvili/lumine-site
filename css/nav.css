@@ -81,7 +81,7 @@ nav {
   width: auto;
   height: 1.5rem;
   object-fit: contain;
-  /* the wordmark is now an SVG drawn in ink, so it needs no inversion —
+  /* the wordmark is now an SVG drawn in ink, so it needs no inversion â€”
      the old asset was a white PNG that had to be flipped to read on the
      solid bar */
 }
@@ -100,307 +100,305 @@ nav {
   /* black-on-transparent PNG - brightness(0) crushes any anti-aliasing to
      solid black, which is already correct now that nav is always solid */
   filter: brightness(0);
-  /* scale, not height — a bigger box height here would grow the whole nav
+  /* scale, not height â€” a bigger box height here would grow the whole nav
      bar's row height (flex, no fixed height); transform paints larger
      without touching layout, so the header stays the same size */
   transform: scale(1.8);
 }
 
+
+/* ── the menu toggle ──────────────────────────────────────────────────────
+   Was a <div>, which meant it could not be focused and the entire
+   navigation was unreachable by keyboard. js/nav.js now emits a real
+   <button>; these rules strip the UA button chrome back off it. */
 .nav-toggler {
-  position: relative;
-  display: flex;
+  display: inline-flex;
+  align-items: center;
   justify-content: flex-end;
-  align-items: center;
+  /* a real target rather than a 16px word */
+  min-height: 44px;
   padding: 0 0.5rem;
+  border: none;
+  background: none;
+  color: inherit;
   cursor: pointer;
+  font: inherit;
 }
 
-.nav-toggle-wrapper {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 1.4rem;
-  overflow: hidden;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
-  cursor: pointer;
-}
-
-.open-label,
-.close-label {
-  position: relative;
-  margin: 0;
-  padding: 0.1rem;
+.nav-toggler-label {
   font-family: var(--f-nm);
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.125;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--d);
-  user-select: none;
-  cursor: pointer;
-  transform: translateY(0);
-  will-change: transform;
+  color: currentColor;
 }
 
+/* ── header while the menu is open ────────────────────────────────────────
+   The bar used to stay paper-coloured on top of the dark overlay, which
+   left a cream strip across the top of an ink panel. It now goes
+   transparent and flips its marks to paper, so the header reads as part of
+   the menu rather than a leftover from the page underneath. */
+html.menu-is-open nav {
+  background-color: transparent;
+  color: var(--l);
+}
+html.menu-is-open .nav-logo img,
+html.menu-is-open .nav-icon img {
+  filter: invert(1);
+}
+html.menu-is-open .nav-lang-btn {
+  color: var(--l);
+}
+html.menu-is-open .nav-lang-btn.is-active {
+  color: var(--accent-bright);
+}
+
+/* ── the overlay ──────────────────────────────────────────────────────────
+   z-index sits above the chat launcher (15000). At the old value of 99 the
+   "Lumine AI" pill floated on top of the open menu. It stays below the page
+   transition veil (20000) so navigating away still wipes over everything. */
 .menu-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 99;
+  z-index: 15500;
   width: 100vw;
   height: 100svh;
-  overflow: hidden;
+  overflow-y: auto;
   background-color: var(--d);
   color: var(--l);
   clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
   will-change: clip-path;
 }
-
-.menu-overlay .menu-content {
-  position: absolute;
-  top: 35%;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-  padding: 0 2.5rem;
-  transform: translateY(-50%);
-  will-change: transform, opacity;
+nav {
+  z-index: 15600;
 }
 
-.menu-overlay .menu-content p,
-.menu-overlay .menu-content a {
-  display: inline-block;
-  font-family: var(--f-nm);
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.125;
+.menu-inner {
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  align-content: center;
+  min-height: 100svh;
+  padding: 7rem 2.5rem 2rem;
+}
+
+/* ── destinations, grouped by what somebody came for ───────────────────── */
+.menu-groups {
+  align-self: center;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3.5rem;
+  align-content: start;
+}
+
+.menu-group-label {
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  text-decoration: none;
+  color: rgba(246, 241, 231, 0.55);
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid rgba(246, 241, 231, 0.2);
+}
+.menu-group-label-sub {
+  margin-top: 2.25rem;
+}
+
+.menu-item {
+  display: block;
+  padding: 1.05rem 0 0.95rem;
+  border-bottom: 1px solid rgba(246, 241, 231, 0.12);
   color: var(--l);
-}
-
-.menu-overlay .menu-col {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.menu-overlay .menu-col:nth-child(2) {
-  text-align: right;
-}
-
-.menu-overlay .menu-col a,
-.menu-overlay .menu-col p {
-  position: relative;
-  display: block;
-  overflow: hidden;
   text-decoration: none;
+  transition: padding-left 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.menu-item:hover {
+  padding-left: 0.9rem;
+}
+.menu-item:hover .menu-item-name {
+  color: var(--accent-bright);
+}
+.menu-item:hover .menu-item-arrow {
+  opacity: 1;
+  transform: translateX(0);
 }
 
-.menu-overlay .split-line {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  will-change: transform;
-}
-
-.menu-overlay .split-line-mask {
-  display: block;
-  overflow: hidden;
-}
-
-.menu-overlay .menu-img {
-  position: absolute;
-  top: 35%;
-  left: 50%;
-  width: 150px;
-  aspect-ratio: 5/7;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  will-change: transform, opacity;
-}
-
-.menu-overlay .menu-img img {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 0.5rem;
-  filter: grayscale(1) contrast(1.08);
-  transform: translateY(0);
-  will-change: transform;
-}
-
-.menu-overlay .menu-links-wrapper {
-  position: absolute;
-  left: 0;
-  bottom: 0;
+.menu-item-row {
   display: flex;
-  justify-content: space-between;
-  gap: 2rem;
-  width: max-content;
-  padding: 2rem;
-  will-change: transform;
+  align-items: baseline;
+  gap: 0.85rem;
+}
+.menu-item-num {
+  flex: none;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  color: rgba(246, 241, 231, 0.45);
+}
+.menu-item-name {
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(1.35rem, 1.9vw, 1.9rem);
+  line-height: 1.1;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+.menu-item-arrow {
+  margin-left: auto;
+  font-size: 1rem;
+  color: var(--accent-bright);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+/* the descriptor is the reason to click, so it is readable rather than a
+   whisper at 45% */
+.menu-item-desc {
+  display: block;
+  margin-top: 0.3rem;
+  margin-left: 2.1rem;
+  font-family: var(--f-nm);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: rgba(246, 241, 231, 0.68);
+  text-transform: none;
 }
 
-.menu-overlay .menu-link {
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  will-change: transform;
+/* where you already are */
+.menu-item.is-here .menu-item-name {
+  color: rgba(246, 241, 231, 0.5);
+}
+.menu-here-tag {
+  margin-left: 0.6rem;
+  padding: 0.12rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: 100px;
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--accent-bright);
 }
 
-/* small, muted - matches the 01/02 index treatment already used on the
-   FAQ and featured-work cards elsewhere on the site, so numbering a link
-   list reads as this site's own convention rather than a new idea. */
-.menu-overlay .menu-link-index {
-  position: absolute;
-  top: 0.5rem;
-  left: 0;
+/* ── socials ─────────────────────────────────────────────────────────────
+   Pills rather than 16px text links: these are the smallest targets in the
+   menu and were the ones most worth enlarging. */
+.menu-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding-top: 1rem;
+}
+.menu-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border: 1px solid rgba(246, 241, 231, 0.28);
+  border-radius: 100px;
+  color: var(--l);
+  text-decoration: none;
   font-family: var(--f-nm);
   font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  opacity: 0.4;
-  pointer-events: none;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+.menu-social:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--d);
+}
+.menu-social i {
+  font-style: normal;
+  font-size: 0.78rem;
+  opacity: 0.6;
+}
+.menu-social:hover i {
+  opacity: 1;
 }
 
-.menu-overlay .menu-link a {
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  font-family: var(--f-h);
-  font-size: 10.5rem;
-  font-weight: 700;
-  line-height: 0.95;
-  text-transform: uppercase;
+/* ── the one thing the site is for ───────────────────────────────────────
+   Ink on Spark, not paper on Spark. White on this coral measures about
+   3.3:1 and fails AA — the same failure the audit found on every button on
+   the site. Dark ink on it measures about 5.9:1. */
+.menu-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 1.75rem;
+  padding: 1.4rem 1.75rem;
+  border-radius: var(--r);
+  background: var(--accent);
+  color: var(--d);
   text-decoration: none;
-  color: var(--l);
+  transition: background-color 0.35s ease;
+}
+.menu-cta:hover {
+  background: var(--accent-bright);
+}
+.menu-cta-title {
+  display: block;
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2.2vw, 2.1rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.menu-cta-sub {
+  display: block;
+  margin-top: 0.45rem;
+  font-family: var(--f-nm);
+  font-size: 0.85rem;
+  opacity: 0.75;
+  text-transform: none;
+}
+.menu-cta-lines {
+  flex: none;
+  text-align: right;
+  font-family: var(--f-mono);
+  font-size: 0.8rem;
+  line-height: 1.7;
 }
 
-html[lang="ka"] .menu-overlay .menu-link a {
-  line-height: 1.3;
+.menu-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1.4rem;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(246, 241, 231, 0.5);
 }
 
-.menu-overlay .menu-link a span:nth-child(2) {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.menu-overlay .link-highlighter {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 400px;
-  height: 0.75rem;
-  background-color: var(--l);
-  will-change: transform, width;
-}
-
-.menu-overlay .char {
-  position: relative;
-  display: inline-block;
-  will-change: transform;
-}
-
-/* The link row is wider than the viewport by design (mouse position
-   scrubs it horizontally) - `overflow: hidden` on .menu-overlay was
-   clipping it with a hard edge and no visual cue there was more. These
-   sit fixed at the viewport edges (not the scrolling content) and fade
-   the last sliver of a cut-off word into the background, reading as
-   "this continues" instead of an arbitrary crop. Desktop-scrub only -
-   hidden below alongside the other desktop-only menu chrome. */
-.menu-overlay::before,
-.menu-overlay::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 8rem;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.menu-overlay::before {
-  left: 0;
-  background: linear-gradient(to left, transparent, var(--d) 85%);
-}
-
-.menu-overlay::after {
-  right: 0;
-  background: linear-gradient(to right, transparent, var(--d) 85%);
-}
-
-/* max-width covers small screens; pointer:coarse covers a touch-primary
-   device that's still wide (a tablet in landscape, a touchscreen desktop)
-   - it would otherwise land in "desktop" mode with no mouse to scrub
-   with and no way to reach the links running off past the viewport,
-   since the vertical-stack fallback below previously only kicked in
-   under 1000px regardless of whether a mouse was actually present. */
-@media (max-width: 1000px), (pointer: coarse) {
-  nav {
-    padding: 1.5rem;
+@media (max-width: 900px) {
+  .menu-inner {
+    padding: 6rem 1.25rem 1.5rem;
+    align-content: start;
   }
-
-  .nav-logo a img {
-    height: 1.5rem;
+  .menu-groups {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
-
-  .nav-icon {
-    display: none;
-  }
-
-  .nav-toggler {
-    transform: translateY(0.1rem);
-  }
-
-  .nav-right {
-    gap: 1.1rem;
-  }
-
-  .nav-lang-btn {
-    font-size: 0.9rem;
-  }
-
-  .menu-overlay .menu-content {
-    display: none;
-  }
-
-  .menu-overlay .menu-img,
-  .menu-overlay .link-highlighter,
-  .menu-overlay::before,
-  .menu-overlay::after {
-    display: none;
-  }
-
-  .menu-overlay .menu-links-wrapper {
+  .menu-cta {
     flex-direction: column;
-    gap: 0;
-    padding: 2rem;
+    align-items: flex-start;
+    gap: 1rem;
   }
-
-  .menu-overlay .menu-link a {
-    /* 8 items must fit a phone screen above the wrapper padding */
-    font-size: min(9.5vh, 4rem);
+  .menu-cta-lines {
+    text-align: left;
   }
-
-  /* stacked links have zero gap between rows, so an index sitting above
-     the word (the desktop treatment) would overlap the row above it -
-     inline-left instead avoids that entirely. */
-  .menu-overlay .menu-link {
-    display: flex;
-    align-items: baseline;
-    gap: 0.6rem;
-  }
-
-  .menu-overlay .menu-link-index {
-    position: static;
-    font-size: 0.7rem;
+  .menu-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }
