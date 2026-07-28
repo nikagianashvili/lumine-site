@@ -1,13 +1,26 @@
-/* Was a scroll-triggered difference-blend/solid toggle (transparent,
-   auto-inverting overlay at the top of the page; opaque bar past a scroll
-   threshold). mix-blend-mode can't be animated, so any transition between
-   those two states meant a window where a non-zero-alpha background was
-   paired with the wrong blend mode - which is what produced a black/grey
-   flash. Several attempts at fixing the transition timing (delaying the
-   blend-mode flip, matching it to the fade) still left edge cases that
-   flickered when scroll direction reversed mid-transition. Simpler and
-   more robust: nav is just always solid. No toggle, no transition, no
-   flicker class to chase. */
+/* ── the bar ──────────────────────────────────────────────────────────────
+   Transparent over the top of a page, taking a paper background once you
+   have scrolled past it, so a hero is not permanently cropped by a cream
+   strip across the top of every screen.
+
+   Read the history before changing this. The header was once a
+   scroll-triggered difference-blend/solid toggle, and it flashed black:
+   mix-blend-mode cannot be animated, so any transition between the two
+   states left a window where a non-zero-alpha background was paired with
+   the wrong blend mode. Delaying the blend flip and matching it to the
+   fade both still flickered when the scroll direction reversed mid-
+   transition. It was replaced by an always-solid bar, which was safe but
+   meant every full-bleed hero on the site lost its top 108px.
+
+   This gets the transparency back without reopening that bug, because the
+   thing that broke is not used: there is no blend mode here. The only
+   animated properties are background-color and border-color, both of which
+   interpolate cleanly and are safe to reverse mid-flight. Do not
+   reintroduce mix-blend-mode to make the marks auto-invert over dark
+   artwork — that is the exact road that ended in the black flash.
+
+   The bar is sticky: it is always on screen. It changes colour, never
+   position. */
 nav {
   position: fixed;
   top: 0;
@@ -16,8 +29,27 @@ nav {
   display: flex;
   width: 100%;
   padding: 2rem;
-  background-color: var(--l);
+  background-color: transparent;
+  /* transparent rather than absent, so the colour has something to
+     interpolate to and from; a border that appears from `none` would pop */
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease;
 }
+
+/* past the bar's own height, it becomes a surface */
+nav.is-stuck {
+  background-color: var(--l);
+  border-bottom-color: rgba(23, 19, 15, 0.12);
+}
+
+/* Note for whoever touches this next: the ink simulation is a fixed canvas
+   at z-index 20000, i.e. above this bar (15600), so ink dragged near the
+   top of the page paints over the header marks. That predates the
+   transparent header and is unchanged by it — a solid bar was covered just
+   the same. It is fixed by lowering the canvas beneath the nav, not by
+   putting anything behind the nav, which is under the canvas either way. */
 
 .nav-logo,
 .nav-icon,
@@ -140,8 +172,13 @@ nav {
    left a cream strip across the top of an ink panel. It now goes
    transparent and flips its marks to paper, so the header reads as part of
    the menu rather than a leftover from the page underneath. */
+/* The menu owns the whole screen, so the bar is pinned back to its resting
+   state underneath it: without this, opening the menu after scrolling down
+   would leave a cream strip (is-stuck) floating across the top of an ink
+   panel. */
 html.menu-is-open nav {
   background-color: transparent;
+  border-bottom-color: transparent;
   color: var(--l);
 }
 html.menu-is-open .nav-logo img,
@@ -377,6 +414,32 @@ nav {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(246, 241, 231, 0.5);
+}
+
+/* ── the bar on small screens ─────────────────────────────────────────────
+   These rules predate the menu rebuild and are unchanged: tighter padding,
+   no centre mark (it has no room beside the wordmark and says nothing), and
+   a smaller, closer right-hand cluster. max-width catches phones; the
+   pointer:coarse arm catches a touch-primary device that is still wide.
+
+   One line from the original is deliberately not carried over: the toggler
+   had a translateY(0.1rem) nudge to line its baseline up with GE/EN. That
+   was compensating for a <div> with no height of its own — the toggler is
+   now a 44px button centred in a centred row, so the nudge would push it
+   1.6px off rather than on. */
+@media (max-width: 1000px), (pointer: coarse) {
+  nav {
+    padding: 1.5rem;
+  }
+  .nav-icon {
+    display: none;
+  }
+  .nav-right {
+    gap: 1.1rem;
+  }
+  .nav-lang-btn {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 900px) {

@@ -349,8 +349,50 @@ function initMenu() {
   });
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initMenu);
-} else {
+/* ── the bar's one scroll state ───────────────────────────────────────────
+   The header is sticky — it never leaves the screen. All that changes is
+   whether it is transparent over the top of the page or sitting on a paper
+   background once you have scrolled past it.
+
+   This only toggles a class; the colour and its timing live in css/nav.css,
+   which is also where the history of why this must not use mix-blend-mode
+   is written down. */
+function initHeaderScroll() {
+  const nav = document.querySelector("nav");
+  if (!nav) return;
+
+  const STUCK_AT = 60; // roughly the bar's own height
+
+  let ticking = false;
+
+  function read() {
+    nav.classList.toggle("is-stuck", window.scrollY > STUCK_AT);
+    ticking = false;
+  }
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(read);
+    },
+    { passive: true },
+  );
+
+  /* A reload partway down a page restores the scroll position without ever
+     firing a scroll event, which would otherwise leave the bar transparent
+     over mid-page content. */
+  read();
+}
+
+function init() {
   initMenu();
+  initHeaderScroll();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
 }
