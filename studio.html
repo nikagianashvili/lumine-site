@@ -250,7 +250,18 @@
       </div>
     </section>
 
-    <!-- studio: clients -->
+    <!--
+      studio: clients
+
+      Was a two-row logo marquee: sixty tiles built from five SVGs that do
+      not exist in the repo, so every one of them was a broken image, and
+      the alt text named five companies that do not exist either. The home
+      page had already replaced the same marquee with a signed register —
+      js/trusted-by.js says why: five marks sliding past give you no name
+      you can read and no way to find out what was actually made. This page
+      is now on that register too, so the real clients appear once, in one
+      pattern, on both pages.
+    -->
     <section class="clients">
       <div class="container">
         <div class="clients-header-wrapper">
@@ -261,12 +272,13 @@
           </div>
           <div class="clients-copy">
             <p data-animate-variant="slide" data-animate-on-scroll="true">
-              Placeholder marks for now — this wall fills in with real client
-              logos as the roster grows. Founders, small businesses, and
-              anyone tired of looking generic: that's who it's reserved for.
+              The names we have worked with so far. Each row opens the
+              project it came from.
             </p>
           </div>
         </div>
+
+        <div class="register" data-register></div>
       </div>
     </section>
 
@@ -307,7 +319,7 @@
     <script type="module" src="/js/studio-hero.js"></script>
     <script type="module" src="/js/home-hero.js"></script>
     <script type="module" src="/js/team-cards.js"></script>
-    <script type="module" src="/js/clients.js"></script>
+    <script type="module" src="/js/trusted-by.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>
   </body>

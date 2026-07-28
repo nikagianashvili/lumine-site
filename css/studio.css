@@ -280,49 +280,9 @@
   width: 50%;
 }
 
-.clients-marquee-wrapper {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 1rem 0 7.5rem;
-  overflow: hidden;
-}
-
-.clients-marquee-row {
-  display: flex;
-  align-items: stretch;
-  width: max-content;
-  will-change: transform;
-}
-
-.clients-marquee-set {
-  display: flex;
-  align-items: stretch;
-  flex-shrink: 0;
-}
-
-.clients-marquee-item {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-  width: 22vw;
-  min-width: 300px;
-  height: 15vw;
-  min-height: 200px;
-  padding: 2rem;
-  background: none;
-  border: 2px solid var(--d);
-}
-
-.clients-marquee-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  user-select: none;
-  transform: scale(1.25);
-}
+/* The .clients-marquee-* rules that lived here are gone with the marquee
+   itself — the client wall is now the register from home.css, mounted on
+   [data-register]. */
 
 @media (min-width: 1000px) {
   .team-mobile {
@@ -407,13 +367,6 @@
     text-align: center;
   }
 
-  .clients-marquee-item {
-    width: 60vw;
-    min-width: 200px;
-    height: 40vw;
-    min-height: 130px;
-    padding: 1.5rem 2rem;
-  }
 }
 
 /* — mission / vision — */
