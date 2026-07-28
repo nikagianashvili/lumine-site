@@ -225,8 +225,15 @@ function initMenu() {
   let isAnimating = false;
   let lastFocus = null;
 
-  const CLOSED_CLIP = "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)";
-  const OPEN_CLIP = "polygon(0% 100%, 100% 100%, 100% 0%, 0% 0%)";
+  /* The panel comes down from the top edge and retracts back up into it —
+     the same direction as the bar it is opened from, so it reads as the
+     header unfolding rather than something arriving from off-screen behind
+     you. Closed is a zero-height strip pinned to the top; open is the full
+     rectangle. The two point lists are written in the same order (top-left,
+     top-right, bottom-right, bottom-left) because clip-path only
+     interpolates smoothly when the vertices correspond one to one. */
+  const CLOSED_CLIP = "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)";
+  const OPEN_CLIP = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";
 
   /* Hidden means hidden. The old overlay was only hidden visually, so its
      nine links stayed in the tab order on every page — a keyboard user
@@ -242,10 +249,14 @@ function initMenu() {
     overlay.removeAttribute("aria-hidden");
   }
 
+  /* Negative offsets: the contents settle downward into place behind the
+     descending edge, and leave upward with it. Coming up from below while
+     the panel comes down would have the two halves of the animation moving
+     against each other. */
   function reset() {
     gsap.set(overlay, { clipPath: CLOSED_CLIP });
-    gsap.set(items, { y: 22, opacity: 0 });
-    gsap.set(chrome, { y: 14, opacity: 0 });
+    gsap.set(items, { y: -22, opacity: 0 });
+    gsap.set(chrome, { y: -14, opacity: 0 });
   }
 
   seal();
@@ -305,7 +316,7 @@ function initMenu() {
     if (label) label.textContent = COPY.openLabel;
 
     gsap.to([items, chrome].flat(), {
-      y: 10,
+      y: -10,
       opacity: 0,
       duration: 0.32,
       ease: "power2.in",

@@ -206,7 +206,10 @@ html.menu-is-open .nav-lang-btn.is-active {
   overflow-y: auto;
   background-color: var(--d);
   color: var(--l);
-  clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
+  /* Closed = a zero-height strip at the top edge, so the panel unfolds
+     downward out of the header. js/nav.js animates between this and the
+     full rectangle; the two must agree or the first open would jump. */
+  clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
   will-change: clip-path;
 }
 nav {
