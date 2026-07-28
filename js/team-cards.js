@@ -5,87 +5,126 @@ gsap.registerPlugin(ScrollTrigger);
 
 const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
 
-// discipline cards — what the studio does, not invented people.
-// Swap for real team members (name, photo, bio) when the roster is public.
+/* ── PLACEHOLDER ROSTER — replace before launch ───────────────────────────
+   These are seats, not people. Each card names the post rather than a
+   person, which is the same device the timeline on this page already uses
+   ("The Document", "The Mark", "The Site"), so it reads as deliberate
+   rather than unfinished.
+
+   Deliberately NOT invented names. The clients wall on this same page ships
+   five made-up companies in its alt text, and that is a credibility problem
+   nobody noticed for months; a made-up roster would be the same mistake
+   about actual colleagues. When the real team is public, swap `name` for
+   the person and leave `role` as it is — nothing else has to change.
+
+   The portraits are the template's stock illustrations and are placeholder
+   too. They also vary in weight (29KB to 196KB), so if the illustrated look
+   is kept on purpose they should be re-exported as one consistent set. */
 const teamMembersEn = [
   {
     id: "card-1",
-    name: "Photo & Video",
-    img: "/work/work2.jpg",
-    alt: "Photo and video discipline",
-    description: "Shoots, retouching, color. The pictures do the selling before anyone reads a word.",
+    name: "The Director",
+    role: "Creative Direction",
+    img: "/team-cards/team-member-1.jpg",
+    alt: "Illustrated portrait — creative direction",
+    description:
+      "Decides what the work is actually for, before anyone opens a design file.",
   },
   {
     id: "card-2",
-    name: "Design",
-    img: "/work/work1.jpg",
-    alt: "Design discipline",
-    description: "Identity, posters, brand books. The face of the thing, kept consistent everywhere.",
+    name: "The Designer",
+    role: "Design & Identity",
+    img: "/team-cards/team-member-2.jpg",
+    alt: "Illustrated portrait — design and identity",
+    description:
+      "Draws the identity, then keeps it honest across every poster, page and post.",
   },
   {
     id: "card-3",
-    name: "Social & Content",
-    img: "/work/work3.jpg",
-    alt: "Social and content discipline",
-    description: "Plans that ship, posts that sound like you, and yes — the comments section too.",
+    name: "The Lens",
+    role: "Photo & Video",
+    img: "/team-cards/team-member-3.jpg",
+    alt: "Illustrated portrait — photo and video",
+    description:
+      "Shoots it, grades it, and knows the picture sells before the copy is read.",
   },
   {
     id: "card-4",
-    name: "Marketing",
-    img: "/work/work6.jpg",
-    alt: "Marketing discipline",
-    description: "Paid social and SEO with receipts. Reach you can measure, not vibes.",
+    name: "The Voice",
+    role: "Social & Content",
+    img: "/team-cards/team-member-4.jpg",
+    alt: "Illustrated portrait — social and content",
+    description:
+      "Writes the posts, plans the calendar, and answers the comments like a person.",
   },
   {
     id: "card-5",
-    name: "Web",
-    img: "/work/work4.jpg",
-    alt: "Web discipline",
-    description: "Sites designed and built in house — fast, maintained, and never off a theme store.",
+    name: "The Builder",
+    role: "Web & Development",
+    img: "/team-cards/team-member-5.jpg",
+    alt: "Illustrated portrait — web and development",
+    description:
+      "Designs and ships the site in house — fast, maintained, never off a theme store.",
   },
 ];
 
+/* Same placeholder roster in Georgian. Georgian has no articles, so the
+   "The X" device becomes the bare role-noun, which reads the same way. */
 const teamMembersKa = [
   {
     id: "card-1",
-    name: "ფოტო და ვიდეო",
-    img: "/work/work2.jpg",
-    alt: "Photo and video discipline",
-    description: "გადაღება, რეტუში, ფერი. სურათები ყიდიან მანამ, სანამ ვინმე სიტყვას წაიკითხავს.",
+    name: "დირექტორი",
+    role: "კრეატიული მიმართულება",
+    img: "/team-cards/team-member-1.jpg",
+    alt: "ილუსტრირებული პორტრეტი — კრეატიული მიმართულება",
+    description:
+      "წყვეტს, რისთვის კეთდება სამუშაო, სანამ ვინმე დიზაინის ფაილს გახსნის.",
   },
   {
     id: "card-2",
-    name: "დიზაინი",
-    img: "/work/work1.jpg",
-    alt: "Design discipline",
-    description: "იდენტობა, პოსტერები, ბრენდბუქები. საგნის სახე, ერთნაირად შენარჩუნებული ყველგან.",
+    name: "დიზაინერი",
+    role: "დიზაინი და იდენტობა",
+    img: "/team-cards/team-member-2.jpg",
+    alt: "ილუსტრირებული პორტრეტი — დიზაინი და იდენტობა",
+    description:
+      "ხატავს იდენტობას და ინარჩუნებს მას ყველა პოსტერზე, გვერდსა და პოსტში.",
   },
   {
     id: "card-3",
-    name: "სოციალური და კონტენტი",
-    img: "/work/work3.jpg",
-    alt: "Social and content discipline",
-    description: "გეგმები, რომლებიც სრულდება, პოსტები, რომლებიც შენსავით ჟღერს, და კი — კომენტარების სექციაც.",
+    name: "ობიექტივი",
+    role: "ფოტო და ვიდეო",
+    img: "/team-cards/team-member-3.jpg",
+    alt: "ილუსტრირებული პორტრეტი — ფოტო და ვიდეო",
+    description:
+      "იღებს, ამუშავებს ფერს და იცის — სურათი ყიდის მანამ, სანამ ტექსტს წაიკითხავენ.",
   },
   {
     id: "card-4",
-    name: "მარკეტინგი",
-    img: "/work/work6.jpg",
-    alt: "Marketing discipline",
-    description: "ფასიანი სოციალური და SEO, დამტკიცებადი. მიწვდომა, რომლის გაზომვაც შეგიძლია და არა შეგრძნება.",
+    name: "ხმა",
+    role: "სოციალური და კონტენტი",
+    img: "/team-cards/team-member-4.jpg",
+    alt: "ილუსტრირებული პორტრეტი — სოციალური და კონტენტი",
+    description:
+      "წერს პოსტებს, გეგმავს კალენდარს და კომენტარებს ადამიანივით პასუხობს.",
   },
   {
     id: "card-5",
-    name: "ვები",
-    img: "/work/work4.jpg",
-    alt: "Web discipline",
-    description: "საიტები, დაპროექტებული და აშენებული საკუთარ გუნდში — სწრაფი, მხარდაჭერილი და არასდროს თემის მაღაზიიდან.",
+    name: "დეველოპერი",
+    role: "ვები და დეველოპმენტი",
+    img: "/team-cards/team-member-5.jpg",
+    alt: "ილუსტრირებული პორტრეტი — ვები და დეველოპმენტი",
+    description:
+      "ქმნის და უშვებს საიტს საკუთარ გუნდში — სწრაფად, მხარდაჭერით, არასდროს თემის მაღაზიიდან.",
   },
 ];
 
 const teamMembers = isKa ? teamMembersKa : teamMembersEn;
-const HEADER_STICKY = isKa ? "რაზეც ვზრუნავთ" : "What We Obsess Over";
-const HEADER_MOBILE = isKa ? "მიმართულებები" : "The Disciplines";
+/* The sticky header is the word that scrubs sideways across 290vw, so its
+   length is load-bearing: too short and there is nothing to travel, too
+   long and the cards outrun it. "What We Obsess Over" was 19 characters;
+   these are deliberately close to that. */
+const HEADER_STICKY = isKa ? "ვინ დგას ამის უკან" : "The People Behind It";
+const HEADER_MOBILE = isKa ? "გუნდი" : "The Team";
 
 // dom builders
 function buildCard(m) {
@@ -97,7 +136,10 @@ function buildCard(m) {
       <img src="${m.img}" alt="${m.alt}" />
     </div>
     <div class="card-content">
-      <div class="card-title"><h6>${m.name}</h6></div>
+      <div class="card-title">
+        <h6>${m.name}</h6>
+        <p class="card-role">${m.role}</p>
+      </div>
       <div class="card-description"><p>${m.description}</p></div>
     </div>
   `;

@@ -219,9 +219,34 @@
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  height: 275px;
+  /* was a fixed 275px, which had no slack once the cards gained a role line
+     under the name. The card itself is still a fixed 500px, so this only
+     lets the content box use what the image leaves rather than clipping. */
+  min-height: 275px;
   padding: 1rem;
   color: var(--l);
+}
+
+/* The global h6 is 64px, which in a 325px card left exactly 1px of slack
+   and wrapped three of the five names onto two lines. Real names will be
+   longer than "The Lens", so the size has to leave room for two lines plus
+   a bio rather than only just fitting today's placeholder text. The mobile
+   cards are full-width and set their own larger size further down. */
+.card-title h6 {
+  font-size: 2.5rem;
+  line-height: 1.05;
+}
+
+/* the seat, under the name. Mono and uppercase so it reads as a label
+   rather than a second line of the name, and matches the eyebrow treatment
+   used in the menu and the mission block. */
+.card-role {
+  margin-top: 0.45rem;
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
 }
 
 .clients {
