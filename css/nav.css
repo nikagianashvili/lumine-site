@@ -35,7 +35,8 @@ nav {
   border-bottom: 1px solid transparent;
   transition:
     background-color 0.35s ease,
-    border-color 0.35s ease;
+    border-color 0.35s ease,
+    color 0.35s ease;
 }
 
 /* past the bar's own height, it becomes a surface */
@@ -85,7 +86,9 @@ nav.is-stuck {
   border: none;
   cursor: pointer;
   opacity: 0.5;
-  transition: opacity 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    color 0.35s ease;
 }
 
 .nav-lang-btn.is-active {
@@ -130,8 +133,8 @@ nav.is-stuck {
   height: 1.75rem;
   object-fit: contain;
   /* black-on-transparent PNG - brightness(0) crushes any anti-aliasing to
-     solid black, which is already correct now that nav is always solid */
-  filter: brightness(0);
+     solid black. The filter itself is declared with the menu-open state
+     further down, so the two can interpolate. */
   /* scale, not height â€” a bigger box height here would grow the whole nav
      bar's row height (flex, no fixed height); transform paints larger
      without touching layout, so the header stays the same size */
@@ -175,15 +178,35 @@ nav.is-stuck {
 /* The menu owns the whole screen, so the bar is pinned back to its resting
    state underneath it: without this, opening the menu after scrolling down
    would leave a cream strip (is-stuck) floating across the top of an ink
-   panel. */
+   panel.
+
+   The marks fade rather than snap, on the same 0.35s as the bar's own
+   background, so the whole header changes as one thing. js/nav.js holds the
+   menu-is-open class until the panel has finished retracting, which is what
+   puts that fade at the end of the close instead of the start of it. */
 html.menu-is-open nav {
   background-color: transparent;
   border-bottom-color: transparent;
   color: var(--l);
 }
-html.menu-is-open .nav-logo img,
-html.menu-is-open .nav-icon img {
+/* Both states have to name the same filter functions in the same order or
+   the browser cannot interpolate between them and the flip is instant
+   again. invert(0) is a no-op that exists purely to give invert(1)
+   something to animate from; the wordmark is already ink and the centre
+   mark is crushed to solid black by brightness(0) first. */
+.nav-logo img {
+  filter: invert(0);
+  transition: filter 0.35s ease;
+}
+.nav-icon img {
+  filter: brightness(0) invert(0);
+  transition: filter 0.35s ease;
+}
+html.menu-is-open .nav-logo img {
   filter: invert(1);
+}
+html.menu-is-open .nav-icon img {
+  filter: brightness(0) invert(1);
 }
 html.menu-is-open .nav-lang-btn {
   color: var(--l);

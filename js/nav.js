@@ -310,7 +310,11 @@ function initMenu() {
     isAnimating = true;
     isOpen = false;
 
-    document.documentElement.classList.remove("menu-is-open");
+    /* The state the assistive tech reads changes now, because the menu is
+       on its way out from this moment. What the eye sees is held back to
+       the end of the animation below — dropping menu-is-open here made the
+       header snap from paper marks back to ink while the panel was still
+       covering most of the screen behind it. */
     toggler.setAttribute("aria-expanded", "false");
     toggler.setAttribute("aria-label", COPY.openAria);
     if (label) label.textContent = COPY.openLabel;
@@ -328,6 +332,10 @@ function initMenu() {
       delay: 0.12,
       ease: "expo.inOut",
       onComplete: () => {
+        /* Released as the panel clears the bar, so the marks fade back to
+           ink on the same 0.35s as the background returns — the header
+           changes once, as one thing, rather than twice. */
+        document.documentElement.classList.remove("menu-is-open");
         reset();
         seal();
         isAnimating = false;
