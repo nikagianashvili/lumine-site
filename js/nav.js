@@ -235,6 +235,15 @@ function initMenu() {
   const CLOSED_CLIP = "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)";
   const OPEN_CLIP = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";
 
+  /* Named because the header fade is timed against them rather than
+     guessed at. HEADER_FADE must stay equal to the transition duration on
+     nav / .nav-logo img / .nav-icon img in css/nav.css — if the two drift
+     apart the fade stops landing with the wipe, which is the whole point of
+     scheduling it. */
+  const CLOSE_DELAY = 0.12;
+  const CLOSE_DUR = 0.75;
+  const HEADER_FADE = 0.35;
+
   /* Hidden means hidden. The old overlay was only hidden visually, so its
      nine links stayed in the tab order on every page — a keyboard user
      tabbed into a menu they could not see and could not have opened.
@@ -311,10 +320,7 @@ function initMenu() {
     isOpen = false;
 
     /* The state the assistive tech reads changes now, because the menu is
-       on its way out from this moment. What the eye sees is held back to
-       the end of the animation below — dropping menu-is-open here made the
-       header snap from paper marks back to ink while the panel was still
-       covering most of the screen behind it. */
+       on its way out from this moment. What the eye sees is timed below. */
     toggler.setAttribute("aria-expanded", "false");
     toggler.setAttribute("aria-label", COPY.openAria);
     if (label) label.textContent = COPY.openLabel;
@@ -326,16 +332,21 @@ function initMenu() {
       ease: "power2.in",
     });
 
+    /* The header fade has to LAND with the panel, not start there. Dropping
+       menu-is-open on completion left the marks still fading for a third of
+       a second after the menu had visibly gone. Starting it one fade-length
+       before the end means the last frame of the wipe is also the last
+       frame of the fade. */
+    gsap.delayedCall(CLOSE_DELAY + CLOSE_DUR - HEADER_FADE, () => {
+      document.documentElement.classList.remove("menu-is-open");
+    });
+
     gsap.to(overlay, {
       clipPath: CLOSED_CLIP,
-      duration: 0.75,
-      delay: 0.12,
+      duration: CLOSE_DUR,
+      delay: CLOSE_DELAY,
       ease: "expo.inOut",
       onComplete: () => {
-        /* Released as the panel clears the bar, so the marks fade back to
-           ink on the same 0.35s as the background returns — the header
-           changes once, as one thing, rather than twice. */
-        document.documentElement.classList.remove("menu-is-open");
         reset();
         seal();
         isAnimating = false;
