@@ -87,7 +87,13 @@
   line-height: 0.95;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--d);
+  /* Spark. Ink was the template's choice and it had a real problem: the
+     rotating photo passes straight through the middle of the line, and
+     near-black type over a near-black frame simply disappeared for the
+     width of the image. Coral reads against both — 3.05:1 on the paper,
+     which clears AA for display type, and high contrast over the photo —
+     so the brand colour and the legibility fix are the same edit. */
+  color: var(--accent);
 }
 
 html[lang="ka"] .studio-hero-copy h1,
@@ -135,7 +141,6 @@ html[lang="ka"] .studio-hero-copy .hero-word {
 .about {
   position: relative;
   width: 100%;
-  height: 100%;
   padding-top: 2.5rem;
   background-color: var(--d);
   color: var(--l);
@@ -165,8 +170,22 @@ html[lang="ka"] .studio-hero-copy .hero-word {
 }
 
 .about .about-row .about-col.about-col-copy p {
+  position: relative;
   width: 75%;
   text-align: center;
+}
+
+/* A struck coral rule over each block of about copy. The about section is
+   2.4 screens of ink and held no brand colour at all; this marks the two
+   places where the page stops shouting in display type and actually says
+   something, which is the right thing to point at. */
+.about .about-row .about-col.about-col-copy p::before {
+  content: "";
+  display: block;
+  width: 2.75rem;
+  height: 2px;
+  margin: 0 auto 1.35rem;
+  background-color: var(--accent);
 }
 
 .particle-canvas {
@@ -432,8 +451,15 @@ html[lang="ka"] .studio-hero-copy .hero-word {
   gap: var(--sp-5);
 }
 
+/* Spark Bright on the ink — 6.64:1, and the eyebrow's dot goes coral with it
+   since it draws from currentColor. "Mission" and "Vision" are the only two
+   labels in this block, so colouring them is what makes the pair read as a
+   pair. Opacity back to 1: the global .eyebrow dims to 0.7, which would mute
+   the accent into a muddy brown. */
 .mission-col .eyebrow {
   margin-bottom: 1.5rem;
+  color: var(--accent-bright);
+  opacity: 1;
 }
 
 .mission-col h3 {
@@ -456,6 +482,18 @@ html[lang="ka"] .studio-hero-copy .hero-word {
   margin-bottom: var(--sp-5);
 }
 
+/* The two section titles on the paper half of the page get the same coral
+   rule struck above them, so "The Story So Far" and "Good Company" read as
+   the same kind of thing. The clients block held no brand colour at all
+   before this — its register rows are styled from home.css, which this
+   page does not own. Note the two selectors: the timeline uses
+   .section-head-row, the clients block has its own header wrapper. */
+.studio-timeline .section-head-row,
+.clients .container .clients-header-wrapper {
+  padding-top: 1.75rem;
+  border-top: 2px solid var(--accent);
+}
+
 .timeline-note {
   max-width: 18rem;
   text-align: right;
@@ -474,7 +512,10 @@ html[lang="ka"] .studio-hero-copy .hero-word {
   flex-direction: column;
   gap: 1rem;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(23, 19, 15, 0.3);
+  /* the four rules across the top of the timeline are the page's longest
+     drawn lines — coral rather than grey ink makes them read as part of the
+     brand instead of as table furniture */
+  border-top: 1px solid rgba(242, 84, 45, 0.45);
 }
 
 .timeline-marker {
@@ -485,10 +526,12 @@ html[lang="ka"] .studio-hero-copy .hero-word {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  /* was 0.55, which measures 3.96:1 against the paper and fails WCAG AA for
-     12.8px text. 0.62 clears it at 4.72:1 without brightening the label into
-     competing with the heading it sits under. */
-  opacity: 0.62;
+  /* Signature Text, at full strength. This was ink dimmed to 0.55, which
+     measured 3.96:1 and failed AA for 12.8px text; --accent-deep on the
+     paper is 8.49:1, so going coral makes it both branded and legible
+     rather than trading one for the other. */
+  color: var(--accent-deep);
+  opacity: 1;
 }
 
 .timeline-item h3 {
@@ -506,8 +549,17 @@ html[lang="ka"] .studio-hero-copy .hero-word {
    should be closing hardest. This is the one dark room in the lower half,
    and the rail's blackbody colours only read as light in a dark room.
    See js/light-desk.js for why the axis is a Kelvin scale. */
+/* Pinned, so it has to FIT the viewport — at 8rem/7rem the block measured
+   1004px against an 847px window and the axis captions fell below the fold
+   for the whole time the section was held. Centring a shorter block inside
+   a full-height section means the layout cannot outgrow its own pin, and
+   the leftover space at the bottom is what keeps the last stop clear of the
+   fixed chat launcher parked in that corner. */
 .lightdesk {
-  padding: 8rem 0 7rem;
+  display: flex;
+  align-items: center;
+  min-height: 100svh;
+  padding: 4rem 0;
   background-color: var(--d);
   color: var(--l);
   /* set per-rule by the script; this is only the resting value so the
@@ -520,7 +572,7 @@ html[lang="ka"] .studio-hero-copy .hero-word {
 }
 
 .lightdesk-head {
-  margin-bottom: var(--sp-6);
+  margin-bottom: var(--sp-4);
 }
 
 .lightdesk-head .eyebrow {
@@ -548,8 +600,8 @@ html[lang="ka"] .studio-hero-copy .hero-word {
   grid-template-columns: 1fr minmax(0, 20rem);
   align-items: end;
   gap: var(--sp-4);
-  min-height: 12rem;
-  margin-bottom: var(--sp-5);
+  min-height: 9rem;
+  margin-bottom: var(--sp-4);
   padding-left: 2rem;
   border-left: 1px solid rgba(246, 241, 231, 0.18);
 }

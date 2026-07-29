@@ -1,6 +1,9 @@
 // webgl particle system with mouse distortion
 const PV = {
   config: {
+    // Must track `.about`'s background in css/studio.css — this canvas sits
+    // inside that section, and a mismatch renders as a hard rectangle of the
+    // wrong colour behind the logo.
     canvasBg: "#17130f",
     logoSize: 2000,
     distortionRadius: 2000,
