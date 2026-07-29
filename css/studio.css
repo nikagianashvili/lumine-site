@@ -73,15 +73,26 @@
    carrying the same treatment rather than a second h1, because the page had
    seven of them and no h2 at all. It cannot be one element: the two words
    fly apart in opposite directions, which needs two boxes. */
+/* Sized per locale, and the Georgian needs the smaller setting rather than
+   the larger one — counting characters is the wrong instinct here. Mtavruli
+   glyphs are much wider than Latin caps: ᲗᲐᲕᲘᲓᲐᲜ / ᲑᲝᲚᲝᲛᲓᲔ is seven and seven
+   but measured 2689px at 19vw against 1920 of viewport, while the English
+   fourteen characters of START / TO FINISH came to 1601px at 13.5vw. Both
+   values below are measured to land ~110px clear of each edge at 1920. */
 .studio-hero-copy h1,
 .studio-hero-copy .hero-word {
   font-family: var(--f-h);
-  font-size: 19vw;
+  font-size: 13.5vw;
   font-weight: 700;
   line-height: 0.95;
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--d);
+}
+
+html[lang="ka"] .studio-hero-copy h1,
+html[lang="ka"] .studio-hero-copy .hero-word {
+  font-size: 11vw;
 }
 
 html[lang="ka"] .studio-hero-copy .hero-word {

@@ -124,15 +124,6 @@
   animation: none;
 }
 
-/* While the page is moving the launcher gets out of the way. It is the only
-   fixed element on the site and it will otherwise always be sitting on
-   somebody's last line of copy. Set by js/chat-widget.js. */
-.chat-widget.is-scrolling .chat-bubble {
-  opacity: 0.25;
-  transform: translateY(0.35rem) scale(0.94);
-  animation: none;
-}
-
 .chat-widget.is-open .chat-bubble {
   opacity: 0;
   pointer-events: none;
@@ -649,9 +640,5 @@
   .chat-bubble,
   .chat-msg.is-typing span {
     animation: none;
-  }
-
-  .chat-widget.is-scrolling .chat-bubble {
-    transform: none;
   }
 }

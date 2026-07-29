@@ -205,6 +205,9 @@ function init() {
   const buttons = [...mount.querySelectorAll(".lightdesk-stop")];
 
   let active = -1;
+  const LAST = RULES.length - 1;
+  const SPAN_K = RULES[LAST].k - RULES[0].k;
+  const pctOfRule = (i) => (RULES[i].k - RULES[0].k) / SPAN_K;
 
   /* Measured off the rendered dot rather than offsetLeft: the stops carry a
      translateX (-50% in the middle, -100% at the cool end) which offsetLeft
@@ -218,9 +221,12 @@ function init() {
     return dot.left + dot.width / 2 - railBox.left;
   }
 
-  function paint(i) {
+  function setTint(k) {
+    mount.style.setProperty("--k-rgb", rgbOf(k));
+  }
+
+  function paintText(i) {
     const r = RULES[i];
-    mount.style.setProperty("--k-rgb", rgbOf(r.k));
     kEl.textContent = `${r.k}K`;
     /* The readout is display type, so on /ka/ it has to be Mtavruli like
        every heading around it — and it is re-set on every stop change, so it
@@ -233,45 +239,115 @@ function init() {
     });
   }
 
-  function select(i, animate = true) {
+  function showRule(i, animate = true) {
     if (i === active) return;
     active = i;
 
-    if (reduced || !animate) {
-      paint(i);
-      gsap.set(lamp, { x: lampX(i) });
+    /* The text is written synchronously, before any tween, and the animation
+       only ever moves it. The obvious version fades out, swaps on complete,
+       fades back in — but under a scrub the reader can cross three stops in
+       one flick, so that tween gets killed mid-fade and leaves the readout
+       stranded at opacity 0 showing the previous rule. Painting first means
+       the worst a killed tween can do is skip an animation. */
+    paintText(i);
+
+    if (!animate || reduced) {
+      gsap.set(stage, { opacity: 1, y: 0 });
       return;
     }
 
-    // the readout swaps under the lamp's arrival, not before it
-    gsap.to(stage, {
-      opacity: 0,
-      y: -6,
-      duration: 0.16,
-      ease: "power2.in",
-      onComplete: () => {
-        paint(i);
-        gsap.fromTo(
-          stage,
-          { opacity: 0, y: 8 },
-          { opacity: 1, y: 0, duration: 0.32, ease: "power3.out" },
-        );
+    gsap.fromTo(
+      stage,
+      { opacity: 0.2, y: 10 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.3,
+        ease: "power3.out",
+        // rapid crossings restart the swap rather than stacking six of them
+        overwrite: true,
+      },
+    );
+  }
+
+  paintText(0);
+  setTint(RULES[0].k);
+  active = 0;
+  gsap.set(lamp, { x: lampX(0) });
+
+  const mm = gsap.matchMedia();
+
+  /* — desktop: the rail is driven by the page, not by the pointer —
+     Hovering six buttons made the section a thing you had to discover and
+     then operate. Pinned and scrubbed, the reader just keeps scrolling and
+     the lamp walks the scale for them: the lamp position and the colour
+     temperature are continuous, and only the name snaps, at the moment the
+     lamp actually crosses that stop. Held for 1.6 screens, which is enough
+     for six rules to each get a beat without adding another long pin to a
+     page that already has two. */
+  mm.add("(min-width: 901px) and (prefers-reduced-motion: no-preference)", () => {
+    const st = ScrollTrigger.create({
+      trigger: mount,
+      start: "top top",
+      end: () => `+=${window.innerHeight * 1.6}`,
+      pin: true,
+      pinSpacing: true,
+      scrub: 0.6,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const p = self.progress;
+        const a = lampX(0);
+        const b = lampX(LAST);
+
+        gsap.set(lamp, { x: a + (b - a) * p });
+        setTint(RULES[0].k + SPAN_K * p);
+
+        // the last stop whose mark the lamp has actually reached
+        let i = 0;
+        for (let n = 0; n <= LAST; n++) if (p >= pctOfRule(n) - 0.001) i = n;
+        showRule(i);
       },
     });
 
-    gsap.to(lamp, { x: lampX(i), duration: 0.55, ease: "power3.inOut" });
-  }
+    /* The stops stay real buttons for keyboard and for anyone who wants to
+       jump — but they move the page rather than setting state behind its
+       back, so the scroll position and the lit rule can never disagree. */
+    const jump = (i) => {
+      const y = st.start + (st.end - st.start) * pctOfRule(i);
+      if (window.lenis?.scrollTo) window.lenis.scrollTo(y);
+      else window.scrollTo({ top: y, behavior: "smooth" });
+    };
+    const onClick = buttons.map((b, i) => {
+      const fn = () => jump(i);
+      b.addEventListener("click", fn);
+      return fn;
+    });
 
-  buttons.forEach((b, i) => {
-    b.addEventListener("click", () => select(i));
-    b.addEventListener("mouseenter", () => select(i));
-    b.addEventListener("focus", () => select(i));
+    return () => {
+      st.kill();
+      buttons.forEach((b, i) => b.removeEventListener("click", onClick[i]));
+    };
   });
 
-  // start lit at the warm end
-  paint(0);
-  active = 0;
-  gsap.set(lamp, { x: lampX(0) });
+  /* — phone, and anything under reduced motion —
+     No pin here: hijacking the scroll on a touch device to run a six-step
+     animation is the thing that makes people close the tab. The rail is
+     vertical and every rule is already legible, so tapping one lights it. */
+  mm.add("(max-width: 900px), (prefers-reduced-motion: reduce)", () => {
+    const handlers = buttons.map((b, i) => {
+      const fn = () => {
+        showRule(i, !reduced);
+        setTint(RULES[i].k);
+        gsap.set(lamp, { x: lampX(i) });
+      };
+      b.addEventListener("click", fn);
+      return fn;
+    });
+
+    return () => {
+      buttons.forEach((b, i) => b.removeEventListener("click", handlers[i]));
+    };
+  });
 
   window.addEventListener(
     "resize",
@@ -280,41 +356,6 @@ function init() {
     },
     { passive: true },
   );
-
-  if (reduced) return;
-
-  /* One sweep the length of the rail when the section arrives, then it
-     settles back on the warm end — the desk being switched on and checked,
-     which is also the only way a first-time reader learns the rail is live. */
-  ScrollTrigger.create({
-    trigger: mount,
-    start: "top 70%",
-    once: true,
-    onEnter: () => {
-      const tl = gsap.timeline();
-      tl.to(lamp, {
-        x: lampX(RULES.length - 1),
-        duration: 1.1,
-        ease: "power2.inOut",
-        onUpdate: () => {
-          // tint tracks the lamp across the sweep instead of jumping at the end
-          const x = gsap.getProperty(lamp, "x");
-          const a = lampX(0);
-          const b = lampX(RULES.length - 1);
-          const p = gsap.utils.clamp(0, 1, (x - a) / (b - a));
-          mount.style.setProperty(
-            "--k-rgb",
-            rgbOf(RULES[0].k + (RULES[RULES.length - 1].k - RULES[0].k) * p),
-          );
-        },
-      }).to(lamp, {
-        x: lampX(0),
-        duration: 0.8,
-        ease: "power3.inOut",
-        onComplete: () => paint(0),
-      });
-    },
-  });
 }
 
 if (document.readyState === "loading") {

@@ -470,24 +470,11 @@ function init() {
     if (!wrap.contains(e.target)) close();
   });
 
-  /* The launcher is the only fixed element on the site, so on a page this
-     tall it is guaranteed to sit on somebody's last line of copy. It steps
-     back while the page is moving and returns when it stops — present when
-     you want it, out of the composition while you are reading it. */
-  let scrollTimer = null;
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (wrap.classList.contains("is-open")) return;
-      wrap.classList.add("is-scrolling");
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(
-        () => wrap.classList.remove("is-scrolling"),
-        420,
-      );
-    },
-    { passive: true },
-  );
+  /* No fade-while-scrolling here. It was tried and it reads as the widget
+     glitching rather than deferring — a control that dims itself looks
+     broken, and you cannot aim at something that is disappearing. The
+     launcher earns its corner by being small instead: a disc at rest that
+     only grows into a labelled pill when you reach for it. */
 }
 
 if (document.readyState === "loading") {
