@@ -58,7 +58,37 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* `user-select: none` used to sit on `*`, which meant nobody could copy a
+   single word off this site — not a client name, not the studio's own
+   positioning line, not the email in the footer. It exists to stop the big
+   display type smearing into a blue selection while you drag through a
+   scroll-scrubbed section, so it now applies to exactly that: headings, the
+   marks, and the interactive furniture. Body copy stays selectable. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.eyebrow,
+button,
+nav,
+.hero-word,
+.card-role,
+.timeline-marker,
+.register-index,
+.register-year,
+#custom-cursor {
   user-select: none;
+}
+
+img,
+canvas,
+svg {
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 ::-webkit-scrollbar {

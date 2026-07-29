@@ -417,7 +417,10 @@ html[lang="ka"] .section-head h3 {
   font-size: 0.8rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  opacity: 0.55;
+  /* was 0.55 — 3.96:1 against the paper, which fails WCAG AA for 12.8px
+     text. 0.62 clears it at 4.72:1 and still sits well behind the client
+     name, which is what the row is actually for. */
+  opacity: 0.62;
   transition: opacity 0.4s ease;
 }
 

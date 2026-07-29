@@ -20,6 +20,10 @@
     <meta name="twitter:card" content="summary" />
     <link rel="icon" type="image/svg+xml" href="/icons/favicon-mark.svg" />
     <link rel="icon" type="image/png" href="/icons/favicon-mark.png" />
+    <link rel="canonical" href="https://lumine.ge/studio" />
+    <link rel="alternate" hreflang="en" href="https://lumine.ge/studio" />
+    <link rel="alternate" hreflang="ka" href="https://lumine.ge/ka/studio" />
+    <link rel="alternate" hreflang="x-default" href="https://lumine.ge/studio" />
     <link rel="stylesheet" href="/css/globals.css" />
     <link rel="stylesheet" href="/css/nav.css" />
     <link rel="stylesheet" href="/css/studio.css" />
@@ -50,11 +54,20 @@
       </div>
     </nav>
 
+    <main>
     <!-- studio: hero -->
     <section class="studio-hero">
       <div class="studio-hero-img">
         <img src="/studio/hero.jpg" alt="" />
       </div>
+      <!--
+        "All Light" came with the template — an adjective in front of what the
+        name already means. "First light" is the term for the first image a
+        newly built instrument ever takes: the night the mirror opens its eye
+        and everyone finds out whether it works. It belongs to the trade this
+        studio is actually in, and it is true of a studio still taking its
+        founding clients, which the timeline further down says out loud.
+      -->
       <div class="studio-hero-copy">
         <div class="studio-hero-header">
           <h1
@@ -62,17 +75,18 @@
             data-animate-on-scroll="false"
             data-animate-delay="0.8"
           >
-            All
+            First
           </h1>
         </div>
         <div class="studio-hero-header">
-          <h1
+          <span
+            class="hero-word"
             data-animate-variant="slide"
             data-animate-on-scroll="false"
             data-animate-delay="0.9"
           >
             Light
-          </h1>
+          </span>
         </div>
       </div>
       <div class="hero-footer">
@@ -109,9 +123,9 @@
       <div class="container">
         <div class="about-row">
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               Concept Driven
-            </h1>
+            </h2>
           </div>
         </div>
         <div class="about-row">
@@ -123,16 +137,16 @@
             </p>
           </div>
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               Visual Culture
-            </h1>
+            </h2>
           </div>
         </div>
         <div class="about-row">
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               Found in Tbilisi
-            </h1>
+            </h2>
           </div>
           <div class="about-col about-col-copy">
             <p data-animate-variant="slide" data-animate-on-scroll="true">
@@ -147,9 +161,9 @@
       <div class="particle-canvas">
         <canvas id="particle-canvas"></canvas>
         <div class="particle-header">
-          <h1 data-animate-variant="slide-words" data-animate-on-scroll="true">
+          <h2 data-animate-variant="slide-words" data-animate-on-scroll="true">
             Ideas In Motion
-          </h1>
+          </h2>
         </div>
       </div>
     </section>
@@ -160,17 +174,17 @@
         <div class="mission-grid">
           <div class="mission-col">
             <p class="eyebrow">Mission</p>
-            <h5 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
               Give small brands the kind of creative work usually reserved
               for big budgets.
-            </h5>
+            </h3>
           </div>
           <div class="mission-col">
             <p class="eyebrow">Vision</p>
-            <h5 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
               A Tbilisi where local businesses look as good as they actually
               are.
-            </h5>
+            </h3>
           </div>
         </div>
       </div>
@@ -180,30 +194,30 @@
     <section class="studio-timeline">
       <div class="container">
         <div class="section-head-row">
-          <h3 data-animate-variant="slide" data-animate-on-scroll="true">
+          <h2 data-animate-variant="slide" data-animate-on-scroll="true">
             The Story So Far
-          </h3>
+          </h2>
           <p class="timeline-note">Young studio, short timeline, no filler.</p>
         </div>
         <div class="timeline-list">
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 01</span>
-            <h6>The Document</h6>
+            <h3>The Document</h3>
             <p>Strategy before style: audience, tone, services, and pricing written down first.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 02</span>
-            <h6>The Mark</h6>
+            <h3>The Mark</h3>
             <p>A black wordmark with a sparkle cut into the "e" — the whole identity grew from it.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 03</span>
-            <h6>The Site</h6>
+            <h3>The Site</h3>
             <p>Built in house, the same way client work ships. You're looking at it.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">Now</span>
-            <h6>First Projects</h6>
+            <h3>First Projects</h3>
             <p>Taking on founding clients. Early means more attention, not less.</p>
           </div>
         </div>
@@ -213,42 +227,21 @@
     <!-- studio: disciplines (sticky cards) -->
     <section id="team-cards"></section>
 
-    <!-- studio: values -->
-    <section class="studio-values">
-      <div class="container">
-        <div class="section-head-row">
-          <h3 data-animate-variant="slide" data-animate-on-scroll="true">
-            House Rules
-          </h3>
-        </div>
-        <div class="values-grid">
-          <div class="value-item">
-            <h6>Trustworthy</h6>
-            <p>Deadlines and prices mean what they say.</p>
-          </div>
-          <div class="value-item">
-            <h6>Results-Oriented</h6>
-            <p>Pretty that doesn't perform is just expensive.</p>
-          </div>
-          <div class="value-item">
-            <h6>Curious</h6>
-            <p>Always learning — new tools, new formats, on purpose.</p>
-          </div>
-          <div class="value-item">
-            <h6>Communicative</h6>
-            <p>You always know where your project stands.</p>
-          </div>
-          <div class="value-item">
-            <h6>Creatively Free</h6>
-            <p>Bold ideas welcome — from our side and yours.</p>
-          </div>
-          <div class="value-item">
-            <h6>Balanced</h6>
-            <p>Humor and seriousness, each where it belongs.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!--
+      studio: the light desk
+
+      Was a three-column grid of six value cards — a box, a two-word virtue,
+      one line of copy, six times. Six interchangeable adjectives in six
+      identical boxes give a reader no reason to look at the second one.
+
+      The same six rules are now plotted on a colour-temperature rail, warm
+      to cool, running from how we treat the client to how we measure the
+      work. The studio is named for light and its people actually shoot and
+      grade, so the Kelvin scale is an instrument they own rather than a
+      metaphor borrowed for the occasion. Built by js/light-desk.js so both
+      locales share one builder, the way the team cards and the register do.
+    -->
+    <section class="lightdesk" data-lightdesk></section>
 
     <!--
       studio: clients
@@ -266,9 +259,9 @@
       <div class="container">
         <div class="clients-header-wrapper">
           <div class="clients-header">
-            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               Good Company
-            </h3>
+            </h2>
           </div>
           <div class="clients-copy">
             <p data-animate-variant="slide" data-animate-on-scroll="true">
@@ -281,6 +274,8 @@
         <div class="register" data-register></div>
       </div>
     </section>
+
+    </main>
 
     <!-- studio: footer -->
     <footer>
@@ -319,6 +314,7 @@
     <script type="module" src="/js/studio-hero.js"></script>
     <script type="module" src="/js/home-hero.js"></script>
     <script type="module" src="/js/team-cards.js"></script>
+    <script type="module" src="/js/light-desk.js"></script>
     <script type="module" src="/js/trusted-by.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>

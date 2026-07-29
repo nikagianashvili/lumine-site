@@ -54,6 +54,7 @@
       </div>
     </nav>
 
+    <main>
     <!-- studio: hero -->
     <section class="studio-hero">
       <div class="studio-hero-img">
@@ -66,17 +67,18 @@
             data-animate-on-scroll="false"
             data-animate-delay="0.8"
           >
-            ყველა
+            პირველი
           </h1>
         </div>
         <div class="studio-hero-header">
-          <h1
+          <span
+            class="hero-word"
             data-animate-variant="slide"
             data-animate-on-scroll="false"
             data-animate-delay="0.9"
           >
             სინათლე
-          </h1>
+          </span>
         </div>
       </div>
       <div class="hero-footer">
@@ -113,9 +115,9 @@
       <div class="container">
         <div class="about-row">
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               კონცეფცია წინ უსწრებს
-            </h1>
+            </h2>
           </div>
         </div>
         <div class="about-row">
@@ -127,16 +129,16 @@
             </p>
           </div>
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               ვიზუალური კულტურა
-            </h1>
+            </h2>
           </div>
         </div>
         <div class="about-row">
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               ნაპოვნია თბილისში
-            </h1>
+            </h2>
           </div>
           <div class="about-col about-col-copy">
             <p data-animate-variant="slide" data-animate-on-scroll="true">
@@ -152,9 +154,9 @@
       <div class="particle-canvas">
         <canvas id="particle-canvas"></canvas>
         <div class="particle-header">
-          <h1 data-animate-variant="slide-words" data-animate-on-scroll="true">
+          <h2 data-animate-variant="slide-words" data-animate-on-scroll="true">
             იდეები მოძრაობაში
-          </h1>
+          </h2>
         </div>
       </div>
     </section>
@@ -165,17 +167,17 @@
         <div class="mission-grid">
           <div class="mission-col">
             <p class="eyebrow">მისია</p>
-            <h5 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
               მცირე ბრენდებს ვაძლევთ იმ დონის შემოქმედებით სამუშაოს,
               რომელიც ჩვეულებრივ დიდი ბიუჯეტისთვისაა დაცული.
-            </h5>
+            </h3>
           </div>
           <div class="mission-col">
             <p class="eyebrow">ხედვა</p>
-            <h5 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
               თბილისი, სადაც ადგილობრივი ბიზნესები ისე კარგად გამოიყურებიან,
               როგორადაც რეალურად არიან.
-            </h5>
+            </h3>
           </div>
         </div>
       </div>
@@ -185,30 +187,30 @@
     <section class="studio-timeline">
       <div class="container">
         <div class="section-head-row">
-          <h3 data-animate-variant="slide" data-animate-on-scroll="true">
+          <h2 data-animate-variant="slide" data-animate-on-scroll="true">
             ისტორია დღემდე
-          </h3>
+          </h2>
           <p class="timeline-note">ახალგაზრდა სტუდია, მოკლე გზა, ზედმეტის გარეშე.</p>
         </div>
         <div class="timeline-list">
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 01</span>
-            <h6>დოკუმენტი</h6>
+            <h3>დოკუმენტი</h3>
             <p>სტრატეგია სტილამდე: აუდიტორია, ტონი, სერვისები და ფასები — ჯერ დაწერილი, მერე ყველაფერი დანარჩენი.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 02</span>
-            <h6>ნიშანი</h6>
+            <h3>ნიშანი</h3>
             <p>შავი სავაჭრო ნიშანი ბზინვარებით, ამოჭრილი „e"-ში — მთელი იდენტობა აქედან გაიზარდა.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 03</span>
-            <h6>საიტი</h6>
+            <h3>საიტი</h3>
             <p>აშენებული საკუთარ გუნდში, ისევე როგორც კლიენტის სამუშაო. სწორედ მას უყურებთ.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">ახლა</span>
-            <h6>პირველი პროექტები</h6>
+            <h3>პირველი პროექტები</h3>
             <p>ვიღებთ დამფუძნებელ კლიენტებს. ადრეული ნიშნავს მეტ ყურადღებას, არა ნაკლებს.</p>
           </div>
         </div>
@@ -218,42 +220,12 @@
     <!-- studio: disciplines (sticky cards) -->
     <section id="team-cards"></section>
 
-    <!-- studio: values -->
-    <section class="studio-values">
-      <div class="container">
-        <div class="section-head-row">
-          <h3 data-animate-variant="slide" data-animate-on-scroll="true">
-            სახლის წესები
-          </h3>
-        </div>
-        <div class="values-grid">
-          <div class="value-item">
-            <h6>სანდო</h6>
-            <p>ვადები და ფასები ნიშნავს იმას, რასაც ამბობს.</p>
-          </div>
-          <div class="value-item">
-            <h6>შედეგზე ორიენტირებული</h6>
-            <p>ლამაზი, რომელიც არ მუშაობს, უბრალოდ ძვირია.</p>
-          </div>
-          <div class="value-item">
-            <h6>ცნობისმოყვარე</h6>
-            <p>მუდამ ვსწავლობთ — ახალი ხელსაწყოები, ახალი ფორმატები, განზრახ.</p>
-          </div>
-          <div class="value-item">
-            <h6>კომუნიკაბელური</h6>
-            <p>ყოველთვის იცით, სად დგას თქვენი პროექტი.</p>
-          </div>
-          <div class="value-item">
-            <h6>შემოქმედებითად თავისუფალი</h6>
-            <p>თამამი იდეები მისასალმებელია — ჩვენი მხრიდანაც და თქვენიდანაც.</p>
-          </div>
-          <div class="value-item">
-            <h6>დაბალანსებული</h6>
-            <p>იუმორი და სერიოზულობა, თითოეული თავის ადგილას.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!--
+      studio: the light desk — see the note on the English page. The same six
+      house rules, plotted on a Kelvin rail from warm to cool. Built by
+      js/light-desk.js, which carries the Georgian copy.
+    -->
+    <section class="lightdesk" data-lightdesk></section>
 
     <!--
       studio: clients — see the note on the English page. The marquee this
@@ -264,9 +236,9 @@
       <div class="container">
         <div class="clients-header-wrapper">
           <div class="clients-header">
-            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               კარგი კომპანია
-            </h3>
+            </h2>
           </div>
           <div class="clients-copy">
             <p data-animate-variant="slide" data-animate-on-scroll="true">
@@ -279,6 +251,8 @@
         <div class="register" data-register></div>
       </div>
     </section>
+
+    </main>
 
     <!-- studio: footer -->
     <footer>
@@ -318,6 +292,7 @@
     <script type="module" src="/js/studio-hero.js"></script>
     <script type="module" src="/js/home-hero.js"></script>
     <script type="module" src="/js/team-cards.js"></script>
+    <script type="module" src="/js/light-desk.js"></script>
     <script type="module" src="/js/trusted-by.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>

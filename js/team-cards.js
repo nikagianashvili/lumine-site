@@ -137,7 +137,7 @@ function buildCard(m) {
     </div>
     <div class="card-content">
       <div class="card-title">
-        <h6>${m.name}</h6>
+        <h3>${m.name}</h3>
         <p class="card-role">${m.role}</p>
       </div>
       <div class="card-description"><p>${m.description}</p></div>
@@ -154,7 +154,7 @@ function buildTeam() {
 
   const stickyHeader = document.createElement("div");
   stickyHeader.className = "sticky-header";
-  stickyHeader.innerHTML = `<h1>${HEADER_STICKY}</h1>`;
+  stickyHeader.innerHTML = `<h2>${HEADER_STICKY}</h2>`;
   desktopSection.appendChild(stickyHeader);
 
   const desktopCards = teamMembers.map((m) => {
@@ -169,7 +169,7 @@ function buildTeam() {
 
   const mobileHeader = document.createElement("div");
   mobileHeader.className = "mobile-header";
-  mobileHeader.innerHTML = `<h1>${HEADER_MOBILE}</h1>`;
+  mobileHeader.innerHTML = `<h2>${HEADER_MOBILE}</h2>`;
   mobileSection.appendChild(mobileHeader);
 
   teamMembers.forEach((m) => {
@@ -181,7 +181,11 @@ function buildTeam() {
   return { desktopSection, stickyHeader, desktopCards, mobileSection };
 }
 
-// animation transforms
+/* Hand-tuned scatter paths, one per card position. This array is indexed by
+   card index, so a sixth roster entry used to hit transforms[5] === undefined
+   and throw on desktop — a landmine in the one section whose entire purpose
+   is to be filled with the real team. `pathFor` wraps instead, so extra
+   people reuse an earlier path rather than taking the page down. */
 const transforms = [
   [
     [10, 50, -10, 10],
@@ -215,8 +219,14 @@ function initTeamCards(mountEl) {
 
   const mm = gsap.matchMedia();
 
+  /* Reduced motion falls through to the mobile branch at any width rather
+     than getting a six-viewport pinned scrub. The stacked layout is the same
+     five people in the same order — it just does not move — so nothing is
+     lost but the ride. The CSS media queries carry the identical condition
+     so the two can never disagree about which section is showing. */
+
   // desktop
-  mm.add("(min-width: 1000px)", () => {
+  mm.add("(min-width: 1000px) and (prefers-reduced-motion: no-preference)", () => {
     let scrollTriggerInstance = null;
 
     let stickyHeight = 0;
@@ -266,8 +276,9 @@ function initTeamCards(mountEl) {
           const cardProgress = Math.max(0, Math.min((progress - delay) * 2, 1));
 
           if (cardProgress > 0) {
-            const yPos = transforms[index][0];
-            const rotations = transforms[index][1];
+            const path = transforms[index % transforms.length];
+            const yPos = path[0];
+            const rotations = path[1];
 
             const cardX = gsap.utils.interpolate(
               cardStartX,
@@ -320,8 +331,8 @@ function initTeamCards(mountEl) {
     };
   });
 
-  // mobile
-  mm.add("(max-width: 999px)", () => {
+  // mobile — and any width under reduced motion
+  mm.add("(max-width: 999px), (prefers-reduced-motion: reduce)", () => {
     // clear inline styles so css takes full control
     gsap.set(desktopSection, { clearProps: "all" });
     gsap.set(stickyHeader, { clearProps: "all" });

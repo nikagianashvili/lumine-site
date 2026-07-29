@@ -1,4 +1,17 @@
-﻿/* chat-widget — floating "Ask Lumine AI" bubble + live chat panel, site-wide */
+/* chat-widget — the front desk. Site-wide launcher + conversation panel.
+ *
+ * This was a standard messenger drop-in: a dark labelled pill, a rounded
+ * card, and two colours of speech balloon. It worked, but it was the one
+ * component on the site that could have come from any other site, and its
+ * launcher sat on top of whatever happened to be in the bottom-right corner.
+ *
+ * It now speaks the language the rest of the site already uses — the ledger
+ * grammar from the client register (hairline rules, mono labels, ink filling
+ * in behind a row) and the lamp from the light desk. The launcher is a pilot
+ * light: a small disc with a warm halo that only grows into a labelled pill
+ * when you reach for it, and that steps aside while you are scrolling so it
+ * is never reading-blocker furniture.
+ */
 
 .chat-widget {
   position: fixed;
@@ -8,82 +21,133 @@
   font-family: var(--f-nm);
 }
 
-/* A labelled pill rather than a bare icon disc: a lone circular glyph in the
-   corner gives no clue what it opens, and the extra inset keeps it off the
-   corner content it used to sit on top of. */
+/* — the launcher —
+   A disc at rest so it covers as little as possible, widening to carry its
+   label on hover or keyboard focus. The old permanent pill was ~132px wide
+   and permanently parked on the corner of every page. */
 .chat-bubble {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.85rem 1.35rem;
-  border: none;
+  gap: 0;
+  height: 3.1rem;
+  padding: 0 0.95rem;
+  border: 1px solid rgba(246, 241, 231, 0.16);
   border-radius: 100px;
   background-color: var(--d);
   color: var(--l);
   font-family: var(--f-nm);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  white-space: nowrap;
   cursor: pointer;
-  box-shadow: var(--lift-hover);
+  box-shadow:
+    var(--lift-hover),
+    0 0 2rem -0.25rem rgba(242, 84, 45, 0.45);
   transition:
-    transform 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    gap 0.45s cubic-bezier(0.65, 0, 0.35, 1),
+    padding 0.45s cubic-bezier(0.65, 0, 0.35, 1),
     background-color 0.35s ease,
+    opacity 0.35s ease,
+    transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* the pilot light itself — the same warm lamp as the light desk's rail, so
+   the widget reads as part of the studio rather than a bolted-on service */
+.chat-bubble svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: none;
+  color: var(--accent);
+  filter: drop-shadow(0 0 0.5rem rgba(242, 84, 45, 0.55));
+  transition:
+    transform 0.6s cubic-bezier(0.65, 0, 0.35, 1),
+    color 0.35s ease;
+}
+
+/* The label is clipped to nothing rather than display:none, so it can slide
+   open instead of popping — and it stays in the accessibility tree either
+   way (the button also carries an aria-label). */
+.chat-bubble-label {
+  display: inline-block;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-width 0.45s cubic-bezier(0.65, 0, 0.35, 1),
     opacity 0.3s ease;
 }
 
-.chat-bubble svg {
-  width: 1.15rem;
-  height: 1.15rem;
-  flex: none;
-  color: var(--accent);
-  transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-.chat-bubble:hover {
-  transform: translateY(-0.15rem);
+.chat-bubble:hover,
+.chat-bubble:focus-visible {
+  gap: 0.6rem;
   background-color: var(--accent);
+  transform: translateY(-0.15rem);
 }
 
-.chat-bubble:hover svg {
+.chat-bubble:hover .chat-bubble-label,
+.chat-bubble:focus-visible .chat-bubble-label {
+  max-width: 12rem;
+  opacity: 1;
+}
+
+.chat-bubble:hover svg,
+.chat-bubble:focus-visible svg {
   color: var(--l);
-}
-
-@media (max-width: 560px) {
-  /* the label is the first thing to go where corners are scarce */
-  .chat-bubble-label {
-    display: none;
-  }
-
-  .chat-bubble {
-    padding: 0.95rem;
-  }
-
-  /* without the label the launcher is a disc again, so layouts dodging it
-     get their space back */
-  :root {
-    --chat-clear: 4rem;
-  }
-}
-
-.chat-bubble:hover svg {
   transform: rotate(90deg);
+  filter: none;
+}
+
+/* A slow breath, not a pulse — it should read as a light that is on, not as
+   a notification demanding attention. */
+@keyframes chatPilot {
+  0%,
+  100% {
+    box-shadow:
+      var(--lift-hover),
+      0 0 2rem -0.25rem rgba(242, 84, 45, 0.4);
+  }
+  50% {
+    box-shadow:
+      var(--lift-hover),
+      0 0 2.75rem 0.1rem rgba(242, 84, 45, 0.6);
+  }
+}
+
+.chat-bubble {
+  animation: chatPilot 4.5s ease-in-out infinite;
+}
+
+.chat-bubble:hover,
+.chat-bubble:focus-visible {
+  animation: none;
+}
+
+/* While the page is moving the launcher gets out of the way. It is the only
+   fixed element on the site and it will otherwise always be sitting on
+   somebody's last line of copy. Set by js/chat-widget.js. */
+.chat-widget.is-scrolling .chat-bubble {
+  opacity: 0.25;
+  transform: translateY(0.35rem) scale(0.94);
+  animation: none;
 }
 
 .chat-widget.is-open .chat-bubble {
   opacity: 0;
   pointer-events: none;
+  animation: none;
 }
 
+/* — the panel — */
 .chat-panel {
   position: absolute;
   right: 0;
-  bottom: 4.6rem;
-  width: min(25rem, calc(100vw - 2 * var(--sp-4)));
+  bottom: 4.4rem;
+  width: min(25.5rem, calc(100vw - 2 * var(--sp-4)));
   /* svh, not vh: on mobile the browser chrome makes vh taller than what you
      can actually see, which pushed the input row off-screen */
-  max-height: min(36rem, calc(100svh - 9rem));
+  max-height: min(37rem, calc(100svh - 9rem));
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -99,6 +163,20 @@
     transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+/* paper grain, the same texture globals.css lays over every other dark or
+   photographic surface on the site */
+.chat-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 140px 140px;
+}
+
 .chat-widget.is-open .chat-panel {
   opacity: 1;
   transform: translateY(0) scale(1);
@@ -109,7 +187,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--sp-2) var(--sp-3);
+  gap: 1rem;
+  padding: 0.9rem var(--sp-3);
   background-color: var(--d);
   color: var(--l);
   flex-shrink: 0;
@@ -119,18 +198,44 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-family: var(--f-nm);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .chat-mark {
   display: flex;
   flex-shrink: 0;
+  color: var(--accent);
 }
 
 .chat-mark svg {
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* a live pilot light in the header, matching the launcher */
+.chat-status {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.chat-status::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background-color: var(--accent-bright);
+  box-shadow: 0 0 0.5rem rgba(255, 107, 69, 0.9);
 }
 
 .chat-panel-close {
@@ -139,33 +244,105 @@
   justify-content: center;
   width: 1.75rem;
   height: 1.75rem;
+  flex-shrink: 0;
   border: none;
   border-radius: 50%;
   background: transparent;
   color: inherit;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   line-height: 1;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .chat-panel-close:hover {
   opacity: 1;
+  background-color: rgba(246, 241, 231, 0.12);
 }
 
-/* — intake form (name + email upfront) — */
+.chat-panel-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+/* — openers —
+   Three things the desk can actually answer. Without them the panel opens on
+   an empty box and a blinking cursor, which is the moment most people close
+   it again: nothing tells them what this knows. */
+.chat-openers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0 var(--sp-3) var(--sp-2);
+}
+
+.chat-opener {
+  padding: 0.5rem 0.85rem;
+  font-family: var(--f-nm);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: left;
+  color: var(--d);
+  background: transparent;
+  border: 1px solid rgba(23, 19, 15, 0.22);
+  border-radius: 100px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.chat-opener:hover,
+.chat-opener:focus-visible {
+  background-color: var(--d);
+  border-color: var(--d);
+  color: var(--l);
+}
+
+/* — intake —
+   Reached only after the visitor has written their question, so it reads as
+   "where do we send this" rather than a gate in front of the door. */
 .chat-intake {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: 0.7rem;
   padding: var(--sp-3);
 }
 
+.chat-intake-label {
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+/* the visitor's own question, held above the form so it is visibly not lost
+   while they type their name */
+.chat-intake-quote {
+  padding: 0.75rem 0.9rem;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  text-transform: none;
+  color: var(--d);
+  background-color: rgba(23, 19, 15, 0.05);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+}
+
 .chat-intake p {
-  font-size: 0.85rem;
-  opacity: 0.7;
   margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-transform: none;
+  opacity: 0.7;
 }
 
 .chat-intake input {
@@ -174,24 +351,47 @@
   font-family: var(--f-nm);
   font-size: 0.95rem;
   color: var(--d);
-  background: var(--l);
+  background: var(--white);
   border: 1px solid rgba(23, 19, 15, 0.15);
-  border-radius: 0.7rem;
+  border-radius: var(--r-sm);
   outline: none;
   transition: border-color 0.2s ease;
 }
 
 .chat-intake input:focus {
-  border-color: var(--d);
+  border-color: var(--accent);
 }
 
 .chat-intake-error {
-  font-size: 0.8rem;
-  color: #b3261e;
   min-height: 1.1em;
+  font-size: 0.78rem;
+  text-transform: none;
+  color: var(--accent-deep);
 }
 
-/* — message thread — */
+.chat-intake-back {
+  align-self: flex-start;
+  padding: 0;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: inherit;
+  background: none;
+  border: 0;
+  opacity: 0.55;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.chat-intake-back:hover {
+  opacity: 1;
+}
+
+/* — the thread —
+   Ledger, not messenger. Each turn is a mono sender label over its text with
+   a hairline under it, the same grammar as the client register — rather than
+   two colours of balloon, which is the one shape every chat widget shares. */
 .chat-messages {
   flex: 1;
   /* a flex child will not shrink below its content without this, so the log
@@ -200,7 +400,7 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0;
   padding: var(--sp-2) var(--sp-3);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -209,46 +409,71 @@
 .chat-msg {
   display: flex;
   flex-direction: column;
-  max-width: 85%;
-  gap: 0.25rem;
+  gap: 0.3rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(23, 19, 15, 0.09);
 }
 
-.chat-msg.role-assistant {
-  align-self: flex-start;
-  align-items: flex-start;
+.chat-msg:last-child {
+  border-bottom: 0;
 }
 
-.chat-msg.role-user {
-  align-self: flex-end;
-  align-items: flex-end;
+.chat-msg-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.chat-msg-who {
+  font-weight: 500;
+  /* 0.72 rather than the 0.55 used elsewhere on the site — that value does
+     not clear AA at this size against paper */
+  opacity: 0.72;
+}
+
+.chat-msg.role-assistant .chat-msg-who {
+  color: var(--accent-deep);
+  opacity: 1;
+}
+
+.chat-msg-time {
+  /* LK Lumina's digits carry a decorative bar that reads as a strike at text
+     sizes, so clock times have to set in the mono face */
+  font-family: var(--f-mono);
+  opacity: 0.45;
 }
 
 .chat-msg-bubble {
-  padding: 0.6rem 0.9rem;
-  border-radius: 0.9rem;
   font-size: 0.9rem;
-  line-height: 1.45;
+  line-height: 1.5;
+  color: var(--d);
 }
 
 .chat-msg-bubble p {
-  text-transform: none;
   font-size: inherit;
-  font-weight: inherit;
+  font-weight: 400;
   line-height: inherit;
+  text-transform: none;
 }
 
 .chat-msg-bubble p + p {
-  margin-top: 0.5em;
+  margin-top: 0.55em;
 }
 
 .chat-msg-bubble ul,
 .chat-msg-bubble ol {
-  margin: 0.4em 0;
+  margin: 0.45em 0;
   padding-left: 1.1em;
 }
 
 .chat-msg-bubble li {
   margin: 0.2em 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .chat-msg-bubble li + li {
@@ -259,62 +484,60 @@
   font-weight: 700;
 }
 
-.chat-msg-time {
-  font-size: 0.7rem;
-  opacity: 0.45;
-  padding: 0 0.3rem;
+/* the visitor's own turn is inked in, the way a register row fills on hover —
+   it marks whose line it is without importing the balloon */
+.chat-msg.role-user {
+  margin: 0.35rem -0.6rem;
+  padding: 0.75rem 0.6rem;
+  background-color: var(--d);
+  border-bottom: 0;
+  border-radius: var(--r-sm);
 }
 
-.chat-msg.role-assistant .chat-msg-bubble {
-  background: var(--l);
-  color: var(--d);
-  border-bottom-left-radius: 0.25rem;
-}
-
-.chat-msg.role-user .chat-msg-bubble {
-  background: var(--d);
+.chat-msg.role-user .chat-msg-bubble,
+.chat-msg.role-user .chat-msg-meta {
   color: var(--l);
-  border-bottom-right-radius: 0.25rem;
 }
 
+.chat-msg.role-user .chat-msg-who {
+  opacity: 0.8;
+}
+
+/* — typing: three lamps warming up, matching the light desk — */
 .chat-msg.is-typing {
-  display: inline-flex;
+  flex-direction: row;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.6rem 0.9rem;
-  border-radius: 0.9rem;
-  background: var(--l);
-  color: var(--d);
-  border-bottom-left-radius: 0.25rem;
-  align-self: flex-start;
+  gap: 0.35rem;
+  padding: 1rem 0;
+  border-bottom: 0;
 }
 
 .chat-msg.is-typing span {
   width: 0.4rem;
   height: 0.4rem;
   border-radius: 50%;
-  background: currentColor;
-  opacity: 0.4;
-  animation: chatTypingPulse 1s ease-in-out infinite;
+  background: var(--accent);
+  opacity: 0.25;
+  animation: chatTypingPulse 1.1s ease-in-out infinite;
 }
 
 .chat-msg.is-typing span:nth-child(2) {
-  animation-delay: 0.15s;
+  animation-delay: 0.16s;
 }
 
 .chat-msg.is-typing span:nth-child(3) {
-  animation-delay: 0.3s;
+  animation-delay: 0.32s;
 }
 
 @keyframes chatTypingPulse {
   0%,
   100% {
-    opacity: 0.25;
-    transform: translateY(0);
+    opacity: 0.2;
+    box-shadow: none;
   }
   50% {
-    opacity: 0.9;
-    transform: translateY(-2px);
+    opacity: 1;
+    box-shadow: 0 0 0.5rem rgba(242, 84, 45, 0.8);
   }
 }
 
@@ -323,8 +546,8 @@
   display: flex;
   align-items: flex-end;
   gap: 0.5rem;
-  padding: var(--sp-2) var(--sp-3);
-  border-top: 1px solid rgba(23, 19, 15, 0.1);
+  padding: 0.75rem var(--sp-3);
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
   flex-shrink: 0;
 }
 
@@ -332,16 +555,20 @@
   flex: 1;
   resize: none;
   max-height: 7.5rem;
-  padding: 0.65rem 1rem;
+  padding: 0.65rem 0.9rem;
   font-family: var(--f-nm);
   font-size: 0.9rem;
   line-height: 1.4;
   color: var(--d);
-  background: var(--l);
-  border: none;
-  border-radius: 1.25rem;
+  background: var(--white);
+  border: 1px solid rgba(23, 19, 15, 0.15);
+  border-radius: var(--r-sm);
   outline: none;
-  transition: border-radius 0.15s ease;
+  transition: border-color 0.2s ease;
+}
+
+.chat-input-row textarea:focus {
+  border-color: var(--accent);
 }
 
 .chat-send-btn {
@@ -353,21 +580,31 @@
   flex-shrink: 0;
   border: none;
   border-radius: 50%;
-  background: var(--d);
-  color: var(--l);
-  font-size: 1rem;
+  background: var(--accent);
+  color: var(--accent-ink);
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    background-color 0.3s ease;
+}
+
+.chat-send-btn svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.chat-send-btn:hover:not(:disabled) {
+  background: var(--d);
 }
 
 .chat-send-btn:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: default;
 }
 
 /* — mobile: a real phone-comfortable layout, not just non-broken margins —
    .chat-panel is `position: absolute` inside .chat-widget on desktop, and
-   .chat-widget is only bubble-width (it's sized to its content, not the
+   .chat-widget is only launcher-width (it's sized to its content, not the
    viewport) - so a percentage-based centering trick here would resolve
    against that tiny box, not the screen. Breaking .chat-panel out to
    `position: fixed` with its own left/right insets is what actually
@@ -385,7 +622,7 @@
     position: fixed;
     left: var(--sp-2);
     right: var(--sp-2);
-    bottom: calc(var(--sp-2) + 4.6rem);
+    bottom: calc(var(--sp-2) + 4.4rem);
     width: auto;
     max-height: min(80svh, calc(100dvh - 6rem));
     transform: translateY(1rem) scale(0.97);
@@ -397,5 +634,24 @@
 
   .chat-input-row textarea {
     font-size: 1rem; /* prevents iOS Safari auto-zoom on focus */
+  }
+}
+
+@media (max-width: 560px) {
+  /* the launcher is already a disc at rest, so there is nothing left to drop
+     here — but layouts dodging it get their space back */
+  :root {
+    --chat-clear: 4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-bubble,
+  .chat-msg.is-typing span {
+    animation: none;
+  }
+
+  .chat-widget.is-scrolling .chat-bubble {
+    transform: none;
   }
 }

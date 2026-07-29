@@ -1,4 +1,4 @@
-﻿.studio-hero {
+.studio-hero {
   position: relative;
   width: 100%;
   height: 100svh;
@@ -42,7 +42,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10%;
+  gap: 6%;
   width: 100%;
   height: 100%;
   pointer-events: none;
@@ -51,10 +51,17 @@
   will-change: transform;
 }
 
+/* Was `flex: 1`, which gave each word an equal (100% - gap) / 2 column
+   regardless of how wide the word actually is. "Light" measures 0.4526vw
+   against a 0.45vw column, so it overflowed its own cell and sat flush on
+   the right edge of the screen at every viewport width, while the shorter
+   first word floated in a wide margin — the pair read off-centre because it
+   was. Sizing to content and letting the parent centre the pair fixes it at
+   every width instead of at one. */
 .studio-hero-header {
   position: relative;
   display: flex;
-  flex: 1;
+  flex: 0 1 auto;
   margin-top: 5svh;
   transform: translate3d(0, 0, 0);
   transform-style: preserve-3d;
@@ -62,17 +69,37 @@
   will-change: transform;
 }
 
-.studio-hero-header:nth-child(1) {
-  justify-content: flex-end;
-}
-
-.studio-hero-header:nth-child(2) {
-  justify-content: flex-start;
-}
-
-.studio-hero-copy h1 {
-  font-size: 21vw;
+/* "First Light" is one headline, so it is one h1 — the second word is a span
+   carrying the same treatment rather than a second h1, because the page had
+   seven of them and no h2 at all. It cannot be one element: the two words
+   fly apart in opposite directions, which needs two boxes. */
+.studio-hero-copy h1,
+.studio-hero-copy .hero-word {
+  font-family: var(--f-h);
+  font-size: 19vw;
+  font-weight: 700;
+  line-height: 0.95;
+  text-transform: uppercase;
+  white-space: nowrap;
   color: var(--d);
+}
+
+html[lang="ka"] .studio-hero-copy .hero-word {
+  line-height: 1.3;
+  text-transform: none;
+}
+
+/* The about statements keep h1's scale while dropping to h2 — they are the
+   page's section-level voice, not six more page titles. */
+.about .about-col h2,
+.particle-canvas h2 {
+  font-size: clamp(3.5rem, 12.5vw, 12.5rem);
+}
+
+/* section titles: the size the old h3 rendered at, now carried by h2 */
+.section-head-row h2,
+.clients .clients-header-wrapper .clients-header h2 {
+  font-size: clamp(2.75rem, 7.5vw, 7.5rem);
 }
 
 .studio-hero .hero-footer {
@@ -150,7 +177,7 @@
   height: 100svh;
 }
 
-.particle-canvas h1 {
+.particle-canvas h2 {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -180,7 +207,7 @@
   will-change: transform;
 }
 
-.sticky-header h1 {
+.sticky-header h2 {
   margin: 2.5% 0 0 0;
   font-size: 24vw;
   line-height: 100%;
@@ -195,8 +222,13 @@
   width: 325px;
   height: 500px;
   padding: 0.75rem;
+  /* 200px image + 275px content + 24px padding = 499 of the fixed 500, so
+     there is exactly 1px of slack. The placeholder names are short; the
+     first real one that wraps would otherwise spill past the rounded
+     corner. Clipping is the honest failure mode until the roster is real. */
+  overflow: hidden;
   background-color: var(--d);
-  border-radius: 1rem;
+  border-radius: var(--r);
   will-change: transform;
 }
 
@@ -232,7 +264,7 @@
    longer than "The Lens", so the size has to leave room for two lines plus
    a bio rather than only just fitting today's placeholder text. The mobile
    cards are full-width and set their own larger size further down. */
-.card-title h6 {
+.card-title h3 {
   font-size: 2.5rem;
   line-height: 1.05;
 }
@@ -252,7 +284,11 @@
 .clients {
   position: relative;
   width: 100%;
-  height: 100%;
+  /* was `padding: 0` on desktop against 6rem on every other section, so the
+     register — the one section on this page carrying real proof — was
+     jammed between the light desk and the footer. Mobile was giving it more
+     room than desktop, which was backwards. */
+  padding: 6rem 0;
   overflow: hidden;
 }
 
@@ -267,7 +303,7 @@
   flex: 1.25;
 }
 
-.clients .clients-header-wrapper .clients-header h3 {
+.clients .clients-header-wrapper .clients-header h2 {
   width: 75%;
 }
 
@@ -284,13 +320,16 @@
    itself — the client wall is now the register from home.css, mounted on
    [data-register]. */
 
-@media (min-width: 1000px) {
+/* These two conditions mirror the gsap.matchMedia queries in
+   js/team-cards.js exactly. Reduced motion drops to the stacked layout at
+   any width instead of being pinned through six viewports of scrub. */
+@media (min-width: 1000px) and (prefers-reduced-motion: no-preference) {
   .team-mobile {
     display: none;
   }
 }
 
-@media (max-width: 999px) {
+@media (max-width: 999px), (prefers-reduced-motion: reduce) {
   .team-desktop.sticky {
     display: none;
   }
@@ -317,7 +356,7 @@
     will-change: auto;
   }
 
-  .mobile-header h1 {
+  .mobile-header h2 {
     margin: 0 0 0.5rem 0;
     font-size: 4rem;
     color: var(--d);
@@ -336,7 +375,7 @@
     will-change: auto;
   }
 
-  .card-title h6 {
+  .card-title h3 {
     font-size: 4rem;
   }
 
@@ -386,7 +425,7 @@
   margin-bottom: 1.5rem;
 }
 
-.mission-col h5 {
+.mission-col h3 {
   max-width: 30rem;
   font-size: clamp(2.25rem, 4vw, 4rem);
 }
@@ -428,15 +467,20 @@
 }
 
 .timeline-marker {
-  font-family: var(--f-nm);
+  /* mono, because LK Lumina's digits carry a decorative bar that reads as a
+     strike-through at this size — and these are all dates */
+  font-family: var(--f-mono);
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.55;
+  /* was 0.55, which measures 3.96:1 against the paper and fails WCAG AA for
+     12.8px text. 0.62 clears it at 4.72:1 without brightening the label into
+     competing with the heading it sits under. */
+  opacity: 0.62;
 }
 
-.timeline-item h6 {
+.timeline-item h3 {
   font-size: 2rem;
 }
 
@@ -445,41 +489,375 @@
   opacity: 0.7;
 }
 
-/* — values — */
-.studio-values {
-  padding: 6rem 0;
-  background-color: var(--l);
-  color: var(--d);
+/* — the light desk —
+   Ink, deliberately. Everything from the timeline down used to be four
+   consecutive cream sections, which flattened the page exactly where it
+   should be closing hardest. This is the one dark room in the lower half,
+   and the rail's blackbody colours only read as light in a dark room.
+   See js/light-desk.js for why the axis is a Kelvin scale. */
+.lightdesk {
+  padding: 8rem 0 7rem;
+  background-color: var(--d);
+  color: var(--l);
+  /* set per-rule by the script; this is only the resting value so the
+     section is never unstyled if the module fails to load */
+  --k-rgb: 255 155 61;
 }
 
-.values-grid {
+.lightdesk .container {
+  position: relative;
+}
+
+.lightdesk-head {
+  margin-bottom: var(--sp-6);
+}
+
+.lightdesk-head .eyebrow {
+  margin-bottom: 1.25rem;
+  /* LK Lumina's digits carry a decorative bar that reads as a strike at
+     text sizes, so anything numeric sets in the mono face */
+  font-family: var(--f-mono);
+  color: rgb(var(--k-rgb));
+  opacity: 1;
+  transition: color 0.55s ease;
+}
+
+.lightdesk-head h2 {
+  font-size: clamp(2.75rem, 7.5vw, 7.5rem);
+}
+
+/* — the readout —
+   Two columns on the same bottom edge: the lit rule on the left, its one
+   line held out to the right. A single left-aligned block left the right
+   half of a 1920 canvas empty, and this reads the way an instrument's own
+   display does — large value, small annotation beside it. */
+.lightdesk-stage {
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--sp-2);
+  grid-template-columns: 1fr minmax(0, 20rem);
+  align-items: end;
+  gap: var(--sp-4);
+  min-height: 12rem;
+  margin-bottom: var(--sp-5);
+  padding-left: 2rem;
+  border-left: 1px solid rgba(246, 241, 231, 0.18);
 }
 
-.value-item {
+/* the lamp's spill, so the readout sits inside the light rather than
+   next to a coloured bar */
+.lightdesk-stage::before {
+  content: "";
+  position: absolute;
+  top: -6rem;
+  left: -14rem;
+  z-index: -1;
+  width: 46rem;
+  height: 30rem;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 30% 40%,
+    rgb(var(--k-rgb) / 0.16),
+    transparent 62%
+  );
+  transition: background 0.55s ease;
+}
+
+.lightdesk-k {
+  margin-bottom: 1rem;
+  font-family: var(--f-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.16em;
+  color: rgb(var(--k-rgb));
+  transition: color 0.55s ease;
+}
+
+.lightdesk-name {
+  font-family: var(--f-h);
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  font-weight: 700;
+  line-height: 0.98;
+  text-transform: uppercase;
+}
+
+html[lang="ka"] .lightdesk-name {
+  line-height: 1.3;
+  text-transform: none;
+}
+
+.lightdesk-line {
+  padding-bottom: 0.6rem;
+  font-size: 1.125rem;
+  line-height: 1.35;
+  /* body copy here is sentence case on purpose — the same call the timeline
+     and the mission block already made */
+  text-transform: none;
+  opacity: 0.72;
+}
+
+/* — the rail — */
+.lightdesk-rail {
+  position: relative;
+  padding-top: 2.5rem;
+}
+
+.lightdesk-beam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  /* gradient is painted from the rule kelvins in js/light-desk.js */
+  opacity: 0.75;
+}
+
+.lightdesk-lamp {
+  position: absolute;
+  top: -7px;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  pointer-events: none;
+  background-color: rgb(var(--k-rgb));
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 4px rgb(var(--k-rgb) / 0.18),
+    0 0 2.5rem 0.5rem rgb(var(--k-rgb) / 0.45);
+  transition:
+    background-color 0.55s ease,
+    box-shadow 0.55s ease;
+}
+
+/* Stops are placed by their own kelvin value, not spread evenly — the
+   script writes `left` as the true position on the 2400–7000K span, the
+   same number the beam gradient is painted from. Even spacing would put
+   each dot on the wrong colour, and an instrument that lies about its own
+   scale is just a decorated list. It also reads correctly: the stops crowd
+   at the warm end and open up toward daylight, which is what kelvin does. */
+.lightdesk-stops {
+  position: relative;
+  min-height: 4.75rem;
+}
+
+.lightdesk-stop {
+  position: absolute;
+  top: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  padding: var(--sp-3);
-  background-color: var(--white);
-  border-radius: 1.25rem;
-  box-shadow: 0 1rem 2.5rem -1.75rem rgba(23, 19, 15, 0.4);
-  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  align-items: center;
+  gap: 0.55rem;
+  width: max-content;
+  max-width: 11rem;
+  padding: 0;
+  font-family: var(--f-nm);
+  text-align: center;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  color: inherit;
+  transform: translateX(-50%);
 }
 
-.value-item:hover {
-  transform: translateY(-0.4rem);
+/* The end stops anchor rather than centre, so the first label cannot run
+   off the left edge and the last cannot run off the right — the dot still
+   lands exactly on its kelvin mark either way. */
+.lightdesk-stop:first-child {
+  align-items: flex-start;
+  text-align: left;
+  transform: none;
 }
 
-.value-item h6 {
-  font-size: 1.75rem;
+.lightdesk-stop:last-child {
+  align-items: flex-end;
+  text-align: right;
+  transform: translateX(-100%);
 }
 
-.value-item p {
-  text-transform: none;
-  opacity: 0.7;
+.lightdesk-dot {
+  width: 9px;
+  height: 9px;
+  margin-top: -2.9rem;
+  background-color: var(--d);
+  border: 1px solid rgba(246, 241, 231, 0.45);
+  border-radius: 50%;
+  transition:
+    border-color 0.4s ease,
+    transform 0.4s ease;
+}
+
+.lightdesk-stop:hover .lightdesk-dot,
+.lightdesk-stop.is-on .lightdesk-dot {
+  border-color: rgb(var(--k-rgb));
+  transform: scale(1.35);
+}
+
+.lightdesk-stop-k {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  /* 0.72 clears AA against the ink; the 0.55 used elsewhere on this page
+     does not, which is what the audit turned up */
+  opacity: 0.72;
+  transition: opacity 0.4s ease;
+}
+
+.lightdesk-stop-name {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  opacity: 0.5;
+  transition:
+    opacity 0.4s ease,
+    color 0.4s ease;
+}
+
+.lightdesk-stop:hover .lightdesk-stop-name,
+.lightdesk-stop:focus-visible .lightdesk-stop-name,
+.lightdesk-stop.is-on .lightdesk-stop-name {
+  opacity: 1;
+}
+
+.lightdesk-stop.is-on .lightdesk-stop-name {
+  color: rgb(var(--k-rgb));
+}
+
+.lightdesk-stop:focus-visible {
+  outline: 2px solid rgb(var(--k-rgb));
+  outline-offset: 6px;
+  border-radius: 2px;
+}
+
+/* the axis caption — without it the Kelvin numbers are trivia rather than
+   an argument, so it is not optional chrome */
+.lightdesk-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: var(--sp-4);
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(246, 241, 231, 0.14);
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.lightdesk-axis span:last-child {
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .lightdesk {
+    padding: 5rem 0 4.5rem;
+  }
+
+  .lightdesk-head {
+    margin-bottom: var(--sp-4);
+  }
+
+  .lightdesk-stage {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 1rem;
+    min-height: 0;
+    margin-bottom: var(--sp-4);
+    padding-left: 1.25rem;
+  }
+
+  .lightdesk-line {
+    padding-bottom: 0;
+  }
+
+  /* The horizontal rail is the whole idea, and six stops cannot hold a
+     readable name across a phone. It turns on its side: the beam runs down
+     the left edge and each rule is a row lit from it, which keeps the
+     warm-to-cool argument intact instead of collapsing to a plain list. */
+  .lightdesk-rail {
+    padding-top: 2rem;
+    padding-left: 1.5rem;
+  }
+
+  .lightdesk-beam {
+    top: 2rem;
+    bottom: 0;
+    left: 0;
+    width: 2px;
+    height: auto;
+    background-image: linear-gradient(
+      180deg,
+      rgb(255, 155, 61),
+      rgb(255, 201, 157),
+      rgb(255, 239, 225),
+      rgb(243, 242, 255)
+    ) !important;
+  }
+
+  .lightdesk-lamp {
+    display: none;
+  }
+
+  /* the kelvin-accurate absolute placement is a desktop device; stacked on a
+     phone the rail reads top-to-bottom and the order alone carries the scale */
+  .lightdesk-stops {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+    min-height: 0;
+  }
+
+  .lightdesk-stop,
+  .lightdesk-stop:first-child,
+  .lightdesk-stop:last-child {
+    position: static;
+    flex: 1 1 auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.9rem;
+    width: auto;
+    max-width: none;
+    padding: 0.75rem 0;
+    text-align: left;
+    transform: none;
+  }
+
+  .lightdesk-dot {
+    flex: 0 0 auto;
+    margin-top: 0;
+    margin-left: -1.75rem;
+  }
+
+  .lightdesk-stop-k {
+    flex: 0 0 3.5rem;
+  }
+
+  .lightdesk-stop-name {
+    opacity: 0.85;
+  }
+
+  .lightdesk-axis {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .lightdesk-axis span:last-child {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightdesk-lamp,
+  .lightdesk-dot,
+  .lightdesk-stage::before,
+  .lightdesk-k,
+  .lightdesk-head .eyebrow {
+    transition: none;
+  }
 }
 
 @media (max-width: 1000px) {
@@ -533,7 +911,7 @@
     padding: 4rem 0;
   }
 
-  .clients .clients-header-wrapper .clients-header h3 {
+  .clients .clients-header-wrapper .clients-header h2 {
     width: 100%;
   }
 

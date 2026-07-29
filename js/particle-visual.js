@@ -81,7 +81,12 @@ function init() {
   loadImage();
 
   if (!PV.isMobile) {
-    document.addEventListener("mousemove", handleMouseMove, { passive: true });
+    /* Was bound to `document`, so moving the cursor anywhere on a sixteen-
+       screen page — while reading the footer, say — queued 300 frames of
+       particle physics on a canvas that was nowhere in sight. It only needs
+       the pointer while the pointer is over it. */
+    const section = PV.canvas.closest(".particle-canvas") || PV.canvas;
+    section.addEventListener("mousemove", handleMouseMove, { passive: true });
   }
   window.addEventListener("resize", handleResize);
 }
@@ -190,12 +195,55 @@ function createParticles(pixels) {
   );
 
   PV.geometry = { posBuf, colBuf, count: PV.particles.length };
-  console.log(`Particles created: ${PV.particles.length}`);
-  animate();
+  watchVisibility();
+}
+
+/* Runs only while the canvas is actually on screen. This loop used to call
+   requestAnimationFrame unconditionally with no cancel anywhere in the file,
+   so a full point-cloud drawArrays ran every frame for the whole session —
+   including the fifteen-odd screens where this canvas is nowhere near the
+   viewport. `isAnimating` was declared for exactly this and never used. */
+function startLoop() {
+  if (PV.isAnimating || !PV.geometry) return;
+  PV.isAnimating = true;
+  PV.animFrame = requestAnimationFrame(animate);
+}
+
+function stopLoop() {
+  PV.isAnimating = false;
+  if (PV.animFrame) cancelAnimationFrame(PV.animFrame);
+  PV.animFrame = null;
+}
+
+function watchVisibility() {
+  const section = PV.canvas.closest(".particle-canvas") || PV.canvas;
+
+  const sync = () => {
+    const shouldRun = PV.onScreen && document.visibilityState !== "hidden";
+    if (shouldRun) startLoop();
+    else stopLoop();
+  };
+
+  if (typeof IntersectionObserver === "function") {
+    new IntersectionObserver(
+      ([entry]) => {
+        PV.onScreen = entry.isIntersecting;
+        sync();
+      },
+      { rootMargin: "200px" },
+    ).observe(section);
+  } else {
+    PV.onScreen = true;
+    sync();
+  }
+
+  // a backgrounded tab throttles rAF anyway, but this stops the GPU work too
+  document.addEventListener("visibilitychange", sync);
 }
 
 // animation loop with physics
 function animate() {
+  if (!PV.isAnimating) return;
   PV.animFrame = requestAnimationFrame(animate);
 
   if (!PV.isMobile && PV.execCount > 0) {
