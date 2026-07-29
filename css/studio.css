@@ -87,13 +87,18 @@
   line-height: 0.95;
   text-transform: uppercase;
   white-space: nowrap;
-  /* Spark. Ink was the template's choice and it had a real problem: the
-     rotating photo passes straight through the middle of the line, and
-     near-black type over a near-black frame simply disappeared for the
-     width of the image. Coral reads against both — 3.05:1 on the paper,
-     which clears AA for display type, and high contrast over the photo —
-     so the brand colour and the legibility fix are the same edit. */
-  color: var(--accent);
+  /* Ink, by decision — Spark was tried here and read as far too loud at this
+     size, and the quieter members of the palette were measured and rejected.
+
+     Known trade-off, kept on purpose: the rotating photo crosses the middle
+     of this line and is near-black (median pixel brightness 1/255), so ink
+     measures 1.05:1 against it — the words are effectively invisible for the
+     width of the image while the hero sits at rest. Spark was the only value
+     in the palette clearing 3:1 on both the paper and the photo, which is
+     why it was there. If this is ever revisited, the fix is to stop asking
+     one flat colour to do both jobs — mix-blend-mode: difference is what the
+     hero footer directly below already uses for exactly this reason. */
+  color: var(--d);
 }
 
 html[lang="ka"] .studio-hero-copy h1,
