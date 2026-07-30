@@ -4,8 +4,12 @@ const hero = document.querySelector(".hero");
 const heroHeader = document.querySelector(".hero-header");
 const particleCanvas = document.querySelector(".particle-canvas");
 const particleHeader = document.querySelector(".particle-header");
+/* Not `h1`: the studio page's heading outline was rebuilt (one h1 for the
+   hero, h2 for section titles) and this silently returned null afterwards,
+   which killed the cursor-tilt on "Ideas In Motion" without erroring. Match
+   the heading whatever level it is set at. */
 const particleHeaderText = particleHeader
-  ? particleHeader.querySelector("h1")
+  ? particleHeader.querySelector("h1, h2, h3")
   : null;
 
 function setupCursorTilt({ container, target }) {

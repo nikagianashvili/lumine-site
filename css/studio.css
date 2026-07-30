@@ -111,12 +111,35 @@ html[lang="ka"] .studio-hero-copy .hero-word {
   text-transform: none;
 }
 
-/* The about statements keep h1's scale while dropping to h2 — they are the
-   page's section-level voice, not six more page titles. */
-.about .about-col h2,
 .particle-canvas h2 {
   font-size: clamp(3.5rem, 12.5vw, 12.5rem);
 }
+
+/* Pure vw, capped exactly where .container itself caps.
+   This was clamp(3.5rem, 12.5vw, 12.5rem). The 12.5rem ceiling is a pixel
+   value, so past ~1600px the type stopped growing while the container kept
+   going — the lines drifted relative to their own row and the layout looked
+   different at every zoom level, which is the complaint. Sizing in vw alone
+   makes the whole block a pure scale of the viewport, so every zoom step
+   renders the identical composition at a different size.
+
+   The 220px ceiling is not a taste value: .container is max-width 2000px, so
+   above a 2000px viewport the box stops growing. Unbounded vw would keep
+   enlarging the type inside a frozen container and overflow it — measured,
+   "FOUND IN TBILISI" is 644px per 100px of font-size, and 11vw at 2000px is
+   exactly 220px. Capping both at the same point is what keeps them locked
+   together on very wide screens and when zoomed out. */
+.about .about-col h2 {
+  font-size: min(11vw, 220px);
+  /* three statements, three lines — never two */
+  white-space: nowrap;
+}
+
+/* Coral was tried on these three statements (the reference template sets
+   them in its own accent) and reverted — they stay paper, inheriting from
+   .about. The brand colour on this page lives on the small elements: the
+   timeline dates and rules, the mission eyebrows, the card roles and the
+   struck rules over the about copy. */
 
 /* section titles: the size the old h3 rendered at, now carried by h2 */
 .section-head-row h2,
@@ -156,22 +179,34 @@ html[lang="ka"] .studio-hero-copy .hero-word {
   flex-direction: column;
 }
 
+/* The three statements are staggered left / right / left and stay that way at
+   every width — which is what "fixed" has to mean here. Previously each
+   .about-col was `flex: 2`, so a column's width was a share of the row
+   rather than the width of its own words: the heading floated inside a box
+   that grew independently of the type, and the composition reshaped every
+   time the viewport changed instead of simply scaling.
+
+   Now the heading column shrink-wraps its line and the copy column absorbs
+   the remainder, so the stagger comes from the source order:
+     row 1  heading only ................ heading sits left
+     row 2  copy, then heading .......... heading pushed right
+     row 3  heading, then copy .......... heading sits left */
 .about .about-row {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 2.5rem;
 }
 
 .about .about-row .about-col {
-  flex: 2;
+  flex: 0 1 auto;
 }
 
 .about .about-row .about-col.about-col-copy {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 1;
+  flex: 1 1 auto;
 }
 
 .about .about-row .about-col.about-col-copy p {
@@ -193,6 +228,10 @@ html[lang="ka"] .studio-hero-copy .hero-word {
   background-color: var(--accent);
 }
 
+/* Paper, inside an otherwise ink section — deliberate. It gives the dot field
+   a page to print on rather than a screen to glow against, and it breaks the
+   run of three consecutive ink sections (about, this, mission) that was
+   flattening the top half of the page. */
 .particle-canvas {
   position: relative;
   display: flex;
@@ -201,6 +240,7 @@ html[lang="ka"] .studio-hero-copy .hero-word {
   width: 100%;
   height: 100svh;
   overflow: hidden;
+  background-color: var(--l);
 }
 
 .particle-canvas #particle-canvas {
@@ -212,14 +252,21 @@ html[lang="ka"] .studio-hero-copy .hero-word {
   height: 100svh;
 }
 
+/* The field writes "Ideas In Motion" itself, so a second giant copy of the
+   same words laid over it would be two headlines fighting. The heading stays
+   in the document for the outline and for screen readers — it is only the
+   painted one that goes. Not `display:none`, which would take it out of the
+   accessibility tree along with the visual. */
 .particle-canvas h2 {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 10;
-  width: 100%;
-  text-align: center;
-  transform: translate(-50%, -50%);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .sticky {
