@@ -366,16 +366,31 @@ html.lenis body {
     width: 28px;
     height: 28px;
     opacity: 0;
-    background-color: var(--l);
+    background-color: var(--d);
     -webkit-mask: url("/icons/cursor.png") center / contain no-repeat;
     mask: url("/icons/cursor.png") center / contain no-repeat;
-    mix-blend-mode: difference;
     pointer-events: none;
     user-select: none;
     transform: translate3d(var(--x, -100px), var(--y, -100px), 0)
       translate(-50%, -50%);
-    transition: opacity 120ms ease;
+    transition:
+      opacity 120ms ease,
+      background-color 160ms ease;
     will-change: transform, opacity;
+  }
+
+  /* Ink and paper, and nothing else.
+
+     This was `background: var(--l)` + `mix-blend-mode: difference`, which
+     inverts whatever is underneath. On the two brand surfaces that happens to
+     land on the right answer — paper inverts to near ink, ink to near paper —
+     but on anything else it inverts to that colour's complement, so the cursor
+     turned cyan over Spark (#f2542d differences to rgb(13,171,210)). Two flat
+     tones, chosen in js/cursor.js by whichever contrasts more with the surface,
+     keep the ink/paper reading everywhere without ever inventing a third
+     colour. The motion is untouched. */
+  #custom-cursor.on-dark {
+    background-color: var(--l);
   }
 
   #custom-cursor.is-visible {
