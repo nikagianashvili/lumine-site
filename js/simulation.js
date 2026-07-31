@@ -1,5 +1,3 @@
-import { paperWinsAt, tones } from "/js/surface-tone.js";
-
 const canvas = document.createElement("canvas");
 let __attached = false;
 
@@ -31,25 +29,14 @@ const C = {
   invertVelocityX: false,
   invertVelocityY: false,
   invertPointerY: false,
-  /* The trail's colour, swapped between the two brand tones as the pointer
-     crosses surfaces (see toneFromPointer). Starts on paper. */
   inkR: 245 / 255,
   inkG: 241 / 255,
   inkB: 230 / 255,
-  /* Must be 0, not 0.05. The display pass now writes premultiplied alpha and
-     blends with ONE / ONE_MINUS_SRC_ALPHA, so any non-zero clear colour is
-     added straight onto the page — a flat 0.05 lift over the whole viewport,
-     and a premultiplied colour with zero alpha, which is not a valid pixel. */
-  clearR: 0,
-  clearG: 0,
-  clearB: 0,
+  clearR: 0.05,
+  clearG: 0.05,
+  clearB: 0.05,
   clearA: 0,
-  /* Was "difference", which is what turned the trail cyan over Spark. The
-     display pass used to write alpha 1 everywhere with a black background,
-     because black is a no-op under difference — that is the only reason the
-     blend mode was needed. It now writes real transparency and picks its own
-     colour, so it composites normally and can only ever be ink or paper. */
-  mixBlendMode: "normal",
+  mixBlendMode: "difference",
   canvasOpacity: 1,
   zIndex: 20000,
   pointerEvents: "none",
@@ -214,15 +201,13 @@ uniform sampler2D uTexture;
 uniform float uDisplayCutoff;
 uniform float uSmoothing;
 uniform vec3 uInk;
+uniform vec3 uBg;
 void main () {
   vec4 tex = texture2D(uTexture, vUv);
   float lo = uDisplayCutoff * uSmoothing;
   float hi = uDisplayCutoff;
   float a = smoothstep(lo, hi, clamp(length(tex.rgb), 0.0, 1.0));
-  // premultiplied: the trail is uInk where the dye is, and genuinely
-  // transparent where it is not. Previously this wrote alpha 1 everywhere and
-  // leaned on black being a no-op under mix-blend-mode: difference.
-  gl_FragColor = vec4(uInk * a, a);
+  gl_FragColor = vec4(mix(uBg, uInk, a), 1.0);
 }`),
 
   splat: prog(`precision highp float;
@@ -576,6 +561,7 @@ function render() {
   gl.uniform1f(u.uDisplayCutoff, C.DISPLAY_SHADER);
   gl.uniform1f(u.uSmoothing, C.SMOOTHING);
   gl.uniform3f(u.uInk, C.inkR, C.inkG, C.inkB);
+  gl.uniform3f(u.uBg, 0, 0, 0);
   blit(null);
 }
 
@@ -590,33 +576,7 @@ const ptr = {
   initialized: false,
 };
 
-/* The trail takes the tone of whatever the pointer is over.
-
-   It snaps rather than easing between the two: a tween from ink to paper
-   travels through mid-grey, and a third colour on screen is the whole thing
-   being fixed here. The snap is not noticeable in practice because the dye
-   dissipates at 0.93 a frame, so a trail is only a few hundred ms long — by
-   the time the pointer is well over the new surface the old trail is gone.
-
-   Read on move rather than per frame: this is the one place the surface can
-   change, and it keeps the hit test off the render loop. */
-let tonePaper = null;
-
-function toneFromPointer(clientX, clientY) {
-  const paper = paperWinsAt(clientX, clientY);
-  if (paper === tonePaper) return;
-  tonePaper = paper;
-  const { paper: P, ink: I } = tones();
-  const [r, g, b] = paper ? P : I;
-  C.inkR = r / 255;
-  C.inkG = g / 255;
-  C.inkB = b / 255;
-  // the dye field only carries intensity — the display pass supplies the
-  // colour — so the splat stays a flat scale and does not need retinting
-}
-
 function onMove(clientX, clientY) {
-  toneFromPointer(clientX, clientY);
   if (ptr.initialized) {
     ptr.dx = C.STROKE_SCALE * (clientX - ptr.x);
     ptr.dy = C.STROKE_SCALE * (clientY - ptr.y);
