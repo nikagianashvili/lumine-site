@@ -395,6 +395,36 @@ html.lenis body {
   display: none !important;
 }
 
+/* Build-time content for the Work and Pricing grids — see vite-prerender.js.
+   Those pages render entirely on the client, so their raw HTML carried no
+   project names and no prices for anything that does not execute JavaScript.
+   This block is a sibling of the real mount, so it needs no cooperation from
+   work.js or pricing.js.
+
+   Hidden the moment JavaScript is present, which is what the `js` class on
+   <html> signals — set by an inline script in the head of those pages, so it
+   applies before first paint and there is no flash. Without JavaScript the
+   class is never added and the content simply shows, which is the whole
+   point: a readable list beats an empty page. */
+html.js .prerender-only {
+  display: none;
+}
+
+.prerender-only {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 2.5rem;
+  line-height: 1.5;
+}
+
+.prerender-only ul {
+  padding-left: 1.2rem;
+}
+
+.prerender-only li {
+  margin-bottom: 0.75rem;
+}
+
 :focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;

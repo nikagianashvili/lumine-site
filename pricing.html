@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Marks that JavaScript is running, before first paint, so the
+         build-time fallback list in this page can hide itself without a
+         flash. See vite-prerender.js and .prerender-only in globals.css. -->
+    <script>document.documentElement.classList.add("js");</script>
     <title>Pricing | Lumine | Creative Agency — Tbilisi</title>
     <meta name="author" content="Lumine" />
     <meta

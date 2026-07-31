@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import { prerenderContent } from "./vite-prerender.js";
 import { resolve } from "path";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -120,7 +121,7 @@ export default defineConfig({
   // imports, `@import "tailwindcss"` in a stylesheet) — the vanilla public
   // pages and the old admin.css never reference either, so they're
   // unaffected. Scoped to /admin's rebuild only.
-  plugins: [devCleanUrls(), react(), tailwindcss()],
+  plugins: [devCleanUrls(), prerenderContent(), react(), tailwindcss()],
   resolve: {
     alias: {
       "@": resolve(__dirname, "src/admin"),
