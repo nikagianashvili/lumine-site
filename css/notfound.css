@@ -50,12 +50,24 @@
 /* Three ways out, as ledger rows — the same pattern the client register and
    the timeline use, so this page belongs to the site rather than apologising
    inside a box. */
+/* This is a <nav>, which css/nav.css styles as a bare element selector:
+   position:fixed, top:0, left:0, width:100%, padding:2rem, z-index:100. That
+   is meant for the site header, and a second <nav> on the page silently
+   inherited all of it — the three links rendered pinned across the top of the
+   viewport, on top of the real navigation, instead of under the copy.
+   Keeping the element for its semantics means undoing that here. */
 .notfound-ways {
+  position: static;
+  z-index: auto;
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 0;
   margin-top: 1rem;
+  background-color: transparent;
+  border-bottom: 0;
   border-top: 1px solid rgba(23, 19, 15, 0.16);
+  transition: none;
 }
 
 .notfound-way {
@@ -103,6 +115,29 @@ html[lang="ka"] .notfound-way-label {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   opacity: 0.6;
+}
+
+/* A 404 should not ask you to scroll to find the way out. On a short window
+   the display heading and three rows do not fit inside 100svh, so the
+   composition tightens rather than overflowing — measured at 1707x753, where
+   it was 22px over. Keyed on viewport height, not width, because it is the
+   height that runs out. */
+@media (max-height: 860px) {
+  .notfound {
+    padding: 6.5rem 0 3rem;
+  }
+
+  .notfound h1 {
+    font-size: min(8.5vw, 96px);
+  }
+
+  .notfound-inner {
+    gap: 1.1rem;
+  }
+
+  .notfound-way {
+    padding: 0.9rem 0.25rem;
+  }
 }
 
 @media (max-width: 700px) {
