@@ -48,7 +48,7 @@ const COLUMNS_EN = [
     title: "Contact",
     links: [
       { label: "hello@lumine.ge", href: "mailto:hello@lumine.ge" },
-      { label: "+995 555 00 00 00", href: "tel:+995555000000" },
+      { label: "+995 555 40 58 43", href: "tel:+995555405843" },
       { label: "Instagram", href: "https://www.instagram.com/lumine.ge", external: true },
       { label: "Tbilisi, Georgia", href: p("/contact") },
     ],
@@ -95,7 +95,7 @@ const COLUMNS_KA = [
     title: "კონტაქტი",
     links: [
       { label: "hello@lumine.ge", href: "mailto:hello@lumine.ge" },
-      { label: "+995 555 00 00 00", href: "tel:+995555000000" },
+      { label: "+995 555 40 58 43", href: "tel:+995555405843" },
       { label: "Instagram", href: "https://www.instagram.com/lumine.ge", external: true },
       { label: "თბილისი, საქართველო", href: p("/contact") },
     ],

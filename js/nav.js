@@ -113,7 +113,7 @@ const COPY = isKa
     };
 
 const EMAIL = "hello@lumine.ge";
-const PHONE = "+995 555 00 00 00";
+const PHONE = "+995 555 40 58 43";
 
 function currentPath() {
   return window.location.pathname.replace(/\/+$/, "") || "/";
