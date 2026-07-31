@@ -62,9 +62,53 @@ function devCleanUrls() {
     apply: "serve",
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        const [path, query] = req.url.split("?");
+        const [rawPath, query] = req.url.split("?");
+        // "/ka/" and "/ka" are the same route; "/" must stay "/"
+        const path =
+          rawPath.length > 1 ? rawPath.replace(/\/+$/, "") || "/" : rawPath;
+
         const target = CLEAN_ROUTES[path];
-        if (target) req.url = query ? `${target}?${query}` : target;
+        if (target) {
+          req.url = query ? `${target}?${query}` : target;
+          return next();
+        }
+
+        /* Match production for unknown routes. Vite's SPA fallback otherwise
+           serves index.html with a 200 for anything it does not recognise, so
+           a typo'd URL silently renders the English home page and the 404 can
+           never be seen or tested locally. Vercel serves dist/404.html for
+           these, so the dev server does the same — and with a real 404 status,
+           which the fallback does not give.
+
+           Everything that legitimately has no CLEAN_ROUTES entry has to be
+           let through first: the site root, anything with a file extension,
+           Vite's own internals, the API, and the two React panels, which route
+           their sub-paths on the client and genuinely do need the fallback. */
+        const isSpa = /^\/(admin|portal)(\/|$)/.test(path);
+        const isPage =
+          req.method === "GET" &&
+          path !== "/" &&
+          !isSpa &&
+          !path.startsWith("/@") &&
+          !path.startsWith("/src") &&
+          !path.startsWith("/node_modules") &&
+          !path.startsWith("/api") &&
+          !/\.[a-z0-9]+$/i.test(path) &&
+          (req.headers.accept || "").includes("text/html");
+
+        if (isPage) {
+          req.url = "/404.html";
+          /* Assigning res.statusCode here does not survive: Vite's own HTML
+             middleware serves the transformed page and sets 200 on the way
+             out, so the dev server would answer a miss with "200 Page Not
+             Found" — the soft 404 this is meant to remove. Pinning the
+             property is what actually holds. */
+          Object.defineProperty(res, "statusCode", {
+            get: () => 404,
+            set: () => {},
+            configurable: true,
+          });
+        }
         next();
       });
     },
@@ -87,6 +131,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
+        /* Vercel serves dist/404.html automatically for any path that matches
+           no rewrite and no file, so this only has to be built — it needs no
+           entry in vercel.json. It carries both locales itself. */
+        "404": resolve(__dirname, "404.html"),
         work: resolve(__dirname, "work.html"),
         "work-tbilisi-zoo": resolve(__dirname, "work-tbilisi-zoo.html"),
         "sample-project": resolve(__dirname, "sample-project.html"),

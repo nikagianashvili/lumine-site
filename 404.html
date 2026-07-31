@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Not Found | Lumine</title>
+    <meta name="author" content="Lumine" />
+    <meta
+      name="description"
+      content="That page has moved or never existed. Here is the way back into the studio."
+    />
+    <meta name="theme-color" content="#17130f" />
+    <!-- a 404 should never be indexed, whatever it is linked from -->
+    <meta name="robots" content="noindex, follow" />
+    <meta property="og:title" content="Page Not Found — Lumine" />
+    <meta
+      property="og:description"
+      content="That page has moved or never existed."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/logo/lumine-logo-black.png" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon-mark.svg" />
+    <link rel="icon" type="image/png" href="/icons/favicon-mark.png" />
+    <link rel="stylesheet" href="/css/globals.css" />
+    <link rel="stylesheet" href="/css/nav.css" />
+    <link rel="stylesheet" href="/css/notfound.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    <link rel="stylesheet" href="/css/chat-widget.css" />
+
+    <!--
+      Vercel serves this one file for every miss on the deployment, including
+      /ka/*, so it has to answer for both locales. Only the two things that
+      would visibly flash are set here, during parse: the lang attribute (it
+      drives the Georgian line-height and Mtavruli rules in CSS) and the tab
+      title. The copy swap itself is js/notfound.js, which has to run as a
+      module in a specific position — see the note there.
+    -->
+    <script>
+      (function () {
+        if (!/^\/ka(\/|$)/.test(window.location.pathname)) return;
+        document.documentElement.lang = "ka";
+        document.title = "გვერდი ვერ მოიძებნა | Lumine";
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- 404: navigation -->
+    <nav>
+      <div class="nav-logo">
+        <a href="/">
+          <img src="/logo/lumine-wordmark.svg" alt="Lumine" />
+        </a>
+      </div>
+      <div class="nav-icon">
+        <img src="/logo/lumine-mark-2.svg" alt="" />
+      </div>
+      <div class="nav-right">
+        <div class="nav-lang" role="group" aria-label="Language">
+          <span class="nav-lang-btn is-active">EN</span>
+          <span class="nav-lang-sep">/</span>
+          <a href="/ka" class="nav-lang-btn">GE</a>
+        </div>
+        <div class="nav-toggler">
+          <p>Menu</p>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <!--
+        No apology and no joke. A visitor who lands here wanted something
+        specific, so the page names the three places that something is most
+        likely to be and gets out of the way. The full menu is still one tap
+        away in the nav, so this is a shortcut rather than the only exit.
+      -->
+      <section class="notfound">
+        <div class="container notfound-inner">
+          <p class="notfound-code">Error 404</p>
+          <h1
+            data-animate-variant="slide-words"
+            data-animate-on-scroll="false"
+            data-animate-delay="0.2"
+          >
+            Nothing Lit Here
+          </h1>
+          <p class="notfound-copy">
+            The page you were after has moved, or never existed. These are the
+            three people ask for most.
+          </p>
+
+          <nav class="notfound-ways" aria-label="Suggested pages">
+            <a href="/work" class="notfound-way">
+              <span class="notfound-way-index" aria-hidden="true">01</span>
+              <span class="notfound-way-label">Work</span>
+              <span class="notfound-way-desc">Projects</span>
+            </a>
+            <a href="/services" class="notfound-way">
+              <span class="notfound-way-index" aria-hidden="true">02</span>
+              <span class="notfound-way-label">Services</span>
+              <span class="notfound-way-desc">9 disciplines</span>
+            </a>
+            <a href="/contact" class="notfound-way">
+              <span class="notfound-way-index" aria-hidden="true">03</span>
+              <span class="notfound-way-label">Contact</span>
+              <span class="notfound-way-desc">Say hello</span>
+            </a>
+          </nav>
+        </div>
+      </section>
+    </main>
+
+    <!-- 404: footer -->
+    <footer>
+      <div id="footer-canvas"></div>
+      <div class="footer-inner">
+        <div class="footer-cta">
+          <span
+            class="footer-cta-eyebrow"
+            data-animate-variant="slide"
+            data-animate-on-scroll="true"
+          >
+            We Are Listening
+          </span>
+          <h3
+            class="footer-cta-heading"
+            data-animate-variant="slide"
+            data-animate-on-scroll="true"
+            data-animate-delay="0.1"
+          >
+            Your Next Big Thing Starts Here
+          </h3>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-logo">Lumine</p>
+          <p class="footer-copy">Tbilisi, Georgia</p>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/js/lenis-scroll.js"></script>
+    <script type="module" src="/js/cursor.js"></script>
+    <!-- notfound.js writes the Georgian copy in; mtavruli.js then converts
+         the heading it just wrote. This order is load-bearing. -->
+    <script type="module" src="/js/notfound.js"></script>
+    <script type="module" src="/js/mtavruli.js"></script>
+    <script type="module" src="/js/animated-copy.js"></script>
+    <script type="module" src="/js/simulation.js"></script>
+    <script type="module" src="/js/nav.js"></script>
+    <script type="module" src="/js/footer.js"></script>
+    <script type="module" src="/js/chat-widget.js"></script>
+  </body>
+</html>
