@@ -29,6 +29,8 @@ const LINE_WIDTH = 2.5;
 const CUBE_SIZE = 1.85;
 
 // Rotation speed — radians per ms (higher = faster spin)
+const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 const ROT_X = 0.00048;
 const ROT_Y = 0.00082;
 const ROT_Z = 0.00022;
@@ -355,7 +357,15 @@ function tick(ts) {
 
     // Auto-rotation kicks back in as momentum fades
     const momentumMag = Math.abs(momentumYaw) + Math.abs(momentumPitch);
-    const autoBlend = Math.max(0, 1 - momentumMag / 0.01); // blend in auto-spin gradually
+    /* The cube spins on its own forever and re-scatters its balls every few
+       seconds. That is continuous, autonomous motion the visitor never asked
+       for, which is the kind reduced-motion exists to stop — so the auto-spin
+       and the kicks are switched off. Dragging still works: motion the user
+       is directly driving is not what the preference is about, and removing
+       it would leave a dead object on the page. */
+    const autoBlend = REDUCED
+      ? 0
+      : Math.max(0, 1 - momentumMag / 0.01); // blend in auto-spin gradually
 
     driftX += (Math.random() - 0.5) * 0.000003;
     driftY += (Math.random() - 0.5) * 0.000003;
@@ -376,7 +386,7 @@ function tick(ts) {
 
   // Periodic random kicks — re-randomises ball positions every few seconds
   nextKick -= dt;
-  if (nextKick <= 0) {
+  if (nextKick <= 0 && !REDUCED) {
     const kickStr = CUBE_SIZE * 1.5;
     for (let i = 0; i < BALL_COUNT; i++) {
       vel[i].x += (Math.random() - 0.5) * kickStr;

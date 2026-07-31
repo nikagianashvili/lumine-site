@@ -11,6 +11,12 @@ function init() {
   const els = document.querySelectorAll(".pd-reveal");
   if (!els.length) return;
 
+  /* Leave everything visible and do nothing else. The order matters: the
+     reveal works by hiding the elements first and animating them back, so
+     bailing out after the gsap.set would leave a reduced-motion visitor
+     looking at a page of permanently invisible content. */
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
   gsap.set(els, { opacity: 0, y: 30 });
   ScrollTrigger.batch(els, {
     start: "top 85%",
