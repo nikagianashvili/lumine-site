@@ -6,6 +6,44 @@
    client-work content — swatches and drawdowns — never as chrome.
    ============================================================ */
 
+/* Skip link.
+
+   This case study is the only page on the site that does not load
+   globals.css — it is deliberately its own visual world — so the site-wide
+   .skip-link rule never reaches it and the link rendered as plain visible
+   text in the top-left corner of the hero. Restated here against this page's
+   own tokens rather than pulling in globals.css, which would restyle the
+   whole thing.
+
+   Moved off-screen by transform, not display:none or visibility:hidden,
+   either of which would drop it out of the tab order and defeat the point. */
+.skip-link{
+  position:fixed;
+  top:0; left:0;
+  z-index:9999;
+  padding:.85rem 1.4rem;
+  font-family:"Space Mono",ui-monospace,monospace;
+  font-size:.78rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  text-decoration:none;
+  background:var(--ink);
+  color:var(--paper);
+  transform:translateY(-120%);
+  transition:transform .18s var(--ease-snap);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible{
+  transform:translateY(0);
+  outline:2px solid var(--spark);
+  outline-offset:-2px;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .skip-link{transition:none}
+}
+
 :root{
   --spark:#F2542D;
   --spark-bright:#FF6B45;
