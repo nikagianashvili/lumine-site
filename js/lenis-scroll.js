@@ -1,6 +1,10 @@
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+// The page wipe belongs on every page that scrolls, and this module is
+// already on all of them — importing it here beats adding a script tag to
+// forty-odd files and then forgetting it on the forty-first.
+import "/js/page-transition.js";
 
 let lenis = null;
 
@@ -18,6 +22,25 @@ if (document.readyState === "loading") {
 // smooth scroll setup with responsive config
 function initLenisScroll() {
   if (lenis) return;
+
+  /* Smooth scrolling is the single most affecting thing on this site for
+     anyone with a vestibular disorder: it takes the scroll away from the
+     input device and keeps the page gliding after the wheel has stopped.
+     Someone who has asked their operating system to reduce motion has asked
+     for exactly this not to happen, so Lenis is not constructed at all and
+     the browser's own scrolling is left alone.
+
+     Nothing else has to change. ScrollTrigger drives off native scroll by
+     default, and every caller of window.lenis in this codebase already
+     guards for its absence and falls back to window.scrollTo — checked in
+     nav.js, page-transition.js, light-desk.js and questions.js. */
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    requestAnimationFrame(() => ScrollTrigger.refresh());
+    window.addEventListener("load", () => ScrollTrigger.refresh(), {
+      once: true,
+    });
+    return;
+  }
 
   const isMobile = window.innerWidth <= 1000;
 

@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ka">
   <head>
     <meta charset="UTF-8" />
@@ -30,10 +30,9 @@
     <link rel="stylesheet" href="/css/home.css" />
     <link rel="stylesheet" href="/css/footer.css" />
     <link rel="stylesheet" href="/css/chat-widget.css" />
-    <script src="/js/wrappedgl.js"></script>
-    <script src="/js/simulator.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">ძირითად შიგთავსზე გადასვლა</a>
     <!-- home: preloader -->
     <div class="preloader" aria-hidden="true">
       <div class="intro-title">
@@ -57,11 +56,11 @@
     <nav>
       <div class="nav-logo">
         <a href="/ka">
-          <img src="/logo/lumine-logo-white.png" alt="Lumine" />
+          <img src="/logo/lumine-wordmark.svg" alt="Lumine" decoding="async" />
         </a>
       </div>
       <div class="nav-icon">
-        <img src="/logo/lumine-mark-2.svg" alt="" />
+        <img src="/logo/lumine-mark-2.svg" alt="" decoding="async" />
       </div>
       <div class="nav-right">
         <div class="nav-lang" role="group" aria-label="Language">
@@ -76,17 +75,29 @@
     </nav>
 
     <!-- home: hero -->
+    <main id="main">
     <section class="hero reticle">
-      <div class="hero-sparkle hero-sparkle-1" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
-        </svg>
-      </div>
-      <div class="hero-sparkle hero-sparkle-2" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
-        </svg>
-      </div>
+      <!-- the roller: cursor lays Spark ink through a halftone screen -->
+      <canvas class="hero-ink" aria-hidden="true"></canvas>
+      <!-- and develops the studio principles printed underneath it -->
+      <canvas class="hero-script" aria-hidden="true"></canvas>
+
+      <!--
+        The principles are painted into a canvas, which assistive tech and
+        crawlers cannot read — so they also exist here as real text.
+      -->
+      <ul class="sr-only" id="heroPrinciples">
+        <li>სამი წამი გაქვს, სანამ თითი გადაფურცლავს.</li>
+        <li>პოსტვა მაშინ, როცა გაგახსენდება, სტრატეგია არ არის.</li>
+        <li>ბრენდს, რომელიც იმპროვიზაციას ჰგავს, ისევე ეპყრობიან.</li>
+        <li>საიტი ერთადერთი არხია, რომელიც შენია. უმეტესობა ნაქირავებს ჰგავს.</li>
+        <li>კარგი კონტენტი, რომელსაც არავინ ხედავს, დღიურია და არა მარკეტინგი.</li>
+        <li>ბრიფი მუდბორდზე ადრე მოდის, ყოველთვის.</li>
+        <li>ტელეფონის ფოტო კარგ პროდუქტს აბრტყელებს.</li>
+        <li>ციფრული სამუშაო, რომელსაც ხელში ვერ დაიჭერ, დასრულებული არ არის.</li>
+        <li>ჯერ სტრატეგია, თორემ ეს უბრალოდ ძვირი ვარაუდია.</li>
+      </ul>
+
       <div class="hero-header">
         <h1
           data-animate-variant="slide-words"
@@ -97,27 +108,31 @@
           LUMINE
         </h1>
       </div>
+
       <div class="hero-sub">
         <p
           data-animate-variant="slide"
           data-animate-on-scroll="false"
           data-animate-delay="1.3"
         >
-          შემოქმედებითი სააგენტო თბილისში — ფოტო, ვიდეო, დიზაინი, სოციალური
-          მედია, მარკეტინგი და ვები, ყველაფერი საკუთარ გუნდში და შედეგზე
-          ორიენტირებული.
+          შემოქმედებითი სააგენტო თბილისში. ყველაფერი, რაც ბრენდს დასანახად
+          სჭირდება, ერთი გუნდის ხელით, ერთ სახურავქვეშ.
         </p>
-        <a
-          href="/ka/contact"
-          class="btn btn-solid"
-          data-magnetic
-          data-animate-variant="slide"
-          data-animate-on-scroll="false"
-          data-animate-delay="1.4"
-        >
-          დარეკვის დაჯავშნა
-        </a>
+        <div class="hero-actions">
+          <a
+            href="/ka/contact"
+            class="btn btn-solid"
+            data-magnetic
+            data-animate-variant="slide"
+            data-animate-on-scroll="false"
+            data-animate-delay="1.4"
+          >
+            დარეკვის დაჯავშნა
+          </a>
+          <a href="/ka/work" class="hero-sub-link">ნახე ნამუშევრები</a>
+        </div>
       </div>
+
       <div class="hero-footer">
         <div class="hero-footer-col">
           <p
@@ -132,16 +147,17 @@
             data-animate-on-scroll="false"
             data-animate-delay="1.1"
           >
-            დაფუძნებული თბილისში
+            დაფუძნებული 2024
           </p>
         </div>
         <div class="hero-footer-col">
           <p
+            class="hero-scroll-cue"
             data-animate-variant="slide"
             data-animate-on-scroll="false"
             data-animate-delay="1.2"
           >
-            © Lumine 2026
+            გაატარე მელანი
           </p>
         </div>
       </div>
@@ -173,7 +189,7 @@
           ბრენდებს ვქმნით, რომლებზეც თვალს ვერ მოაშორებ
         </h2>
         <div class="manifesto-img">
-          <img src="/menu/menu-img.jpg" alt="Lumine-ის სტუდიის შიგნით" />
+          <img src="/menu/menu-img.jpg" alt="Lumine-ის სტუდიის შიგნით" decoding="async" loading="lazy" width="1600" height="900" />
         </div>
         <p
           class="manifesto-foot"
@@ -185,25 +201,6 @@
           მედია, მარკეტინგი და ვები, ყველაფერი ერთად.
         </p>
       </div>
-    </section>
-
-    <!-- home: trusted by -->
-    <section class="section section-light trusted-by">
-      <div class="container">
-        <div class="section-head">
-          <h3 data-animate-variant="slide" data-animate-on-scroll="true">
-            გვენდობიან
-          </h3>
-          <p
-            class="section-head-copy"
-            data-animate-variant="slide"
-            data-animate-on-scroll="true"
-          >
-            რამდენიმე ბრენდი, რომლებისთვისაც შევქმენით დიზაინი.
-          </p>
-        </div>
-      </div>
-      <div class="trusted-marquee-wrapper"></div>
     </section>
 
     <!-- home: featured projects -->
@@ -228,6 +225,26 @@
         <div class="featured-view-all">
           <a href="/ka/work" class="btn btn-outline">ყველა ნამუშევარი</a>
         </div>
+      </div>
+    </section>
+
+    <!-- home: trusted by -->
+    <section class="section section-light trusted-by">
+      <div class="container">
+        <div class="section-head">
+          <h3 data-animate-variant="slide" data-animate-on-scroll="true">
+            გვენდობიან
+          </h3>
+          <p
+            class="section-head-copy"
+            data-animate-variant="slide"
+            data-animate-on-scroll="true"
+          >
+            აქ ყოველი სახელი დასრულებული პროექტია. გახსენი და ნახე.
+          </p>
+        </div>
+
+        <div class="register" data-register></div>
       </div>
     </section>
 
@@ -348,7 +365,7 @@
             <p>თამამი, აქტუალური და აგებული იმაზე, ვისთანაც რეალურად საუბრობ.</p>
           </div>
           <div class="bento-cell bento-photo">
-            <img src="/work/work4.jpg" alt="Lumine-ის მიმდინარე სამუშაო" />
+            <img src="/work/work4.jpg" alt="Lumine-ის მიმდინარე სამუშაო" decoding="async" loading="lazy" width="1600" height="1000" />
           </div>
           <div class="bento-cell">
             <span class="bento-num">03</span>
@@ -361,13 +378,21 @@
             <p>კონტენტი და რეკლამა, რომელსაც ვზომავთ და არა უბრალოდ ვაქვეყნებთ.</p>
           </div>
           <div class="bento-cell bento-wide">
-            <div class="bento-copy">
-              <span class="bento-num">05</span>
-              <h6>მხარდაჭერა</h6>
-              <p>ერთი გუნდი, ერთი საკონტაქტო პირი — ბრიფიდან გაშვებამდე და მის შემდეგაც.</p>
-            </div>
-            <a href="/ka/contact" class="btn btn-outline">პროექტის დაწყება</a>
+            <span class="bento-num">05</span>
+            <h6>მხარდაჭერა</h6>
+            <p>ერთი გუნდი, ერთი საკონტაქტო პირი — ბრიფიდან გაშვებამდე და მის შემდეგაც.</p>
           </div>
+        </div>
+
+        <!--
+          The action moved out of cell 05, which had been a full-width bar with
+          a button inside it while every other cell was a stacked panel — the
+          grid was breaking its own logic to hold a CTA. It closes the section
+          instead, matching the "View All Work" row under Featured Work.
+        -->
+        <div class="bento-foot">
+          <a href="/ka/contact" class="btn btn-solid" data-magnetic>პროექტის დაწყება</a>
+          <a href="/ka/pricing" class="bento-foot-link">ნახე რა ღირს</a>
         </div>
       </div>
     </section>
@@ -381,37 +406,62 @@
           </h3>
         </div>
 
-        <div class="process-list">
-          <div class="process-step">
-            <span class="process-step-index">01</span>
-            <h6>კვლევა</h6>
-            <p>ბრენდის, აუდიტორიისა და წარმატების გაგება.</p>
-          </div>
-          <div class="process-step">
-            <span class="process-step-index">02</span>
-            <h6>სტრატეგია</h6>
-            <p>სერვისების, ფორმატებისა და არხების გეგმა, რომელიც ჯდება.</p>
-          </div>
-          <div class="process-step">
-            <span class="process-step-index">03</span>
-            <h6>დიზაინი</h6>
-            <p>კონცეფციები, რომლებზეც რეაგირებ, დახვეწილი სანამ სწორი გახდება.</p>
-          </div>
-          <div class="process-step">
-            <span class="process-step-index">04</span>
-            <h6>დეველოპმენტი</h6>
-            <p>აშენება — ფოტო, ვიდეო, დიზაინი თუ კოდი.</p>
-          </div>
-          <div class="process-step">
-            <span class="process-step-index">05</span>
-            <h6>გაშვება</h6>
-            <p>გაგზავნილი, ტესტირებული და ცოცხალი.</p>
-          </div>
-          <div class="process-step">
-            <span class="process-step-index">06</span>
-            <h6>ზრდა</h6>
-            <p>მუდმივი კონტენტი, მარკეტინგი და მხარდაჭერა გაშვების შემდეგ.</p>
-          </div>
+        <!--
+          The route runs as a rail down the right margin and the stages read as
+          full-width rows against it — no panels. The line drifts gently
+          left/right as it descends, so the nodes are placed from the path
+          itself in JS rather than pinned to a fixed x.
+        -->
+        <div class="process-route">
+          <svg class="route-svg" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true">
+            <path class="route-track" d="M50 0 C 50 130, 14 190, 14 330 C 14 470, 86 520, 86 660 C 86 800, 50 850, 50 1000" />
+            <path class="route-line" d="M50 0 C 50 130, 14 190, 14 330 C 14 470, 86 520, 86 660 C 86 800, 50 850, 50 1000" />
+          </svg>
+
+          <span class="route-head" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+            </svg>
+          </span>
+
+          <ol class="process-list">
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">01</span>
+              <h6>აღმოჩენა</h6>
+              <p>ბრენდის, აუდიტორიისა და იმის გაგება, როგორ გამოიყურება წარმატება.</p>
+            </li>
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">02</span>
+              <h6>სტრატეგია</h6>
+              <p>გეგმა იმ სერვისებზე, ფორმატებსა და არხებზე, რომლებიც შეესაბამება.</p>
+            </li>
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">03</span>
+              <h6>დიზაინი</h6>
+              <p>კონცეფციები, რომლებზეც რეაგირებ, დახვეწილი სანამ სწორი გახდება.</p>
+            </li>
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">04</span>
+              <h6>დეველოპმენტი</h6>
+              <p>აშენება — ფოტო, ვიდეო, დიზაინი თუ კოდი.</p>
+            </li>
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">05</span>
+              <h6>გაშვება</h6>
+              <p>გაშვებული, ტესტირებული და ცოცხალი.</p>
+            </li>
+            <li class="process-step">
+              <span class="process-node" aria-hidden="true"></span>
+              <span class="process-step-index">06</span>
+              <h6>ზრდა</h6>
+              <p>მუდმივი კონტენტი, მარკეტინგი და მხარდაჭერა გაშვების შემდეგ.</p>
+            </li>
+          </ol>
         </div>
       </div>
     </section>
@@ -429,49 +479,70 @@
             data-animate-on-scroll="true"
             id="testimonialNote"
           >
-            სანიმუშო ციტატებია, დაწერილი Lumine-ის ხმით — შეიცვლება რეალურით,
-            როგორც კი გამოჩნდება.
+            დროებითი ციტატები, დაწერილი Lumine-ის ხმით — რეალურით შეიცვლება,
+            როგორც კი მოვა.
           </p>
         </div>
 
-        <div class="testimonial-track" id="testimonialTrack">
-          <div class="testimonial-card card-base">
-            <p class="testimonial-quote">„მართლა გვკითხეს, რა გვჭირდებოდა, სანამ რამე მაგარს გვაჩვენებდნენ."</p>
-            <p class="testimonial-attr">— ადგილობრივი ბიზნესის მფლობელი, თბილისი</p>
-          </div>
-          <div class="testimonial-card card-base">
-            <p class="testimonial-quote">„სწრაფად მოამზადეს და მაინც ჩვენი ხმა დარჩა, არა შაბლონი."</p>
-            <p class="testimonial-attr">— სოციალური მედიის კლიენტი</p>
-          </div>
-          <div class="testimonial-card card-base">
-            <p class="testimonial-quote">„ერთმა გუნდმა გადაიღო, გააკეთა საიტი და აწარმოა რეკლამაც. სამ სხვადასხვა კონტრაქტორს აღარ ვდევნებდი."</p>
-            <p class="testimonial-attr">— სტარტაპის დამფუძნებელი</p>
-          </div>
-        </div>
+      </div>
+
+      <!--
+        A rail rather than a row of three: it bleeds off the right edge so it
+        reads as "there are more", scrolls by drag or trackpad, and each voice
+        carries the project it came from — so the section is also a way into
+        the work rather than a dead end.
+      -->
+      <div class="voices" id="testimonialTrack" tabindex="0" role="region" aria-label="კლიენტების ციტატები, გადასაადგილებელი">
+        <article class="voice is-short">
+          <span class="voice-index">01</span>
+          <blockquote class="voice-quote">მართლა გვკითხეს, რა გვჭირდებოდა, სანამ ლამაზს გვაჩვენებდნენ.</blockquote>
+          <span class="voice-author">ადგილობრივი ბიზნესის მფლობელი, თბილისი</span>
+        </article>
+        <article class="voice">
+          <span class="voice-index">02</span>
+          <blockquote class="voice-quote">სწრაფად შესრულდა და კონტენტი მაინც ჩვენნაირი იყო, შაბლონი არა.</blockquote>
+          <span class="voice-author">სოციალური მედიის კლიენტი</span>
+        </article>
+        <article class="voice">
+          <span class="voice-index">03</span>
+          <blockquote class="voice-quote">ერთმა გუნდმა გააკეთა გადაღებაც, საიტიც და რეკლამაც. სამ კონტრაქტორს არ ვდევნიდით.</blockquote>
+          <span class="voice-author">სტარტაპის დამფუძნებელი</span>
+        </article>
+      </div>
+
+      <div class="container voices-foot">
+        <span class="voices-count" id="voicesCount">01 / 03</span>
+        <div class="voices-progress" aria-hidden="true"><span id="voicesBar"></span></div>
+        <span class="voices-hint">გადაათრიე გასაგრძელებლად</span>
       </div>
     </section>
 
     <!-- home: statistics -->
     <section class="section section-dark">
       <div class="container">
-        <div class="stats-grid">
-          <div class="stat-item">
-            <h2 data-count="6">0</h2>
-            <p>ძირითადი სერვისი</p>
-          </div>
-          <div class="stat-item">
-            <h2 data-count="100" data-suffix="%">0%</h2>
-            <p>საკუთარი გუნდი</p>
-          </div>
-          <div class="stat-item">
-            <h2 data-count="48" data-suffix="h">0h</h2>
-            <p>საშუალო პასუხის დრო</p>
-          </div>
-          <div class="stat-item">
-            <h2 data-count="1">0</h2>
-            <p>პირადი საკონტაქტო პირი</p>
-          </div>
-        </div>
+        <!--
+          Not a stats grid and not a ledger — one sentence, with the figures
+          set several times the size of the words around them. The numbers
+          become the composition instead of sitting in cells beside it, and
+          the section says something rather than displaying badges.
+        -->
+        <p class="stat-sentence">
+          <span class="stat-line stat-line-left">
+            ჩვენ ვართ
+            <em class="stat-fig" data-count="9" data-pad="2">09</em>
+            მიმართულება ერთ სახურავქვეშ,
+          </span>
+          <span class="stat-line stat-line-center">
+            ახალ ბრიფს ვპასუხობთ
+            <em class="stat-fig" data-count="48" data-suffix="სთ">0სთ</em>
+            — ჩვეულებრივ იმავე დღეს —
+          </span>
+          <span class="stat-line stat-line-right">
+            და ამას
+            <em class="stat-fig">2024</em>
+            წლიდან ვაკეთებთ.
+          </span>
+        </p>
       </div>
     </section>
 
@@ -485,33 +556,17 @@
           </h3>
           <p class="faq-intro-copy">
             მოკლე პასუხები იმაზე, რასაც დამფუძნებლები ჩვეულებრივ სვამენ
-            ზარამდე. სხვა რამეზე — უბრალოდ გვკითხეთ.
+            ზარამდე. გრძელი პასუხები — ყოველი პაკეტი, ყოველი ფასი, ვის რა
+            ეკუთვნის — ცალკე გვერდზეა.
           </p>
-          <a href="/ka/contact" class="btn btn-outline">სხვა კითხვის დასმა</a>
+          <a href="/ka/questions" class="btn btn-outline">წაიკითხე ყველა პასუხი</a>
         </div>
 
         <div class="faq-list"></div>
       </div>
     </section>
 
-    <!-- home: final cta -->
-    <section class="section section-light">
-      <div class="container">
-        <div class="cta-panel grain">
-          <div class="cta-sparkle" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
-            </svg>
-          </div>
-          <p class="eyebrow">შენი სვლაა</p>
-          <h2>მოდი, <span class="outline">რაღაც</span> ავაშენოთ</h2>
-          <div class="cta-actions">
-            <a href="/ka/contact" class="btn btn-invert" data-magnetic>დარეკვის დაჯავშნა</a>
-            <a href="mailto:hello@lumine.ge" class="cta-mail">hello@lumine.ge</a>
-          </div>
-        </div>
-      </div>
-    </section>
+    </main>
 
     <!-- home: footer -->
     <footer>

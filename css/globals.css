@@ -1,4 +1,5 @@
 ﻿@import "./fonts.css";
+@import "./page-transition.css";
 
 :root {
   /* — Final Cut palette: warm ink/paper close to the original baseline,
@@ -19,6 +20,23 @@
   /* LK Lumina is the brand face for display AND body, Latin + Georgian */
   --f-h: "LK Lumina", "Humane", system-ui, sans-serif;
   --f-nm: "LK Lumina", "Neue Montreal", system-ui, sans-serif;
+  /* LK Lumina's digit glyphs carry a decorative bar that reads as a
+     strike-through at text sizes — anything numeric (prices, rates,
+     counters) sets in DM Mono instead */
+  --f-mono: "DM Mono", "Courier New", monospace;
+
+  /* — corner radius —
+     One scale so every framed thing on the site rounds by the same amount:
+     --r  boxes that hold an image or a block of content
+     --r-sm  small chips, inputs, markers */
+  --r: 0.85rem;
+  --r-sm: 0.5rem;
+
+  /* — elevation —
+     Tinted with the ink rather than pure black, so the lift stays warm
+     against the paper. Kept shallow: enough to float, not enough to shout. */
+  --lift: 0 0.6rem 1.6rem -0.9rem rgba(23, 19, 15, 0.28);
+  --lift-hover: 0 1.1rem 2.4rem -1rem rgba(23, 19, 15, 0.34);
 
   /* — spacing scale — */
   --sp-1: 0.5rem;
@@ -26,6 +44,12 @@
   --sp-3: 1.5rem;
   --sp-4: 2.5rem;
   --sp-5: 4rem;
+
+  /* How much of the bottom-right corner the fixed chat launcher owns. Any
+     page that puts content in that corner reserves this much room, so the
+     launcher's size lives in one place instead of in every layout that has
+     to dodge it. See css/chat-widget.css. */
+  --chat-clear: 11rem;
   --sp-6: 6rem;
   --sp-7: 9rem;
 }
@@ -34,7 +58,37 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* `user-select: none` used to sit on `*`, which meant nobody could copy a
+   single word off this site — not a client name, not the studio's own
+   positioning line, not the email in the footer. It exists to stop the big
+   display type smearing into a blue selection while you drag through a
+   scroll-scrubbed section, so it now applies to exactly that: headings, the
+   marks, and the interactive furniture. Body copy stays selectable. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.eyebrow,
+button,
+nav,
+.hero-word,
+.card-role,
+.timeline-marker,
+.register-index,
+.register-year,
+#custom-cursor {
   user-select: none;
+}
+
+img,
+canvas,
+svg {
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 ::-webkit-scrollbar {
@@ -341,6 +395,77 @@ html.lenis body {
   display: none !important;
 }
 
+/* Skip link.
+   Every page is menu-driven with a long scroll, so without this a keyboard
+   visitor tabs through the same nav furniture before reaching content on
+   every single page.
+
+   Moved off-screen rather than hidden with display:none or visibility, both
+   of which would take it out of the tab order and defeat the purpose. It
+   comes back on focus only. z-index clears the fluid canvas at 20000 and the
+   cursor at 20001, or it would land underneath them. */
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20002;
+  padding: 0.85rem 1.4rem;
+  font-family: var(--f-nm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background-color: var(--d);
+  color: var(--l);
+  border-bottom-right-radius: var(--r-sm);
+  transform: translateY(-120%);
+  transition: transform 0.18s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
+}
+
+/* Build-time content for the Work and Pricing grids — see vite-prerender.js.
+   Those pages render entirely on the client, so their raw HTML carried no
+   project names and no prices for anything that does not execute JavaScript.
+   This block is a sibling of the real mount, so it needs no cooperation from
+   work.js or pricing.js.
+
+   Hidden the moment JavaScript is present, which is what the `js` class on
+   <html> signals — set by an inline script in the head of those pages, so it
+   applies before first paint and there is no flash. Without JavaScript the
+   class is never added and the content simply shows, which is the whole
+   point: a readable list beats an empty page. */
+html.js .prerender-only {
+  display: none;
+}
+
+.prerender-only {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 2.5rem;
+  line-height: 1.5;
+}
+
+.prerender-only ul {
+  padding-left: 1.2rem;
+}
+
+.prerender-only li {
+  margin-bottom: 0.75rem;
+}
+
 :focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;
@@ -357,49 +482,7 @@ html.lenis body {
   }
 }
 
-@view-transition {
-  navigation: auto;
-}
-
-::view-transition-group(root) {
-  animation: none;
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.5s;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  will-change: transform, clip-path, filter;
-}
-
-::view-transition-old(root) {
-  animation: 1.5s cubic-bezier(0.87, 0, 0.13, 1) both move-out;
-}
-
-::view-transition-new(root) {
-  clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
-  animation: 1.5s cubic-bezier(0.87, 0, 0.13, 1) both move-in;
-}
-
-@keyframes move-out {
-  from {
-    opacity: 1;
-    filter: none;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 1;
-    filter: brightness(0.25);
-    transform: translateY(-35%);
-  }
-}
-
-@keyframes move-in {
-  from {
-    clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
-  }
-  to {
-    clip-path: polygon(0% 100%, 100% 100%, 100% 0%, 0% 0%);
-  }
-}
+/* The page transition used to live here as a CSS-only `@view-transition`.
+   It fired on a coin flip — Chrome/Edge only, never on the dev server, and
+   inconsistently even in a build — so it moved to css/page-transition.css
+   and js/page-transition.js, which run the same wipe everywhere. */

@@ -1,0 +1,125 @@
+/* page-transition — the old view-transition's movement, on a driver that runs.
+
+   This is the same choreography the CSS-only `@view-transition` in
+   globals.css used to play: the page you are leaving lifts and darkens, and
+   the page you land on is uncovered from the bottom edge upward. What
+   changed is what drives it.
+
+   The old rule was Chrome/Edge only, never ran on the Vite dev server (Vite
+   serves stylesheets through JS, so the opt-in is not in the document at
+   first paint), and Chrome skipped it unpredictably even in a build — the
+   same click to /work transitioned on some loads and not others. None of
+   that is patchable from here, so the movement moved onto a veil we own.
+
+   The veil hangs off `html`, not `body`, on purpose: the leaving half
+   transforms `body`, and a transformed element becomes the containing block
+   for its fixed descendants — a veil inside `body` would ride along with the
+   page instead of staying put over it.
+
+   The uncovering half is pure CSS, so it is on screen from the first paint
+   and still runs if the JS never loads. Only the covering half needs JS, to
+   hold the navigation back until the animation has finished. */
+
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  /* under the custom cursor (20001), over the chat launcher (15000) */
+  z-index: 20000;
+  /* the fallback covers the case-study pages, which set their own tokens */
+  background-color: var(--d, #17130f);
+  pointer-events: none;
+  will-change: clip-path;
+  animation: ptReveal 0.75s cubic-bezier(0.87, 0, 0.13, 1) both;
+}
+
+/* On timing: the original played one 1.5s move — the new page wiped in over
+   the old one, and that single gesture was the whole navigation. This runs
+   as two halves either side of a page load, so each gets half the budget.
+   0.75s out plus 0.75s in lands the whole trip on the same 1.5s the original
+   took from click to settled. Doubling each to 1.5s would look faithful in
+   isolation and feel twice as slow in use. */
+
+/* arriving: the ink retreats off the top, uncovering the page from the
+   bottom edge up — the old ::view-transition-new(root) wipe */
+@keyframes ptReveal {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+/* Ink behind the page for the whole exit.
+
+   Without this the page appears to come apart on its way out. A body
+   background propagates to the canvas while <html> has none of its own, so
+   `background-color` on body paints the whole viewport rather than the body
+   box — and a transform on body then moves the content while that painted
+   field stays exactly where it is. The page looks like it is running up over
+   its own background, with nothing behind it but the veil still climbing.
+
+   Giving html a background stops the propagation. From that moment body
+   paints and carries its own background, so the page lifts as one slab and
+   what it uncovers is ink, immediately, rather than the paper it was just
+   sitting on. Every page sets its own body background (globals var(--l),
+   the case studies var(--paper)), so none of them are left transparent. */
+html.pt-leaving {
+  background-color: var(--d, #17130f);
+}
+
+/* leaving: the ink climbs back in from the bottom. js/page-transition.js
+   sets the class and waits for this to end before letting the browser go.
+
+   Back on the original curve. It was split briefly — ink easing out, page
+   easing in — to stop the page being seen running up, but that was treating
+   the symptom. The cause was the canvas background below, and with that
+   fixed the two can travel together on one curve again, which is what the
+   original did: old page and incoming wipe on the same 1.5s
+   cubic-bezier(0.87, 0, 0.13, 1), moving as one gesture. */
+html.pt-leaving::before {
+  animation: ptCover 0.75s cubic-bezier(0.87, 0, 0.13, 1) both;
+}
+
+@keyframes ptCover {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* …and the page recedes behind it, which is the old
+   ::view-transition-old(root) `move-out`: lift and dim, same distance and
+   same darkness as before. Fixed children (nav, chat launcher) travel with
+   it, exactly as they did inside the old snapshot.
+
+   Same duration and same curve as the ink, so the page recedes in step with
+   it rather than racing ahead — the relationship the old page and the
+   incoming wipe had with each other. */
+html.pt-leaving body {
+  animation: ptLift 0.75s cubic-bezier(0.87, 0, 0.13, 1) both;
+}
+
+/* -35vh, not the original's -35%. The old rule moved
+   ::view-transition-old(root), which is a viewport-sized snapshot, so 35%
+   there meant 35% of the screen. A percentage on `body` resolves against
+   body's own height instead — on the work page that is 35% of ~3800px, so
+   the page shot up 1333px rather than a couple of hundred. Same movement as
+   the original only once it is measured against the same thing. */
+@keyframes ptLift {
+  from {
+    transform: translateY(0);
+    filter: brightness(1);
+  }
+  to {
+    transform: translateY(-35vh);
+    filter: brightness(0.25);
+  }
+}
+
+/* globals.css already collapses every animation to 0.01ms under reduced
+   motion, which lands all three on their finished frame instantly — the
+   navigation still happens, it just stops being a movement. */

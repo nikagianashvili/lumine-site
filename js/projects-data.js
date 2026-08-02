@@ -478,6 +478,20 @@ export const projects = [
   },
 ];
 
+// Projects with a dedicated, art-directed case-study page. Keyed by slug.
+// Both languages link here instead of the generic /project template — the
+// Georgian page lives at the same route under /ka.
+export const CASE_STUDY_PAGES = {
+  "tbilisi-zoo": "/work/tbilisi-zoo",
+};
+
+// Canonical href for a project card/link, honouring custom case-study pages.
+export function projectHref(project, isKa) {
+  const custom = CASE_STUDY_PAGES[project.slug];
+  const prefix = isKa ? "/ka" : "";
+  return custom ? `${prefix}${custom}` : `${prefix}/project?slug=${project.slug}`;
+}
+
 export function getServiceType(id) {
   return SERVICE_TYPES.find((s) => s.id === id);
 }

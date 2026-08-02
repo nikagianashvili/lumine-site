@@ -100,14 +100,20 @@ body {
   font-size: 2.25rem;
 }
 
+/* prices set in mono — LK Lumina's digits carry a decorative crossbar that
+   reads as a strike-through at this size (i.e. "was 1000₾, now…") */
 .price-amount {
   margin-top: 0.5rem;
-  font-size: 1.25rem;
+  font-family: var(--f-mono);
+  font-size: 1.05rem;
   font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 .price-amount span {
+  font-family: var(--f-nm);
   font-size: 0.85rem;
+  letter-spacing: 0.04em;
   opacity: 0.6;
 }
 
@@ -126,10 +132,11 @@ body {
 }
 
 .price-count-num {
-  font-family: var(--f-h);
-  font-size: 3rem;
-  line-height: 0.85;
-  text-transform: uppercase;
+  font-family: var(--f-mono);
+  font-size: 2.4rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 .price-count-label {
@@ -234,10 +241,10 @@ html[lang="ka"] .price-single-name {
 
 .price-single-price {
   flex-shrink: 0;
-  font-family: var(--f-nm);
-  font-size: 1.1rem;
+  font-family: var(--f-mono);
+  font-size: 1rem;
   font-weight: 500;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
 }
 
 /* — cta — */

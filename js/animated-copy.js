@@ -111,15 +111,35 @@ export function initAnimatedCopy(root = document) {
       variant === "slide-words";
     if (!isSlide) return;
 
-    initSlideMaskAnimation(element, { isPreloaderShowing, hero });
+    // Every reveal starts its targets at yPercent:100 behind an overflow
+    // mask, so anything that throws mid-split would leave that element
+    // permanently blank — most visibly the hero CTA, which renders as an
+    // empty pill. Failing means "show the text as-is", never "hide it".
+    try {
+      initSlideMaskAnimation(element, { isPreloaderShowing, hero });
+    } catch (err) {
+      gsap.set(element, { clearProps: "all" });
+      element.style.visibility = "visible";
+      console.warn("[lumine] text reveal skipped:", err?.message || err);
+    }
   });
 }
 
 domReady(() => {
-  // Wait for layout-stable text metrics if possible.
+  // Wait for layout-stable text metrics if possible — but never wait
+  // forever. A font request that hangs (slow network, blocked host) would
+  // otherwise leave every masked element stuck off-screen, so the reveal
+  // runs anyway after a short grace period.
   const fontsReady = document.fonts?.ready;
   if (fontsReady && typeof fontsReady.then === "function") {
-    fontsReady.then(() => initAnimatedCopy());
+    let done = false;
+    const run = () => {
+      if (done) return;
+      done = true;
+      initAnimatedCopy();
+    };
+    fontsReady.then(run);
+    setTimeout(run, 2000);
   } else {
     initAnimatedCopy();
   }

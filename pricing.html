@@ -1,8 +1,12 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Marks that JavaScript is running, before first paint, so the
+         build-time fallback list in this page can hide itself without a
+         flash. See vite-prerender.js and .prerender-only in globals.css. -->
+    <script>document.documentElement.classList.add("js");</script>
     <title>Pricing | Lumine | Creative Agency — Tbilisi</title>
     <meta name="author" content="Lumine" />
     <meta
@@ -20,24 +24,27 @@
     <meta name="twitter:card" content="summary" />
     <link rel="icon" type="image/svg+xml" href="/icons/favicon-mark.svg" />
     <link rel="icon" type="image/png" href="/icons/favicon-mark.png" />
+    <link rel="canonical" href="https://lumine.ge/pricing" />
+    <link rel="alternate" hreflang="en" href="https://lumine.ge/pricing" />
+    <link rel="alternate" hreflang="ka" href="https://lumine.ge/ka/pricing" />
+    <link rel="alternate" hreflang="x-default" href="https://lumine.ge/pricing" />
     <link rel="stylesheet" href="/css/globals.css" />
     <link rel="stylesheet" href="/css/nav.css" />
     <link rel="stylesheet" href="/css/pricing.css" />
     <link rel="stylesheet" href="/css/footer.css" />
     <link rel="stylesheet" href="/css/chat-widget.css" />
-    <script src="/js/wrappedgl.js"></script>
-    <script src="/js/simulator.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <!-- pricing: navigation -->
     <nav>
       <div class="nav-logo">
         <a href="/">
-          <img src="/logo/lumine-logo-white.png" alt="Lumine" />
+          <img src="/logo/lumine-wordmark.svg" alt="Lumine" decoding="async" />
         </a>
       </div>
       <div class="nav-icon">
-        <img src="/logo/lumine-mark-2.svg" alt="" />
+        <img src="/logo/lumine-mark-2.svg" alt="" decoding="async" />
       </div>
       <div class="nav-right">
         <div class="nav-lang" role="group" aria-label="Language">
@@ -52,6 +59,7 @@
     </nav>
 
     <!-- pricing: header -->
+    <main id="main">
     <header class="price-hero">
       <div class="container price-hero-row">
         <div class="price-hero-head">
@@ -107,6 +115,8 @@
         </div>
       </div>
     </section>
+
+    </main>
 
     <!-- pricing: footer -->
     <footer>

@@ -1,8 +1,12 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ka">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Marks that JavaScript is running, before first paint, so the
+         build-time fallback list in this page can hide itself without a
+         flash. See vite-prerender.js and .prerender-only in globals.css. -->
+    <script>document.documentElement.classList.add("js");</script>
     <title>ფასები | Lumine | შემოქმედებითი სააგენტო — თბილისი</title>
     <meta name="author" content="Lumine" />
     <meta
@@ -29,19 +33,18 @@
     <link rel="stylesheet" href="/css/pricing.css" />
     <link rel="stylesheet" href="/css/footer.css" />
     <link rel="stylesheet" href="/css/chat-widget.css" />
-    <script src="/js/wrappedgl.js"></script>
-    <script src="/js/simulator.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">ძირითად შიგთავსზე გადასვლა</a>
     <!-- pricing: navigation -->
     <nav>
       <div class="nav-logo">
         <a href="/ka">
-          <img src="/logo/lumine-logo-white.png" alt="Lumine" />
+          <img src="/logo/lumine-wordmark.svg" alt="Lumine" decoding="async" />
         </a>
       </div>
       <div class="nav-icon">
-        <img src="/logo/lumine-mark-2.svg" alt="" />
+        <img src="/logo/lumine-mark-2.svg" alt="" decoding="async" />
       </div>
       <div class="nav-right">
         <div class="nav-lang" role="group" aria-label="Language">
@@ -56,6 +59,7 @@
     </nav>
 
     <!-- pricing: header -->
+    <main id="main">
     <header class="price-hero">
       <div class="container price-hero-row">
         <div class="price-hero-head">
@@ -112,6 +116,8 @@
         </div>
       </div>
     </section>
+
+    </main>
 
     <!-- pricing: footer -->
     <footer>

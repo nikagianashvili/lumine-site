@@ -1,8 +1,12 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ka">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Marks that JavaScript is running, before first paint, so the
+         build-time fallback list in this page can hide itself without a
+         flash. See vite-prerender.js and .prerender-only in globals.css. -->
+    <script>document.documentElement.classList.add("js");</script>
     <title>ნამუშევრები | Lumine | შემოქმედებითი სააგენტო — თბილისი</title>
     <meta name="author" content="Lumine" />
     <meta
@@ -29,19 +33,18 @@
     <link rel="stylesheet" href="/css/work.css" />
     <link rel="stylesheet" href="/css/footer.css" />
     <link rel="stylesheet" href="/css/chat-widget.css" />
-    <script src="/js/wrappedgl.js"></script>
-    <script src="/js/simulator.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">ძირითად შიგთავსზე გადასვლა</a>
     <!-- work: navigation -->
     <nav>
       <div class="nav-logo">
         <a href="/ka">
-          <img src="/logo/lumine-logo-white.png" alt="Lumine" />
+          <img src="/logo/lumine-wordmark.svg" alt="Lumine" decoding="async" />
         </a>
       </div>
       <div class="nav-icon">
-        <img src="/logo/lumine-mark-2.svg" alt="" />
+        <img src="/logo/lumine-mark-2.svg" alt="" decoding="async" />
       </div>
       <div class="nav-right">
         <div class="nav-lang" role="group" aria-label="Language">
@@ -55,44 +58,52 @@
       </div>
     </nav>
 
-    <!-- work: header -->
+    <!-- work: header — the archive's cover plate -->
     <header class="work-hero">
-      <div class="container">
-        <p class="eyebrow">პორტფოლიო</p>
-        <h1
-          data-animate-variant="slide-words"
-          data-animate-on-scroll="false"
-          data-animate-delay="0.3"
-        >
-          არქივი
-        </h1>
-        <div class="work-meta">
-          <p class="work-count" id="workCount" aria-live="polite">
-            09 / 09 — ყველა ტიპი, ყველა ინდუსტრია
-          </p>
-          <p class="work-note">
-            რეალური კლიენტის სამუშაოსა და საკონცეფციო პროექტების ნაზავი.
-          </p>
+      <div class="container work-hero-top">
+        <div class="work-hero-title">
+          <p class="eyebrow">პორტფოლიო — ფირფიტების კატალოგი</p>
+          <h1
+            data-animate-variant="slide-words"
+            data-animate-on-scroll="false"
+            data-animate-delay="0.3"
+          >
+            არქივი
+          </h1>
         </div>
+        <!-- the archive described by its own numbers, not by adjectives -->
+        <dl class="work-tally" id="workTally" aria-label="არქივი ერთი შეხედვით"></dl>
       </div>
     </header>
 
-    <!-- work: filters -->
-    <div class="work-filters">
-      <div class="container">
-        <div class="filter-group" data-filter-group="type">
-          <span class="filter-label">ტიპი</span>
-          <div class="filter-pills" id="typeFilters"></div>
+    <!-- work: filters + view toggle (sticks while the plates scroll) -->
+    <div class="work-filters" id="workFilters">
+      <div class="container work-filters-inner">
+        <div class="filter-rows">
+          <div class="filter-group" data-filter-group="type">
+            <span class="filter-label">ტიპი</span>
+            <div class="filter-tabs" id="typeFilters" role="group" aria-label="ტიპით ფილტრაცია"></div>
+          </div>
+          <div class="filter-group" data-filter-group="industry">
+            <span class="filter-label">ინდუსტრია</span>
+            <div class="filter-tabs" id="industryFilters" role="group" aria-label="ინდუსტრიით ფილტრაცია"></div>
+          </div>
         </div>
-        <div class="filter-group" data-filter-group="industry">
-          <span class="filter-label">ინდუსტრია</span>
-          <div class="filter-pills" id="industryFilters"></div>
+        <div class="work-filters-foot">
+          <p class="work-count" id="workCount" aria-live="polite" aria-atomic="true">
+            22 / 22 — ყველა ტიპი, ყველა ინდუსტრია
+          </p>
+          <div class="work-views" role="group" aria-label="ხედი">
+            <button type="button" class="work-view is-active" data-view="plates" aria-pressed="true">ფირფიტები</button>
+            <button type="button" class="work-view" data-view="index" aria-pressed="false">საძიებელი</button>
+            <button type="button" class="work-reset" id="workReset" hidden>გასუფთავება ✕</button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- work: grid -->
-    <main class="work-main">
+    <main id="main" class="work-main">
       <div class="container">
         <div class="work-grid" id="workGrid"></div>
         <div class="work-empty" id="workEmpty" hidden>

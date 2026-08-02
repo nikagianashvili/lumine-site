@@ -1,7 +1,4 @@
 import gsap from "gsap";
-import { SplitText } from "gsap/SplitText";
-
-gsap.registerPlugin(SplitText);
 
 let lenis = null;
 try {
@@ -9,561 +6,423 @@ try {
   lenis = lenisModule.default || lenisModule.lenis || null;
 } catch (e) {}
 
-gsap.registerPlugin(SplitText);
-
 // Georgian pages live under /ka/ as real, separate static HTML — not a
 // client-side toggle — so the menu this builds just needs to know which
 // side of that split the current page is on, to link and label itself
 // correctly. No language state to read/write anywhere.
 const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
 
-// Gate the cursor-scrub menu interaction on more than just viewport width.
-// A touch-primary device can still be >=1000px wide (a tablet in landscape,
-// a touchscreen desktop) - it has no mouse to drive the scrub with, and
-// with only the width check the links wrapper would sit in "desktop" mode
-// with links running off-screen and no way to reach them, since the
-// vertical-stack fallback only kicked in below 1000px. `pointer: fine`
-// is what a mouse/trackpad reports; touch reports `coarse`.
-function isDesktopPointer() {
-  return window.innerWidth >= 1000 && window.matchMedia("(pointer: fine)").matches;
-}
+/* This menu replaces a horizontal cursor-scrub rail. That rail put eight
+   destinations in a 4,439px strip on a 1,890px viewport: three were fully
+   visible, four were entirely off-screen, and the only hint that more
+   existed was a thin progress bar. Pricing and Contact — the two things a
+   prospect actually wants — were among the ones you could not see.
 
-const menuItems = isKa
+   It is now three columns grouped by what somebody came for, every
+   destination on screen at once, with contact pulled out as its own block.
+   The scrub loop, the link highlighter and the per-character SplitText
+   animation are all gone with it. */
+
+/* Counts are mirrored here rather than imported. projects-data.js is 37KB
+   and questions-data.js is 49KB; nav.js loads on every page, so importing
+   either to read one number would put the whole archive on the contact
+   page. Keep these in step with those two files. */
+const TALLY = { projects: 14, answers: 32, disciplines: 9 };
+
+const MENU_GROUPS = isKa
   ? [
-      { label: "მთავარი", route: "/ka" },
-      { label: "სტუდია", route: "/ka/studio" },
-      { label: "სერვისები", route: "/ka/services" },
-      { label: "ნამუშევრები", route: "/ka/work" },
-      { label: "ფასები", route: "/ka/pricing" },
-      { label: "ჟურნალი", route: "/ka/journal" },
-      { label: "კონტაქტი", route: "/ka/contact" },
+      {
+        label: "სტუდია",
+        items: [
+          { label: "მთავარი", route: "/ka", desc: "დასაწყისში დაბრუნება" },
+          { label: "სტუდია", route: "/ka/studio", desc: "ვისთან გექნებათ საქმე" },
+        ],
+      },
+      {
+        label: "რას ვაკეთებთ",
+        items: [
+          { label: "სერვისები", route: "/ka/services", desc: `${TALLY.disciplines} მიმართულება, ერთი გუნდი` },
+          { label: "ფასები", route: "/ka/pricing", desc: "ყველა ტარიფი ღიად" },
+          { label: "ნამუშევრები", route: "/ka/work", desc: `${TALLY.projects} პროექტი, 2024—2026` },
+        ],
+      },
+      {
+        label: "სასარგებლო",
+        items: [
+          { label: "კითხვები", route: "/ka/questions", desc: `${TALLY.answers} პასუხი — პაკეტებიდან უფლებებამდე` },
+          { label: "ჟურნალი", route: "/ka/journal", desc: "მოკლე ჩანაწერები სამუშაო პროცესზე" },
+        ],
+      },
     ]
   : [
-      { label: "Home", route: "/" },
-      { label: "Studio", route: "/studio" },
-      { label: "Services", route: "/services" },
-      { label: "Work", route: "/work" },
-      { label: "Pricing", route: "/pricing" },
-      { label: "Journal", route: "/journal" },
-      { label: "Contact", route: "/contact" },
+      {
+        label: "The studio",
+        items: [
+          { label: "Home", route: "/", desc: "Back to the start" },
+          { label: "Studio", route: "/studio", desc: "Who you would actually be working with" },
+        ],
+      },
+      {
+        label: "What we do",
+        items: [
+          { label: "Services", route: "/services", desc: `${TALLY.disciplines} disciplines, one team` },
+          { label: "Pricing", route: "/pricing", desc: "Every rate listed in the open" },
+          { label: "Work", route: "/work", desc: `${TALLY.projects} projects, 2024—2026` },
+        ],
+      },
+      {
+        label: "Good to know",
+        items: [
+          { label: "Questions", route: "/questions", desc: `${TALLY.answers} answers, packages to file rights` },
+          { label: "Journal", route: "/journal", desc: "Short reads on how we work" },
+        ],
+      },
     ];
+
+/* Only Instagram exists. The rest are deliberately absent rather than
+   pointed at guessed profile URLs — add each one here as its account is
+   confirmed and it appears in both languages at once. */
+const SOCIALS = [{ label: "Instagram", href: "https://www.instagram.com/lumine.ge" }];
+
+const COPY = isKa
+  ? {
+      follow: "მოგვყევით",
+      ctaTitle: "დაიწყეთ პროექტი",
+      ctaSub: "მოგვწერეთ რა გჭირდებათ — ვპასუხობთ დღის განმავლობაში.",
+      here: "თქვენ აქ ხართ",
+      openLabel: "მენიუ",
+      closeLabel: "დახურვა",
+      closeAria: "მენიუს დახურვა",
+      openAria: "მენიუს გახსნა",
+      rights: "© Lumine — თბილისი, საქართველო",
+      availability: "ვიღებთ ახალ პროექტებს",
+      contactRoute: "/ka/contact",
+    }
+  : {
+      follow: "Follow",
+      ctaTitle: "Start a project",
+      ctaSub: "Tell us what you need — we reply within a day.",
+      here: "You are here",
+      openLabel: "Menu",
+      closeLabel: "Close",
+      closeAria: "Close menu",
+      openAria: "Open menu",
+      rights: "© Lumine — Tbilisi, Georgia",
+      availability: "Available for new projects",
+      contactRoute: "/contact",
+    };
+
+const EMAIL = "hello@lumine.ge";
+const PHONE = "+995 555 40 58 43";
+
+function currentPath() {
+  return window.location.pathname.replace(/\/+$/, "") || "/";
+}
 
 function buildNav() {
   const nav = document.querySelector("nav");
   if (!nav) return;
 
-  // Prevent duplicate overlays if any script re-runs.
   const existingOverlay = document.querySelector(".menu-overlay");
   if (existingOverlay) existingOverlay.remove();
 
+  /* The toggle was a <div>: not focusable, no role, no state. The whole
+     navigation was unreachable by keyboard. It is a real button now, and it
+     reports whether the menu is open. */
+  const oldToggler = nav.querySelector(".nav-toggler");
+  if (oldToggler && oldToggler.tagName !== "BUTTON") {
+    const btn = document.createElement("button");
+    btn.className = "nav-toggler";
+    btn.type = "button";
+    oldToggler.replaceWith(btn);
+  }
   const toggler = nav.querySelector(".nav-toggler");
   if (toggler) {
-    toggler.innerHTML = isKa
-      ? `
-      <div class="nav-toggle-wrapper">
-        <p class="open-label">მენიუ</p>
-        <p class="close-label">დახურვა</p>
-      </div>
-    `
-      : `
-      <div class="nav-toggle-wrapper">
-        <p class="open-label">Menu</p>
-        <p class="close-label">Close</p>
-      </div>
-    `;
+    toggler.setAttribute("aria-expanded", "false");
+    toggler.setAttribute("aria-controls", "menuOverlay");
+    toggler.setAttribute("aria-label", COPY.openAria);
+    toggler.innerHTML = `<span class="nav-toggler-label">${COPY.openLabel}</span>`;
   }
+
+  const groupsHtml = MENU_GROUPS.map(
+    (group) => `
+      <div class="menu-group">
+        <p class="menu-group-label">${group.label}</p>
+        ${group.items
+          .map((item) => {
+            const isHere = currentPath() === item.route.replace(/\/+$/, "");
+            return `
+          <a class="menu-item${isHere ? " is-here" : ""}" href="${item.route}"${
+            isHere ? ' aria-current="page"' : ""
+          }>
+            <span class="menu-item-row">
+              <span class="menu-item-num">${String(item.n).padStart(2, "0")}</span>
+              <span class="menu-item-name">${item.label}</span>
+              ${isHere ? `<span class="menu-here-tag">${COPY.here}</span>` : ""}
+              <span class="menu-item-arrow" aria-hidden="true">→</span>
+            </span>
+            <span class="menu-item-desc">${item.desc}</span>
+          </a>`;
+          })
+          .join("")}
+        ${
+          group.withSocials
+            ? `<p class="menu-group-label menu-group-label-sub">${COPY.follow}</p>
+               <div class="menu-socials">
+                 ${SOCIALS.map(
+                   (s) =>
+                     `<a class="menu-social" href="${s.href}" target="_blank" rel="noopener">${s.label} <i aria-hidden="true">↗</i></a>`,
+                 ).join("")}
+               </div>`
+            : ""
+        }
+      </div>`,
+  ).join("");
 
   const overlay = document.createElement("div");
   overlay.className = "menu-overlay";
-  overlay.innerHTML = isKa
-    ? `
-    <div class="menu-content">
-      <div class="menu-col" data-col="0">
-        <div class="menu-content-group">
-          <p>&copy; Lumine</p>
-          <p>თბილისი, საქართველო</p>
-        </div>
-        <div class="menu-content-group">
-          <p>რას ვაკეთებთ</p>
-          <p>სტრატეგია და ბრენდი</p>
-          <p>ფოტო, ვიდეო და AI</p>
-          <p>ვები და მარკეტინგი</p>
-        </div>
-        <div class="menu-content-group">
-          <p>მოგვწერეთ</p>
-          <p>hello@lumine.ge</p>
-        </div>
-        <div class="menu-content-group">
-          <p>სატელეფონო ხაზი</p>
-          <p>+995 555 00 00 00</p>
-        </div>
-      </div>
-      <div class="menu-col" data-col="1">
-        <div class="menu-content-group">
-          <p>სოციალური ქსელები</p>
-          <a href="https://www.instagram.com/lumine.ge" target="_blank">Instagram</a>
-        </div>
-        <div class="menu-content-group">
-          <p>ენა</p>
-          <p>ძირითადად ქართული</p>
-        </div>
-        <div class="menu-content-group">
-          <p>ხელმისაწვდომია</p>
-          <p>ახალი პროექტებისთვის</p>
-        </div>
-      </div>
-    </div>
+  overlay.id = "menuOverlay";
+  overlay.innerHTML = `
+    <div class="menu-inner">
+      <div class="menu-groups">${groupsHtml}</div>
 
-    <div class="menu-img">
-      <img src="/menu/menu-img.jpg" alt="" />
-    </div>
+      <a class="menu-cta" href="${COPY.contactRoute}">
+        <span class="menu-cta-text">
+          <span class="menu-cta-title">${COPY.ctaTitle}</span>
+          <span class="menu-cta-sub">${COPY.ctaSub}</span>
+        </span>
+        <span class="menu-cta-lines">${EMAIL}<br />${PHONE}</span>
+      </a>
 
-    <div class="menu-links-wrapper">
-      ${menuItems
-        .map(
-          (item, i) => `
-        <div class="menu-link" data-route="${item.route}">
-          <span class="menu-link-index">${String(i + 1).padStart(2, "0")}</span>
-          <a href="${item.route}">
-            <span>${item.label}</span>
-            <span>${item.label}</span>
-          </a>
-        </div>
-      `,
-        )
-        .join("")}
-      <div class="link-highlighter"></div>
-    </div>
-  `
-    : `
-    <div class="menu-content">
-      <div class="menu-col" data-col="0">
-        <div class="menu-content-group">
-          <p>&copy; Lumine</p>
-          <p>Tbilisi, Georgia</p>
-        </div>
-        <div class="menu-content-group">
-          <p>What We Do</p>
-          <p>Strategy &amp; Brand</p>
-          <p>Photo, Video &amp; AI</p>
-          <p>Web &amp; Marketing</p>
-        </div>
-        <div class="menu-content-group">
-          <p>Say Hello</p>
-          <p>hello@lumine.ge</p>
-        </div>
-        <div class="menu-content-group">
-          <p>Hotline</p>
-          <p>+995 555 00 00 00</p>
-        </div>
+      <div class="menu-foot">
+        <span>${COPY.rights}</span>
+        <span>${COPY.availability}</span>
       </div>
-      <div class="menu-col" data-col="1">
-        <div class="menu-content-group">
-          <p>Socials</p>
-          <a href="https://www.instagram.com/lumine.ge" target="_blank">Instagram</a>
-        </div>
-        <div class="menu-content-group">
-          <p>Language</p>
-          <p>Georgian, Mostly</p>
-        </div>
-        <div class="menu-content-group">
-          <p>Available For</p>
-          <p>New Projects</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="menu-img">
-      <img src="/menu/menu-img.jpg" alt="" />
-    </div>
-
-    <div class="menu-links-wrapper">
-      ${menuItems
-        .map(
-          (item, i) => `
-        <div class="menu-link" data-route="${item.route}">
-          <span class="menu-link-index">${String(i + 1).padStart(2, "0")}</span>
-          <a href="${item.route}">
-            <span>${item.label}</span>
-            <span>${item.label}</span>
-          </a>
-        </div>
-      `,
-        )
-        .join("")}
-      <div class="link-highlighter"></div>
-    </div>
-  `;
+    </div>`;
 
   document.body.appendChild(overlay);
 }
 
 function initMenu() {
+  // number the destinations in reading order across the three columns
+  let n = 0;
+  MENU_GROUPS.forEach((g) => g.items.forEach((i) => (i.n = ++n)));
+  MENU_GROUPS[MENU_GROUPS.length - 1].withSocials = true;
+
   buildNav();
 
-  const navToggler = document.querySelector(".nav-toggler");
-  const menuOverlay = document.querySelector(".menu-overlay");
-  const menuImage = document.querySelector(".menu-overlay .menu-img img");
-  const menuLinksWrapper = document.querySelector(".menu-links-wrapper");
-  const linkHighlighter = document.querySelector(".link-highlighter");
-  const menuLinks = Array.from(document.querySelectorAll(".menu-link a"));
-  const menuLinkContainers = Array.from(
-    document.querySelectorAll(".menu-link"),
+  const toggler = document.querySelector(".nav-toggler");
+  const overlay = document.querySelector(".menu-overlay");
+  if (!toggler || !overlay) return;
+
+  const label = toggler.querySelector(".nav-toggler-label");
+  const items = Array.from(overlay.querySelectorAll(".menu-item"));
+  const chrome = Array.from(
+    overlay.querySelectorAll(".menu-group-label, .menu-socials, .menu-cta, .menu-foot"),
   );
-  const openLabel = document.querySelector(".open-label");
-  const closeLabel = document.querySelector(".close-label");
-  const menuCols = Array.from(document.querySelectorAll(".menu-col"));
 
-  let isMenuOpen = false;
-  let isMenuAnimating = false;
+  let isOpen = false;
+  let isAnimating = false;
+  let lastFocus = null;
 
-  const splitTextInstances = [];
+  /* The panel comes down from the top edge and retracts back up into it —
+     the same direction as the bar it is opened from, so it reads as the
+     header unfolding rather than something arriving from off-screen behind
+     you. Closed is a zero-height strip pinned to the top; open is the full
+     rectangle. The two point lists are written in the same order (top-left,
+     top-right, bottom-right, bottom-left) because clip-path only
+     interpolates smoothly when the vertices correspond one to one. */
+  const CLOSED_CLIP = "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)";
+  const OPEN_CLIP = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";
 
-  function setupLinkSplits() {
-    splitTextInstances.forEach((s) => s.revert && s.revert());
-    splitTextInstances.length = 0;
+  /* Named because the header fade is timed against them rather than
+     guessed at. HEADER_FADE must stay equal to the transition duration on
+     nav / .nav-logo img / .nav-icon img in css/nav.css — if the two drift
+     apart the fade stops landing with the wipe, which is the whole point of
+     scheduling it. */
+  const CLOSE_DELAY = 0.12;
+  const CLOSE_DUR = 0.75;
+  const HEADER_FADE = 0.35;
 
-    menuLinks.forEach((link) => {
-      const spans = link.querySelectorAll("span");
-      spans.forEach((span, i) => {
-        const split = new SplitText(span, { type: "chars" });
-        splitTextInstances.push(split);
-        split.chars.forEach((c) => c.classList.add("char"));
-        if (i === 1) {
-          gsap.set(split.chars, { y: "110%" });
+  /* Hidden means hidden. The old overlay was only hidden visually, so its
+     nine links stayed in the tab order on every page — a keyboard user
+     tabbed into a menu they could not see and could not have opened.
+     `inert` removes the whole subtree from focus and the accessibility
+     tree in one attribute. */
+  function seal() {
+    overlay.setAttribute("inert", "");
+    overlay.setAttribute("aria-hidden", "true");
+  }
+  function unseal() {
+    overlay.removeAttribute("inert");
+    overlay.removeAttribute("aria-hidden");
+  }
+
+  /* Negative offsets: the contents settle downward into place behind the
+     descending edge, and leave upward with it. Coming up from below while
+     the panel comes down would have the two halves of the animation moving
+     against each other. */
+  function reset() {
+    gsap.set(overlay, { clipPath: CLOSED_CLIP });
+    gsap.set(items, { y: -22, opacity: 0 });
+    gsap.set(chrome, { y: -14, opacity: 0 });
+  }
+
+  seal();
+  reset();
+
+  function open() {
+    if (isAnimating || isOpen) return;
+    isAnimating = true;
+    isOpen = true;
+    lastFocus = document.activeElement;
+
+    unseal();
+    if (lenis) lenis.stop();
+    document.documentElement.classList.add("menu-is-open");
+    toggler.setAttribute("aria-expanded", "true");
+    toggler.setAttribute("aria-label", COPY.closeAria);
+    if (label) label.textContent = COPY.closeLabel;
+
+    gsap.to(overlay, {
+      clipPath: OPEN_CLIP,
+      duration: 0.9,
+      ease: "expo.out",
+      onComplete: () => {
+        isAnimating = false;
+        // send the reader to the first destination, not the close button
+        const first = items[0];
+        if (first) first.focus({ preventScroll: true });
+      },
+    });
+
+    gsap.to(items, {
+      y: 0,
+      opacity: 1,
+      duration: 0.7,
+      stagger: 0.045,
+      delay: 0.18,
+      ease: "expo.out",
+    });
+    gsap.to(chrome, {
+      y: 0,
+      opacity: 1,
+      duration: 0.7,
+      stagger: 0.04,
+      delay: 0.3,
+      ease: "expo.out",
+    });
+  }
+
+  function close({ restoreFocus = true } = {}) {
+    if (isAnimating || !isOpen) return;
+    isAnimating = true;
+    isOpen = false;
+
+    /* The state the assistive tech reads changes now, because the menu is
+       on its way out from this moment. What the eye sees is timed below. */
+    toggler.setAttribute("aria-expanded", "false");
+    toggler.setAttribute("aria-label", COPY.openAria);
+    if (label) label.textContent = COPY.openLabel;
+
+    gsap.to([items, chrome].flat(), {
+      y: -10,
+      opacity: 0,
+      duration: 0.32,
+      ease: "power2.in",
+    });
+
+    /* The header fade has to LAND with the panel, not start there. Dropping
+       menu-is-open on completion left the marks still fading for a third of
+       a second after the menu had visibly gone. Starting it one fade-length
+       before the end means the last frame of the wipe is also the last
+       frame of the fade. */
+    gsap.delayedCall(CLOSE_DELAY + CLOSE_DUR - HEADER_FADE, () => {
+      document.documentElement.classList.remove("menu-is-open");
+    });
+
+    gsap.to(overlay, {
+      clipPath: CLOSED_CLIP,
+      duration: CLOSE_DUR,
+      delay: CLOSE_DELAY,
+      ease: "expo.inOut",
+      onComplete: () => {
+        reset();
+        seal();
+        isAnimating = false;
+        if (lenis) lenis.start();
+        if (restoreFocus && lastFocus && document.contains(lastFocus)) {
+          lastFocus.focus({ preventScroll: true });
         }
-      });
+      },
     });
   }
 
-  const menuColSplitInstances = [];
+  toggler.addEventListener("click", () => (isOpen ? close() : open()));
 
-  function setupColSplits() {
-    if (isMenuOpen) return;
-
-    menuColSplitInstances.forEach((s) => s.revert && s.revert());
-    menuColSplitInstances.length = 0;
-
-    menuCols.forEach((col) => {
-      col.querySelectorAll("p, a").forEach((el) => {
-        const split = SplitText.create(el, {
-          type: "lines",
-          mask: "lines",
-          linesClass: "split-line",
-        });
-        menuColSplitInstances.push(split);
-        gsap.set(split.lines, { y: "100%" });
-      });
-    });
-  }
-
-  function setInitialStates() {
-    gsap.set(menuImage, { y: 0, scale: 0.5, opacity: 0.25 });
-    gsap.set(menuLinks, { y: "150%" });
-    gsap.set(linkHighlighter, { y: "150%" });
-
-    const firstLinkContainer = menuLinkContainers[0];
-    const firstLinkSpan = firstLinkContainer
-      ? firstLinkContainer.querySelector("a span")
-      : null;
-
-    if (firstLinkSpan) {
-      const linkWidth = firstLinkSpan.offsetWidth;
-      linkHighlighter.style.width = linkWidth + "px";
-      currentHighlighterWidth = linkWidth;
-      targetHighlighterWidth = linkWidth;
-
-      const linkRect = firstLinkContainer.getBoundingClientRect();
-      const wrapperRect = menuLinksWrapper.getBoundingClientRect();
-      const initialX = linkRect.left - wrapperRect.left;
-      currentHighlighterX = initialX;
-      targetHighlighterX = initialX;
-    }
-  }
-
-  let currentX = 0;
-  let targetX = 0;
-  const lerpFactor = 0.05;
-
-  let currentHighlighterX = 0;
-  let targetHighlighterX = 0;
-  let currentHighlighterWidth = 0;
-  let targetHighlighterWidth = 0;
-
-  let rafId = null;
-
-  function animateLoop() {
-    currentX += (targetX - currentX) * lerpFactor;
-    currentHighlighterX +=
-      (targetHighlighterX - currentHighlighterX) * lerpFactor;
-    currentHighlighterWidth +=
-      (targetHighlighterWidth - currentHighlighterWidth) * lerpFactor;
-
-    gsap.set(menuLinksWrapper, { x: currentX });
-    gsap.set(linkHighlighter, {
-      x: currentHighlighterX,
-      width: currentHighlighterWidth,
-    });
-
-    rafId = requestAnimationFrame(animateLoop);
-  }
-
-  function startDesktopTracking() {
-    if (!isDesktopPointer()) return;
-    if (rafId) return;
-    menuOverlay.addEventListener("mousemove", onMouseMove);
-    menuLinksWrapper.addEventListener("mouseleave", onLinksWrapperLeave);
-    rafId = requestAnimationFrame(animateLoop);
-  }
-
-  function stopDesktopTracking() {
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = null;
-    menuOverlay.removeEventListener("mousemove", onMouseMove);
-    menuLinksWrapper.removeEventListener("mouseleave", onLinksWrapperLeave);
-  }
-
-  function onMouseMove(e) {
-    if (!isDesktopPointer()) return;
-
-    const mouseX = e.clientX;
-    const viewportWidth = window.innerWidth;
-    const wrapperWidth = menuLinksWrapper.offsetWidth;
-
-    const maxMoveLeft = 0;
-    const maxMoveRight = viewportWidth - wrapperWidth;
-
-    const sensitivityRange = viewportWidth * 0.5;
-    const startX = (viewportWidth - sensitivityRange) / 2;
-    const endX = startX + sensitivityRange;
-
-    let pct;
-    if (mouseX <= startX) pct = 0;
-    else if (mouseX >= endX) pct = 1;
-    else pct = (mouseX - startX) / sensitivityRange;
-
-    targetX = maxMoveLeft + pct * (maxMoveRight - maxMoveLeft);
-  }
-
-  function onLinkEnter(container) {
-    if (!isDesktopPointer()) return;
-
-    const spans = container.querySelectorAll("a span");
-    if (!spans || spans.length < 2) return;
-
-    const visibleChars = spans[0].querySelectorAll(".char");
-    const animatedChars = spans[1].querySelectorAll(".char");
-
-    gsap.to(visibleChars, {
-      y: "-110%",
-      stagger: 0.05,
-      duration: 0.5,
-      ease: "expo.inOut",
-    });
-    gsap.to(animatedChars, {
-      y: "0%",
-      stagger: 0.05,
-      duration: 0.5,
-      ease: "expo.inOut",
-    });
-
-    const linkRect = container.getBoundingClientRect();
-    const wrapperRect = menuLinksWrapper.getBoundingClientRect();
-    targetHighlighterX = linkRect.left - wrapperRect.left;
-
-    const firstSpan = container.querySelector("a span");
-    targetHighlighterWidth = firstSpan
-      ? firstSpan.offsetWidth
-      : container.offsetWidth;
-  }
-
-  function onLinkLeave(container) {
-    if (!isDesktopPointer()) return;
-
-    const spans = container.querySelectorAll("a span");
-    if (!spans || spans.length < 2) return;
-
-    const visibleChars = spans[0].querySelectorAll(".char");
-    const animatedChars = spans[1].querySelectorAll(".char");
-
-    gsap.to(animatedChars, {
-      y: "110%",
-      stagger: 0.05,
-      duration: 0.5,
-      ease: "expo.inOut",
-    });
-    gsap.to(visibleChars, {
-      y: "0%",
-      stagger: 0.05,
-      duration: 0.5,
-      ease: "expo.inOut",
-    });
-  }
-
-  function onLinksWrapperLeave() {
-    const firstContainer = menuLinkContainers[0];
-    if (!firstContainer) return;
-    const firstSpan = firstContainer.querySelector("a span");
-    if (!firstSpan) return;
-
-    const linkRect = firstContainer.getBoundingClientRect();
-    const wrapperRect = menuLinksWrapper.getBoundingClientRect();
-    targetHighlighterX = linkRect.left - wrapperRect.left;
-    targetHighlighterWidth = firstSpan.offsetWidth;
-  }
-
-  // The cursor-scrub is the whole point of this menu, but nothing about it
-  // is discoverable - a first-time visitor has no reason to think moving
-  // their mouse reveals more links. Rather than add a label or icon,
-  // borrow the same targetX the mouse itself drives and nudge it once on
-  // open: the links visibly shift left and settle back, teaching the
-  // mechanic through motion instead of asking the visitor to read anything.
-  function playIntroPeek() {
-    if (!isDesktopPointer()) return;
-    const maxMoveRight = window.innerWidth - menuLinksWrapper.offsetWidth;
-    if (maxMoveRight >= 0) return; // links already fit - nothing to reveal
-    targetX = Math.max(maxMoveRight, -240);
-    setTimeout(() => {
-      targetX = 0;
-    }, 850);
-  }
-
-  menuLinkContainers.forEach((container) => {
-    container.addEventListener("mouseenter", () => onLinkEnter(container));
-    container.addEventListener("mouseleave", () => onLinkLeave(container));
-
-    // Let the browser perform a normal anchor navigation.
-    // This keeps cross-document view transitions eligible and reliable.
-    const a = container.querySelector("a");
-    if (a) {
-      a.addEventListener("click", (e) => {
-        const href = a.getAttribute("href") || "";
-        const currentPath = window.location.pathname;
-        if (href && currentPath === href) e.preventDefault();
-      });
-    }
+  // Escape is what people press to get out of an overlay
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && isOpen) close();
   });
 
-  function toggleMenu() {
-    if (isMenuAnimating) return;
-    isMenuAnimating = true;
+  /* A link to the page you are already on should close the menu rather than
+     reload it; anything else is left to js/page-transition.js, which needs a
+     real anchor navigation to play the wipe. */
+  overlay.querySelectorAll("a[href]").forEach((a) => {
+    a.addEventListener("click", (e) => {
+      const href = a.getAttribute("href") || "";
+      if (href.replace(/\/+$/, "") === currentPath()) {
+        e.preventDefault();
+        close();
+      }
+    });
+  });
+}
 
-    if (!isMenuOpen) {
-      if (lenis) lenis.stop();
-      startDesktopTracking();
-      setTimeout(playIntroPeek, 1700);
+/* ── the bar's one scroll state ───────────────────────────────────────────
+   The header is sticky — it never leaves the screen. All that changes is
+   whether it is transparent over the top of the page or sitting on a paper
+   background once you have scrolled past it.
 
-      gsap.to(openLabel, { y: "-100%", duration: 1, ease: "power3.out" });
-      gsap.to(closeLabel, { y: "-100%", duration: 1, ease: "power3.out" });
+   This only toggles a class; the colour and its timing live in css/nav.css,
+   which is also where the history of why this must not use mix-blend-mode
+   is written down. */
+function initHeaderScroll() {
+  const nav = document.querySelector("nav");
+  if (!nav) return;
 
-      gsap.to(menuOverlay, {
-        clipPath: "polygon(0% 100%, 100% 100%, 100% 0%, 0% 0%)",
-        duration: 1.25,
-        ease: "expo.out",
-        onComplete: () => {
-          menuLinkContainers.forEach((c) => (c.style.overflow = "visible"));
-          isMenuOpen = true;
-          isMenuAnimating = false;
-        },
-      });
+  const STUCK_AT = 60; // roughly the bar's own height
 
-      gsap.to(menuImage, {
-        scale: 1,
-        opacity: 1,
-        duration: 1.5,
-        ease: "expo.out",
-      });
+  let ticking = false;
 
-      gsap.to(menuLinks, {
-        y: "0%",
-        duration: 1.25,
-        stagger: 0.1,
-        delay: 0.25,
-        ease: "expo.out",
-      });
-
-      gsap.to(linkHighlighter, {
-        y: "0%",
-        duration: 1,
-        delay: 1,
-        ease: "expo.out",
-      });
-
-      menuCols.forEach((col) => {
-        const splitLines = col.querySelectorAll(".split-line");
-        gsap.to(splitLines, {
-          y: "0%",
-          duration: 1,
-          stagger: 0.05,
-          delay: 0.5,
-          ease: "expo.out",
-        });
-      });
-    } else {
-      gsap.to(openLabel, { y: "0%", duration: 1, ease: "power3.out" });
-      gsap.to(closeLabel, { y: "0%", duration: 1, ease: "power3.out" });
-
-      gsap.to(menuImage, {
-        y: "-25svh",
-        opacity: 0.5,
-        duration: 1.25,
-        ease: "expo.out",
-      });
-
-      menuCols.forEach((col) => {
-        const splitLines = col.querySelectorAll(".split-line");
-        gsap.to(splitLines, {
-          y: "-100%",
-          duration: 1,
-          stagger: 0,
-          ease: "expo.out",
-        });
-      });
-
-      gsap.to(menuOverlay, {
-        clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
-        duration: 1.25,
-        ease: "expo.out",
-        onComplete: () => {
-          stopDesktopTracking();
-          gsap.set(menuOverlay, {
-            clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
-          });
-          gsap.set(menuLinks, { y: "150%" });
-          gsap.set(linkHighlighter, { y: "150%" });
-          gsap.set(menuImage, { y: "0", scale: 0.5, opacity: 0.25 });
-          menuLinkContainers.forEach((c) => (c.style.overflow = "hidden"));
-
-          menuCols.forEach((col) => {
-            const splitLines = col.querySelectorAll(".split-line");
-            gsap.set(splitLines, { y: "100%" });
-          });
-
-          gsap.set(menuLinksWrapper, { x: 0 });
-          currentX = 0;
-          targetX = 0;
-
-          setupColSplits();
-
-          isMenuOpen = false;
-          isMenuAnimating = false;
-
-          if (lenis) lenis.start();
-        },
-      });
-    }
+  function read() {
+    nav.classList.toggle("is-stuck", window.scrollY > STUCK_AT);
+    ticking = false;
   }
 
-  navToggler.addEventListener("click", toggleMenu);
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(read);
+    },
+    { passive: true },
+  );
 
-  setupLinkSplits();
-  setupColSplits();
-  setInitialStates();
-  // Desktop tracking loop starts only when menu is open.
+  /* A reload partway down a page restores the scroll position without ever
+     firing a scroll event, which would otherwise leave the bar transparent
+     over mid-page content. */
+  read();
+}
+
+function init() {
+  initMenu();
+  initHeaderScroll();
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initMenu);
+  document.addEventListener("DOMContentLoaded", init);
 } else {
-  initMenu();
+  init();
 }

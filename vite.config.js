@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
+import { prerenderContent } from "./vite-prerender.js";
 import { resolve } from "path";
-import fs from "fs";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -11,6 +11,7 @@ import tailwindcss from "@tailwindcss/vite";
 // SPA fallback then silently serves the English index.html instead.
 const CLEAN_ROUTES = {
   "/work": "/work.html",
+  "/work/tbilisi-zoo": "/work-tbilisi-zoo.html",
   "/sample-project": "/sample-project.html",
   "/project": "/project.html",
   "/studio": "/studio.html",
@@ -25,6 +26,7 @@ const CLEAN_ROUTES = {
   "/services/ai": "/services/ai.html",
   "/services/printing": "/services/printing.html",
   "/pricing": "/pricing.html",
+  "/questions": "/questions.html",
   "/journal": "/journal.html",
   "/legal": "/legal.html",
   "/contact": "/contact.html",
@@ -34,6 +36,7 @@ const CLEAN_ROUTES = {
   "/portal-login": "/portal-login.html",
   "/ka": "/ka/index.html",
   "/ka/work": "/ka/work.html",
+  "/ka/work/tbilisi-zoo": "/ka/work-tbilisi-zoo.html",
   "/ka/sample-project": "/ka/sample-project.html",
   "/ka/project": "/ka/project.html",
   "/ka/studio": "/ka/studio.html",
@@ -48,6 +51,7 @@ const CLEAN_ROUTES = {
   "/ka/services/ai": "/ka/services/ai.html",
   "/ka/services/printing": "/ka/services/printing.html",
   "/ka/pricing": "/ka/pricing.html",
+  "/ka/questions": "/ka/questions.html",
   "/ka/journal": "/ka/journal.html",
   "/ka/legal": "/ka/legal.html",
   "/ka/contact": "/ka/contact.html",
@@ -59,41 +63,55 @@ function devCleanUrls() {
     apply: "serve",
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        const [path, query] = req.url.split("?");
+        const [rawPath, query] = req.url.split("?");
+        // "/ka/" and "/ka" are the same route; "/" must stay "/"
+        const path =
+          rawPath.length > 1 ? rawPath.replace(/\/+$/, "") || "/" : rawPath;
+
         const target = CLEAN_ROUTES[path];
-        if (target) req.url = query ? `${target}?${query}` : target;
+        if (target) {
+          req.url = query ? `${target}?${query}` : target;
+          return next();
+        }
+
+        /* Match production for unknown routes. Vite's SPA fallback otherwise
+           serves index.html with a 200 for anything it does not recognise, so
+           a typo'd URL silently renders the English home page and the 404 can
+           never be seen or tested locally. Vercel serves dist/404.html for
+           these, so the dev server does the same — and with a real 404 status,
+           which the fallback does not give.
+
+           Everything that legitimately has no CLEAN_ROUTES entry has to be
+           let through first: the site root, anything with a file extension,
+           Vite's own internals, the API, and the two React panels, which route
+           their sub-paths on the client and genuinely do need the fallback. */
+        const isSpa = /^\/(admin|portal)(\/|$)/.test(path);
+        const isPage =
+          req.method === "GET" &&
+          path !== "/" &&
+          !isSpa &&
+          !path.startsWith("/@") &&
+          !path.startsWith("/src") &&
+          !path.startsWith("/node_modules") &&
+          !path.startsWith("/api") &&
+          !/\.[a-z0-9]+$/i.test(path) &&
+          (req.headers.accept || "").includes("text/html");
+
+        if (isPage) {
+          req.url = "/404.html";
+          /* Assigning res.statusCode here does not survive: Vite's own HTML
+             middleware serves the transformed page and sets 200 on the way
+             out, so the dev server would answer a miss with "200 Page Not
+             Found" — the soft 404 this is meant to remove. Pinning the
+             property is what actually holds. */
+          Object.defineProperty(res, "statusCode", {
+            get: () => 404,
+            set: () => {},
+            configurable: true,
+          });
+        }
         next();
       });
-    },
-  };
-}
-
-function copyToDist() {
-  return {
-    name: "copy-non-bundled-js-assets",
-    apply: "build",
-    closeBundle() {
-      const distDir = resolve(__dirname, "dist");
-      const distJsDir = resolve(distDir, "js");
-
-      fs.mkdirSync(distJsDir, { recursive: true });
-
-      fs.copyFileSync(
-        resolve(__dirname, "js/wrappedgl.js"),
-        resolve(distJsDir, "wrappedgl.js"),
-      );
-      fs.copyFileSync(
-        resolve(__dirname, "js/simulator.js"),
-        resolve(distJsDir, "simulator.js"),
-      );
-
-      fs.cpSync(
-        resolve(__dirname, "js/shaders"),
-        resolve(distJsDir, "shaders"),
-        {
-          recursive: true,
-        },
-      );
     },
   };
 }
@@ -103,7 +121,7 @@ export default defineConfig({
   // imports, `@import "tailwindcss"` in a stylesheet) — the vanilla public
   // pages and the old admin.css never reference either, so they're
   // unaffected. Scoped to /admin's rebuild only.
-  plugins: [copyToDist(), devCleanUrls(), react(), tailwindcss()],
+  plugins: [devCleanUrls(), prerenderContent(), react(), tailwindcss()],
   resolve: {
     alias: {
       "@": resolve(__dirname, "src/admin"),
@@ -114,7 +132,12 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
+        /* Vercel serves dist/404.html automatically for any path that matches
+           no rewrite and no file, so this only has to be built — it needs no
+           entry in vercel.json. It carries both locales itself. */
+        "404": resolve(__dirname, "404.html"),
         work: resolve(__dirname, "work.html"),
+        "work-tbilisi-zoo": resolve(__dirname, "work-tbilisi-zoo.html"),
         "sample-project": resolve(__dirname, "sample-project.html"),
         project: resolve(__dirname, "project.html"),
         studio: resolve(__dirname, "studio.html"),
@@ -129,6 +152,7 @@ export default defineConfig({
         "services-ai": resolve(__dirname, "services/ai.html"),
         "services-printing": resolve(__dirname, "services/printing.html"),
         pricing: resolve(__dirname, "pricing.html"),
+        questions: resolve(__dirname, "questions.html"),
         journal: resolve(__dirname, "journal.html"),
         legal: resolve(__dirname, "legal.html"),
         contact: resolve(__dirname, "contact.html"),
@@ -138,6 +162,7 @@ export default defineConfig({
         "portal-login": resolve(__dirname, "portal-login.html"),
         "ka-main": resolve(__dirname, "ka/index.html"),
         "ka-work": resolve(__dirname, "ka/work.html"),
+        "ka-work-tbilisi-zoo": resolve(__dirname, "ka/work-tbilisi-zoo.html"),
         "ka-sample-project": resolve(__dirname, "ka/sample-project.html"),
         "ka-project": resolve(__dirname, "ka/project.html"),
         "ka-studio": resolve(__dirname, "ka/studio.html"),
@@ -152,6 +177,7 @@ export default defineConfig({
         "ka-services-ai": resolve(__dirname, "ka/services/ai.html"),
         "ka-services-printing": resolve(__dirname, "ka/services/printing.html"),
         "ka-pricing": resolve(__dirname, "ka/pricing.html"),
+        "ka-questions": resolve(__dirname, "ka/questions.html"),
         "ka-journal": resolve(__dirname, "ka/journal.html"),
         "ka-legal": resolve(__dirname, "ka/legal.html"),
         "ka-contact": resolve(__dirname, "ka/contact.html"),

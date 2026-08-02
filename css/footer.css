@@ -1,51 +1,54 @@
-﻿footer {
+/* footer — the colophon: how a printed piece signs off.
+   Three parts, one continuous ending:
+     1. sign-off band (ink)     — the ask, with the ink roller over the type
+     2. marquee rule            — the seam, moving with scroll velocity
+     3. colophon (paper)        — link index, newsletter, legal, floor mark
+   Flat surfaces and hairlines throughout. No glass, no blur, no rounded
+   panels — those existed to let the old particle sim show through, which is
+   what made the links unreadable. */
+
+footer {
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 100svh;
   overflow: hidden;
   background-color: var(--d);
 }
 
+/* the old sim's host — kept in the markup, no longer painted */
 #footer-canvas {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  cursor: none;
+  display: none;
 }
 
-#footer-canvas canvas {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
-}
-
+/* ── 1 · sign-off band ─────────────────────────────────────────────────── */
 .footer-inner {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 2.5rem;
-  min-height: 92svh;
-  padding: 8rem 2.5rem 3.5rem;
-  pointer-events: none;
+  gap: var(--sp-5);
+  min-height: 56svh;
+  padding: 4rem 2.5rem 3rem;
 }
 
-.footer-inner > * {
-  pointer-events: auto;
+/* the sign-off statement — big, but it shares the page with a full link
+   index below it, so it stops short of the display sizes used in heroes */
+footer .footer-cta-heading {
+  font-size: clamp(2.5rem, 6vw, 6rem);
 }
 
-/* top corner meta — location + availability, studio-lab framing */
+/* corner meta — location + a live availability dot. The most on-brand thing
+   in the old footer, promoted to the top rail where it reads first. */
 .footer-cta-meta {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid rgba(246, 241, 231, 0.22);
   color: var(--l);
 }
 
@@ -54,9 +57,9 @@
   align-items: center;
   gap: 0.6rem;
   font-family: var(--f-nm);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   opacity: 0.55;
 }
@@ -78,57 +81,30 @@
   width: 0.4rem;
   height: 0.4rem;
   border-radius: 50%;
-  background-color: currentColor;
-  /* live availability dot */
-  box-shadow: 0 0 0 0 rgba(246, 241, 231, 0.6);
+  background-color: var(--accent);
+  box-shadow: 0 0 0 0 rgba(242, 84, 45, 0.6);
   animation: footer-pulse 2.4s ease-out infinite;
 }
 
 @keyframes footer-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(246, 241, 231, 0.5);
+    box-shadow: 0 0 0 0 rgba(242, 84, 45, 0.55);
   }
   70% {
-    box-shadow: 0 0 0 0.5rem rgba(246, 241, 231, 0);
+    box-shadow: 0 0 0 0.5rem rgba(242, 84, 45, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(246, 241, 231, 0);
+    box-shadow: 0 0 0 0 rgba(242, 84, 45, 0);
   }
 }
 
 .footer-cta {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.75rem;
-}
-
-/* action row — the actual CTA the section was missing */
-.footer-cta-actions {
-  display: flex;
-  align-items: center;
-  gap: 1.75rem;
-  pointer-events: auto;
-}
-
-.footer-cta-mail {
-  font-family: var(--f-nm);
-  font-size: 1rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--l);
-  opacity: 0.7;
-  border-bottom: 1px solid currentColor;
-  padding-bottom: 0.2rem;
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
-}
-
-.footer-cta-mail:hover {
-  opacity: 1;
-  transform: translateY(-0.15rem);
+  align-items: flex-start;
+  gap: 1.25rem;
+  width: 100%;
 }
 
 .footer-cta-eyebrow {
@@ -136,88 +112,132 @@
   align-items: center;
   gap: 0.75rem;
   font-family: var(--f-nm);
-  font-size: 1rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  line-height: 1.125;
-  text-align: center;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--l);
-}
-
-.footer-cta-heading {
-  text-align: center;
-  color: var(--l);
-  mix-blend-mode: difference;
-}
-
-.footer-bottom {
-  position: absolute;
-  bottom: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2rem;
-  width: 100%;
-  padding: 2.5rem;
-  color: var(--l);
-}
-
-/* bottom bar after footer-links.js moves it onto .footer-solid, below the
-   link grid — three-way spread (logo / location / legal) stays, it just
-   needed a readable surface under it, not a restructure */
-.footer-bottom.is-static {
-  position: static;
-  z-index: 2;
-  align-items: center;
-  padding: 2rem 2.5rem 2.5rem;
-  color: var(--d);
-  border-top: 1px solid rgba(23, 19, 15, 0.12);
+  color: var(--accent);
 }
 
 /*
-  — floating glass panel (injected by footer-links.js): link grid + bottom
-  bar sit here — inset from the footer's edges and rounded like the home
-  page's ink CTA panel, but in the header's own paper tone at partial
-  opacity + a blur, so the fluid simulation still reads through softly
-  instead of disappearing behind a flat block. Text below flips to ink
-  since the surface is light now.
+  The ink roller: .footer-cta-heading--fill is a Spark duplicate laid exactly
+  over the paper original and clipped to a disc that follows the cursor
+  (js/footer.js). The type changes colour under the roller instead of being
+  covered by anything — the one motion idea that cannot hide content.
 */
+.footer-cta-heading {
+  position: relative;
+  max-width: 16ch;
+  text-align: left;
+  color: var(--l);
+}
+
+/* Mirrors the h3's box exactly. Every inherited property the h1–h6 rule
+   would have supplied (line-height, weight, transform) is restated here,
+   because this layer is a span — leave any of them to inherit and the two
+   layers drift apart. Position and width are set from the heading's own box
+   in js/footer.js. */
+.footer-cta-heading--fill {
+  position: absolute;
+  display: block;
+  margin: 0;
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 6vw, 6rem);
+  line-height: 0.95;
+  letter-spacing: inherit;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--accent);
+  pointer-events: none;
+  clip-path: circle(0 at -9999px -9999px);
+  will-change: clip-path;
+}
+
+.footer-cta-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  margin-top: 0.75rem;
+}
+
+.footer-cta-mail {
+  font-family: var(--f-mono);
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  color: var(--l);
+  opacity: 0.65;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.2rem;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.footer-cta-mail:hover {
+  opacity: 1;
+  color: var(--accent-bright);
+}
+
+/* ── 2 · marquee rule ──────────────────────────────────────────────────── */
+.footer-marquee {
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(246, 241, 231, 0.22);
+  border-bottom: 1px solid rgba(246, 241, 231, 0.22);
+}
+
+.footer-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.footer-marquee-track span {
+  display: block;
+  white-space: nowrap;
+  font-family: var(--f-nm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--l);
+  opacity: 0.5;
+}
+
+/* ── 3 · colophon ──────────────────────────────────────────────────────── */
 .footer-solid {
   position: relative;
   z-index: 2;
-  margin: 1rem 1.5rem 1.5rem;
-  background-color: rgba(246, 241, 231, 0.82);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 2rem;
-  overflow: hidden;
+  background-color: var(--l);
+  color: var(--d);
 }
 
-/* — utility link grid — */
 .footer-links {
   position: relative;
   display: grid;
   grid-template-columns: 1.6fr repeat(4, minmax(0, 1fr));
   gap: 2.5rem;
-  padding: 4rem 2.5rem 3rem;
+  padding: 3rem 2.5rem 2.5rem;
   color: var(--d);
 }
 
 .footer-links-logo {
   width: auto;
-  height: 1.75rem;
+  height: 1.6rem;
   object-fit: contain;
-  /* white asset, inverted to read dark on this panel's light surface —
-     same trick the nav uses once solid, see css/nav.css */
+  /* white asset, inverted to read dark on paper — same trick as the nav */
   filter: invert(1);
 }
 
 .footer-links-tag {
-  max-width: 18rem;
+  max-width: 20rem;
   margin-top: 1.25rem;
   font-size: 0.85rem;
+  line-height: 1.5;
   text-transform: none;
-  opacity: 0.65;
+  opacity: 0.6;
 }
 
 .footer-links-col {
@@ -228,11 +248,13 @@
 }
 
 .footer-links-title {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(23, 19, 15, 0.25);
   font-family: var(--f-nm);
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   opacity: 0.5;
 }
@@ -240,15 +262,13 @@
 .footer-links-col a {
   width: max-content;
   font-family: var(--f-nm);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
   text-transform: uppercase;
   text-decoration: none;
   color: inherit;
-  opacity: 0.8;
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
+  opacity: 0.75;
+  transition: opacity 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
 
 .footer-links-col a:hover {
@@ -266,9 +286,9 @@
   display: block;
   margin-bottom: 0.75rem;
   font-family: var(--f-nm);
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   opacity: 0.5;
 }
@@ -278,7 +298,7 @@
   align-items: center;
   gap: 0.5rem;
   max-width: 20rem;
-  border-bottom: 1px solid rgba(23, 19, 15, 0.3);
+  border-bottom: 1px solid rgba(23, 19, 15, 0.35);
 }
 
 .footer-newsletter input {
@@ -286,9 +306,8 @@
   -webkit-user-select: text;
   flex: 1;
   padding: 0.6rem 0;
-  font-family: var(--f-nm);
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-family: var(--f-mono);
+  font-size: 0.9rem;
   color: var(--d);
   background: none;
   border: none;
@@ -303,9 +322,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  font-size: 1rem;
+  width: 2.1rem;
+  height: 2.1rem;
+  font-size: 0.95rem;
   color: var(--d);
   background: none;
   border: 1px solid rgba(23, 19, 15, 0.35);
@@ -313,28 +332,55 @@
   cursor: pointer;
   transition:
     background-color 0.3s ease,
-    color 0.3s ease,
-    transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .footer-newsletter button:hover {
   background-color: var(--accent);
   border-color: var(--accent);
   color: var(--accent-ink);
-  transform: rotate(45deg);
 }
 
 .footer-newsletter-status {
   display: block;
   margin-top: 0.6rem;
-  font-family: var(--f-nm);
   font-size: 0.8rem;
+  text-transform: none;
   opacity: 0.7;
 }
 
-/* — legal line — */
+/* — bottom bar — */
+.footer-bottom {
+  position: static;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 100%;
+  padding: 1.4rem 2.5rem;
+  color: var(--d);
+  border-top: 1px solid rgba(23, 19, 15, 0.2);
+}
+
+.footer-bottom.is-static {
+  position: static;
+}
+
+.footer-logo {
+  font-family: var(--f-h);
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.footer-copy,
 .footer-legal {
-  font-size: 0.8rem;
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: -0.01em;
+  text-transform: none;
   opacity: 0.6;
 }
 
@@ -345,38 +391,110 @@
 }
 
 .footer-legal a:hover {
+  color: var(--accent);
   border-bottom-color: currentColor;
 }
 
+/* — the signature: wordmark drawn as an outline, inking in on scroll —
+   It lives in the right half of the sign-off band, opposite the ask. The
+   two spans are stacked exactly on top of each other: the outline is always
+   there, the solid copy is clipped to nothing and wiped open as the band
+   scrolls up (js/footer.js). */
+.footer-mark {
+  position: relative;
+  grid-area: mark;
+  justify-self: end;
+  align-self: end;
+  width: 100%;
+  min-height: clamp(3rem, 6vw, 6.5rem);
+}
+
+.footer-mark span {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-family: var(--f-h);
+  font-weight: 700;
+  font-size: clamp(3rem, 9.5vw, 10rem);
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* cream, not ink: the sign-off band is the dark surface */
+.footer-mark-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(246, 241, 231, 0.45);
+}
+
+.footer-mark-fill {
+  color: var(--accent);
+  clip-path: inset(0 100% 0 0);
+  will-change: clip-path;
+}
+
+/* Two columns only where there is room for both: the ask reads first and
+   keeps the left, the signature takes the space the heading was leaving
+   empty. Below this the signature drops under the heading at full width. */
+@media (min-width: 1001px) {
+  .footer-cta {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-areas:
+      "eyebrow mark"
+      "heading mark";
+    align-items: end;
+    column-gap: var(--sp-4);
+    row-gap: 1.25rem;
+  }
+
+  .footer-cta-eyebrow {
+    grid-area: eyebrow;
+  }
+
+  footer .footer-cta-heading {
+    grid-area: heading;
+  }
+}
+
+@media (max-width: 1000px) {
+  .footer-mark {
+    margin-top: 0.5rem;
+  }
+
+  .footer-mark span {
+    right: auto;
+    left: 0;
+  }
+}
+
+/* ── responsive ────────────────────────────────────────────────────────── */
 @media (max-width: 1000px) {
   footer h3 {
-    font-size: 3rem;
+    font-size: 2.75rem;
   }
 
   .footer-inner {
-    min-height: 82svh;
-    padding: 7rem 2rem 2.5rem;
+    min-height: 58svh;
+    padding: 4rem 2rem 2.5rem;
+    gap: var(--sp-4);
   }
 
   .footer-cta-meta {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.5rem;
   }
 
-  .footer-cta-meta-item::before,
-  .footer-cta-meta-item:last-child::after {
+  .footer-cta-meta-item::before {
     display: none;
   }
 
   .footer-cta-actions {
     flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .footer-solid {
-    margin: 0.75rem 1rem 1rem;
-    border-radius: 1.5rem;
+    align-items: flex-start;
+    gap: 1.1rem;
   }
 
   .footer-links {
@@ -391,12 +509,13 @@
 
   .footer-bottom {
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.4rem 2rem;
   }
 
-  .footer-bottom.is-static {
-    align-items: center;
-    gap: 0.75rem;
+  .footer-marquee-track span {
+    font-size: 0.68rem;
+    letter-spacing: 0.24em;
   }
 }

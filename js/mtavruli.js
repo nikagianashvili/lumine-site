@@ -11,7 +11,19 @@
 
 const isKa = /^\/ka(\/|$)/.test(window.location.pathname);
 
-function toMtavruli(str) {
+/* Not only h1-h6: anything that *reads* as display type needs the same
+   treatment, or it sits next to a converted heading still in Mkhedruli and
+   the mismatch is obvious. The studio hero is one headline split across two
+   boxes so the words can fly apart — only the first box is the h1, so the
+   second (.hero-word) has to be named here too.
+
+   Live-swapped display text (the light desk readout) is deliberately NOT in
+   this list: conversion is one-shot per element, and the observer below
+   watches for added nodes rather than changed text, so it would convert once
+   and then go stale. Those callers import toMtavruli and apply it per swap. */
+const HEADING_SELECTOR = "h1, h2, h3, h4, h5, h6, .hero-word";
+
+export function toMtavruli(str) {
   let out = "";
   for (const ch of str) {
     const cp = ch.codePointAt(0);
@@ -31,8 +43,8 @@ function convertHeading(el) {
 }
 
 function convertHeadingsIn(root) {
-  if (root.matches?.("h1, h2, h3, h4, h5, h6")) convertHeading(root);
-  root.querySelectorAll?.("h1, h2, h3, h4, h5, h6").forEach(convertHeading);
+  if (root.matches?.(HEADING_SELECTOR)) convertHeading(root);
+  root.querySelectorAll?.(HEADING_SELECTOR).forEach(convertHeading);
 }
 
 function init() {

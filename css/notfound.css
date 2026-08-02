@@ -1,0 +1,167 @@
+/* 404 — the one page nobody designs, on a site selling design.
+
+   Vercel serves a single /404.html for every miss on the deployment, so this
+   one file has to answer for both locales; the copy swap lives in the page
+   itself. Kept to the tokens in globals.css so it inherits the palette and
+   both faces rather than introducing a look of its own. */
+
+.notfound {
+  display: flex;
+  align-items: center;
+  min-height: 100svh;
+  padding: 8rem 0 6rem;
+  background-color: var(--l);
+  color: var(--d);
+}
+
+.notfound-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  max-width: 46rem;
+}
+
+/* The numeral sets in the mono face for the same reason every other number on
+   the site does — LK Lumina's digits carry a decorative bar that reads as a
+   strike-through. See the --f-mono note in globals.css. */
+.notfound-code {
+  font-family: var(--f-mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--accent-deep);
+}
+
+.notfound h1 {
+  /* pure vw with a ceiling, so the composition scales rather than reflows */
+  font-size: min(11vw, 132px);
+  line-height: 0.95;
+}
+
+.notfound-copy {
+  max-width: 34rem;
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  text-transform: none;
+  color: var(--d-soft);
+}
+
+/* Three ways out, as ledger rows — the same pattern the client register and
+   the timeline use, so this page belongs to the site rather than apologising
+   inside a box. */
+/* This is a <nav>, which css/nav.css styles as a bare element selector:
+   position:fixed, top:0, left:0, width:100%, padding:2rem, z-index:100. That
+   is meant for the site header, and a second <nav> on the page silently
+   inherited all of it — the three links rendered pinned across the top of the
+   viewport, on top of the real navigation, instead of under the copy.
+   Keeping the element for its semantics means undoing that here. */
+.notfound-ways {
+  position: static;
+  z-index: auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  margin-top: 1rem;
+  background-color: transparent;
+  border-bottom: 0;
+  border-top: 1px solid rgba(23, 19, 15, 0.16);
+  transition: none;
+}
+
+.notfound-way {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  padding: 1.15rem 0.25rem;
+  border-bottom: 1px solid rgba(23, 19, 15, 0.16);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    padding-left 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    color 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.notfound-way:hover,
+.notfound-way:focus-visible {
+  padding-left: 1rem;
+  color: var(--accent);
+}
+
+.notfound-way-index {
+  font-family: var(--f-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  opacity: 0.55;
+}
+
+.notfound-way-label {
+  font-family: var(--f-h);
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+html[lang="ka"] .notfound-way-label {
+  line-height: 1.3;
+  text-transform: none;
+}
+
+.notfound-way-desc {
+  margin-left: auto;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+/* A 404 should not ask you to scroll to find the way out. On a short window
+   the display heading and three rows do not fit inside 100svh, so the
+   composition tightens rather than overflowing — measured at 1707x753, where
+   it was 22px over. Keyed on viewport height, not width, because it is the
+   height that runs out. */
+@media (max-height: 860px) {
+  .notfound {
+    padding: 6.5rem 0 3rem;
+  }
+
+  .notfound h1 {
+    font-size: min(8.5vw, 96px);
+  }
+
+  .notfound-inner {
+    gap: 1.1rem;
+  }
+
+  .notfound-way {
+    padding: 0.9rem 0.25rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .notfound {
+    padding: 7rem 0 4rem;
+  }
+
+  .notfound h1 {
+    font-size: 15vw;
+  }
+
+  /* the descriptions are the first thing to go — the label is the link */
+  .notfound-way-desc {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notfound-way {
+    transition: none;
+  }
+
+  .notfound-way:hover,
+  .notfound-way:focus-visible {
+    padding-left: 0.25rem;
+  }
+}

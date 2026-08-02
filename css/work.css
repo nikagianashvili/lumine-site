@@ -1,13 +1,24 @@
-﻿/* work — filterable portfolio grid */
+/* work — the archive, read as a catalogue of numbered plates.
+   Two ways through it: Plates (visual) and Index (a dense typographic
+   table). Print language throughout — hairlines, plate numbers, flat
+   frames; no rounded cards, no drop shadows. */
 
 body {
   background-color: var(--l);
   color: var(--d);
 }
 
-/* — header — */
+/* ── header: cover plate ───────────────────────────────────────────────── */
 .work-hero {
   padding-top: 10rem;
+}
+
+.work-hero-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  padding-bottom: var(--sp-4);
 }
 
 .work-hero .eyebrow {
@@ -18,42 +29,68 @@ body {
   font-size: clamp(4rem, 11vw, 11rem);
 }
 
-.work-meta {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+/* the archive stated in figures rather than adjectives */
+.work-tally {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, auto));
   gap: var(--sp-4);
-  margin-top: var(--sp-3);
+  flex-shrink: 0;
+  padding-left: var(--sp-4);
+  border-left: 1px solid rgba(23, 19, 15, 0.3);
 }
 
-.work-count {
-  font-size: 0.9rem;
-  letter-spacing: 0.06em;
-  opacity: 0.75;
+.work-tally-item dt {
+  font-family: var(--f-nm);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.5;
 }
 
-.work-note {
-  max-width: 20rem;
-  text-align: right;
-  font-size: 0.8rem;
-  text-transform: none;
-  opacity: 0.55;
+.work-tally-item dd {
+  margin-top: 0.35rem;
+  font-family: var(--f-mono);
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
-/* — filters — */
+/* ── filters + views ───────────────────────────────────────────────────── */
 .work-filters {
-  position: relative;
-  border-top: 1px solid rgba(23, 19, 15, 0.15);
-  border-bottom: 1px solid rgba(23, 19, 15, 0.15);
-  margin-top: var(--sp-4);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-top: 1px solid rgba(23, 19, 15, 0.2);
+  border-bottom: 1px solid rgba(23, 19, 15, 0.2);
+  background-color: var(--l);
+  transition: box-shadow 0.4s ease, padding 0.4s ease;
 }
 
-.work-filters .container {
+/* once pinned, the bar tightens and lifts off the plates below it */
+.work-filters.is-pinned {
+  box-shadow: 0 1px 0 rgba(23, 19, 15, 0.12), 0 12px 24px -20px rgba(23, 19, 15, 0.5);
+}
+
+.work-filters-inner {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  padding-top: 1.75rem;
-  padding-bottom: 1.75rem;
+  gap: 1rem;
+  padding-top: 1.4rem;
+  padding-bottom: 1.1rem;
+  transition: padding 0.4s ease;
+}
+
+.work-filters.is-pinned .work-filters-inner {
+  padding-top: 0.9rem;
+  padding-bottom: 0.7rem;
+}
+
+.filter-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .filter-group {
@@ -66,21 +103,27 @@ body {
   flex-shrink: 0;
   width: 5.5rem;
   font-family: var(--f-nm);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  opacity: 0.5;
+  opacity: 0.45;
 }
 
-.filter-pills {
+.filter-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.35rem 1.5rem;
 }
 
-.filter-pill {
-  padding: 0.55rem 1.15rem;
+/* flat tabs, not pills — the active one is marked by a rule under it, the
+   way a running head marks the open section of a book */
+.filter-tab {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  padding: 0.3rem 0 0.5rem;
   font-family: var(--f-nm);
   font-size: 0.85rem;
   font-weight: 500;
@@ -89,34 +132,115 @@ body {
   white-space: nowrap;
   color: inherit;
   background: none;
-  border: 1px solid rgba(23, 19, 15, 0.35);
-  border-radius: 100px;
+  border: none;
   cursor: pointer;
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease;
+  opacity: 0.55;
+  transition: opacity 0.3s ease, color 0.3s ease;
 }
 
-.filter-pill:hover {
-  border-color: var(--accent);
+.filter-tab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.filter-tab:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.filter-tab.is-active {
+  opacity: 1;
   color: var(--accent);
 }
 
-.filter-pill.is-active {
-  background-color: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-ink);
+.filter-tab.is-active::after {
+  transform: scaleX(1);
 }
 
-/* — grid — */
+.filter-tab-count {
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: -0.02em;
+  opacity: 0.55;
+}
+
+/* a combination with nothing behind it says so instead of leading to a
+   dead end */
+.filter-tab.is-empty {
+  opacity: 0.2;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.work-filters-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(23, 19, 15, 0.12);
+}
+
+.work-count {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.work-views {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.work-view,
+.work-reset {
+  padding: 0;
+  font-family: var(--f-nm);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.work-view:hover,
+.work-reset:hover {
+  opacity: 1;
+}
+
+.work-view.is-active {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.work-reset {
+  color: var(--accent-deep);
+  opacity: 0.8;
+}
+
+/* ── plates ────────────────────────────────────────────────────────────── */
 .work-main {
   padding: var(--sp-5) 0 var(--sp-6);
 }
 
 .work-grid {
   display: grid;
-  gap: var(--sp-4) var(--sp-3);
+  gap: var(--sp-5) var(--sp-4);
 }
 
 .work-card {
@@ -127,16 +251,10 @@ body {
 }
 
 /*
-  Two grid modes, switched by js/work.js:
-
-  --featured (default, "All" + "All"): a 2-up grid where curated projects
-  (data: `featured: true`, one per service type, every 3rd slot) break the
-  rhythm by spanning the full row at a wider, more cinematic ratio — 1 big,
-  2 regular, repeating. Stops a 9-item grid from reading as one flat wall.
-
-  --dense (any filter active): visitor is comparing within one bucket now,
-  not browsing — so it collapses to a tight, uniform 3-up grid that trades
-  spotlight-per-item for more items per scroll.
+  Three modes, switched by js/work.js:
+  --featured  default browse: 2-up, curated projects span the full row
+  --dense     a filter is active: tight 3-up for comparing within a bucket
+  --index     the typographic table — every plate on roughly one screen
 */
 .work-grid--featured {
   grid-template-columns: repeat(2, 1fr);
@@ -151,14 +269,12 @@ body {
     aspect-ratio: 21 / 9;
   }
 
-  /* the poster-stack variant reads better wide-ish than ultra-wide —
-     21/9 would flatten two portrait mockups into letterboxed strips */
   .work-grid--featured .work-card.is-featured .work-card-visual.work-card-stack {
     aspect-ratio: 12 / 5;
   }
 
   .work-grid--featured .work-card.is-featured .work-card-title {
-    font-size: 1.85rem;
+    font-size: 2rem;
   }
 
   .work-grid--featured .work-card.is-featured .work-card-blurb {
@@ -169,7 +285,7 @@ body {
 
 .work-grid--dense {
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--sp-3) var(--sp-2);
+  gap: var(--sp-4) var(--sp-3);
 }
 
 .work-grid--dense .work-card-title {
@@ -183,21 +299,57 @@ body {
   -webkit-line-clamp: 1;
 }
 
-/* — card visual: shared frame — */
+/* — the plate frame — */
+.work-card-frame {
+  position: relative;
+}
+
+.work-card-plate {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  z-index: 3;
+  padding: 0.2rem 0.5rem;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--d);
+  background-color: var(--l);
+  border-radius: var(--r-sm);
+  opacity: 0;
+  transform: translateY(-0.25rem);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.work-card:hover .work-card-plate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .work-card-visual {
   position: relative;
   overflow: hidden;
   aspect-ratio: 4 / 3;
-  border-radius: 1rem;
   background-color: var(--white);
-  box-shadow: 0 0 0 0 var(--accent);
-  transition: box-shadow 0.5s ease;
+  border-radius: var(--r);
+  box-shadow: inset 0 0 0 1px rgba(23, 19, 15, 0.18), var(--lift);
+  transition:
+    box-shadow 0.5s ease,
+    transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .work-card:hover .work-card-visual {
-  box-shadow: 0 0 0 3px var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent), var(--lift-hover);
+  transform: translateY(-0.3rem);
 }
 
+/*
+  Delivered client work is shown in colour — on a design portfolio the
+  colour system usually *is* the deliverable, so graying it out hides the
+  work. Speculative concepts keep the archive's grayscale treatment, which
+  makes the two readable apart at a glance without a legend.
+*/
 .work-card-visual img {
   filter: grayscale(1) contrast(1.08);
   transition:
@@ -205,7 +357,11 @@ body {
     filter 0.6s ease;
 }
 
-.work-card:hover .work-card-visual img {
+.work-card.is-delivered .work-card-visual img {
+  filter: none;
+}
+
+.work-card.is-concept:hover .work-card-visual img {
   filter: grayscale(0) contrast(1);
 }
 
@@ -213,7 +369,6 @@ body {
 .work-card-browser {
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(23, 19, 15, 0.15);
 }
 
 .browser-bar {
@@ -237,13 +392,11 @@ body {
   flex: 1;
   margin-left: 0.5rem;
   padding: 0.25rem 0.75rem;
-  font-family: var(--f-nm);
-  font-size: 0.7rem;
-  font-weight: 500;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
   text-align: center;
-  color: rgba(23, 19, 15, 0.4);
+  color: rgba(23, 19, 15, 0.45);
   background-color: rgba(23, 19, 15, 0.05);
-  border-radius: 100px;
 }
 
 .browser-viewport {
@@ -303,17 +456,22 @@ body {
   transform: translate(-50%, -50%) scale(1.1);
 }
 
-/* variant 3 — graphic design: stacked, offset posters */
+/* variant 3 — graphic design: stacked, offset plates */
 .work-card-stack {
   background: none;
   overflow: visible;
+  box-shadow: none;
+}
+
+.work-card:hover .work-card-stack {
+  box-shadow: none;
 }
 
 .stack-poster {
   position: absolute;
   overflow: hidden;
-  border-radius: 0.75rem;
-  box-shadow: 0 1rem 2rem -1rem rgba(23, 19, 15, 0.35);
+  border-radius: var(--r-sm);
+  box-shadow: 0 0 0 1px rgba(23, 19, 15, 0.18), var(--lift);
   transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
@@ -323,17 +481,6 @@ body {
   object-fit: cover;
 }
 
-/*
-  Both posters are horizontally centered (left: 4% + width: 92% = an equal
-  4% margin on both sides) instead of anchored from the left/top-left
-  corner like before. Anchoring from one side works fine on a roughly
-  square card, but on a very wide box (the "featured" ratio) it leaves the
-  whole stack sitting closer to one edge than the other — that's what was
-  reading as "not centered." The stack/offset look still comes through via
-  the top-vs-bottom stagger and opposing rotation; only the horizontal
-  anchor changed, so any bleed from the rotation is now symmetric left and
-  right instead of lopsided.
-*/
 .stack-poster-back {
   top: 0.75rem;
   left: 4%;
@@ -359,48 +506,174 @@ body {
   transform: rotate(4deg) translate(0.4rem, -0.2rem);
 }
 
-/* nudge the whole card right — in the default two-up grid it was reading
-   tighter to the right wall than its neighbor is to the left wall.
-   margin (not transform) on purpose: work.js animates this card's own
-   transform (x/y) for reveal + filter-fade, which would silently override
-   a CSS transform every time it runs. */
-.work-grid--featured .work-card[data-type="design"]:not(.is-featured) {
-  margin-left: 0.75rem;
-}
-
-/* — card meta (shared structure, every type) — */
+/* — plate caption — */
 .work-card-meta {
-  margin-top: 1.5rem;
+  margin-top: 1.1rem;
 }
 
+.work-card-rule {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(23, 19, 15, 0.2);
+}
+
+/* the discipline's colour rides in a marker square, not in the text — the
+   design tan reads at 2:1 against paper, which fails as a label but works
+   perfectly as a swatch */
 .work-card-badge {
   display: inline-flex;
-  padding: 0.4rem 0.85rem;
+  align-items: center;
+  gap: 0.45rem;
   font-family: var(--f-nm);
   font-size: 0.7rem;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  border-radius: 100px;
+  opacity: 0.75;
+}
+
+.work-card-badge i {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(23, 19, 15, 0.25);
+}
+
+.work-card-status {
+  font-family: var(--f-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+/* delivered work says so in the brand's own accent, not in gray */
+.work-card.is-delivered .work-card-status {
+  color: var(--accent-deep);
+  opacity: 0.9;
 }
 
 .work-card-title {
-  margin-top: 0.85rem;
+  margin-top: 0.8rem;
   font-family: var(--f-nm);
   font-size: 1.4rem;
   font-weight: 500;
   text-transform: none;
+  transition: color 0.3s ease;
+}
+
+.work-card:hover .work-card-title {
+  color: var(--accent);
 }
 
 .work-card-blurb {
   max-width: 26rem;
-  margin-top: 0.35rem;
+  margin-top: 0.3rem;
   font-size: 0.9rem;
   text-transform: none;
   opacity: 0.65;
 }
 
-/* — empty state — */
+.work-card-foot {
+  display: block;
+  margin-top: 0.7rem;
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: -0.01em;
+  opacity: 0.45;
+}
+
+/* ── index view: the whole archive as one table ────────────────────────── */
+.work-grid--index {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid rgba(23, 19, 15, 0.25);
+}
+
+.work-grid--index .work-card {
+  display: grid;
+  grid-template-columns: 3rem minmax(9rem, 1.1fr) minmax(0, 1.4fr) 11rem 9rem 5.5rem;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(23, 19, 15, 0.15);
+  transition: background-color 0.3s ease, padding-left 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.work-grid--index .work-card:hover {
+  background-color: rgba(242, 84, 45, 0.05);
+  padding-left: 0.75rem;
+}
+
+/* the plate's image is the frame's job — the index is text only */
+.work-grid--index .work-card-frame {
+  display: none;
+}
+
+.work-grid--index .work-card-meta {
+  display: contents;
+  margin: 0;
+}
+
+.work-grid--index .work-card-rule {
+  display: contents;
+}
+
+.work-grid--index .work-card::before {
+  content: attr(data-plate);
+  font-family: var(--f-mono);
+  font-size: 0.75rem;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+.work-grid--index .work-card-title {
+  margin: 0;
+  font-size: 1.05rem;
+  order: 1;
+}
+
+.work-grid--index .work-card-blurb {
+  margin: 0;
+  max-width: none;
+  font-size: 0.85rem;
+  order: 2;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.work-grid--index .work-card-badge {
+  order: 3;
+  font-size: 0.65rem;
+  opacity: 0.75;
+}
+
+.work-grid--index .work-card-foot {
+  margin: 0;
+  order: 4;
+  font-size: 0.68rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.work-grid--index .work-card-badge {
+  white-space: nowrap;
+}
+
+.work-grid--index .work-card-status {
+  order: 5;
+  text-align: right;
+}
+
+/* ── empty state ───────────────────────────────────────────────────────── */
 .work-empty {
   display: flex;
   flex-direction: column;
@@ -415,29 +688,56 @@ body {
   opacity: 0.65;
 }
 
-/* — responsive — */
+/* ── responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .work-grid--index .work-card {
+    grid-template-columns: 2.5rem minmax(8rem, 1fr) 8rem 5rem;
+  }
+
+  .work-grid--index .work-card-blurb,
+  .work-grid--index .work-card-foot {
+    display: none;
+  }
+}
+
 @media (max-width: 1000px) {
   .work-hero {
     padding-top: 8rem;
   }
 
-  .work-meta {
+  .work-hero-top {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: var(--sp-4);
   }
 
-  .work-note {
-    text-align: left;
+  .work-tally {
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    padding-left: 0;
+    padding-top: var(--sp-3);
+    border-left: none;
+    border-top: 1px solid rgba(23, 19, 15, 0.3);
+    gap: var(--sp-2);
   }
 
   .filter-group {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
 
   .filter-label {
     width: auto;
+  }
+
+  .filter-tabs {
+    gap: 0.35rem 1.1rem;
+  }
+
+  .work-filters-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
   }
 
   .work-grid--featured,
@@ -457,5 +757,15 @@ body {
   .play-button {
     width: 3.25rem;
     height: 3.25rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .work-grid--index .work-card {
+    grid-template-columns: 2rem 1fr 4.5rem;
+  }
+
+  .work-grid--index .work-card-badge {
+    display: none;
   }
 }

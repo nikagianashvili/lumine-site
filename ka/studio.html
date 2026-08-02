@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ka">
   <head>
     <meta charset="UTF-8" />
@@ -30,19 +30,18 @@
     <link rel="stylesheet" href="/css/home.css" />
     <link rel="stylesheet" href="/css/footer.css" />
     <link rel="stylesheet" href="/css/chat-widget.css" />
-    <script src="/js/wrappedgl.js"></script>
-    <script src="/js/simulator.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">ძირითად შიგთავსზე გადასვლა</a>
     <!-- studio: navigation -->
     <nav>
       <div class="nav-logo">
         <a href="/ka">
-          <img src="/logo/lumine-logo-white.png" alt="Lumine" />
+          <img src="/logo/lumine-wordmark.svg" alt="Lumine" decoding="async" />
         </a>
       </div>
       <div class="nav-icon">
-        <img src="/logo/lumine-mark-2.svg" alt="" />
+        <img src="/logo/lumine-mark-2.svg" alt="" decoding="async" />
       </div>
       <div class="nav-right">
         <div class="nav-lang" role="group" aria-label="Language">
@@ -56,11 +55,19 @@
       </div>
     </nav>
 
+    <main id="main">
     <!-- studio: hero -->
     <section class="studio-hero">
       <div class="studio-hero-img">
-        <img src="/studio/hero.jpg" alt="" />
+        <img src="/studio/hero.jpg" alt="" decoding="async" width="2400" height="1350" />
       </div>
+      <!--
+        The line was written here first and the English page mirrors it, not
+        the other way round — most of the people reading this are Georgian, so
+        თავიდან ბოლომდე has to be a phrase somebody would actually say rather
+        than a translation. Two words of equal length, which is also what the
+        split hero wants. See the note on the English page.
+      -->
       <div class="studio-hero-copy">
         <div class="studio-hero-header">
           <h1
@@ -68,17 +75,18 @@
             data-animate-on-scroll="false"
             data-animate-delay="0.8"
           >
-            ყველა
+            თავიდან
           </h1>
         </div>
         <div class="studio-hero-header">
-          <h1
+          <span
+            class="hero-word"
             data-animate-variant="slide"
             data-animate-on-scroll="false"
             data-animate-delay="0.9"
           >
-            სინათლე
-          </h1>
+            ბოლომდე
+          </span>
         </div>
       </div>
       <div class="hero-footer">
@@ -115,9 +123,9 @@
       <div class="container">
         <div class="about-row">
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               კონცეფცია წინ უსწრებს
-            </h1>
+            </h2>
           </div>
         </div>
         <div class="about-row">
@@ -129,16 +137,16 @@
             </p>
           </div>
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               ვიზუალური კულტურა
-            </h1>
+            </h2>
           </div>
         </div>
         <div class="about-row">
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               ნაპოვნია თბილისში
-            </h1>
+            </h2>
           </div>
           <div class="about-col about-col-copy">
             <p data-animate-variant="slide" data-animate-on-scroll="true">
@@ -154,9 +162,9 @@
       <div class="particle-canvas">
         <canvas id="particle-canvas"></canvas>
         <div class="particle-header">
-          <h1 data-animate-variant="slide-words" data-animate-on-scroll="true">
+          <h2 data-animate-variant="slide-words" data-animate-on-scroll="true">
             იდეები მოძრაობაში
-          </h1>
+          </h2>
         </div>
       </div>
     </section>
@@ -167,17 +175,17 @@
         <div class="mission-grid">
           <div class="mission-col">
             <p class="eyebrow">მისია</p>
-            <h5 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
               მცირე ბრენდებს ვაძლევთ იმ დონის შემოქმედებით სამუშაოს,
               რომელიც ჩვეულებრივ დიდი ბიუჯეტისთვისაა დაცული.
-            </h5>
+            </h3>
           </div>
           <div class="mission-col">
             <p class="eyebrow">ხედვა</p>
-            <h5 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
               თბილისი, სადაც ადგილობრივი ბიზნესები ისე კარგად გამოიყურებიან,
               როგორადაც რეალურად არიან.
-            </h5>
+            </h3>
           </div>
         </div>
       </div>
@@ -187,30 +195,30 @@
     <section class="studio-timeline">
       <div class="container">
         <div class="section-head-row">
-          <h3 data-animate-variant="slide" data-animate-on-scroll="true">
+          <h2 data-animate-variant="slide" data-animate-on-scroll="true">
             ისტორია დღემდე
-          </h3>
+          </h2>
           <p class="timeline-note">ახალგაზრდა სტუდია, მოკლე გზა, ზედმეტის გარეშე.</p>
         </div>
         <div class="timeline-list">
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 01</span>
-            <h6>დოკუმენტი</h6>
+            <h3>დოკუმენტი</h3>
             <p>სტრატეგია სტილამდე: აუდიტორია, ტონი, სერვისები და ფასები — ჯერ დაწერილი, მერე ყველაფერი დანარჩენი.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 02</span>
-            <h6>ნიშანი</h6>
+            <h3>ნიშანი</h3>
             <p>შავი სავაჭრო ნიშანი ბზინვარებით, ამოჭრილი „e"-ში — მთელი იდენტობა აქედან გაიზარდა.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 03</span>
-            <h6>საიტი</h6>
+            <h3>საიტი</h3>
             <p>აშენებული საკუთარ გუნდში, ისევე როგორც კლიენტის სამუშაო. სწორედ მას უყურებთ.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">ახლა</span>
-            <h6>პირველი პროექტები</h6>
+            <h3>პირველი პროექტები</h3>
             <p>ვიღებთ დამფუძნებელ კლიენტებს. ადრეული ნიშნავს მეტ ყურადღებას, არა ნაკლებს.</p>
           </div>
         </div>
@@ -220,63 +228,39 @@
     <!-- studio: disciplines (sticky cards) -->
     <section id="team-cards"></section>
 
-    <!-- studio: values -->
-    <section class="studio-values">
-      <div class="container">
-        <div class="section-head-row">
-          <h3 data-animate-variant="slide" data-animate-on-scroll="true">
-            სახლის წესები
-          </h3>
-        </div>
-        <div class="values-grid">
-          <div class="value-item">
-            <h6>სანდო</h6>
-            <p>ვადები და ფასები ნიშნავს იმას, რასაც ამბობს.</p>
-          </div>
-          <div class="value-item">
-            <h6>შედეგზე ორიენტირებული</h6>
-            <p>ლამაზი, რომელიც არ მუშაობს, უბრალოდ ძვირია.</p>
-          </div>
-          <div class="value-item">
-            <h6>ცნობისმოყვარე</h6>
-            <p>მუდამ ვსწავლობთ — ახალი ხელსაწყოები, ახალი ფორმატები, განზრახ.</p>
-          </div>
-          <div class="value-item">
-            <h6>კომუნიკაბელური</h6>
-            <p>ყოველთვის იცით, სად დგას თქვენი პროექტი.</p>
-          </div>
-          <div class="value-item">
-            <h6>შემოქმედებითად თავისუფალი</h6>
-            <p>თამამი იდეები მისასალმებელია — ჩვენი მხრიდანაც და თქვენიდანაც.</p>
-          </div>
-          <div class="value-item">
-            <h6>დაბალანსებული</h6>
-            <p>იუმორი და სერიოზულობა, თითოეული თავის ადგილას.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!--
+      studio: the light desk — see the note on the English page. The same six
+      house rules, plotted on a Kelvin rail from warm to cool. Built by
+      js/light-desk.js, which carries the Georgian copy.
+    -->
+    <section class="lightdesk" data-lightdesk></section>
 
-    <!-- studio: clients -->
+    <!--
+      studio: clients — see the note on the English page. The marquee this
+      replaces was sixty broken images built from five SVGs that are not in
+      the repo, credited to five companies that do not exist.
+    -->
     <section class="clients">
       <div class="container">
         <div class="clients-header-wrapper">
           <div class="clients-header">
-            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               კარგი კომპანია
-            </h3>
+            </h2>
           </div>
           <div class="clients-copy">
             <p data-animate-variant="slide" data-animate-on-scroll="true">
-              ჯერჯერობით სანიმუშო ნიშნებია — ეს კედელი რეალური კლიენტების
-              ლოგოებით ივსება, როცა როსტერი გაიზრდება. დამფუძნებლები, მცირე
-              ბიზნესები და ყველა, ვისაც შაბლონურის ყოფა მოსწყინდა — სწორედ
-              მათთვისაა დაცული.
+              სახელები, რომლებთანაც აქამდე ვიმუშავეთ. თითოეული სტრიქონი
+              ხსნის პროექტს, საიდანაც მოდის.
             </p>
           </div>
         </div>
+
+        <div class="register" data-register></div>
       </div>
     </section>
+
+    </main>
 
     <!-- studio: footer -->
     <footer>
@@ -311,12 +295,13 @@
     <script type="module" src="/js/mtavruli.js"></script>
     <script type="module" src="/js/animated-copy.js"></script>
     <script type="module" src="/js/simulation.js"></script>
-    <script type="module" src="/js/particle-visual.js"></script>
+    <script type="module" src="/js/idea-field.js"></script>
     <script type="module" src="/js/nav.js"></script>
     <script type="module" src="/js/studio-hero.js"></script>
     <script type="module" src="/js/home-hero.js"></script>
     <script type="module" src="/js/team-cards.js"></script>
-    <script type="module" src="/js/clients.js"></script>
+    <script type="module" src="/js/light-desk.js"></script>
+    <script type="module" src="/js/trusted-by.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>
   </body>

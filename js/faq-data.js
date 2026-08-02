@@ -37,4 +37,28 @@ export const FAQ = [
     answer: "Yes. Photo, video, a brand book, or a website can each be booked individually if that's all you need right now.",
     answer_ka: "დიახ. ფოტო, ვიდეო, ბრენდბუქი ან საიტი შეიძლება შეკვეთოთ ცალ-ცალკე, თუ ახლა მხოლოდ ეს გჭირდებათ.",
   },
+  {
+    question: "How long does a project take?",
+    question_ka: "რამდენი ხანი სჭირდება პროექტს?",
+    answer:
+      "A shoot or a single set of content usually lands within a week or two. A brand book takes three to four weeks, a website four to six, depending on how much content is ready. Monthly packages run continuously, with a content plan agreed at the start of each month.",
+    answer_ka:
+      "გადაღება ან კონტენტის ერთი ნაკრები ჩვეულებრივ ერთ-ორ კვირაში მზადდება. ბრენდბუქს სამი-ოთხი კვირა სჭირდება, საიტს ოთხი-ექვსი, იმის მიხედვით რამდენი კონტენტია მზად. თვიური პაკეტები უწყვეტად მიმდინარეობს, თვის დასაწყისში შეთანხმებული კონტენტ-გეგმით.",
+  },
+  {
+    question: "Who actually does the work?",
+    question_ka: "ვინ აკეთებს რეალურად სამუშაოს?",
+    answer:
+      "We do — in house, in Tbilisi. Photo, video, design, social, marketing and web all sit with the same team, so nothing gets passed to a subcontractor you never meet, and you keep one point of contact from brief to launch.",
+    answer_ka:
+      "ჩვენ — შიდა გუნდით, თბილისში. ფოტო, ვიდეო, დიზაინი, სოციალური, მარკეტინგი და ვები ერთსა და იმავე გუნდშია, ასე რომ არაფერი გადაეცემა სუბკონტრაქტორს, რომელსაც ვერასდროს ნახავთ, და ბრიფიდან გაშვებამდე ერთი საკონტაქტო პირი გყავთ.",
+  },
+  {
+    question: "Do we own everything you make?",
+    question_ka: "ჩვენია ყველაფერი, რასაც ქმნით?",
+    answer:
+      "Yes. Final files, source files, and full usage rights are yours once the project is paid. That includes editable design files and the original photo and video footage, not just exports.",
+    answer_ka:
+      "დიახ. საბოლოო ფაილები, საწყისი ფაილები და სრული გამოყენების უფლებები თქვენია პროექტის ანაზღაურების შემდეგ. ეს მოიცავს რედაქტირებად დიზაინ-ფაილებსა და ორიგინალ ფოტო-ვიდეო მასალას, არა მხოლოდ ექსპორტებს.",
+  },
 ];

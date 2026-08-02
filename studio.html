@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -20,25 +20,28 @@
     <meta name="twitter:card" content="summary" />
     <link rel="icon" type="image/svg+xml" href="/icons/favicon-mark.svg" />
     <link rel="icon" type="image/png" href="/icons/favicon-mark.png" />
+    <link rel="canonical" href="https://lumine.ge/studio" />
+    <link rel="alternate" hreflang="en" href="https://lumine.ge/studio" />
+    <link rel="alternate" hreflang="ka" href="https://lumine.ge/ka/studio" />
+    <link rel="alternate" hreflang="x-default" href="https://lumine.ge/studio" />
     <link rel="stylesheet" href="/css/globals.css" />
     <link rel="stylesheet" href="/css/nav.css" />
     <link rel="stylesheet" href="/css/studio.css" />
     <link rel="stylesheet" href="/css/home.css" />
     <link rel="stylesheet" href="/css/footer.css" />
     <link rel="stylesheet" href="/css/chat-widget.css" />
-    <script src="/js/wrappedgl.js"></script>
-    <script src="/js/simulator.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <!-- studio: navigation -->
     <nav>
       <div class="nav-logo">
         <a href="/">
-          <img src="/logo/lumine-logo-white.png" alt="Lumine" />
+          <img src="/logo/lumine-wordmark.svg" alt="Lumine" decoding="async" />
         </a>
       </div>
       <div class="nav-icon">
-        <img src="/logo/lumine-mark-2.svg" alt="" />
+        <img src="/logo/lumine-mark-2.svg" alt="" decoding="async" />
       </div>
       <div class="nav-right">
         <div class="nav-lang" role="group" aria-label="Language">
@@ -52,11 +55,28 @@
       </div>
     </nav>
 
+    <main id="main">
     <!-- studio: hero -->
     <section class="studio-hero">
       <div class="studio-hero-img">
-        <img src="/studio/hero.jpg" alt="" />
+        <img src="/studio/hero.jpg" alt="" decoding="async" width="2400" height="1350" />
       </div>
+      <!--
+        This is the about-us page, so the hero says what the studio is rather
+        than what it does to a client, and it was written in Georgian first:
+        თავიდან ბოლომდე is an ordinary phrase people already say, not a line
+        translated out of English. Most of the people reading this are
+        Georgian and the Georgian should be the one that sounds native.
+
+        It is also the claim that separates this studio from an agency that
+        subcontracts — strategy, design, photo, video and the build are one
+        team. The timeline and the about copy both already say "in house";
+        this is that, said as a headline.
+
+        The two halves fly apart in opposite directions on scroll, which puts
+        real distance between "start" and "finish". That is the whole point,
+        so the words are split at the phrase's own hinge.
+      -->
       <div class="studio-hero-copy">
         <div class="studio-hero-header">
           <h1
@@ -64,17 +84,18 @@
             data-animate-on-scroll="false"
             data-animate-delay="0.8"
           >
-            All
+            Start
           </h1>
         </div>
         <div class="studio-hero-header">
-          <h1
+          <span
+            class="hero-word"
             data-animate-variant="slide"
             data-animate-on-scroll="false"
             data-animate-delay="0.9"
           >
-            Light
-          </h1>
+            To Finish
+          </span>
         </div>
       </div>
       <div class="hero-footer">
@@ -111,9 +132,9 @@
       <div class="container">
         <div class="about-row">
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               Concept Driven
-            </h1>
+            </h2>
           </div>
         </div>
         <div class="about-row">
@@ -125,16 +146,16 @@
             </p>
           </div>
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               Visual Culture
-            </h1>
+            </h2>
           </div>
         </div>
         <div class="about-row">
           <div class="about-col">
-            <h1 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               Found in Tbilisi
-            </h1>
+            </h2>
           </div>
           <div class="about-col about-col-copy">
             <p data-animate-variant="slide" data-animate-on-scroll="true">
@@ -149,9 +170,9 @@
       <div class="particle-canvas">
         <canvas id="particle-canvas"></canvas>
         <div class="particle-header">
-          <h1 data-animate-variant="slide-words" data-animate-on-scroll="true">
+          <h2 data-animate-variant="slide-words" data-animate-on-scroll="true">
             Ideas In Motion
-          </h1>
+          </h2>
         </div>
       </div>
     </section>
@@ -162,17 +183,17 @@
         <div class="mission-grid">
           <div class="mission-col">
             <p class="eyebrow">Mission</p>
-            <h5 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
               Give small brands the kind of creative work usually reserved
               for big budgets.
-            </h5>
+            </h3>
           </div>
           <div class="mission-col">
             <p class="eyebrow">Vision</p>
-            <h5 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
               A Tbilisi where local businesses look as good as they actually
               are.
-            </h5>
+            </h3>
           </div>
         </div>
       </div>
@@ -182,30 +203,30 @@
     <section class="studio-timeline">
       <div class="container">
         <div class="section-head-row">
-          <h3 data-animate-variant="slide" data-animate-on-scroll="true">
+          <h2 data-animate-variant="slide" data-animate-on-scroll="true">
             The Story So Far
-          </h3>
+          </h2>
           <p class="timeline-note">Young studio, short timeline, no filler.</p>
         </div>
         <div class="timeline-list">
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 01</span>
-            <h6>The Document</h6>
+            <h3>The Document</h3>
             <p>Strategy before style: audience, tone, services, and pricing written down first.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 02</span>
-            <h6>The Mark</h6>
+            <h3>The Mark</h3>
             <p>A black wordmark with a sparkle cut into the "e" — the whole identity grew from it.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">2026 · 03</span>
-            <h6>The Site</h6>
+            <h3>The Site</h3>
             <p>Built in house, the same way client work ships. You're looking at it.</p>
           </div>
           <div class="timeline-item">
             <span class="timeline-marker">Now</span>
-            <h6>First Projects</h6>
+            <h3>First Projects</h3>
             <p>Taking on founding clients. Early means more attention, not less.</p>
           </div>
         </div>
@@ -215,62 +236,55 @@
     <!-- studio: disciplines (sticky cards) -->
     <section id="team-cards"></section>
 
-    <!-- studio: values -->
-    <section class="studio-values">
-      <div class="container">
-        <div class="section-head-row">
-          <h3 data-animate-variant="slide" data-animate-on-scroll="true">
-            House Rules
-          </h3>
-        </div>
-        <div class="values-grid">
-          <div class="value-item">
-            <h6>Trustworthy</h6>
-            <p>Deadlines and prices mean what they say.</p>
-          </div>
-          <div class="value-item">
-            <h6>Results-Oriented</h6>
-            <p>Pretty that doesn't perform is just expensive.</p>
-          </div>
-          <div class="value-item">
-            <h6>Curious</h6>
-            <p>Always learning — new tools, new formats, on purpose.</p>
-          </div>
-          <div class="value-item">
-            <h6>Communicative</h6>
-            <p>You always know where your project stands.</p>
-          </div>
-          <div class="value-item">
-            <h6>Creatively Free</h6>
-            <p>Bold ideas welcome — from our side and yours.</p>
-          </div>
-          <div class="value-item">
-            <h6>Balanced</h6>
-            <p>Humor and seriousness, each where it belongs.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!--
+      studio: the light desk
 
-    <!-- studio: clients -->
+      Was a three-column grid of six value cards — a box, a two-word virtue,
+      one line of copy, six times. Six interchangeable adjectives in six
+      identical boxes give a reader no reason to look at the second one.
+
+      The same six rules are now plotted on a colour-temperature rail, warm
+      to cool, running from how we treat the client to how we measure the
+      work. The studio is named for light and its people actually shoot and
+      grade, so the Kelvin scale is an instrument they own rather than a
+      metaphor borrowed for the occasion. Built by js/light-desk.js so both
+      locales share one builder, the way the team cards and the register do.
+    -->
+    <section class="lightdesk" data-lightdesk></section>
+
+    <!--
+      studio: clients
+
+      Was a two-row logo marquee: sixty tiles built from five SVGs that do
+      not exist in the repo, so every one of them was a broken image, and
+      the alt text named five companies that do not exist either. The home
+      page had already replaced the same marquee with a signed register —
+      js/trusted-by.js says why: five marks sliding past give you no name
+      you can read and no way to find out what was actually made. This page
+      is now on that register too, so the real clients appear once, in one
+      pattern, on both pages.
+    -->
     <section class="clients">
       <div class="container">
         <div class="clients-header-wrapper">
           <div class="clients-header">
-            <h3 data-animate-variant="slide" data-animate-on-scroll="true">
+            <h2 data-animate-variant="slide" data-animate-on-scroll="true">
               Good Company
-            </h3>
+            </h2>
           </div>
           <div class="clients-copy">
             <p data-animate-variant="slide" data-animate-on-scroll="true">
-              Placeholder marks for now — this wall fills in with real client
-              logos as the roster grows. Founders, small businesses, and
-              anyone tired of looking generic: that's who it's reserved for.
+              The names we have worked with so far. Each row opens the
+              project it came from.
             </p>
           </div>
         </div>
+
+        <div class="register" data-register></div>
       </div>
     </section>
+
+    </main>
 
     <!-- studio: footer -->
     <footer>
@@ -304,12 +318,13 @@
     <script type="module" src="/js/cursor.js"></script>
     <script type="module" src="/js/animated-copy.js"></script>
     <script type="module" src="/js/simulation.js"></script>
-    <script type="module" src="/js/particle-visual.js"></script>
+    <script type="module" src="/js/idea-field.js"></script>
     <script type="module" src="/js/nav.js"></script>
     <script type="module" src="/js/studio-hero.js"></script>
     <script type="module" src="/js/home-hero.js"></script>
     <script type="module" src="/js/team-cards.js"></script>
-    <script type="module" src="/js/clients.js"></script>
+    <script type="module" src="/js/light-desk.js"></script>
+    <script type="module" src="/js/trusted-by.js"></script>
     <script type="module" src="/js/footer.js"></script>
     <script type="module" src="/js/chat-widget.js"></script>
   </body>

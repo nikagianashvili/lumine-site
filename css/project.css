@@ -230,6 +230,15 @@
   aspect-ratio: 21 / 9;
 }
 
+/* The project's name is this page's h1. The template used to open at h2 and
+   carried no h1 at all, so every project page was a document with no title
+   as far as a screen reader or a crawler was concerned. Pinned here to the
+   h2 size it was drawn at, so the promotion changes the document outline
+   and nothing on screen. */
+.pd-hero h1 {
+  font-size: clamp(3rem, 9.5vw, 9.5rem);
+}
+
 /* hero: shared bits (badge, tagline, quick-facts row) */
 .pd-hero-badge {
   display: inline-flex;

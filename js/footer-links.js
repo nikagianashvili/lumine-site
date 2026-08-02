@@ -18,7 +18,7 @@ const COLUMNS_EN = [
       { label: "Work", href: p("/work") },
       { label: "Pricing", href: p("/pricing") },
       { label: "Journal", href: p("/journal") },
-      { label: "Q&A", href: `${p("/")}#faq` },
+      { label: "Q&A", href: p("/questions") },
     ],
   },
   {
@@ -48,7 +48,7 @@ const COLUMNS_EN = [
     title: "Contact",
     links: [
       { label: "hello@lumine.ge", href: "mailto:hello@lumine.ge" },
-      { label: "+995 555 00 00 00", href: "tel:+995555000000" },
+      { label: "+995 555 40 58 43", href: "tel:+995555405843" },
       { label: "Instagram", href: "https://www.instagram.com/lumine.ge", external: true },
       { label: "Tbilisi, Georgia", href: p("/contact") },
     ],
@@ -65,7 +65,7 @@ const COLUMNS_KA = [
       { label: "ნამუშევრები", href: p("/work") },
       { label: "ფასები", href: p("/pricing") },
       { label: "ჟურნალი", href: p("/journal") },
-      { label: "კითხვა-პასუხი", href: `${p("/")}#faq` },
+      { label: "კითხვა-პასუხი", href: p("/questions") },
     ],
   },
   {
@@ -95,7 +95,7 @@ const COLUMNS_KA = [
     title: "კონტაქტი",
     links: [
       { label: "hello@lumine.ge", href: "mailto:hello@lumine.ge" },
-      { label: "+995 555 00 00 00", href: "tel:+995555000000" },
+      { label: "+995 555 40 58 43", href: "tel:+995555405843" },
       { label: "Instagram", href: "https://www.instagram.com/lumine.ge", external: true },
       { label: "თბილისი, საქართველო", href: p("/contact") },
     ],
@@ -116,6 +116,8 @@ const T = isKa
       terms: "წესები",
       invalid: "მიუთითეთ რეალური მეილი.",
       sent: "დრაფტი გაიხსნა თქვენს მეილ აპლიკაციაში — გააგზავნეთ და სიაშია ხართ.",
+      marquee:
+        "ფოტო · ვიდეო · დიზაინი · სოციალური მედია · მარკეტინგი · ვები · თბილისი · ",
     }
   : {
       tag: "Photo, video, design, social, marketing, and web — in house, in Tbilisi.",
@@ -128,6 +130,8 @@ const T = isKa
       terms: "Terms",
       invalid: "Add a real email first.",
       sent: "A draft opened in your mail app — send it and you're on the list.",
+      marquee:
+        "Photo · Video · Design · Social · Marketing · Web · Tbilisi · Est. 2024 · ",
     };
 
 // Turn the bare "big statement" CTA into a composed sign-off:
@@ -160,11 +164,20 @@ function buildLinks() {
 
   enhanceCta(footer);
 
-  // The link grid + bottom bar live on a solid panel (like the home page's
-  // ink CTA panel) instead of sitting exposed on the live particle canvas —
-  // readability shouldn't depend on where the simulation happens to settle.
+  // A marquee rule separates the dark sign-off from the light colophon —
+  // the seam between the two halves, rather than a gap.
+  const marquee = document.createElement("div");
+  marquee.className = "footer-marquee";
+  marquee.setAttribute("aria-hidden", "true");
+  const strip = `<span>${T.marquee}</span>`;
+  marquee.innerHTML = `<div class="footer-marquee-track">${strip}${strip}</div>`;
+  footer.appendChild(marquee);
+
+  // The colophon: a flat paper surface, not a translucent panel. The old
+  // glass treatment existed so the particle sim could show through it, which
+  // is exactly what made the links hard to read.
   const solid = document.createElement("div");
-  solid.className = "footer-solid grain";
+  solid.className = "footer-solid";
 
   const section = document.createElement("div");
   section.className = "footer-links";
@@ -209,6 +222,23 @@ function buildLinks() {
     legal.innerHTML = `<a href="${p("/legal")}#privacy">${T.privacy}</a> · <a href="${p("/legal")}#terms">${T.terms}</a> · © 2026 Lumine`;
     bottom.appendChild(legal);
     solid.appendChild(bottom);
+  }
+
+  // The wordmark drawn as an outline that inks in on scroll. It used to sit
+  // on the floor of the colophon, below every link, where it was the last
+  // thing on the page and read as a rug. It now fills the empty right half
+  // of the sign-off band, so the studio signs its name beside the ask
+  // instead of after it.
+  const signOff = footer.querySelector(".footer-cta");
+  if (signOff && !footer.querySelector(".footer-mark")) {
+    const mark = document.createElement("div");
+    mark.className = "footer-mark";
+    mark.setAttribute("aria-hidden", "true");
+    mark.innerHTML = `
+      <span class="footer-mark-outline">Lumine</span>
+      <span class="footer-mark-fill">Lumine</span>
+    `;
+    signOff.appendChild(mark);
   }
 
   // newsletter — no backend yet: composes a subscribe email, says so.

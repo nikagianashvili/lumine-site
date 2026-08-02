@@ -4,7 +4,16 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const hero = document.querySelector(".studio-hero");
-if (hero) {
+
+/* Nine of this page's sixteen screens were pinned scrub — three here and six
+   in the team cards — and neither module checked this, while nine other
+   modules in the codebase do. Someone who has asked the OS to stop moving
+   things still got the whole ride. Skipping the pin leaves the hero in its
+   opening composition: the clipped, rotated frame with the words across it,
+   which is a finished picture on its own and simply scrolls past. */
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+if (hero && !reduced) {
   // pin + animate hero on scroll
   ScrollTrigger.create({
     trigger: hero,

@@ -6,4 +6,4 @@ Disallow: /portal
 Disallow: /portal-login
 Disallow: /api/
 
-Sitemap: https://lumine-site.vercel.app/sitemap.xml
+Sitemap: https://lumine.ge/sitemap.xml
